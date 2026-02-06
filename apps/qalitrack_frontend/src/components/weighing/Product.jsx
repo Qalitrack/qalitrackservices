@@ -27,7 +27,6 @@ export default function ProductsPortal() {
     status: "Active",
   });
 
-  // Fetch products
   useEffect(() => {
     fetchProducts();
   }, [page, search]);
@@ -53,7 +52,6 @@ export default function ProductsPortal() {
     }
   };
 
-  // Form handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
@@ -115,251 +113,257 @@ export default function ProductsPortal() {
     setEditingProduct(null);
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    setPage(1);
-    fetchProducts();
-  };
-
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b-2 border-amber-500 px-4 py-2 flex items-center gap-2.5 shrink-0 shadow-lg">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg ring-2 ring-amber-400/50">
-            <PackagePlus className="w-4 h-4 text-black font-bold" />
-          </div>
-          <div>
-            <div className="text-sm font-bold text-white leading-none">Products</div>
-            <div className="text-[10px] text-amber-400 leading-none mt-1">
-              <span className="font-semibold">{products.length}</span> items
+    <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+      {/* Compact Header */}
+      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+              <PackagePlus className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+                Products
+              </span>
+              <span className="text-[9px] text-amber-700 font-medium">
+                {products.length} products available
+              </span>
             </div>
           </div>
-        </div>
-        
-        <div className="flex-1 flex gap-2 justify-end items-center">
-          <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input 
-              type="text"
-              placeholder="Search products..." 
-              className="w-64 h-8 pl-9 pr-3 text-[11px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-amber-500" 
-              value={search}
-              onChange={(e) => setSearch(e.target.value)} 
-            />
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search products..."
+                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
+            <button
+              onClick={() => {
+                setSearch("");
+                setPage(1);
+                fetchProducts();
+              }}
+              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+            >
+              Refresh
+            </button>
           </div>
-          <button
-            onClick={handleSearch}
-            className="h-8 px-4 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded shadow-lg transition-all"
-          >
-            Search
-          </button>
         </div>
       </div>
 
       {/* Form Section */}
-      <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-emerald-50/20 border-b-2 border-amber-200 px-4 py-3 shrink-0 shadow-inner">
-        <div className="bg-white rounded-lg p-4 border-2 border-amber-300 shadow-md">
-          <h3 className="text-sm font-bold text-amber-900 mb-3 flex items-center gap-2">
-            <PackagePlus className="w-4 h-4" />
-            {editingProduct ? "Edit Product" : "Add New Product"}
-          </h3>
-          
-          <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-3">
-            <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-                Product Name *
-              </label>
-              <input
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className="w-full h-7 text-[11px] rounded border border-blue-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-200"
-                placeholder="Product name"
-              />
-            </div>
+      <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">
+        <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-2">
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              Product Name *
+            </label>
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              placeholder="Product name"
+            />
+          </div>
 
-            <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
-                Product Code
-              </label>
-              <input
-                name="code"
-                value={form.code}
-                onChange={handleChange}
-                className="w-full h-7 text-[11px] rounded border border-purple-300 px-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-200"
-                placeholder="Product code"
-              />
-            </div>
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              Product Code
+            </label>
+            <input
+              name="code"
+              value={form.code}
+              onChange={handleChange}
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              placeholder="Product code"
+            />
+          </div>
 
-            <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-pink-500 rounded-full"></span>
-                Unit
-              </label>
-              <input
-                name="unit"
-                value={form.unit}
-                onChange={handleChange}
-                className="w-full h-7 text-[11px] rounded border border-pink-300 px-2 focus:border-pink-500 focus:ring-1 focus:ring-pink-200"
-                placeholder="e.g., kg, pcs"
-              />
-            </div>
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              Unit
+            </label>
+            <input
+              name="unit"
+              value={form.unit}
+              onChange={handleChange}
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              placeholder="e.g., kg, pcs"
+            />
+          </div>
 
-            <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
-                Status
-              </label>
-              <select
-                name="status"
-                value={form.status}
-                onChange={handleChange}
-                className="w-full h-7 text-[11px] rounded border border-emerald-300 px-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
-              >
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
-            </div>
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              Status
+            </label>
+            <select
+              name="status"
+              value={form.status}
+              onChange={handleChange}
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+            >
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
 
-            <div className="col-span-4">
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
-                Description
-              </label>
-              <textarea
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                rows={2}
-                className="w-full text-[11px] rounded border border-amber-300 px-2 py-1.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 resize-none"
-                placeholder="Product description"
-              />
-            </div>
+          <div className="col-span-4">
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              Description
+            </label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              rows={2}
+              className="w-full text-[11px] rounded border-amber-300 px-2 py-1 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 resize-none"
+              placeholder="Product description"
+            />
+          </div>
 
-            <div className="col-span-4 flex gap-2 justify-end mt-2">
-              {editingProduct && (
-                <button
-                  type="button"
-                  onClick={resetForm}
-                  className="h-7 px-4 text-[11px] font-semibold bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg transition-all flex items-center gap-1.5"
-                >
-                  <X className="w-3.5 h-3.5" />
-                  Cancel
-                </button>
-              )}
+          <div className="col-span-4 flex gap-2 justify-end mt-1">
+            {editingProduct && (
               <button
-                type="submit"
-                disabled={loading}
-                className="h-7 px-4 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded-lg shadow-lg transition-all flex items-center gap-1.5"
+                type="button"
+                onClick={resetForm}
+                className="h-7 px-3 text-[11px] font-semibold bg-gray-200 hover:bg-gray-300 text-gray-800 rounded transition-all flex items-center gap-1"
               >
-                <PackagePlus className="w-3.5 h-3.5" />
-                {editingProduct ? "Update Product" : "Add Product"}
+                <X className="w-3 h-3" />
+                Cancel
               </button>
-            </div>
-          </form>
-        </div>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1"
+            >
+              <PackagePlus className="w-3 h-3" />
+              {editingProduct ? "Update" : "Add"} Product
+            </button>
+          </div>
+        </form>
       </div>
 
       {/* Table Section */}
-      <div className="flex-1 overflow-hidden px-2.5 pb-2.5 pt-1.5">
-        <div className="h-full bg-white rounded border border-gray-200 overflow-hidden">
-          {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-gray-500 text-sm">Loading products...</p>
-            </div>
-          ) : error ? (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-red-500 text-sm">Error: {error}</p>
-            </div>
-          ) : products.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <p className="text-gray-500 text-sm">No products found.</p>
-            </div>
-          ) : (
-            <div className="flex flex-col h-full">
-              <div className="flex-1 overflow-auto">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b-2 border-amber-500">
-                    <tr>
-                      <th className="px-4 py-2.5 text-[10px] font-bold text-amber-400 text-left uppercase tracking-wide">Name</th>
-                      <th className="px-4 py-2.5 text-[10px] font-bold text-amber-400 text-left uppercase tracking-wide">Code</th>
-                      <th className="px-4 py-2.5 text-[10px] font-bold text-amber-400 text-left uppercase tracking-wide">Unit</th>
-                      <th className="px-4 py-2.5 text-[10px] font-bold text-amber-400 text-left uppercase tracking-wide">Description</th>
-                      <th className="px-4 py-2.5 text-[10px] font-bold text-amber-400 text-left uppercase tracking-wide">Status</th>
-                      <th className="px-4 py-2.5 text-[10px] font-bold text-amber-400 text-center uppercase tracking-wide">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {products.map((p, index) => (
-                      <tr 
-                        key={p.id} 
-                        className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-yellow-50 transition-all ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+      <div className="flex-1 overflow-auto bg-white">
+        {loading ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-gray-500 text-sm">Loading products...</p>
+          </div>
+        ) : error ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-red-500 text-sm">Error: {error}</p>
+          </div>
+        ) : products.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-gray-500 text-sm">No products found.</p>
+          </div>
+        ) : (
+          <table className="w-full compact-table">
+            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+              <tr>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Code</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Unit</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Description</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Status</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map((p, index) => (
+                <tr
+                  key={p.id}
+                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  }`}
+                >
+                  <td className="px-3 py-2 text-[10px] text-gray-900 font-bold">{p.name}</td>
+                  <td className="px-3 py-2 text-[10px] text-gray-600 font-mono font-medium">{p.code || "-"}</td>
+                  <td className="px-3 py-2 text-[10px] text-gray-600">{p.unit || "-"}</td>
+                  <td className="px-3 py-2 text-[10px] text-gray-600 max-w-xs truncate">{p.description || "-"}</td>
+                  <td className="px-3 py-2">
+                    <span
+                      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
+                        p.status === "Active"
+                          ? "bg-green-100 text-green-700 border border-green-300"
+                          : "bg-red-100 text-red-700 border border-red-300"
+                      }`}
+                    >
+                      {p.status === "Active" ? "✓ Active" : "✕ Inactive"}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    <div className="flex gap-1 justify-center">
+                      <button
+                        onClick={() => handleEdit(p)}
+                        className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"
+                        title="Edit"
                       >
-                        <td className="px-4 py-2.5 text-[10px] text-blue-700 font-bold">{p.name}</td>
-                        <td className="px-4 py-2.5 text-[10px] text-purple-600 font-medium font-mono">{p.code || '-'}</td>
-                        <td className="px-4 py-2.5 text-[10px] text-pink-600">{p.unit || '-'}</td>
-                        <td className="px-4 py-2.5 text-[10px] text-gray-600 max-w-xs truncate">{p.description || '-'}</td>
-                        <td className="px-4 py-2.5">
-                          <span className={`px-2.5 py-1 rounded-full text-[9px] font-bold uppercase shadow-sm ${
-                            p.status === "Active"
-                              ? "bg-gradient-to-r from-emerald-100 to-green-200 text-emerald-700 border border-emerald-300"
-                              : "bg-gradient-to-r from-red-100 to-rose-200 text-red-700 border border-red-300"
-                          }`}>
-                            {p.status === "Active" ? "✓ Active" : "✕ Inactive"}
-                          </span>
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <div className="flex gap-2 justify-center">
-                            <button
-                              onClick={() => handleEdit(p)}
-                              className="p-1.5 rounded-lg text-blue-600 hover:bg-blue-50 border border-blue-300 hover:border-blue-500 transition-all"
-                              title="Edit"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(p.id)}
-                              className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        <Pencil className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(p.id)}
+                        className="p-1 rounded text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
 
-              {/* Pagination */}
-              <div className="border-t-2 border-amber-200 bg-gradient-to-r from-gray-50 to-amber-50/30 px-4 py-2.5 flex justify-between items-center">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                  className="h-7 px-3 text-[11px] font-semibold border-2 border-gray-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-all"
-                >
-                  Previous
-                </button>
-                <span className="text-[11px] font-bold text-gray-700">
-                  Page <span className="text-amber-600">{page}</span> of <span className="text-amber-600">{totalPages}</span>
-                </span>
-                <button
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                  className="h-7 px-3 text-[11px] font-semibold border-2 border-gray-300 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition-all"
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+      {/* Footer with Pagination */}
+      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
+        <span className="text-[10px] text-gray-600 font-medium">
+          Page <span className="font-semibold text-amber-600">{page}</span> of{" "}
+          <span className="font-semibold text-amber-600">{totalPages}</span>
+        </span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
+          >
+            Next
+          </button>
         </div>
       </div>
+
+      <style>{`
+        .compact-table {
+          font-size: 10px;
+        }
+        .compact-table thead tr th {
+          padding: 6px 12px;
+          font-weight: 700;
+          font-size: 9px;
+          line-height: 1.2;
+        }
+        .compact-table tbody tr td {
+          padding: 6px 12px;
+          line-height: 1.3;
+        }
+      `}</style>
     </div>
   );
 }
