@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Tag, Button, Input, DatePicker, Space, Modal, message, Radio, Typography, Drawer } from "antd";
-import { ReloadOutlined, SearchOutlined, EditOutlined, SaveOutlined, CloseOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { Table, Tag, Button, Input, DatePicker, message, Radio, Typography, Drawer } from "antd";
+import { ReloadOutlined, EditOutlined, SaveOutlined, CloseOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
@@ -67,11 +67,9 @@ export default function Transactions() {
     dispatch(fetchTransactions(params));
   }, [dispatch, filters.page, filters.pageSize, filters.search, filters.dateRange, filters.status]);
 
-  // Client-side filtering for additional fields
   const filteredTransactions = React.useMemo(() => {
     let filtered = transactions || [];
     
-    // Apply status filter based on second weight
     if (filters.status) {
       if (filters.status === 'completed') {
         filtered = filtered.filter(t => 
@@ -88,7 +86,6 @@ export default function Transactions() {
       }
     }
     
-    // Apply client-side filters
     if (filters.vehicle) {
       const vehicleLower = filters.vehicle.toLowerCase();
       filtered = filtered.filter(t => t.noPlate?.toLowerCase().includes(vehicleLower));
@@ -361,7 +358,7 @@ export default function Transactions() {
       render: (d) => (
         <div className="text-[10px] leading-tight">
           <div className="font-semibold text-gray-800">{dayjs(d).format('DD-MMM')}</div>
-          <div className="text-purple-600 font-medium">{dayjs(d).format('HH:mm')}</div>
+          <div className="text-gray-500 font-medium">{dayjs(d).format('HH:mm')}</div>
         </div>
       ) 
     },
@@ -375,7 +372,7 @@ export default function Transactions() {
       title: 'Vehicle', 
       dataIndex: 'noPlate', 
       width: 70, 
-      render: (t) => <div className="inline-block bg-gradient-to-r from-gray-800 to-black text-amber-400 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider shadow-sm">{t || '-'}</div> 
+      render: (t) => <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold">{t || '-'}</div> 
     },
     { 
       title: 'Driver', 
@@ -387,50 +384,50 @@ export default function Transactions() {
       title: 'Commodity', 
       dataIndex: 'commodityName', 
       width: 90, 
-      render: (t) => <span className="text-[10px] text-emerald-700 font-medium">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Supplier', 
       dataIndex: 'supplierName', 
       width: 85, 
-      render: (t) => <span className="text-[10px] text-indigo-600">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Transporter', 
       dataIndex: 'transporterName', 
       width: 90, 
-      render: (t) => <span className="text-[10px] text-cyan-600">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Customer', 
       dataIndex: 'customerName', 
       width: 85, 
-      render: (t) => <span className="text-[10px] text-rose-600">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Origin', 
       dataIndex: 'originName', 
       width: 80, 
-      render: (t) => <span className="text-[10px] text-violet-600">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Destination', 
       dataIndex: 'destinationName', 
       width: 90, 
-      render: (t) => <span className="text-[10px] text-fuchsia-600">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Weighbridge', 
       dataIndex: 'weighBridgeName', 
       width: 95, 
-      render: (t) => <span className="text-[10px] text-teal-600">{t || '-'}</span> 
+      render: (t) => <span className="text-[10px] text-gray-600">{t || '-'}</span> 
     },
     { 
       title: 'Mode', 
       dataIndex: 'weighMode', 
       width: 60, 
       render: (t) => (
-        <Tag color="purple" className="text-[9px] font-semibold px-2 py-0 m-0 uppercase rounded-full leading-tight">
+        <Tag color="orange" className="text-[9px] font-semibold px-2 py-0 m-0 uppercase rounded-full leading-tight">
           {t || 'N/A'}
         </Tag>
       )
@@ -450,7 +447,7 @@ export default function Transactions() {
       width: 65, 
       align: 'right', 
       render: (w) => (
-        <span className="text-[10px] font-bold text-blue-600">
+        <span className="text-[10px] font-bold text-orange-600">
           {w ? `${parseFloat(w).toLocaleString()}` : '-'}
         </span>
       )
@@ -461,7 +458,7 @@ export default function Transactions() {
       width: 65, 
       align: 'right', 
       render: (w) => (
-        <span className="text-[10px] font-bold text-emerald-600">
+        <span className="text-[10px] font-bold text-green-600">
           {w ? `${parseFloat(w).toLocaleString()}` : '-'}
         </span>
       )
@@ -547,62 +544,64 @@ export default function Transactions() {
   ];
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-white">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-900 via-black to-gray-900 border-b-2 border-amber-500 px-4 py-2 flex items-center gap-2.5 shrink-0 shadow-lg">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg ring-2 ring-amber-400/50">
-            <svg className="w-4 h-4 text-black font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-          </div>
-          <div>
-            <div className="text-sm font-bold text-white leading-none">Transactions</div>
-            <div className="text-[10px] text-amber-400 leading-none mt-1">
-              <span className="font-semibold">{filteredTransactions.length}</span> of <span className="font-semibold">{total || 0}</span>
+      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 shrink-0">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+              <svg className="w-4 h-4 text-white font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <div className="text-[11px] font-bold text-gray-900 leading-tight">Transactions</div>
+              <div className="text-[9px] text-amber-700 font-medium leading-tight">
+                <span className="font-semibold">{filteredTransactions.length}</span> of <span className="font-semibold">{total || 0}</span>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="flex-1 flex gap-2 justify-end items-center">
-          <Input 
-            allowClear 
-            placeholder="Search..." 
-            prefix={<Search size={14} className="text-gray-400" />} 
-            className="w-64 h-8 text-[11px] bg-gray-800 border-gray-700 text-white placeholder:text-gray-500" 
-            value={filters.search}
-            onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })} 
-          />
-          <Button 
-            icon={<Filter size={14} />} 
-            className={`h-8 text-[11px] font-medium ${showFilters ? 'bg-amber-500 text-black border-amber-500 hover:bg-amber-400' : 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700'}`}
-            onClick={() => setShowFilters(!showFilters)}
-          >
-            Filters
-          </Button>
-          <Button 
-            type="primary" 
-            icon={<ReloadOutlined />}
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 border-0 h-8 text-[11px] font-semibold text-black shadow-lg" 
-            onClick={loadTransactions}
-            loading={loading}
-          >
-            Refresh
-          </Button>
+          
+          <div className="flex gap-2 items-center">
+            <Input 
+              allowClear 
+              placeholder="Search..." 
+              prefix={<Search size={10} className="text-gray-400" />} 
+              className="w-52 h-7 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm" 
+              value={filters.search}
+              onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })} 
+            />
+            <Button 
+              icon={<Filter size={14} />} 
+              className={`h-7 text-[11px] font-medium ${showFilters ? 'bg-amber-500 text-white border-amber-500 hover:bg-amber-600' : 'border-gray-300 hover:border-amber-500 hover:text-amber-600'}`}
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              Filters
+            </Button>
+            <Button 
+              type="primary" 
+              icon={<ReloadOutlined />}
+              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 border-0 h-7 text-[10px] font-semibold text-white shadow-sm" 
+              onClick={loadTransactions}
+              loading={loading}
+            >
+              Refresh
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Filters Panel */}
       {showFilters && (
-        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-emerald-50/20 border-b-2 border-amber-200 px-4 py-2.5 shrink-0 shadow-inner">
+        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border-b border-amber-200 px-3 py-2 shrink-0">
           <div className="grid grid-cols-5 gap-2 mb-2">
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Date Range
               </label>
               <RangePicker 
-                className="w-full h-7 text-[11px] border-purple-300 focus:border-purple-500" 
+                className="w-full h-6 text-[10px] border-amber-300 focus:border-amber-500" 
                 value={filters.dateRange}
                 onChange={(d) => setFilters({ ...filters, dateRange: d, page: 1 })} 
                 format="DD-MM-YY"
@@ -611,12 +610,12 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Status
               </label>
               <select 
-                className="w-full h-7 text-[11px] rounded border border-emerald-300 px-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200"
+                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                 value={filters.status || ''}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value || null, page: 1 })}
               >
@@ -627,13 +626,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Vehicle
               </label>
               <Input 
                 placeholder="Vehicle..."
-                className="h-7 text-[11px] border-blue-300 focus:border-blue-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.vehicle || ''}
                 onChange={(e) => setFilters({ ...filters, vehicle: e.target.value, page: 1 })}
                 allowClear
@@ -641,13 +640,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-pink-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Driver
               </label>
               <Input 
                 placeholder="Driver..."
-                className="h-7 text-[11px] border-pink-300 focus:border-pink-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.driver || ''}
                 onChange={(e) => setFilters({ ...filters, driver: e.target.value, page: 1 })}
                 allowClear
@@ -655,13 +654,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Commodity
               </label>
               <Input 
                 placeholder="Commodity..."
-                className="h-7 text-[11px] border-amber-300 focus:border-amber-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.commodity || ''}
                 onChange={(e) => setFilters({ ...filters, commodity: e.target.value, page: 1 })}
                 allowClear
@@ -671,13 +670,13 @@ export default function Transactions() {
           
           <div className="grid grid-cols-6 gap-2 mb-2">
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Supplier
               </label>
               <Input 
                 placeholder="Supplier..."
-                className="h-7 text-[11px] border-indigo-300 focus:border-indigo-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.supplier || ''}
                 onChange={(e) => setFilters({ ...filters, supplier: e.target.value, page: 1 })}
                 allowClear
@@ -685,13 +684,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Transporter
               </label>
               <Input 
                 placeholder="Transporter..."
-                className="h-7 text-[11px] border-cyan-300 focus:border-cyan-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.transporter || ''}
                 onChange={(e) => setFilters({ ...filters, transporter: e.target.value, page: 1 })}
                 allowClear
@@ -699,13 +698,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Customer
               </label>
               <Input 
                 placeholder="Customer..."
-                className="h-7 text-[11px] border-rose-300 focus:border-rose-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.customer || ''}
                 onChange={(e) => setFilters({ ...filters, customer: e.target.value, page: 1 })}
                 allowClear
@@ -713,13 +712,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Operator
               </label>
               <Input 
                 placeholder="Operator..."
-                className="h-7 text-[11px] border-teal-300 focus:border-teal-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.operator || ''}
                 onChange={(e) => setFilters({ ...filters, operator: e.target.value, page: 1 })}
                 allowClear
@@ -727,13 +726,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-violet-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Origin
               </label>
               <Input 
                 placeholder="Origin..."
-                className="h-7 text-[11px] border-violet-300 focus:border-violet-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.origin || ''}
                 onChange={(e) => setFilters({ ...filters, origin: e.target.value, page: 1 })}
                 allowClear
@@ -741,13 +740,13 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-fuchsia-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Destination
               </label>
               <Input 
                 placeholder="Destination..."
-                className="h-7 text-[11px] border-fuchsia-300 focus:border-fuchsia-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.destination || ''}
                 onChange={(e) => setFilters({ ...filters, destination: e.target.value, page: 1 })}
                 allowClear
@@ -757,13 +756,13 @@ export default function Transactions() {
           
           <div className="grid grid-cols-6 gap-2">
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-lime-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Weighbridge
               </label>
               <Input 
                 placeholder="Weighbridge..."
-                className="h-7 text-[11px] border-lime-300 focus:border-lime-500"
+                className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
                 value={filters.weighbridge || ''}
                 onChange={(e) => setFilters({ ...filters, weighbridge: e.target.value, page: 1 })}
                 allowClear
@@ -771,12 +770,12 @@ export default function Transactions() {
             </div>
             
             <div>
-              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-orange-500 rounded-full"></span>
+              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
                 Mode
               </label>
               <select 
-                className="w-full h-7 text-[11px] rounded border border-orange-300 px-2 focus:border-orange-500 focus:ring-1 focus:ring-orange-200"
+                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                 value={filters.weighMode || ''}
                 onChange={(e) => setFilters({ ...filters, weighMode: e.target.value || null, page: 1 })}
               >
@@ -792,7 +791,7 @@ export default function Transactions() {
                 {Object.entries(filters).filter(([key, value]) => 
                   value && !['page', 'pageSize'].includes(key)
                 ).length > 0 && (
-                  <span className="text-[10px] text-amber-900 font-bold bg-gradient-to-r from-amber-100 to-amber-200 px-2.5 py-1 rounded-full border border-amber-300 shadow-sm">
+                  <span className="text-[9px] text-amber-900 font-bold bg-gradient-to-r from-amber-100 to-amber-200 px-2 py-0.5 rounded-full border border-amber-300 shadow-sm">
                     🎯 {Object.entries(filters).filter(([key, value]) => 
                       value && !['page', 'pageSize'].includes(key)
                     ).length} active
@@ -827,7 +826,7 @@ export default function Transactions() {
                       pageSize: filters.pageSize 
                     });
                   }}
-                  className="h-7 text-[11px] font-semibold shadow-sm rounded-lg bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
+                  className="h-6 text-[10px] font-semibold shadow-sm rounded bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
                 >
                   Clear
                 </Button>
@@ -838,8 +837,8 @@ export default function Transactions() {
       )}
 
       {/* Table */}
-      <div className="flex-1 overflow-hidden px-2.5 pb-2.5 pt-1.5">
-        <div className="h-full bg-white rounded border border-gray-200 overflow-hidden">
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full bg-white overflow-hidden">
           <Table 
             columns={columns} 
             dataSource={filteredTransactions} 
@@ -857,14 +856,26 @@ export default function Transactions() {
               size: 'small',
               pageSizeOptions: ['10', '20', '50', '100'],
               onChange: (p, ps) => setFilters({ ...filters, page: p, pageSize: ps }) 
-            }} 
+            }}
+            rowClassName={(record) => {
+              const hasSecondWeight = record.secondWeight && parseFloat(record.secondWeight) > 0;
+              const isCompleted = hasSecondWeight || record.status === 'Completed' || record.status === 'completed';
+              return isCompleted ? 'completed-row' : 'incomplete-row';
+            }}
           />
         </div>
       </div>
 
       {/* Drawer */}
       <Drawer
-        title={<span className="text-sm font-semibold">Ticket: {selectedRecord?.receiptNo}</span>}
+        title={
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <span className="text-white text-xs font-bold">📋</span>
+            </div>
+            <span className="text-sm font-bold text-gray-900">Ticket: {selectedRecord?.receiptNo}</span>
+          </div>
+        }
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
         open={isDrawerOpen}
@@ -886,7 +897,7 @@ export default function Transactions() {
             <div className="flex gap-2">
               {!isEditing ? (
                 <>
-                  <Button size="small" icon={<EditOutlined />} onClick={() => setIsEditing(true)} className="text-xs">
+                  <Button size="small" icon={<EditOutlined />} onClick={() => setIsEditing(true)} className="text-xs border-amber-300 text-amber-600 hover:border-amber-500 hover:text-amber-700">
                     Edit
                   </Button>
                   <Button 
@@ -894,7 +905,7 @@ export default function Transactions() {
                     type="primary" 
                     icon={<Printer size={14} />} 
                     onClick={() => generatePDF(selectedRecord, printMode === 'color')}
-                    className="text-xs"
+                    className="text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 border-0"
                   >
                     Export PDF
                   </Button>
@@ -904,7 +915,7 @@ export default function Transactions() {
                   <Button size="small" icon={<CloseOutlined />} onClick={() => { setEditedRecord(selectedRecord); setIsEditing(false); }} className="text-xs">
                     Cancel
                   </Button>
-                  <Button size="small" type="primary" icon={<SaveOutlined />} loading={saving} onClick={handleSave} className="text-xs">
+                  <Button size="small" type="primary" icon={<SaveOutlined />} loading={saving} onClick={handleSave} className="text-xs bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 border-0">
                     Save
                   </Button>
                 </>
@@ -916,10 +927,10 @@ export default function Transactions() {
         {selectedRecord && (
           <div className="space-y-3 text-xs">
             {/* Basic Info */}
-            <div className="bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
+            <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                  <span className="text-black text-sm font-bold">📋</span>
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">📋</span>
                 </div>
                 <span className="text-sm font-bold text-amber-900">BASIC INFORMATION</span>
               </div>
@@ -941,7 +952,7 @@ export default function Transactions() {
                         value={editedRecord[field]} 
                         onChange={(e) => setEditedRecord({...editedRecord, [field]: e.target.value})} 
                         size="small"
-                        className="text-xs"
+                        className="text-xs border-amber-300 focus:border-amber-500"
                       />
                     ) : (
                       <div className="font-bold text-gray-900 text-xs">{selectedRecord[field] || 'N/A'}</div>
@@ -952,12 +963,12 @@ export default function Transactions() {
             </div>
 
             {/* Parties */}
-            <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 rounded-lg p-3 border-2 border-blue-300 shadow-md">
+            <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                   <span className="text-white text-sm font-bold">🏢</span>
                 </div>
-                <span className="text-sm font-bold text-blue-900">PARTIES</span>
+                <span className="text-sm font-bold text-amber-900">PARTIES</span>
               </div>
               <div className="grid grid-cols-2 gap-2.5">
                 {[
@@ -966,14 +977,14 @@ export default function Transactions() {
                   { label: 'Transporter', field: 'transporterName', editable: true },
                   { label: 'Operator', field: 'operatorName', editable: false },
                 ].map(({ label, field, editable }) => (
-                  <div key={field} className="bg-white/70 backdrop-blur rounded px-2.5 py-2 border border-blue-200">
-                    <div className="text-blue-700 text-[10px] mb-1 font-bold uppercase tracking-wide">{label}</div>
+                  <div key={field} className="bg-white/70 backdrop-blur rounded px-2.5 py-2 border border-amber-200">
+                    <div className="text-amber-700 text-[10px] mb-1 font-bold uppercase tracking-wide">{label}</div>
                     {isEditing && editable ? (
                       <Input 
                         value={editedRecord[field]} 
                         onChange={(e) => setEditedRecord({...editedRecord, [field]: e.target.value})} 
                         size="small"
-                        className="text-xs"
+                        className="text-xs border-amber-300 focus:border-amber-500"
                       />
                     ) : (
                       <div className="font-bold text-gray-900 text-xs">{selectedRecord[field] || 'N/A'}</div>
@@ -984,12 +995,12 @@ export default function Transactions() {
             </div>
 
             {/* Locations */}
-            <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-violet-100 rounded-lg p-3 border-2 border-violet-300 shadow-md">
+            <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                   <span className="text-white text-sm font-bold">📍</span>
                 </div>
-                <span className="text-sm font-bold text-violet-900">LOCATIONS</span>
+                <span className="text-sm font-bold text-amber-900">LOCATIONS</span>
               </div>
               <div className="grid grid-cols-2 gap-2.5">
                 {[
@@ -998,14 +1009,14 @@ export default function Transactions() {
                   { label: 'Weighbridge', field: 'weighBridgeName', editable: false },
                   { label: 'Operation', field: 'operation', editable: false },
                 ].map(({ label, field, editable }) => (
-                  <div key={field} className="bg-white/70 backdrop-blur rounded px-2.5 py-2 border border-violet-200">
-                    <div className="text-violet-700 text-[10px] mb-1 font-bold uppercase tracking-wide">{label}</div>
+                  <div key={field} className="bg-white/70 backdrop-blur rounded px-2.5 py-2 border border-amber-200">
+                    <div className="text-amber-700 text-[10px] mb-1 font-bold uppercase tracking-wide">{label}</div>
                     {isEditing && editable ? (
                       <Input 
                         value={editedRecord[field]} 
                         onChange={(e) => setEditedRecord({...editedRecord, [field]: e.target.value})} 
                         size="small"
-                        className="text-xs"
+                        className="text-xs border-amber-300 focus:border-amber-500"
                       />
                     ) : (
                       <div className="font-bold text-gray-900 text-xs">{selectedRecord[field] || 'N/A'}</div>
@@ -1016,50 +1027,50 @@ export default function Transactions() {
             </div>
 
             {/* Weight Summary */}
-            <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-emerald-100 rounded-lg p-3 border-2 border-emerald-300 shadow-md">
+            <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                   <span className="text-white text-sm font-bold">⚖️</span>
                 </div>
-                <span className="text-sm font-bold text-emerald-900">WEIGHT SUMMARY</span>
+                <span className="text-sm font-bold text-amber-900">WEIGHT SUMMARY</span>
               </div>
               <div className="grid grid-cols-3 gap-2.5 mb-3">
-                <div className="bg-gradient-to-br from-blue-100 to-blue-200 rounded-lg p-2.5 border-2 border-blue-400 shadow-sm">
-                  <div className="text-[10px] text-blue-700 font-bold uppercase mb-1">1st Weight</div>
-                  <div className="text-base font-extrabold text-blue-900">{selectedRecord.firstWeight || 0}</div>
-                  <div className="text-[9px] text-blue-600 font-semibold">KILOGRAMS</div>
-                  <div className="text-[9px] text-blue-500 mt-1">{selectedRecord.firstWeightTime ? dayjs(selectedRecord.firstWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}</div>
+                <div className="bg-white rounded-lg p-2.5 border-2 border-amber-200 shadow-sm">
+                  <div className="text-[10px] text-amber-700 font-bold uppercase mb-1">1st Weight</div>
+                  <div className="text-base font-extrabold text-orange-600">{selectedRecord.firstWeight || 0}</div>
+                  <div className="text-[9px] text-amber-600 font-semibold">KILOGRAMS</div>
+                  <div className="text-[9px] text-gray-500 mt-1">{selectedRecord.firstWeightTime ? dayjs(selectedRecord.firstWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}</div>
                 </div>
-                <div className="bg-gradient-to-br from-emerald-100 to-green-200 rounded-lg p-2.5 border-2 border-emerald-400 shadow-sm">
-                  <div className="text-[10px] text-emerald-700 font-bold uppercase mb-1">2nd Weight</div>
-                  <div className="text-base font-extrabold text-emerald-900">{selectedRecord.secondWeight || 0}</div>
-                  <div className="text-[9px] text-emerald-600 font-semibold">KILOGRAMS</div>
-                  <div className="text-[9px] text-emerald-500 mt-1">{selectedRecord.secondWeightTime ? dayjs(selectedRecord.secondWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}</div>
+                <div className="bg-white rounded-lg p-2.5 border-2 border-amber-200 shadow-sm">
+                  <div className="text-[10px] text-amber-700 font-bold uppercase mb-1">2nd Weight</div>
+                  <div className="text-base font-extrabold text-green-600">{selectedRecord.secondWeight || 0}</div>
+                  <div className="text-[9px] text-amber-600 font-semibold">KILOGRAMS</div>
+                  <div className="text-[9px] text-gray-500 mt-1">{selectedRecord.secondWeightTime ? dayjs(selectedRecord.secondWeightTime).format("DD-MM-YY HH:mm") : 'N/A'}</div>
                 </div>
-                <div className="bg-gradient-to-br from-amber-200 via-amber-300 to-orange-300 rounded-lg p-2.5 border-2 border-amber-500 shadow-lg animate-pulse">
+                <div className="bg-gradient-to-br from-amber-200 via-amber-300 to-orange-300 rounded-lg p-2.5 border-2 border-amber-500 shadow-lg">
                   <div className="text-[10px] text-amber-900 font-extrabold uppercase mb-1">Net Weight</div>
                   <div className="text-lg font-black text-amber-950">{selectedRecord.netWeight || 0}</div>
                   <div className="text-[9px] text-amber-800 font-bold">KILOGRAMS</div>
                 </div>
               </div>
-              <div className="bg-white rounded-lg px-3 py-2.5 border-2 border-emerald-300 flex items-center justify-between">
-                <span className="text-[11px] text-emerald-800 font-bold">⏱️ TURNAROUND TIME:</span>
-                <span className="text-sm font-black text-emerald-900 bg-emerald-100 px-3 py-1 rounded-full">
+              <div className="bg-white rounded-lg px-3 py-2.5 border-2 border-amber-300 flex items-center justify-between">
+                <span className="text-[11px] text-amber-800 font-bold">⏱️ TURNAROUND TIME:</span>
+                <span className="text-sm font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
                   {formatTurnaroundTimeSimple(selectedRecord.firstWeightTime, selectedRecord.secondWeightTime)}
                 </span>
               </div>
             </div>
 
             {/* Status & Remarks */}
-            <div className="bg-gradient-to-br from-gray-50 to-slate-100 rounded-lg p-3 border-2 border-gray-300 shadow-md">
+            <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
               <div className="flex items-center gap-2 mb-3">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
                   <span className="text-white text-sm font-bold">📝</span>
                 </div>
-                <span className="text-sm font-bold text-gray-900">STATUS & REMARKS</span>
+                <span className="text-sm font-bold text-amber-900">STATUS & REMARKS</span>
               </div>
               <div className="mb-3">
-                <div className="text-gray-600 text-[10px] mb-1.5 font-bold uppercase">Status</div>
+                <div className="text-amber-700 text-[10px] mb-1.5 font-bold uppercase">Status</div>
                 <Tag 
                   color={
                     (selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) || 
@@ -1076,16 +1087,16 @@ export default function Transactions() {
                 </Tag>
               </div>
               <div>
-                <div className="text-gray-600 text-[10px] mb-1.5 font-bold uppercase">Remarks / Notes</div>
+                <div className="text-amber-700 text-[10px] mb-1.5 font-bold uppercase">Remarks / Notes</div>
                 {isEditing ? (
                   <Input.TextArea 
                     value={editedRecord.remarks || editedRecord.notes} 
                     onChange={(e) => setEditedRecord({...editedRecord, remarks: e.target.value})} 
                     rows={3}
-                    className="text-xs"
+                    className="text-xs border-amber-300 focus:border-amber-500"
                   />
                 ) : (
-                  <div className="text-gray-900 bg-white p-2.5 rounded-lg border-2 border-gray-300 text-xs font-medium">
+                  <div className="text-gray-900 bg-white p-2.5 rounded-lg border-2 border-amber-200 text-xs font-medium">
                     {selectedRecord.remarks || selectedRecord.notes || '💭 No remarks available'}
                   </div>
                 )}
@@ -1100,32 +1111,40 @@ export default function Transactions() {
           font-size: 10px;
         }
         .compact-table .ant-table-thead > tr > th {
-          background: linear-gradient(135deg, #1f2937 0%, #111827 100%) !important;
-          border-bottom: 2px solid #f59e0b !important;
-          padding: 4px 5px !important;
+          background: linear-gradient(to bottom, #fffbeb, #fef3c7) !important;
+          border-bottom: 1.5px solid #f59e0b !important;
+          padding: 6px 8px !important;
           font-weight: 700 !important;
-          font-size: 10px !important;
-          color: #fbbf24 !important;
+          font-size: 9px !important;
+          color: #78350f !important;
           text-transform: uppercase;
           letter-spacing: 0.3px;
-          text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-          line-height: 1.3;
+          line-height: 1.2;
         }
         .compact-table .ant-table-tbody > tr > td {
-          padding: 4px 5px !important;
+          padding: 6px 8px !important;
           border-bottom: 1px solid #f3f4f6 !important;
-          transition: all 0.15s ease;
-          line-height: 1.4;
+          transition: all 0.12s ease;
+          line-height: 1.3;
         }
-        .compact-table .ant-table-tbody > tr:hover > td {
-          background: linear-gradient(to right, #fffbeb, #fef3c7) !important;
+        
+        /* Completed transactions - light green background */
+        .compact-table .ant-table-tbody > tr.completed-row > td {
+          background: rgba(236, 253, 245, 0.4) !important;
         }
-        .compact-table .ant-table-tbody > tr:nth-child(even) > td {
-          background: #fafafa;
+        .compact-table .ant-table-tbody > tr.completed-row:hover > td {
+          background: rgba(236, 253, 245, 0.8) !important;
         }
-        .compact-table .ant-table-tbody > tr:nth-child(even):hover > td {
-          background: linear-gradient(to right, #fffbeb, #fef3c7) !important;
+        
+        /* Incomplete transactions - amber/yellow theme */
+        .compact-table .ant-table-tbody > tr.incomplete-row > td {
+          background: white !important;
         }
+        .compact-table .ant-table-tbody > tr.incomplete-row:hover > td {
+          background: #fffbeb !important;
+          box-shadow: inset 0 0 0 1px #fef3c7;
+        }
+        
         .compact-table .ant-pagination {
           margin: 8px 0 !important;
         }
@@ -1136,21 +1155,20 @@ export default function Transactions() {
           height: 24px !important;
           line-height: 22px !important;
           font-size: 11px !important;
-          border-radius: 5px !important;
+          border-radius: 4px !important;
           transition: all 0.2s ease !important;
         }
         .compact-table .ant-pagination-item-active {
-          background: linear-gradient(135deg, #f59e0b, #d97706) !important;
+          background: linear-gradient(135deg, #f59e0b, #f97316) !important;
           border-color: #f59e0b !important;
-          box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4) !important;
+          box-shadow: 0 1px 3px rgba(245, 158, 11, 0.25) !important;
         }
         .compact-table .ant-pagination-item-active a {
-          color: #000 !important;
+          color: white !important;
           font-weight: 700 !important;
         }
         .compact-table .ant-pagination-item:hover {
-          border-color: #fbbf24 !important;
-          transform: translateY(-1px);
+          border-color: #f59e0b !important;
         }
         .compact-table .ant-select-selector {
           height: 24px !important;

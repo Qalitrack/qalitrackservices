@@ -38,7 +38,7 @@ export default function UserManagement() {
         <div className="flex items-center gap-3 shrink-0">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md"
-            style={{ background: "linear-gradient(135deg, #d97706, #f59e0b)" }}
+            style={{ background: "linear-gradient(135deg, #f59e0b, #f97316)" }}
           >
             <Users size={20} color="#fff" />
           </div>
@@ -59,7 +59,7 @@ export default function UserManagement() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-9 pr-3 py-2 rounded-lg text-sm outline-none transition-all"
               style={{ background: "#fff", border: "1.5px solid #e5e7eb", color: "#111827" }}
-              onFocus={(e) => { e.target.style.borderColor="#d97706"; e.target.style.boxShadow="0 0 0 3px rgba(217,119,6,0.15)"; }}
+              onFocus={(e) => { e.target.style.borderColor="#f59e0b"; e.target.style.boxShadow="0 0 0 3px rgba(245,158,11,0.15)"; }}
               onBlur={(e)  => { e.target.style.borderColor="#e5e7eb"; e.target.style.boxShadow="none"; }}
             />
           </div>
@@ -72,10 +72,10 @@ export default function UserManagement() {
               className="pl-8 pr-7 py-2 rounded-lg text-sm appearance-none cursor-pointer outline-none transition-all"
               style={{
                 background:"#fff", border:"1.5px solid #e5e7eb", color:"#374151", minWidth:"140px",
-                backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d97706' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+                backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f59e0b' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
                 backgroundRepeat:"no-repeat", backgroundPosition:"right 0.65rem center",
               }}
-              onFocus={(e) => { e.target.style.borderColor="#d97706"; e.target.style.boxShadow="0 0 0 3px rgba(217,119,6,0.15)"; }}
+              onFocus={(e) => { e.target.style.borderColor="#f59e0b"; e.target.style.boxShadow="0 0 0 3px rgba(245,158,11,0.15)"; }}
               onBlur={(e)  => { e.target.style.borderColor="#e5e7eb"; e.target.style.boxShadow="none"; }}
             >
               <option value="">All Roles</option>
@@ -91,10 +91,10 @@ export default function UserManagement() {
             className="pl-3 pr-7 py-2 rounded-lg text-sm appearance-none cursor-pointer outline-none transition-all"
             style={{
               background:"#fff", border:"1.5px solid #e5e7eb", color:"#374151", minWidth:"120px",
-              backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23d97706' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
+              backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f59e0b' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
               backgroundRepeat:"no-repeat", backgroundPosition:"right 0.65rem center",
             }}
-            onFocus={(e) => { e.target.style.borderColor="#d97706"; e.target.style.boxShadow="0 0 0 3px rgba(217,119,6,0.15)"; }}
+            onFocus={(e) => { e.target.style.borderColor="#f59e0b"; e.target.style.boxShadow="0 0 0 3px rgba(245,158,11,0.15)"; }}
             onBlur={(e)  => { e.target.style.borderColor="#e5e7eb"; e.target.style.boxShadow="none"; }}
           >
             <option value="">All Status</option>
@@ -106,7 +106,7 @@ export default function UserManagement() {
             <button
               onClick={handleClearFilters}
               className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-75"
-              style={{ background:"#fef3c7", color:"#d97706", border:"1.5px solid #fcd34d" }}
+              style={{ background:"#fef3c7", color:"#f59e0b", border:"1.5px solid #fde68a" }}
             >
               <X size={14} /> Clear
             </button>
@@ -118,9 +118,9 @@ export default function UserManagement() {
       {hasActiveFilters && (
         <div className="shrink-0 flex items-center gap-2">
           <span className="text-xs font-medium" style={{ color:"#9ca3af" }}>Active:</span>
-          {searchTerm   && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#d97706", border:"1px solid #fcd34d" }}>Search: "{searchTerm}"</span>}
-          {selectedRole && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#d97706", border:"1px solid #fcd34d" }}>Role: {selectedRole}</span>}
-          {selectedStatus && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#d97706", border:"1px solid #fcd34d" }}>Status: {selectedStatus}</span>}
+          {searchTerm   && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>Search: "{searchTerm}"</span>}
+          {selectedRole && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>Role: {selectedRole}</span>}
+          {selectedStatus && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>Status: {selectedStatus}</span>}
         </div>
       )}
 
@@ -132,26 +132,22 @@ export default function UserManagement() {
         {/* Sticky card header */}
         <div
           className="shrink-0 px-5 py-3 flex items-center justify-between"
-          style={{ background:"linear-gradient(135deg, #fffbeb, #fff7ed)", borderBottom:"1px solid #f0ecdf" }}
+          style={{ background:"linear-gradient(135deg, #fffbeb, #fef3c7)", borderBottom:"1px solid #fde68a" }}
         >
           <div className="flex items-center gap-2.5">
-            <div className="w-1 h-6 rounded-full" style={{ background:"linear-gradient(180deg, #d97706, #f59e0b)" }} />
+            <div className="w-1 h-6 rounded-full" style={{ background:"linear-gradient(180deg, #f59e0b, #f97316)" }} />
             <div>
               <h3 className="text-sm font-bold" style={{ color:"#111827" }}>User Directory</h3>
               <p className="text-xs" style={{ color:"#9ca3af" }}>Browse and manage all users</p>
             </div>
           </div>
-          <div className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background:"#fef3c7", color:"#d97706", border:"1px solid #fcd34d" }}>
+          <div className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>
             5 per page
           </div>
         </div>
 
         {/* Scrollable body — wraps UsersComponent full-width */}
         <div className="flex-1 overflow-auto" style={{ minHeight:0 }}>
-          {/*
-            The inner wrapper forces the component to stretch to card width.
-            text-align:left undoes any centering the table applies internally.
-          */}
           <div style={{ width:"100%", textAlign:"left" }}>
             <UsersComponent
               compact={false}
