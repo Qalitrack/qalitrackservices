@@ -4,17 +4,17 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Kestrel from appsettings.json
+// Configure Kestrel from appsettings.json (includes HTTPS with certificates)
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.Configure(builder.Configuration.GetSection("Kestrel"));
 });
 
-// Disable HTTPS redirection
-builder.Services.Configure<Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionOptions>(options =>
+// Enable HTTPS redirection
+builder.Services.AddHttpsRedirection(options =>
 {
-    options.HttpsPort = null;
-    options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
+    options.RedirectStatusCode = (int)HttpStatusCode.MovedPermanently;
+    options.HttpsPort = 443;
 });
 
 // Add Authorization policies BEFORE YARP
@@ -59,6 +59,9 @@ builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
+
+// Enable HTTPS redirection (redirects HTTP to HTTPS)
+app.UseHttpsRedirection();
 
 // Enable CORS
 app.UseCors();
