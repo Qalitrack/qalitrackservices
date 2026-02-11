@@ -14,7 +14,7 @@ on:
 env:
   REGISTRY: ghcr.io
   DOCKER_BUILDKIT: 1
-  SERVICE_NAME: gateway-service
+  SERVICE_NAME: production-gateway
   SERVICE_PATH: packages/microservices/ProductionGateway
 
 jobs:
@@ -158,7 +158,7 @@ jobs:
           version: '3.8'
           services:
             production-gateway:
-              image: \$IMAGE_TAG
+              image: ${IMAGE_TAG}
               container_name: production-gateway
               restart: unless-stopped
               environment:
