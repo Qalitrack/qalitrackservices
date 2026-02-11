@@ -4,10 +4,17 @@ using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure Kestrel from appsettings.json (includes HTTPS with certificates)
+// Configure Kestrel to listen on both HTTP and HTTPS
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Configure(builder.Configuration.GetSection("Kestrel"));
+    // HTTP port 80 for redirection
+    serverOptions.ListenAnyIP(80);
+
+    // HTTPS port 443
+    serverOptions.ListenAnyIP(443, listenOptions =>
+    {
+        listenOptions.UseHttps(); // Certificate configured in appsettings.json or default
+    });
 });
 
 // Add HTTPS redirection (redirect all HTTP to HTTPS)
@@ -20,9 +27,9 @@ builder.Services.AddHttpsRedirection(options =>
 // Add HSTS (HTTP Strict Transport Security)
 builder.Services.AddHsts(options =>
 {
-    options.Preload = true;        // Include in preload lists
+    options.Preload = true;
     options.IncludeSubDomains = true;
-    options.MaxAge = TimeSpan.FromDays(365); // Tell browsers to enforce HTTPS for 1 year
+    options.MaxAge = TimeSpan.FromDays(365);
 });
 
 // Add Authorization policies BEFORE YARP
@@ -64,10 +71,10 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
 
-// Enforce HSTS (force HTTPS for browsers)
+// Enforce HSTS
 app.UseHsts();
 
-// Enforce HTTPS redirection
+// Redirect HTTP → HTTPS
 app.UseHttpsRedirection();
 
 // Enable CORS
@@ -76,14 +83,13 @@ app.UseCors();
 // Add authorization middleware
 app.UseAuthorization();
 
-// ONLY expose /health endpoint - DO NOT map "/"
+// Health endpoint
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
     .WithMetadata(new AllowAnonymousAttribute());
 
-// Map the reverse proxy with logging
+// Reverse proxy with logging
 app.MapReverseProxy(proxyPipeline =>
 {
-    // Add logging inside the proxy pipeline
     proxyPipeline.Use(async (context, next) =>
     {
         var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
