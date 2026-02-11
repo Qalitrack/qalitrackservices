@@ -10,11 +10,19 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.Configure(builder.Configuration.GetSection("Kestrel"));
 });
 
-// Enable HTTPS redirection
+// Add HTTPS redirection (redirect all HTTP to HTTPS)
 builder.Services.AddHttpsRedirection(options =>
 {
-    options.RedirectStatusCode = (int)HttpStatusCode.MovedPermanently;
-    options.HttpsPort = 443;
+    options.RedirectStatusCode = StatusCodes.Status308PermanentRedirect; // Permanent redirect
+    options.HttpsPort = 443; // Port where HTTPS is served
+});
+
+// Add HSTS (HTTP Strict Transport Security)
+builder.Services.AddHsts(options =>
+{
+    options.Preload = true;        // Include in preload lists
+    options.IncludeSubDomains = true;
+    options.MaxAge = TimeSpan.FromDays(365); // Tell browsers to enforce HTTPS for 1 year
 });
 
 // Add Authorization policies BEFORE YARP
@@ -44,13 +52,9 @@ builder.Services.AddCors(options =>
               .WithHeaders(allowedHeaders);
 
         if (allowCredentials)
-        {
             policy.AllowCredentials();
-        }
         else
-        {
             policy.DisallowCredentials();
-        }
     });
 });
 
@@ -60,7 +64,10 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 
 var app = builder.Build();
 
-// Enable HTTPS redirection (redirects HTTP to HTTPS)
+// Enforce HSTS (force HTTPS for browsers)
+app.UseHsts();
+
+// Enforce HTTPS redirection
 app.UseHttpsRedirection();
 
 // Enable CORS
