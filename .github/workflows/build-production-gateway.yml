@@ -1,4 +1,5 @@
-name: Build Gateway Service
+name: Build Production Gateway
+
 on:
   push:
     branches: [ main ]
@@ -22,22 +23,22 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
-      
+
       - name: Restore dependencies
         run: |
           cd ${{ env.SERVICE_PATH }}
           dotnet restore ProductionGateway.csproj --verbosity normal
-      
+
       - name: Build application
         run: |
           cd ${{ env.SERVICE_PATH }}
           dotnet build ProductionGateway.csproj --no-restore -c Release --verbosity normal
-      
+
       - name: Run unit tests
         env:
           ASPNETCORE_ENVIRONMENT: "Testing"
@@ -51,7 +52,7 @@ jobs:
             dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
           done
         continue-on-error: false
-      
+
       - name: Run database migrations (if applicable)
         env:
           ASPNETCORE_ENVIRONMENT: "Testing"
@@ -60,13 +61,12 @@ jobs:
           # Check if Entity Framework migrations exist
           if [ -d "Migrations" ] || [ -d "Properties/Migrations" ]; then
             echo "Running database migrations..."
-            # For gateway, if no DB, this might skip; adjust if needed
-            echo "No migrations expected for gateway service, skipping..."
+            echo "No migrations expected for Production Gateway, skipping..."
           else
             echo "No Entity Framework migrations found, skipping..."
           fi
         continue-on-error: true
-      
+
       - name: Run integration tests
         env:
           ASPNETCORE_ENVIRONMENT: "Testing"
@@ -80,7 +80,7 @@ jobs:
             dotnet test "$testproject" --no-build -c Release --verbosity normal --logger trx --results-directory TestResults/
           done
         continue-on-error: true
-      
+
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
@@ -96,21 +96,20 @@ jobs:
       packages: write
       attestations: write
       id-token: write
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Log in to Container Registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -122,11 +121,11 @@ jobs:
             type=sha,prefix={{branch}}-
             type=raw,value=latest,enable={{is_default_branch}}
           labels: |
-            org.opencontainers.image.title=Gateway Service
-            org.opencontainers.image.description=QaliTrack Gateway Microservice for JWT Authentication
+            org.opencontainers.image.title=Production Gateway
+            org.opencontainers.image.description=QaliTrack Production Gateway Microservice for JWT Authentication
             org.opencontainers.image.vendor=QaliTrack
             org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
-      
+
       - name: Build and push Docker image
         id: build
         uses: docker/build-push-action@v5
@@ -146,24 +145,21 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Create deployment artifact
         run: |
           mkdir -p deployment
           # Create a simple docker-compose for gateway deployment
           IMAGE_TAG="${{ env.REGISTRY }}/${{ github.repository }}/${{ env.SERVICE_NAME }}:main-${{ github.sha }}"
-          
           cat > deployment/docker-compose.yml << EOF
           version: '3.8'
-
           services:
-            gateway-service:
-              image: $IMAGE_TAG
-              container_name: gateway-service
+            production-gateway:
+              image: \$IMAGE_TAG
+              container_name: production-gateway
               restart: unless-stopped
               environment:
                 - ASPNETCORE_ENVIRONMENT=Production
@@ -175,18 +171,17 @@ jobs:
                 - "3000:3000"
               networks:
                 - gateway-network
-
           networks:
             gateway-network:
               driver: bridge
           EOF
-      
+
       - name: Upload deployment files
         uses: actions/upload-artifact@v4
         with:
           name: deployment-files
           path: deployment/
-      
+
       - name: Validate Docker Compose
         run: |
           cd deployment
