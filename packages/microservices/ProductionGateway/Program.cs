@@ -21,7 +21,17 @@ builder.Services.Configure<Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionOpti
     options.RedirectStatusCode = (int)HttpStatusCode.TemporaryRedirect;
 });
 
-// Add YARP Reverse Proxy from configuration
+// Add Authorization policies BEFORE YARP (CRITICAL FIX)
+builder.Services.AddAuthorization(options =>
+{
+    // Add a policy for public endpoints that allows all access
+    options.AddPolicy("Public", policy => policy.RequireAssertion(_ => true));
+    
+    // Optional: Add other policies if needed
+    // options.AddPolicy("Authenticated", policy => policy.RequireAuthenticatedUser());
+});
+
+// Add YARP Reverse Proxy from configuration (AFTER Authorization)
 builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
@@ -90,10 +100,15 @@ app.Use(async (context, next) =>
 // Enable CORS - moved after logging middleware
 app.UseCors();
 
-// Expose a simple health endpoint
-app.MapGet("/", () => Results.Ok(new { status = "ok", service = "QaliTrack Gateway" }));
+// Add authorization middleware
+app.UseAuthorization();
 
-app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
+// Expose a simple health endpoint
+app.MapGet("/", () => Results.Ok(new { status = "ok", service = "QaliTrack Production Gateway" }))
+    .WithMetadata(new AllowAnonymousAttribute());
+
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
+    .WithMetadata(new AllowAnonymousAttribute());
 
 // Map the reverse proxy
 app.MapReverseProxy(proxyPipeline =>
