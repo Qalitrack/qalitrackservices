@@ -62,6 +62,32 @@ namespace Masterdata.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets a driver by their NFC code
+        /// </summary>
+        /// <param name="nfcCode">The NFC code to search for</param>
+        /// <returns>Driver information if found</returns>
+        [HttpGet("nfc/{nfcCode}")]
+        [ProducesResponseType(typeof(DriverReadDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetDriverByNfcCode(string nfcCode)
+        {
+            try
+            {
+                var driver = await _driverService.GetByNfcCodeAsync(nfcCode);
+                if (driver == null)
+                {
+                    return NotFound(new { message = "Driver not found with the provided NFC code" });
+                }
+                return Ok(driver);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting driver with NFC code: {nfcCode}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the driver");
+            }
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(DriverReadDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -104,6 +130,11 @@ namespace Masterdata.Api.Controllers
                 }
 
                 return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, $"Validation error updating driver with ID: {id}");
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -236,7 +267,6 @@ namespace Masterdata.Api.Controllers
             return NoContent();
         }
         
-        // Add these endpoints to your DriversController class
         /// <summary>
         /// Assigns a driver to a transporter
         /// </summary>

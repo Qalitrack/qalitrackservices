@@ -27,4 +27,19 @@ public interface IVehicleService
     Task<bool> AssignToOwnerAsync(string vehicleId, string? ownerId);
     Task<IEnumerable<VehicleReadDto>> GetVehiclesBySupplierIdAsync(string supplierId);
 
+    // NEW: RFID Code methods
+    /// <summary>
+    /// Get a vehicle by its RFID code
+    /// </summary>
+    /// <param name="rfidCode">The RFID code to search for</param>
+    /// <returns>The vehicle with the specified RFID code, or null if not found</returns>
+    Task<VehicleReadDto?> GetByRfidCodeAsync(string rfidCode);
+    
+    /// <summary>
+    /// Check if an RFID code is already assigned to a vehicle
+    /// </summary>
+    /// <param name="rfidCode">The RFID code to check</param>
+    /// <param name="excludeVehicleId">Optional vehicle ID to exclude from the check (for updates)</param>
+    /// <returns>True if the RFID code is available, false if already in use</returns>
+    Task<bool> IsRfidCodeAvailableAsync(string rfidCode, string? excludeVehicleId = null);
 }
