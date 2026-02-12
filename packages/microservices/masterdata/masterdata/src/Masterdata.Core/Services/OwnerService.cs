@@ -39,53 +39,12 @@ public class OwnerService : IOwnerService
             pageNumber = Math.Max(1, pageNumber);
             pageSize = Math.Clamp(pageSize, 1, 100);
 
-            // First get the paged owners
             var pagedResult = await _ownerRepository.GetPagedAsync(
                 pageNumber: pageNumber,
                 pageSize: pageSize,
                 searchTerm: searchTerm,
                 searchProperties: new[] { nameof(Owner.Name), nameof(Owner.Type) }
             );
-            
-            // If no owners found, return empty result
-            if (!pagedResult.Items.Any())
-            {
-                return new PagedResult<OwnerDto>
-                {
-                    Items = Enumerable.Empty<OwnerDto>(),
-                    TotalItems = 0,
-                    PageNumber = pageNumber,
-                    PageSize = pageSize
-                };
-            }
-            
-            // Get all owner IDs for the current page
-            var ownerIds = pagedResult.Items.Select(o => o.Id).ToList();
-            
-            // Get all vehicles for these owners in a single query
-            var vehicles = await _vehicleRepository.GetPagedAsync(
-                pageNumber: 1,
-                pageSize: int.MaxValue,
-                searchPredicate: v => ownerIds.Contains(v.OwnerId)
-            );
-            
-            // Group vehicles by owner ID for easy lookup
-            var vehiclesByOwnerId = vehicles.Items
-                .GroupBy(v => v.OwnerId)
-                .ToDictionary(g => g.Key, g => g.AsEnumerable());
-                
-            // Map owners to DTOs and attach their vehicles
-            var ownerDtos = new List<OwnerDto>();
-            foreach (var owner in pagedResult.Items)
-            {
-                var ownerDto = _mapper.Map<OwnerDto>(owner);
-                if (vehiclesByOwnerId.TryGetValue(owner.Id, out var ownerVehicles))
-                {
-                    // If you need to set the vehicles on the DTO, you'll need to add a property for it
-                    // ownerDto.Vehicles = _mapper.Map<IEnumerable<VehicleReadDto>>(ownerVehicles);
-                }
-                ownerDtos.Add(ownerDto);
-            }
 
             if (!pagedResult.Items.Any())
             {
@@ -110,7 +69,8 @@ public class OwnerService : IOwnerService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving paged owners");
+            _logger.LogError(ex, "Error retrieving paged owners (page {PageNumber}, size {PageSize}, search: {SearchTerm})", 
+                pageNumber, pageSize, searchTerm);
             throw;
         }
     }
@@ -122,21 +82,12 @@ public class OwnerService : IOwnerService
             var owners = await _ownerRepository.GetByIdsAsync(new[] { id.ToString() });
             var owner = owners.FirstOrDefault();
             if (owner == null) return null;
-            
-            // Get vehicles for this owner
-            var vehicles = await _vehicleRepository.GetPagedAsync(
-                pageNumber: 1,
-                pageSize: int.MaxValue,
-                searchTerm: null,
-                searchPredicate: v => v.OwnerId == id.ToString()
-            );
-            
-            var ownerDto = _mapper.Map<OwnerDto>(owner);
-            return ownerDto;
+
+            return _mapper.Map<OwnerDto>(owner);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error retrieving owner with ID: {id}");
+            _logger.LogError(ex, "Error retrieving owner with ID: {OwnerId}", id);
             throw;
         }
     }
@@ -145,18 +96,19 @@ public class OwnerService : IOwnerService
     {
         try
         {
-            if (await IsNameAvailableAsync(dto.Name) == false)
+            if (!await IsNameAvailableAsync(dto.Name))
             {
                 throw new InvalidOperationException($"An owner with name '{dto.Name}' already exists.");
             }
 
             var owner = _mapper.Map<Owner>(dto);
-            var createdOwner = await _ownerRepository.CreateAsync(owner);
-            return _mapper.Map<OwnerDto>(createdOwner);
+            var created = await _ownerRepository.CreateAsync(owner);
+
+            return _mapper.Map<OwnerDto>(created);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating owner");
+            _logger.LogError(ex, "Error creating owner with name: {Name}", dto.Name);
             throw;
         }
     }
@@ -166,24 +118,22 @@ public class OwnerService : IOwnerService
         try
         {
             var owners = await _ownerRepository.GetByIdsAsync(new[] { id.ToString() });
-            var existingOwner = owners.FirstOrDefault();
-            if (existingOwner == null)
-            {
-                return null;
-            }
+            var existing = owners.FirstOrDefault();
+            if (existing == null) return null;
 
-            if (await IsNameAvailableAsync(dto.Name, id) == false)
+            if (!await IsNameAvailableAsync(dto.Name, id))
             {
                 throw new InvalidOperationException($"An owner with name '{dto.Name}' already exists.");
             }
 
-            _mapper.Map(dto, existingOwner);
-            var updatedOwner = await _ownerRepository.UpdateAsync(existingOwner);
-            return updatedOwner != null ? _mapper.Map<OwnerDto>(updatedOwner) : null;
+            _mapper.Map(dto, existing);
+            var updated = await _ownerRepository.UpdateAsync(existing);
+
+            return updated != null ? _mapper.Map<OwnerDto>(updated) : null;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error updating owner with ID: {id}");
+            _logger.LogError(ex, "Error updating owner with ID: {OwnerId}", id);
             throw;
         }
     }
@@ -192,44 +142,36 @@ public class OwnerService : IOwnerService
     {
         try
         {
-            // First check if owner exists
             var owners = await _ownerRepository.GetByIdsAsync(new[] { id.ToString() });
-            var owner = owners.FirstOrDefault();
-            if (owner == null)
-            {
-                return false;
-            }
+            if (!owners.Any()) return false;
 
-            // Check if owner has any vehicles
-            var vehicles = await _vehicleRepository.GetPagedAsync(
+            // Check for associated vehicles
+            var vehiclesCheck = await _vehicleRepository.GetPagedAsync(
                 pageNumber: 1,
-                pageSize: 1,  // We only need to know if there are any vehicles
+                pageSize: 1,
                 searchPredicate: v => v.OwnerId == id.ToString()
             );
 
-            if (vehicles.TotalItems > 0)
+            if (vehiclesCheck.TotalItems > 0)
             {
-                throw new InvalidOperationException("Cannot delete owner with associated vehicles. Please reassign or delete the vehicles first.");
+                throw new InvalidOperationException("Cannot delete owner with associated vehicles. Reassign vehicles first.");
             }
 
             return await _ownerRepository.DeleteAsync(id.ToString());
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting owner with ID: {id}");
+            _logger.LogError(ex, "Error deleting owner with ID: {OwnerId}", id);
             throw;
         }
     }
 
     public async Task<bool> IsNameAvailableAsync(string name, Guid? excludeId = null)
     {
+        if (string.IsNullOrWhiteSpace(name)) return false;
+
         try
         {
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                return false;
-            }
-
             var result = await _ownerRepository.GetPagedAsync(
                 pageNumber: 1,
                 pageSize: 1,
@@ -237,100 +179,96 @@ public class OwnerService : IOwnerService
                 searchProperties: new[] { nameof(Owner.Name) }
             );
 
-            if (!result.Items.Any())
-            {
-                return true;
-            }
+            if (!result.Items.Any()) return true;
 
-            if (excludeId.HasValue)
-            {
-                return result.Items.All(o => o.Id == excludeId.Value.ToString());
-            }
-
-            return false;
+            return excludeId.HasValue && result.Items.All(o => o.Id == excludeId.Value.ToString());
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error checking owner name availability for: {name}");
+            _logger.LogError(ex, "Error checking name availability for: '{Name}'", name);
             throw;
         }
     }
 
     public async Task<bool> AssignVehiclesAsync(Guid ownerId, IEnumerable<Guid> vehicleIds)
     {
+        var vehicleIdList = vehicleIds?.ToList() ?? new List<Guid>();
+        if (!vehicleIdList.Any()) return true;
+
         try
         {
-            var vehicleIdList = vehicleIds.ToList();
-            if (!vehicleIdList.Any())
-            {
-                return true; // No vehicles to assign, return success
-            }
-
-            // Verify owner exists
-            var owners = await _ownerRepository.GetByIdsAsync(new[] { ownerId.ToString() });
-            if (!owners.Any())
+            // Check owner exists
+            if (!await _ownerRepository.ExistsAsync(ownerId.ToString()))
             {
                 return false;
             }
 
-            // Get all vehicles to update
-            var vehicles = await _vehicleRepository.GetByIdsAsync(vehicleIdList.Select(id => id.ToString()).ToArray());
-            if (!vehicles.Any())
+            // Fetch vehicles
+            var vehicles = await _vehicleRepository.GetByIdsAsync(
+                vehicleIdList.Select(id => id.ToString()).ToArray());
+
+            if (!vehicles.Any()) return false;
+
+            // Prevent reassigning vehicles that belong to someone else
+            var alreadyOwned = vehicles
+                .Where(v => !string.IsNullOrEmpty(v.OwnerId) && v.OwnerId != ownerId.ToString())
+                .Select(v => v.RegistrationNumber ?? v.Id)
+                .ToList();
+
+            if (alreadyOwned.Any())
             {
-                return false;
+                throw new InvalidOperationException(
+                    $"Cannot assign vehicles already owned by another owner: {string.Join(", ", alreadyOwned)}");
             }
 
-            // Update owner for each vehicle
+            // Bulk update
             foreach (var vehicle in vehicles)
             {
                 vehicle.OwnerId = ownerId.ToString();
-                await _vehicleRepository.UpdateAsync(vehicle);
             }
 
+            // Assuming your repository supports bulk update
+            // If not, use transaction + SaveChanges in one go
+            await _vehicleRepository.UpdateRangeAsync(vehicles);
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error assigning vehicles to owner with ID: {ownerId}");
+            _logger.LogError(ex, "Error assigning vehicles to owner {OwnerId}", ownerId);
             throw;
         }
     }
 
     public async Task<bool> RemoveVehiclesAsync(Guid ownerId, IEnumerable<Guid> vehicleIds)
     {
+        var vehicleIdList = vehicleIds?.ToList() ?? new List<Guid>();
+        if (!vehicleIdList.Any()) return true;
+
         try
         {
-            var vehicleIdList = vehicleIds.ToList();
-            if (!vehicleIdList.Any())
-            {
-                return true; // No vehicles to remove, return success
-            }
+            var vehicles = await _vehicleRepository.GetByIdsAsync(
+                vehicleIdList.Select(id => id.ToString()).ToArray());
 
-            // Get all vehicles to update
-            var vehicles = await _vehicleRepository.GetByIdsAsync(vehicleIdList.Select(id => id.ToString()).ToArray());
-            if (!vehicles.Any())
-            {
-                return false;
-            }
+            if (!vehicles.Any()) return false;
 
-            // Verify all vehicles belong to this owner
+            // Security check: only remove vehicles actually belonging to this owner
             if (vehicles.Any(v => v.OwnerId != ownerId.ToString()))
             {
                 throw new InvalidOperationException("One or more vehicles do not belong to the specified owner.");
             }
 
-            // Set OwnerId to empty string (you might want to handle this differently based on your requirements)
             foreach (var vehicle in vehicles)
             {
-                vehicle.OwnerId = string.Empty; // Or set to a default owner if applicable
-                await _vehicleRepository.UpdateAsync(vehicle);
+                vehicle.OwnerId = null;  // ← null instead of empty string
             }
+
+            await _vehicleRepository.UpdateRangeAsync(vehicles);
 
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error removing vehicles from owner with ID: {ownerId}");
+            _logger.LogError(ex, "Error removing vehicles from owner {OwnerId}", ownerId);
             throw;
         }
     }
@@ -342,7 +280,6 @@ public class OwnerService : IOwnerService
             var vehicles = await _vehicleRepository.GetPagedAsync(
                 pageNumber: 1,
                 pageSize: int.MaxValue,
-                searchTerm: null,
                 searchPredicate: v => v.OwnerId == ownerId.ToString()
             );
 
@@ -350,7 +287,7 @@ public class OwnerService : IOwnerService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error retrieving vehicles for owner with ID: {ownerId}");
+            _logger.LogError(ex, "Error retrieving vehicles for owner {OwnerId}", ownerId);
             throw;
         }
     }
