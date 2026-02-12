@@ -13,6 +13,10 @@ namespace Masterdata.Core.DTOs.Drivers
         public string? LicenseNumber { get; set; }
 
         private DateTime? _licenseExpiryDate;
+      
+        public string? NfCcode { get; set; }
+        
+        public string? Phone { get; set; } = null!;
 
         [DataType(DataType.Date)]
         public DateTime? LicenseExpiryDate

@@ -48,16 +48,64 @@ public class VehicleService : IVehicleService
         return dto;
     }
 
+    // NEW: Get vehicle by RFID code
+    public async Task<VehicleReadDto?> GetByRfidCodeAsync(string rfidCode)
+    {
+        if (string.IsNullOrWhiteSpace(rfidCode))
+        {
+            return null;
+        }
+
+        var vehicle = await _vehicleRepository.GetByPredicateAsync(v => v.RfiDcode == rfidCode);
+        if (vehicle == null || vehicle.IsDeleted)
+        {
+            return null;
+        }
+
+        var dto = _mapper.Map<VehicleReadDto>(vehicle);
+        
+        // Get assigned drivers
+        var driverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { vehicle.Id });
+        dto.AssignedDriverIds = driverVehicles
+            .Where(dv => dv.VehicleId == vehicle.Id && !dv.IsDeleted)
+            .Select(dv => dv.DriverId)
+            .ToList();
+        
+        return dto;
+    }
+
+    // NEW: Check if RFID code is available
+    public async Task<bool> IsRfidCodeAvailableAsync(string rfidCode, string? excludeVehicleId = null)
+    {
+        if (string.IsNullOrWhiteSpace(rfidCode))
+        {
+            return true; // Empty/null RFID codes are allowed (optional field)
+        }
+
+        if (string.IsNullOrEmpty(excludeVehicleId))
+        {
+            // For create - check if RFID code exists at all
+            var exists = await _vehicleRepository.ExistsByPredicateAsync(v => v.RfiDcode == rfidCode);
+            return !exists; // Available if it doesn't exist
+        }
+
+        // For update - check if RFID code exists for a different vehicle
+        var existsForOther = await _vehicleRepository.ExistsByPredicateAsync(v => 
+            v.RfiDcode == rfidCode && v.Id != excludeVehicleId);
+        return !existsForOther; // Available if it doesn't exist for another vehicle
+    }
+
     public async Task<PagedResult<VehicleReadDto>> GetPagedVehiclesAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
     {
+        // Added RfiDcode to search properties
         var pagedResult = await _vehicleRepository.GetPagedAsync(
             pageNumber: pageNumber,
             pageSize: pageSize,
             searchTerm: searchTerm,
             searchPredicate: searchTerm != null ? 
-                (v => v.RegistrationNumber.Contains(searchTerm) || v.Model.Contains(searchTerm)) : 
+                (v => v.RegistrationNumber.Contains(searchTerm) || v.Model.Contains(searchTerm) || v.RfiDcode.Contains(searchTerm)) : 
                 null,
-            searchProperties: new[] { nameof(Vehicle.RegistrationNumber), nameof(Vehicle.Model) }
+            searchProperties: new[] { nameof(Vehicle.RegistrationNumber), nameof(Vehicle.Model), nameof(Vehicle.RfiDcode) }
         );
 
         var vehicleDtos = _mapper.Map<IEnumerable<VehicleReadDto>>(pagedResult.Items).ToList();
@@ -118,6 +166,16 @@ public class VehicleService : IVehicleService
         if (!await IsRegistrationNumberAvailableAsync(dto.RegistrationNumber, id))
         {
             throw new InvalidOperationException($"A different vehicle with registration number {dto.RegistrationNumber} already exists.");
+        }
+
+        // NEW: Validate RFID code uniqueness if provided and changed
+        if (!string.IsNullOrWhiteSpace(dto.RfiDcode) && dto.RfiDcode != vehicle.RfiDcode)
+        {
+            var rfidAvailable = await IsRfidCodeAvailableAsync(dto.RfiDcode, id);
+            if (!rfidAvailable)
+            {
+                throw new InvalidOperationException("This RFID code is already assigned to another vehicle.");
+            }
         }
 
         _mapper.Map(dto, vehicle);

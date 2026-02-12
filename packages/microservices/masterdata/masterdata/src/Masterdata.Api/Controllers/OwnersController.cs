@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Masterdata.Core.DTOs;
 using Masterdata.Core.DTOs.Owner;
@@ -43,12 +44,16 @@ public class OwnersController : ControllerBase
     {
         try
         {
+            pageNumber = Math.Max(1, pageNumber);
+            pageSize = Math.Clamp(pageSize, 1, 100);
+
             var result = await _ownerService.GetPagedOwnersAsync(pageNumber, pageSize, searchTerm);
             return Ok(result);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving owners");
+            _logger.LogError(ex, "Error retrieving owners (page: {Page}, size: {Size}, search: {Term})", 
+                pageNumber, pageSize, searchTerm);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving owners");
         }
     }
@@ -73,7 +78,7 @@ public class OwnersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error retrieving owner with ID: {id}");
+            _logger.LogError(ex, "Error retrieving owner with ID: {OwnerId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving the owner");
         }
     }
@@ -103,7 +108,7 @@ public class OwnersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating owner");
+            _logger.LogError(ex, "Error creating owner with name: {Name}", dto?.Name);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the owner");
         }
     }
@@ -139,7 +144,7 @@ public class OwnersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error updating owner with ID: {id}");
+            _logger.LogError(ex, "Error updating owner with ID: {OwnerId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the owner");
         }
     }
@@ -170,7 +175,7 @@ public class OwnersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error deleting owner with ID: {id}");
+            _logger.LogError(ex, "Error deleting owner with ID: {OwnerId}", id);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the owner");
         }
     }
@@ -198,7 +203,7 @@ public class OwnersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error checking name availability for: {name}");
+            _logger.LogError(ex, "Error checking name availability for: {Name}", name);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while checking name availability");
         }
     }
@@ -211,56 +216,68 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> AssignVehicles(Guid ownerId, [FromBody] IEnumerable<Guid> vehicleIds)
+    public async Task<IActionResult> AssignVehicles(Guid ownerId, [FromBody] IEnumerable<Guid>? vehicleIds)
     {
         try
         {
+            if (vehicleIds == null || !vehicleIds.Any())
+            {
+                return BadRequest("At least one vehicle ID must be provided.");
+            }
+
             var success = await _ownerService.AssignVehiclesAsync(ownerId, vehicleIds);
             if (!success)
             {
-                return NotFound($"Owner with ID {ownerId} not found or no valid vehicles provided.");
+                return NotFound("Owner not found or no valid vehicles provided.");
             }
 
             return Ok(new { message = "Vehicles assigned successfully." });
         }
         catch (InvalidOperationException ex)
         {
+            // Catches cases like "vehicle already owned by another owner"
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error assigning vehicles to owner with ID: {ownerId}");
+            _logger.LogError(ex, "Error assigning vehicles to owner {OwnerId}", ownerId);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while assigning vehicles");
         }
     }
 
     /// <summary>
-    /// Remove vehicles from an owner
+    /// Remove vehicles from an owner (unassign them)
     /// </summary>
     [HttpPost("{ownerId:guid}/vehicles/remove")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> RemoveVehicles(Guid ownerId, [FromBody] IEnumerable<Guid> vehicleIds)
+    public async Task<IActionResult> RemoveVehicles(Guid ownerId, [FromBody] IEnumerable<Guid>? vehicleIds)
     {
         try
         {
+            if (vehicleIds == null || !vehicleIds.Any())
+            {
+                return BadRequest("At least one vehicle ID must be provided.");
+            }
+
             var success = await _ownerService.RemoveVehiclesAsync(ownerId, vehicleIds);
             if (!success)
             {
-                return NotFound($"Owner with ID {ownerId} not found or no valid vehicles provided.");
+                return NotFound("Owner not found or no valid vehicles to remove.");
             }
 
-            return Ok(new { message = "Vehicles removed successfully." });
+            return Ok(new { message = "Vehicles removed successfully (unassigned)." });
         }
         catch (InvalidOperationException ex)
         {
+            // Catches cases like "vehicles do not belong to this owner"
             return BadRequest(ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error removing vehicles from owner with ID: {ownerId}");
+            _logger.LogError(ex, "Error removing vehicles from owner {OwnerId}", ownerId);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while removing vehicles");
         }
     }
@@ -281,7 +298,7 @@ public class OwnersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error retrieving vehicles for owner with ID: {ownerId}");
+            _logger.LogError(ex, "Error retrieving vehicles for owner with ID: {OwnerId}", ownerId);
             return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while retrieving vehicles");
         }
     }

@@ -18,13 +18,13 @@ public class DriverService : IDriverService
         IRepository<Driver> driverRepository,
         IRepository<DriverVehicle> driverVehicleRepository,
         IRepository<Supplier> supplierRepository,
-        IRepository<Transporter> transporterRepository, // Add this
+        IRepository<Transporter> transporterRepository,
         IMapper mapper)
     {
         _driverRepository = driverRepository ?? throw new ArgumentNullException(nameof(driverRepository));
         _driverVehicleRepository = driverVehicleRepository ?? throw new ArgumentNullException(nameof(driverVehicleRepository));
         _supplierRepository = supplierRepository ?? throw new ArgumentNullException(nameof(supplierRepository));
-        _transporterRepository = transporterRepository ?? throw new ArgumentNullException(nameof(transporterRepository)); // Add this
+        _transporterRepository = transporterRepository ?? throw new ArgumentNullException(nameof(transporterRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
@@ -35,12 +35,12 @@ public class DriverService : IDriverService
         pageNumber = Math.Max(1, pageNumber);
         pageSize = Math.Clamp(pageSize, 1, 100); // Limit page size to 100 for performance
 
-        // Get paginated drivers with search
+        // Get paginated drivers with search (added NfCcode to search properties)
         var pagedResult = await _driverRepository.GetPagedAsync(
             pageNumber: pageNumber,
             pageSize: pageSize,
             searchTerm: searchTerm,
-            searchProperties: new[] { nameof(Driver.FullName), nameof(Driver.LicenseNumber) }
+            searchProperties: new[] { nameof(Driver.FullName), nameof(Driver.LicenseNumber), nameof(Driver.NfCcode) }
         );
 
         if (!pagedResult.Items.Any())
@@ -114,6 +114,53 @@ public class DriverService : IDriverService
         return dto;
     }
 
+    // NEW: Get driver by NFC code
+    public async Task<DriverReadDto?> GetByNfcCodeAsync(string nfcCode)
+    {
+        if (string.IsNullOrWhiteSpace(nfcCode))
+        {
+            return null;
+        }
+
+        var driver = await _driverRepository.GetByPredicateAsync(d => d.NfCcode == nfcCode);
+        if (driver == null || driver.IsDeleted)
+        {
+            return null;
+        }
+
+        // Get the assigned vehicles
+        var assignedVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { driver.Id });
+
+        var dto = _mapper.Map<DriverReadDto>(driver);
+        dto.AssignedVehicleIds = assignedVehicles
+            .Where(dv => dv.DriverId == driver.Id)
+            .Select(dv => dv.VehicleId)
+            .ToList();
+
+        return dto;
+    }
+
+    // NEW: Check if NFC code is available
+    public async Task<bool> IsNfcCodeAvailableAsync(string nfcCode, string? excludeDriverId = null)
+    {
+        if (string.IsNullOrWhiteSpace(nfcCode))
+        {
+            return true; // Empty/null NFC codes are allowed (optional field)
+        }
+
+        if (string.IsNullOrEmpty(excludeDriverId))
+        {
+            // For create - check if NFC code exists at all
+            var exists = await _driverRepository.ExistsByPredicateAsync(d => d.NfCcode == nfcCode);
+            return !exists; // Available if it doesn't exist
+        }
+
+        // For update - check if NFC code exists for a different driver
+        var existsForOther = await _driverRepository.ExistsByPredicateAsync(d => 
+            d.NfCcode == nfcCode && d.Id != excludeDriverId);
+        return !existsForOther; // Available if it doesn't exist for another driver
+    }
+
     public async Task<DriverReadDto> CreateAsync(CreateDriverDto dto)
     {
         // Check if license number is already in use
@@ -132,7 +179,7 @@ public class DriverService : IDriverService
             driver.Status = "active";
         }
 
-        // Create the driver
+        // Create the driver (NFC code will be added later via update)
         var createdDriver = await _driverRepository.CreateAsync(driver);
         
         if (createdDriver == null)
@@ -171,6 +218,16 @@ public class DriverService : IDriverService
             if (driverWithSameLicense != null)
             {
                 throw new InvalidOperationException("A driver with this license number already exists.");
+            }
+        }
+
+        // NEW: Validate NFC code uniqueness if provided and changed
+        if (!string.IsNullOrWhiteSpace(dto.NfCcode) && dto.NfCcode != existingDriver.NfCcode)
+        {
+            var nfcAvailable = await IsNfcCodeAvailableAsync(dto.NfCcode, id);
+            if (!nfcAvailable)
+            {
+                throw new InvalidOperationException("This NFC code is already assigned to another driver.");
             }
         }
 
@@ -373,92 +430,90 @@ public class DriverService : IDriverService
         return result != null;
     }
     
-    // Add these methods to your DriverService class
-
-// Assign driver to a transporter
-public async Task<bool> AssignToTransporterAsync(string driverId, string transporterId)
-{
-    if (string.IsNullOrEmpty(driverId) || string.IsNullOrEmpty(transporterId))
+    // Assign driver to a transporter
+    public async Task<bool> AssignToTransporterAsync(string driverId, string transporterId)
     {
-        return false;
+        if (string.IsNullOrEmpty(driverId) || string.IsNullOrEmpty(transporterId))
+        {
+            return false;
+        }
+
+        // Check if the driver exists and is not deleted using GetByIdsAsync
+        var drivers = await _driverRepository.GetByIdsAsync(new[] { driverId });
+        var driver = drivers.FirstOrDefault();
+        if (driver == null || driver.IsDeleted)
+        {
+            return false;
+        }
+
+        // Check if the transporter exists and is not deleted using GetByIdsAsync
+        var transporters = await _transporterRepository.GetByIdsAsync(new[] { transporterId });
+        var transporter = transporters.FirstOrDefault();
+        if (transporter == null || transporter.IsDeleted)
+        {
+            return false;
+        }
+
+        // Check if the driver is already assigned to this transporter
+        if (driver.TransporterId == transporterId)
+        {
+            return true; // Already assigned to this transporter
+        }
+
+        // Check if the driver is assigned to a different transporter
+        if (!string.IsNullOrEmpty(driver.TransporterId) && driver.TransporterId != transporterId)
+        {
+            // Get the current transporter's name for a better error message
+            var currentTransporters = await _transporterRepository.GetByIdsAsync(new[] { driver.TransporterId });
+            var currentTransporter = currentTransporters.FirstOrDefault();
+            var currentTransporterName = currentTransporter?.Name ?? "Unknown Transporter";
+            
+            // Get the target transporter's name for a better error message
+            var targetTransporterName = transporter.Name ?? "Unknown Transporter";
+            
+            // Throw a meaningful exception with details
+            throw new InvalidOperationException(
+                $"Driver is already assigned to transporter '{currentTransporterName}'. " +
+                $"Please unassign from the current transporter before assigning to '{targetTransporterName}'.");
+        }
+
+        driver.TransporterId = transporterId;
+        var result = await _driverRepository.UpdateAsync(driver);
+        return result != null;
     }
 
-    // Check if the driver exists and is not deleted using GetByIdsAsync
-    var drivers = await _driverRepository.GetByIdsAsync(new[] { driverId });
-    var driver = drivers.FirstOrDefault();
-    if (driver == null || driver.IsDeleted)
+    // Remove a driver from a transporter
+    public async Task<bool> RemoveFromTransporterAsync(string driverId, string transporterId)
     {
-        return false;
+        if (string.IsNullOrEmpty(driverId) || string.IsNullOrEmpty(transporterId))
+        {
+            return false;
+        }
+
+        // Check if the driver exists and is not deleted using GetByIdsAsync
+        var drivers = await _driverRepository.GetByIdsAsync(new[] { driverId });
+        var driver = drivers.FirstOrDefault();
+        if (driver == null || driver.IsDeleted)
+        {
+            return false;
+        }
+
+        var transporters = await _transporterRepository.GetByIdsAsync(new[] { transporterId });
+        var transporter = transporters.FirstOrDefault();
+        if (transporter == null || transporter.IsDeleted)
+        {
+            return false;
+        }
+
+        // Check if the driver is assigned to this transporter
+        if (driver.TransporterId != transporterId)
+        {
+            return true; // Not assigned to this transporter
+        }
+
+        // Remove the driver from the transporter
+        driver.TransporterId = null;
+        var result = await _driverRepository.UpdateAsync(driver);
+        return result != null;
     }
-
-    // Check if the transporter exists and is not deleted using GetByIdsAsync
-    var transporters = await _transporterRepository.GetByIdsAsync(new[] { transporterId });
-    var transporter = transporters.FirstOrDefault();
-    if (transporter == null || transporter.IsDeleted)
-    {
-        return false;
-    }
-
-    // Check if the driver is already assigned to this transporter
-    if (driver.TransporterId == transporterId)
-    {
-        return true; // Already assigned to this transporter
-    }
-
-    // Check if the driver is assigned to a different transporter
-    if (!string.IsNullOrEmpty(driver.TransporterId) && driver.TransporterId != transporterId)
-    {
-        // Get the current transporter's name for a better error message
-        var currentTransporters = await _transporterRepository.GetByIdsAsync(new[] { driver.TransporterId });
-        var currentTransporter = currentTransporters.FirstOrDefault();
-        var currentTransporterName = currentTransporter?.Name ?? "Unknown Transporter";
-        
-        // Get the target transporter's name for a better error message
-        var targetTransporterName = transporter.Name ?? "Unknown Transporter";
-        
-        // Throw a meaningful exception with details
-        throw new InvalidOperationException(
-            $"Driver is already assigned to transporter '{currentTransporterName}'. " +
-            $"Please unassign from the current transporter before assigning to '{targetTransporterName}'.");
-    }
-
-    driver.TransporterId = transporterId;
-    var result = await _driverRepository.UpdateAsync(driver);
-    return result != null;
-}
-
-// Remove a driver from a transporter
-public async Task<bool> RemoveFromTransporterAsync(string driverId, string transporterId)
-{
-    if (string.IsNullOrEmpty(driverId) || string.IsNullOrEmpty(transporterId))
-    {
-        return false;
-    }
-
-    // Check if the driver exists and is not deleted using GetByIdsAsync
-    var drivers = await _driverRepository.GetByIdsAsync(new[] { driverId });
-    var driver = drivers.FirstOrDefault();
-    if (driver == null || driver.IsDeleted)
-    {
-        return false;
-    }
-
-    var transporters = await _transporterRepository.GetByIdsAsync(new[] { transporterId });
-    var transporter = transporters.FirstOrDefault();
-    if (transporter == null || transporter.IsDeleted)
-    {
-        return false;
-    }
-
-    // Check if the driver is assigned to this transporter
-    if (driver.TransporterId != transporterId)
-    {
-        return true; // Not assigned to this transporter
-    }
-
-    // Remove the driver from the transporter
-    driver.TransporterId = null;
-    var result = await _driverRepository.UpdateAsync(driver);
-    return result != null;
-}
 }
