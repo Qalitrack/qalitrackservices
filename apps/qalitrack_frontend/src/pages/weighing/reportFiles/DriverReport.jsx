@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react"
 import ReportsTable from "../ReportsTable"
 import ReportsPagination from "../ReportsPagination"
-import { ChevronLeft, RotateCcw, FileDown, FileSpreadsheet } from "lucide-react"
+import { ChevronLeft, RotateCcw, FileDown, FileSpreadsheet, Filter } from "lucide-react"
+import { Button, Input } from "antd"
+import { CloseOutlined } from "@ant-design/icons"
 import dayjs from "dayjs"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
@@ -10,7 +12,7 @@ import * as XLSX from "xlsx"
 export default function DriverReport({ transactions = [], loading }) {
   const [selectedDriver, setSelectedDriver] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const PAGE_SIZE = 5
+  const PAGE_SIZE = 10
 
   // Filters
   const [filters, setFilters] = useState({
@@ -19,13 +21,13 @@ export default function DriverReport({ transactions = [], loading }) {
     search: "",
   })
 
+  const [showFilters, setShowFilters] = useState(false)
+
   // Export preview
   const [showExportPreview, setShowExportPreview] = useState(false)
   const [exportType, setExportType] = useState(null)
 
-  /* =========================
-     FILTERED TRANSACTIONS
-  ========================= */
+  /* FILTERED TRANSACTIONS */
   const filteredTransactions = useMemo(() => {
     let data = [...transactions]
 
@@ -55,9 +57,7 @@ export default function DriverReport({ transactions = [], loading }) {
     setCurrentPage(1)
   }
 
-  /* =========================
-     GROUP BY DRIVER
-  ========================= */
+  /* GROUP BY DRIVER */
   const driverSummary = useMemo(() => {
     const map = {}
 
@@ -85,20 +85,15 @@ export default function DriverReport({ transactions = [], loading }) {
     }))
   }, [filteredTransactions])
 
-  /* =========================
-     KPIs (SUMMARY)
-  ========================= */
+  /* KPIs (SUMMARY) */
   const totalDrivers = driverSummary.length
   const totalTrips = driverSummary.reduce((s, d) => s + d.trips, 0)
   const totalWeight = driverSummary.reduce((s, d) => s + d.totalNetWeight, 0)
 
-  /* =========================
-     EXPORT FUNCTIONS
-  ========================= */
+  /* EXPORT FUNCTIONS */
   const exportPDF = () => {
     const doc = new jsPDF()
     
-    // Header
     doc.setFillColor(245, 158, 11)
     doc.rect(0, 0, doc.internal.pageSize.getWidth(), 20, "F")
     doc.setTextColor(255, 255, 255)
@@ -109,14 +104,12 @@ export default function DriverReport({ transactions = [], loading }) {
     doc.setFont("helvetica", "normal")
     doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, doc.internal.pageSize.getWidth() / 2, 15, { align: "center" })
 
-    // Summary
     doc.setTextColor(0, 0, 0)
     doc.setFontSize(9)
     doc.text(`Total Drivers: ${totalDrivers}`, 14, 25)
     doc.text(`Total Trips: ${totalTrips}`, 14, 30)
     doc.text(`Total Weight: ${totalWeight.toLocaleString()} kg`, 14, 35)
 
-    // Table
     autoTable(doc, {
       startY: 40,
       head: [["Driver Name", "Trips", "Vehicles", "Net Weight (kg)"]],
@@ -149,9 +142,7 @@ export default function DriverReport({ transactions = [], loading }) {
     XLSX.writeFile(wb, `driver-report-${dayjs().format('YYYY-MM-DD')}.xlsx`)
   }
 
-  /* =========================
-     PAGINATED SUMMARY
-  ========================= */
+  /* PAGINATED SUMMARY */
   const paginatedRows = useMemo(() => {
     const start = (currentPage - 1) * PAGE_SIZE
 
@@ -160,7 +151,7 @@ export default function DriverReport({ transactions = [], loading }) {
       driverName: (
         <button
           onClick={() => setSelectedDriver(d.driverName)}
-          className="text-amber-700 hover:underline font-medium"
+          className="text-amber-700 hover:underline font-medium text-[10px]"
         >
           {d.driverName}
         </button>
@@ -171,9 +162,7 @@ export default function DriverReport({ transactions = [], loading }) {
     }))
   }, [driverSummary, currentPage])
 
-  /* =========================
-     DRIVER TRIPS (DETAIL PAGE)
-  ========================= */
+  /* DRIVER TRIPS (DETAIL PAGE) */
   const driverTrips = useMemo(() => {
     if (!selectedDriver) return []
 
@@ -191,9 +180,7 @@ export default function DriverReport({ transactions = [], loading }) {
       }))
   }, [filteredTransactions, selectedDriver])
 
-  /* =========================
-     DRIVER KPIs
-  ========================= */
+  /* DRIVER KPIs */
   const driverTotals = useMemo(() => {
     const totalNet = driverTrips.reduce((s, t) => s + t.netWeight, 0)
     const vehicles = new Set(driverTrips.map((t) => t.vehicle))
@@ -207,79 +194,126 @@ export default function DriverReport({ transactions = [], loading }) {
   }, [driverTrips])
 
   return (
-    <div className="bg-white border rounded-lg p-4 space-y-4">
+    <div className="space-y-3">
       {/* FILTERS */}
       {!selectedDriver && (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-            <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">Start Date</label>
-              <input
-                type="date"
-                value={filters.startDate}
-                onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-                className="w-full border border-gray-300 px-2 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-300"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">End Date</label>
-              <input
-                type="date"
-                value={filters.endDate}
-                onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-                className="w-full border border-gray-300 px-2 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-300"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-[10px] font-semibold text-gray-700 uppercase tracking-wider">Search</label>
-              <input
-                type="text"
-                placeholder="Search driver or vehicle..."
-                value={filters.search}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-                className="w-full border border-gray-300 px-2 py-1.5 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-amber-300"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <button 
-              onClick={clearFilters} 
-              className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 rounded-lg text-xs font-medium hover:bg-white transition-colors"
+        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border border-amber-200 rounded-lg p-3">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-[10px] font-bold text-gray-900 uppercase tracking-wide">Filter Options</span>
+            <Button 
+              icon={<Filter size={12} />}
+              size="small"
+              className={`h-6 text-[10px] font-medium ${showFilters ? 'bg-amber-500 text-white border-amber-500' : 'border-gray-300'}`}
+              onClick={() => setShowFilters(!showFilters)}
             >
-              <RotateCcw size={14} />
-              Clear
-            </button>
-
-            <div className="ml-auto flex gap-2">
-              <button
-                onClick={() => { setExportType("pdf"); setShowExportPreview(true); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-xs font-medium hover:bg-amber-200"
-              >
-                <FileDown size={14} />
-                PDF
-              </button>
-
-              <button
-                onClick={() => { setExportType("excel"); setShowExportPreview(true); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-300 bg-white rounded-lg text-xs font-medium hover:bg-gray-50"
-              >
-                <FileSpreadsheet size={14} />
-                Excel
-              </button>
-            </div>
+              {showFilters ? 'Hide' : 'Show'}
+            </Button>
           </div>
+
+          {showFilters && (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
+                <div>
+                  <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                    <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={filters.startDate}
+                    onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+                    className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                    <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={filters.endDate}
+                    onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+                    className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                    <span className="w-1 h-1 bg-amber-500 rounded-full"></span>
+                    Search
+                  </label>
+                  <Input
+                    placeholder="Driver or vehicle..."
+                    value={filters.search}
+                    onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                    className="h-6 text-[10px] border-amber-300 focus:border-amber-500"
+                    allowClear
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <div className="flex gap-2 items-center">
+                  {Object.entries(filters).filter(([key, value]) => value && value !== '').length > 0 && (
+                    <span className="text-[9px] text-amber-900 font-bold bg-gradient-to-r from-amber-100 to-amber-200 px-2 py-0.5 rounded-full border border-amber-300 shadow-sm">
+                      🎯 {Object.entries(filters).filter(([key, value]) => value && value !== '').length} active
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex gap-2">
+                  {Object.entries(filters).filter(([key, value]) => value && value !== '').length > 0 && (
+                    <Button 
+                      size="small"
+                      danger
+                      icon={<CloseOutlined />}
+                      onClick={clearFilters}
+                      className="h-6 text-[10px] font-semibold shadow-sm rounded bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
+                    >
+                      Clear
+                    </Button>
+                  )}
+
+                  <button
+                    onClick={() => { setExportType("pdf"); setShowExportPreview(true); }}
+                    className="flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-lg text-[10px] font-medium hover:bg-amber-200"
+                  >
+                    <FileDown size={12} />
+                    PDF
+                  </button>
+
+                  <button
+                    onClick={() => { setExportType("excel"); setShowExportPreview(true); }}
+                    className="flex items-center gap-1.5 px-3 py-1 border border-gray-300 bg-white rounded-lg text-[10px] font-medium hover:bg-gray-50"
+                  >
+                    <FileSpreadsheet size={12} />
+                    Excel
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
 
       {/* SUMMARY KPIs */}
       {!selectedDriver && (
         <div className="grid grid-cols-3 gap-3">
-          <CompactStat label="Drivers" value={totalDrivers} />
-          <CompactStat label="Trips" value={totalTrips} />
-          <CompactStat label="Net Weight" value={totalWeight.toLocaleString()} />
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[10px] text-gray-700 uppercase font-semibold tracking-wide">Drivers</p>
+            <p className="text-xl font-bold leading-tight text-amber-900">{totalDrivers}</p>
+          </div>
+          <div className="bg-amber-100 border border-amber-300 rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[10px] text-amber-900 uppercase font-semibold tracking-wide">Trips</p>
+            <p className="text-xl font-bold leading-tight text-amber-950">{totalTrips}</p>
+          </div>
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[10px] text-gray-700 uppercase font-semibold tracking-wide">Net Weight</p>
+            <p className="text-xl font-bold leading-tight text-amber-900">{totalWeight.toLocaleString()}</p>
+            <p className="text-[9px] text-amber-700">kg</p>
+          </div>
         </div>
       )}
 
@@ -290,14 +324,11 @@ export default function DriverReport({ transactions = [], loading }) {
             transactions={paginatedRows}
             loading={loading}
             showColumns={["driverName", "trips", "vehicles", "netWeight"]}
-            compact
-          />
-
-          <ReportsPagination
             currentPage={currentPage}
-            totalRecords={driverSummary.length}
             pageSize={PAGE_SIZE}
+            totalRecords={driverSummary.length}
             onPageChange={setCurrentPage}
+            onPageSizeChange={() => {}}
           />
         </>
       )}
@@ -305,52 +336,66 @@ export default function DriverReport({ transactions = [], loading }) {
       {/* DRIVER DETAIL PAGE */}
       {selectedDriver && (
         <>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200 rounded-lg p-2">
             <button
               onClick={() => setSelectedDriver(null)}
-              className="flex items-center gap-1 text-xs border rounded px-2 py-1 hover:bg-gray-50"
+              className="flex items-center gap-1 text-[10px] border border-amber-300 rounded px-2 py-1 hover:bg-amber-50 font-medium"
             >
-              <ChevronLeft size={14} /> Back
+              <ChevronLeft size={12} /> Back
             </button>
 
-            <h3 className="text-sm font-semibold">
+            <h3 className="text-[11px] font-bold text-gray-900">
               {selectedDriver} — Driver Report
             </h3>
           </div>
 
           {/* DRIVER KPIs */}
           <div className="grid grid-cols-4 gap-3">
-            <CompactStat label="Trips" value={driverTotals.trips} />
-            <CompactStat label="Total Net" value={driverTotals.totalNet.toLocaleString()} />
-            <CompactStat label="Vehicles" value={driverTotals.vehicles} />
-            <CompactStat label="Avg Net" value={driverTotals.avgNet.toLocaleString()} />
+            <div className="bg-amber-50 border border-amber-200 rounded px-3 py-2">
+              <p className="text-[10px] text-gray-700 uppercase font-semibold">Trips</p>
+              <p className="text-lg font-bold leading-tight text-amber-900">{driverTotals.trips}</p>
+            </div>
+            <div className="bg-amber-100 border border-amber-300 rounded px-3 py-2">
+              <p className="text-[10px] text-amber-900 uppercase font-semibold">Total Net</p>
+              <p className="text-lg font-bold leading-tight text-amber-950">{driverTotals.totalNet.toLocaleString()}</p>
+              <p className="text-[9px] text-amber-800">kg</p>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded px-3 py-2">
+              <p className="text-[10px] text-gray-700 uppercase font-semibold">Vehicles</p>
+              <p className="text-lg font-bold leading-tight text-amber-900">{driverTotals.vehicles}</p>
+            </div>
+            <div className="bg-amber-100 border border-amber-300 rounded px-3 py-2">
+              <p className="text-[10px] text-amber-900 uppercase font-semibold">Avg Net</p>
+              <p className="text-lg font-bold leading-tight text-amber-950">{driverTotals.avgNet.toLocaleString()}</p>
+              <p className="text-[9px] text-amber-800">kg</p>
+            </div>
           </div>
 
           {/* TRIPS TABLE */}
-          <div className="border rounded-lg overflow-auto">
+          <div className="border border-amber-200 rounded-lg overflow-auto bg-white">
             <table className="w-full text-xs min-w-[1200px]">
-              <thead className="bg-amber-50">
+              <thead className="bg-gradient-to-b from-amber-50 to-amber-100/50 sticky top-0">
                 <tr>
-                  <th className="p-2 text-left font-semibold border-b border-amber-200">Date</th>
-                  <th className="p-2 text-left font-semibold border-b border-amber-200">Vehicle</th>
-                  <th className="p-2 text-left font-semibold border-b border-amber-200">Supplier</th>
-                  <th className="p-2 text-left font-semibold border-b border-amber-200">Commodity</th>
-                  <th className="p-2 text-left font-semibold border-b border-amber-200">Customer</th>
-                  <th className="p-2 text-left font-semibold border-b border-amber-200">Destination</th>
-                  <th className="p-2 text-right font-semibold border-b border-amber-200">Net Weight</th>
+                  <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Date</th>
+                  <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Vehicle</th>
+                  <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Supplier</th>
+                  <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Commodity</th>
+                  <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Customer</th>
+                  <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Destination</th>
+                  <th className="p-2 text-right font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Net Weight</th>
                 </tr>
               </thead>
 
               <tbody>
                 {driverTrips.map((t, idx) => (
-                  <tr key={t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
-                    <td className="p-2">{t.date}</td>
-                    <td className="p-2">{t.vehicle}</td>
-                    <td className="p-2">{t.supplier}</td>
-                    <td className="p-2">{t.commodity}</td>
-                    <td className="p-2">{t.customer}</td>
-                    <td className="p-2">{t.destination}</td>
-                    <td className="p-2 text-right font-medium text-amber-800">
+                  <tr key={t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                    <td className="p-2 text-[10px]">{t.date}</td>
+                    <td className="p-2 text-[10px] font-semibold">{t.vehicle}</td>
+                    <td className="p-2 text-[10px]">{t.supplier}</td>
+                    <td className="p-2 text-[10px]">{t.commodity}</td>
+                    <td className="p-2 text-[10px]">{t.customer}</td>
+                    <td className="p-2 text-[10px]">{t.destination}</td>
+                    <td className="p-2 text-right text-[10px] font-bold text-amber-800">
                       {t.netWeight.toLocaleString()}
                     </td>
                   </tr>
@@ -420,15 +465,6 @@ export default function DriverReport({ transactions = [], loading }) {
           </div>
         </div>
       )}
-    </div>
-  )
-}
-
-function CompactStat({ label, value }) {
-  return (
-    <div className="bg-amber-50 border border-amber-200 rounded px-3 py-2">
-      <p className="text-[10px] text-gray-700 uppercase font-semibold">{label}</p>
-      <p className="text-lg font-bold leading-tight text-amber-900">{value}</p>
     </div>
   )
 }

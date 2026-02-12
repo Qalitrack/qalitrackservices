@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import useAuth from '../api/helpers/auth'; // Adjust path as needed
+import useAuth from '../api/helpers/auth';
 
 const ProtectedRoute = ({ allowedRoles = [] }) => {
     const location = useLocation();
@@ -29,13 +29,13 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
 
     if (!hasAccess) {
         console.log('❌ Access denied - insufficient permissions');
-        // Redirect based on user's primary role
+        // Redirect based on user's primary role to their default landing page
         const primaryRole = userRoles[0];
 
         if (primaryRole === 'Admin') {
-            return <Navigate to="/admin" replace />;
+            return <Navigate to="/admin/dashboard" replace />;
         } else if (primaryRole === 'Operator') {
-            return <Navigate to="/operator" replace />;
+            return <Navigate to="/operator/weighing/factory" replace />;
         } else {
             // If no valid role, logout and redirect to login
             return <Navigate to="/login" replace />;
