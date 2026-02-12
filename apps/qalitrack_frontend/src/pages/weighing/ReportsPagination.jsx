@@ -13,7 +13,7 @@ export default function ReportsPagination({
     onPageChange(page);
   };
 
-  // 🔹 Only show a window of pages
+  // Only show a window of pages
   const getVisiblePages = () => {
     const pages = [];
     const maxVisible = 5;
@@ -33,12 +33,12 @@ export default function ReportsPagination({
   };
 
   return (
-    <div className="sticky bottom-0 bg-white border-t mt-6 pt-4 pb-3 px-2">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-3 max-w-full">
+    <div className="bg-amber-50/50 border-t border-amber-200 px-3 py-3">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
         {/* Page Info */}
-        <p className="text-sm text-gray-600 whitespace-nowrap">
-          Page <span className="font-medium">{currentPage}</span> of{" "}
-          <span className="font-medium">{totalPages}</span>
+        <p className="text-xs font-medium text-gray-700 whitespace-nowrap">
+          Page <span className="font-bold text-amber-700">{currentPage}</span> of{" "}
+          <span className="font-bold">{totalPages}</span>
         </p>
 
         {/* Controls */}
@@ -46,9 +46,9 @@ export default function ReportsPagination({
           <button
             onClick={() => goToPage(currentPage - 1)}
             disabled={currentPage === 1}
-            className="px-3 py-1 border rounded disabled:opacity-40"
+            className="border border-amber-200 px-3 py-1 rounded-lg text-xs font-medium hover:bg-amber-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-white"
           >
-            Prev
+            Previous
           </button>
 
           {getVisiblePages().map((page) => {
@@ -58,10 +58,10 @@ export default function ReportsPagination({
               <button
                 key={page}
                 onClick={() => goToPage(page)}
-                className={`px-3 py-1 border rounded min-w-[36px] ${
+                className={`px-3 py-1 rounded-lg min-w-[32px] text-xs font-medium transition-all ${
                   isActive
-                    ? "bg-yellow-400 border-yellow-400 font-medium"
-                    : "bg-white"
+                    ? "bg-gradient-to-r from-amber-500 to-amber-600 border border-amber-500 text-white shadow-sm"
+                    : "bg-white border border-amber-200 hover:bg-amber-50 hover:border-amber-300"
                 }`}
               >
                 {page}
@@ -72,7 +72,7 @@ export default function ReportsPagination({
           <button
             onClick={() => goToPage(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="px-3 py-1 border rounded disabled:opacity-40"
+            className="border border-amber-200 px-3 py-1 rounded-lg text-xs font-medium hover:bg-amber-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-white"
           >
             Next
           </button>
