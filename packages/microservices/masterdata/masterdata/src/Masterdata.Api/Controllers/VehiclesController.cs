@@ -62,6 +62,32 @@ namespace Masterdata.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets a vehicle by its RFID code
+        /// </summary>
+        /// <param name="rfidCode">The RFID code to search for</param>
+        /// <returns>Vehicle information if found</returns>
+        [HttpGet("rfid/{rfidCode}")]
+        [ProducesResponseType(typeof(VehicleReadDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetVehicleByRfidCode(string rfidCode)
+        {
+            try
+            {
+                var vehicle = await _vehicleService.GetByRfidCodeAsync(rfidCode);
+                if (vehicle == null)
+                {
+                    return NotFound(new { message = "Vehicle not found with the provided RFID code" });
+                }
+                return Ok(vehicle);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting vehicle with RFID code: {rfidCode}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while getting the vehicle");
+            }
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(VehicleReadDto), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -121,6 +147,11 @@ namespace Masterdata.Api.Controllers
                 }
 
                 return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, $"Validation error updating vehicle with ID: {id}");
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {

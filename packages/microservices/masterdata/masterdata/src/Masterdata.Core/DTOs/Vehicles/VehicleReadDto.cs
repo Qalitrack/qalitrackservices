@@ -80,6 +80,8 @@ public class VehicleReadDto
     
     public string? AxleConfigurationId { get; set; }
     public string? AxleConfigurationName { get; set; }
+    public string? NfCcode { get; set; }
+
     
     // Driver assignments
     public List<string> DriverIds { get; set; } = new();
