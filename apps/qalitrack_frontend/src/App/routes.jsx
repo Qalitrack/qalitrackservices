@@ -1,4 +1,3 @@
-// App/routes.jsx
 import React, { lazy } from 'react';
 import { Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes.jsx";
@@ -51,10 +50,19 @@ const RootRedirect = () => {
 
     const user = getCurrentUser();
     const primaryRole = user?.userRoles?.[0];
-    if (primaryRole === "Admin")    return <Navigate to="/admin/dashboard"    replace />;
-    if (primaryRole === "Operator") return <Navigate to="/operator/dashboard" replace />;
+    
+    // Redirect to the actual first page each role should see
+    if (primaryRole === "Admin")    return <Navigate to="/admin/dashboard" replace />;
+    if (primaryRole === "Operator") return <Navigate to="/operator/weighing/factory" replace />;
+    
     return <Navigate to="/login" replace />;
 };
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Role-specific index redirects
+// ═══════════════════════════════════════════════════════════════════════════
+const AdminIndexRedirect = () => <Navigate to="/admin/dashboard" replace />;
+const OperatorIndexRedirect = () => <Navigate to="/operator/weighing/factory" replace />;
 
 // 404
 const NotFound = () => (
@@ -74,9 +82,7 @@ const NotFound = () => (
 // ═══════════════════════════════════════════════════════════════════════════
 export const routes = [
     // ───────────────────────────────────────────────────────────────────────
-    // /kiosk — PUBLIC. No layout. No ProtectedRoute. No extra <Suspense>
-    // (App.jsx already provides one at the top level that covers all
-    // lazy-loaded routes including this one).
+    // /kiosk — PUBLIC. No layout. No ProtectedRoute.
     // ───────────────────────────────────────────────────────────────────────
     {
         path: "/kiosk",
@@ -96,6 +102,9 @@ export const routes = [
                 path: "/operator",
                 element: <MainLayout />,
                 children: [
+                    // Redirect /operator to /operator/weighing/factory
+                    { index: true, element: <OperatorIndexRedirect /> },
+                    
                     { path: "dashboard",              element: <Dashboard /> },
                     { path: "weighing/factory",       element: <FactoryWeighing /> },
                     { path: "transactions",           element: <Transaction /> },
@@ -128,6 +137,9 @@ export const routes = [
                 path: "/admin",
                 element: <MainLayout />,
                 children: [
+                    // Redirect /admin to /admin/dashboard
+                    { index: true, element: <AdminIndexRedirect /> },
+                    
                     { path: "dashboard",                element: <AdminDashboard /> },
                     { path: "weighing/factory",         element: <FactoryWeighing /> },
                     { path: "transactions",             element: <Transaction /> },
@@ -145,6 +157,7 @@ export const routes = [
                     { path: "suppliers",                element: <Suppliers /> },
                     { path: "saccos",                   element: <SaccosPortal /> },
                     { path: "weighbridges",             element: <WeighbridgesPortal /> },
+                    { path: "routes",                   element: <Routes /> },
                     // admin-only
                     { path: "user-management",          element: <UserManagement /> },
                     { path: "security/password-policy", element: <PasswordPolicy /> },
