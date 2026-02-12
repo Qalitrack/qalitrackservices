@@ -64,6 +64,7 @@ namespace Masterdata.Core.DTOs.Drivers
         /// The date and time when the driver record was last updated
         /// </summary>
         public DateTime UpdatedAt { get; set; }
+        public string? NfCcode { get; set; }
 
         /// <summary>
         /// Detailed information about vehicle assignments for this driver

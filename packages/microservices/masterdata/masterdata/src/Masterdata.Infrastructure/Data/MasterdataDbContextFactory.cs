@@ -13,8 +13,7 @@ public class MasterdataDbContextFactory : IDesignTimeDbContextFactory<Masterdata
         // This connection string is for design-time only (migrations)
         var connectionString =
             Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-            ?? throw new InvalidOperationException(
-                "ConnectionStrings__DefaultConnection is not set");
+            ?? "Host=localhost;Port=5432;Database=masterdatadb;Username=masterdata;Password=masterdata123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;IncludeErrorDetail=true;CommandTimeout=60";
 
         optionsBuilder.UseNpgsql(connectionString);
         
