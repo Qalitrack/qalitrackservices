@@ -1,163 +1,281 @@
-import React, { useState, useEffect } from "react";
-import { Users, Search, Filter, X } from "lucide-react";
+import React, { useState, useEffect, useMemo } from "react";
+import { Users, Search, Filter, X, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { fetchRoles } from "../api/helpers/UserService/Roles/Roles.js";
 import UsersComponent from "../pages/Userservice/Users.jsx";
 
+const FilterSelect = ({ value, onChange, options, placeholder, icon: Icon, className = "" }) => (
+  <div className={`relative ${className}`}>
+    {Icon && (
+      <Icon
+        size={12}
+        className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+      />
+    )}
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`
+        w-full pl-${Icon ? "7" : "2.5"} pr-7 py-1 text-[10px]
+        bg-white border border-amber-200 rounded-md
+        appearance-none cursor-pointer outline-none
+        focus:border-amber-500 focus:ring-1 focus:ring-amber-300/40
+        transition-all
+      `}
+    >
+      <option value="">{placeholder}</option>
+      {options.map((opt) => (
+        <option key={opt.value} value={opt.value}>
+          {opt.label}
+        </option>
+      ))}
+    </select>
+    <ChevronDown
+      size={10}
+      className="absolute right-1.5 top-1/2 -translate-y-1/2 text-amber-500 pointer-events-none"
+    />
+  </div>
+);
+
 export default function UserManagement() {
-  const [searchTerm, setSearchTerm]         = useState("");
-  const [selectedRole, setSelectedRole]     = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedRole, setSelectedRole] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [roles, setRoles]                   = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ── Pagination ──
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // ← changed to 5 users per page
+  const [totalUsers, setTotalUsers] = useState(0);
 
   useEffect(() => {
-    const load = async () => {
+    const loadRoles = async () => {
       try {
-        const rolesData = await fetchRoles();
-        setRoles(rolesData);
+        setLoading(true);
+        const data = await fetchRoles();
+        setRoles(data || []);
       } catch (err) {
-        console.error("Failed to fetch roles:", err);
+        console.error("Roles fetch failed:", err);
+      } finally {
+        setLoading(false);
       }
     };
-    load();
+    loadRoles();
   }, []);
 
-  const handleClearFilters = () => {
+  const hasFilters = !!(searchTerm || selectedRole || selectedStatus);
+
+  const clearFilters = () => {
     setSearchTerm("");
     setSelectedRole("");
     setSelectedStatus("");
+    setCurrentPage(1);
   };
 
-  const hasActiveFilters = searchTerm || selectedRole || selectedStatus;
+  const statusOptions = useMemo(
+    () => [
+      { value: "active", label: "Active" },
+      { value: "offline", label: "Offline" },
+      { value: "suspended", label: "Suspended" },
+    ],
+    []
+  );
+
+  const roleOptions = useMemo(
+    () => roles.map((r) => ({ value: r.name, label: r.name })),
+    [roles]
+  );
+
+  // Calculate pagination numbers to show
+  const totalPages = Math.ceil(totalUsers / pageSize);
+  const maxVisiblePages = 7;
+  
+  let pages = [];
+  if (totalPages <= maxVisiblePages) {
+    pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  } else {
+    if (currentPage <= 4) {
+      pages = [1, 2, 3, 4, 5, "...", totalPages];
+    } else if (currentPage >= totalPages - 3) {
+      pages = [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    } else {
+      pages = [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+    }
+  }
+
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
 
   return (
-    <div className="h-full flex flex-col px-6 py-5 gap-4" style={{ background: "#fafafa" }}>
+    <div className="h-full flex flex-col px-2 py-1.5 gap-1.5 bg-gray-50">
 
-      {/* ── Top row: title left, search + filters right ── */}
-      <div className="shrink-0 flex items-center justify-between gap-6">
-        {/* Title block */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div
-            className="w-10 h-10 rounded-xl flex items-center justify-center shadow-md"
-            style={{ background: "linear-gradient(135deg, #f59e0b, #f97316)" }}
-          >
-            <Users size={20} color="#fff" />
+      {/* Header */}
+      <div className="shrink-0 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+            <Users size={14} className="text-white" />
           </div>
           <div>
-            <h2 className="text-xl font-bold" style={{ color: "#111827" }}>User Management</h2>
-            <p className="text-xs" style={{ color: "#6b7280" }}>Manage users, roles, and permissions</p>
+            <h2 className="text-xs font-bold text-gray-900 leading-tight">User Management</h2>
+            <p className="text-[9px] text-amber-700 font-medium">Users • Roles • Permissions</p>
           </div>
         </div>
 
-        {/* Search + filters — fills remaining width */}
-        <div className="flex items-center gap-2 flex-1">
+        <div className="flex-1 flex items-center gap-1.5 max-w-3xl">
           <div className="relative flex-1">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "#9ca3af" }} />
+            <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
-              placeholder="Search by name, email or username…"
+              placeholder="Name, email, username..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 rounded-lg text-sm outline-none transition-all"
-              style={{ background: "#fff", border: "1.5px solid #e5e7eb", color: "#111827" }}
-              onFocus={(e) => { e.target.style.borderColor="#f59e0b"; e.target.style.boxShadow="0 0 0 3px rgba(245,158,11,0.15)"; }}
-              onBlur={(e)  => { e.target.style.borderColor="#e5e7eb"; e.target.style.boxShadow="none"; }}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="
+                w-full pl-7 pr-2.5 py-1 text-[10px] rounded-md
+                border border-amber-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-300/40
+                bg-white placeholder:text-gray-400 transition-all
+              "
             />
           </div>
 
-          <div className="relative">
-            <Filter size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color:"#9ca3af" }} />
-            <select
-              value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
-              className="pl-8 pr-7 py-2 rounded-lg text-sm appearance-none cursor-pointer outline-none transition-all"
-              style={{
-                background:"#fff", border:"1.5px solid #e5e7eb", color:"#374151", minWidth:"140px",
-                backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f59e0b' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-                backgroundRepeat:"no-repeat", backgroundPosition:"right 0.65rem center",
-              }}
-              onFocus={(e) => { e.target.style.borderColor="#f59e0b"; e.target.style.boxShadow="0 0 0 3px rgba(245,158,11,0.15)"; }}
-              onBlur={(e)  => { e.target.style.borderColor="#e5e7eb"; e.target.style.boxShadow="none"; }}
-            >
-              <option value="">All Roles</option>
-              {roles.map((role) => (
-                <option key={role.id} value={role.name}>{role.name}</option>
-              ))}
-            </select>
-          </div>
-
-          <select
-            value={selectedStatus}
-            onChange={(e) => setSelectedStatus(e.target.value)}
-            className="pl-3 pr-7 py-2 rounded-lg text-sm appearance-none cursor-pointer outline-none transition-all"
-            style={{
-              background:"#fff", border:"1.5px solid #e5e7eb", color:"#374151", minWidth:"120px",
-              backgroundImage:`url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f59e0b' d='M6 9L1 4h10z'/%3E%3C/svg%3E")`,
-              backgroundRepeat:"no-repeat", backgroundPosition:"right 0.65rem center",
+          <FilterSelect
+            value={selectedRole}
+            onChange={(v) => {
+              setSelectedRole(v);
+              setCurrentPage(1);
             }}
-            onFocus={(e) => { e.target.style.borderColor="#f59e0b"; e.target.style.boxShadow="0 0 0 3px rgba(245,158,11,0.15)"; }}
-            onBlur={(e)  => { e.target.style.borderColor="#e5e7eb"; e.target.style.boxShadow="none"; }}
-          >
-            <option value="">All Status</option>
-            <option value="active">Active</option>
-            <option value="offline">Offline</option>
-          </select>
+            options={roleOptions}
+            placeholder={loading ? "Loading..." : "All Roles"}
+            icon={Filter}
+            className="min-w-[110px]"
+            disabled={loading}
+          />
 
-          {hasActiveFilters && (
+          <FilterSelect
+            value={selectedStatus}
+            onChange={(v) => {
+              setSelectedStatus(v);
+              setCurrentPage(1);
+            }}
+            options={statusOptions}
+            placeholder="All Status"
+            className="min-w-[95px]"
+          />
+
+          {hasFilters && (
             <button
-              onClick={handleClearFilters}
-              className="flex items-center gap-1 px-3 py-2 rounded-lg text-sm font-semibold transition-all hover:opacity-75"
-              style={{ background:"#fef3c7", color:"#f59e0b", border:"1.5px solid #fde68a" }}
+              onClick={clearFilters}
+              className="
+                flex items-center gap-1 px-2 py-1 text-[10px] font-semibold
+                bg-amber-100 text-amber-800 border border-amber-300 rounded-md
+                hover:bg-amber-200 active:opacity-90 transition-colors
+              "
             >
-              <X size={14} /> Clear
+              <X size={10} /> Clear
             </button>
           )}
         </div>
       </div>
 
-      {/* Active-filter pills */}
-      {hasActiveFilters && (
-        <div className="shrink-0 flex items-center gap-2">
-          <span className="text-xs font-medium" style={{ color:"#9ca3af" }}>Active:</span>
-          {searchTerm   && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>Search: "{searchTerm}"</span>}
-          {selectedRole && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>Role: {selectedRole}</span>}
-          {selectedStatus && <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>Status: {selectedStatus}</span>}
+      {/* Active filters */}
+      {hasFilters && (
+        <div className="flex items-center gap-1.5 text-[9px] flex-wrap">
+          <span className="text-gray-500 font-medium">Filters:</span>
+          {searchTerm && (
+            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full border border-amber-200">
+              "{searchTerm.slice(0, 15)}{searchTerm.length > 15 ? "..." : ""}
+            </span>
+          )}
+          {selectedRole && (
+            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full border border-amber-200">
+              {selectedRole}
+            </span>
+          )}
+          {selectedStatus && (
+            <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full border border-amber-200">
+              {selectedStatus}
+            </span>
+          )}
         </div>
       )}
 
-      {/* ── Directory card — fills remaining height, internal scroll only ── */}
-      <div
-        className="flex-1 flex flex-col rounded-2xl overflow-hidden"
-        style={{ background:"#ffffff", border:"1px solid #e5e7eb", boxShadow:"0 2px 8px rgba(0,0,0,0.07)", minHeight:0 }}
-      >
-        {/* Sticky card header */}
-        <div
-          className="shrink-0 px-5 py-3 flex items-center justify-between"
-          style={{ background:"linear-gradient(135deg, #fffbeb, #fef3c7)", borderBottom:"1px solid #fde68a" }}
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-1 h-6 rounded-full" style={{ background:"linear-gradient(180deg, #f59e0b, #f97316)" }} />
-            <div>
-              <h3 className="text-sm font-bold" style={{ color:"#111827" }}>User Directory</h3>
-              <p className="text-xs" style={{ color:"#9ca3af" }}>Browse and manage all users</p>
-            </div>
+      {/* Main content card */}
+      <div className="flex-1 flex flex-col rounded-lg overflow-hidden bg-white border border-amber-200 shadow-sm">
+        <div className="shrink-0 px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200 flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <div className="w-0.5 h-4 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
+            <h3 className="text-[11px] font-semibold text-gray-900">User Directory</h3>
           </div>
-          <div className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background:"#fef3c7", color:"#f59e0b", border:"1px solid #fde68a" }}>
+          <span className="text-[9px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
             5 per page
-          </div>
+          </span>
         </div>
 
-        {/* Scrollable body — wraps UsersComponent full-width */}
-        <div className="flex-1 overflow-auto" style={{ minHeight:0 }}>
-          <div style={{ width:"100%", textAlign:"left" }}>
-            <UsersComponent
-              compact={false}
-              pageSize={5}
-              searchTerm={searchTerm}
-              selectedRole={selectedRole}
-              selectedStatus={selectedStatus}
-            />
-          </div>
+        <div className="flex-1 overflow-auto">
+          <UsersComponent
+            compact={true}
+            pageSize={pageSize}
+            currentPage={currentPage}
+            searchTerm={searchTerm.trim()}
+            selectedRole={selectedRole}
+            selectedStatus={selectedStatus}
+            showRowNumbers={true}           // ← new prop suggestion
+            onPageChange={setCurrentPage}
+            onTotalChange={setTotalUsers}
+          />
         </div>
+
+        {/* Pagination with page numbers */}
+        {totalUsers > 0 && totalPages > 1 && (
+          <div className="shrink-0 px-2 py-1.5 border-t border-amber-200 bg-amber-50/60 flex items-center justify-between text-[10px]">
+            <div className="text-gray-600 font-medium">
+              {totalUsers} users • page {currentPage} of {totalPages}
+            </div>
+
+            <div className="flex items-center gap-1">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => goToPage(currentPage - 1)}
+                className="p-1 rounded hover:bg-amber-100 disabled:opacity-40 transition-colors"
+              >
+                <ChevronLeft size={14} className="text-amber-700" />
+              </button>
+
+              {pages.map((page, idx) => (
+                <React.Fragment key={idx}>
+                  {page === "..." ? (
+                    <span className="px-2 py-1 text-gray-500">...</span>
+                  ) : (
+                    <button
+                      onClick={() => goToPage(page)}
+                      className={`
+                        min-w-[24px] h-6 flex items-center justify-center rounded text-[10px] font-medium
+                        ${currentPage === page 
+                          ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm" 
+                          : "hover:bg-amber-100 text-amber-800"}
+                      `}
+                    >
+                      {page}
+                    </button>
+                  )}
+                </React.Fragment>
+              ))}
+
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => goToPage(currentPage + 1)}
+                className="p-1 rounded hover:bg-amber-100 disabled:opacity-40 transition-colors"
+              >
+                <ChevronRight size={14} className="text-amber-700" />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
