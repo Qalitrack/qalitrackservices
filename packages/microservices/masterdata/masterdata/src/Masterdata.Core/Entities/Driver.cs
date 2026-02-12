@@ -29,6 +29,8 @@ namespace Masterdata.Core.Entities
 
         public string? SupplierId { get; set; }
 
+        public string? NfCcode { get; set; }
+
         [ForeignKey(nameof(SupplierId))]
         public virtual Supplier? Supplier { get; set; }
 

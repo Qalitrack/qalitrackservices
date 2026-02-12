@@ -136,11 +136,6 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         };
     }
 
-    public Task<T?> GetByIdAsync(string id)
-    {
-        throw new NotImplementedException();
-    }
-
     public virtual async Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<string> ids)
     {
         var idSet = new HashSet<string>(ids);
@@ -310,74 +305,100 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         };
     }
 
+    public virtual async Task<T?> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await DbSet
+            .Where(e => !e.IsDeleted)
+            .FirstOrDefaultAsync(predicate);
+    }
+
+    public virtual async Task<bool> ExistsByPredicateAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await DbSet
+            .Where(e => !e.IsDeleted)
+            .AnyAsync(predicate);
+    }
+
+           /// <summary>
+        /// Bulk update multiple entities in a single operation
+        /// </summary>
+        /// <param name="entities">The entities to update</param>
+        public virtual async Task UpdateRangeAsync(IEnumerable<T> entities)
+        {
+            var entityList = entities?.ToList() ?? new List<T>();
+            if (!entityList.Any()) return;
+
+            var strategy = Context.Database.CreateExecutionStrategy();
+
+            await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await Context.Database.BeginTransactionAsync();
+                try
+                {
+                    // Apply audit fields to all entities
+                    foreach (var entity in entityList)
+                    {
+                        entity.UpdatedAt = DateTime.UtcNow;
+                        if (CurrentUserId != null)
+                        {
+                            entity.UpdatedBy = CurrentUserId;
+
+                            // Preserve CreatedBy if it was not set
+                            var existingCreatedBy = await DbSet.AsNoTracking()
+                                .Where(e => e.Id == entity.Id)
+                                .Select(e => e.CreatedBy)
+                                .FirstOrDefaultAsync();
+
+                            if (!string.IsNullOrEmpty(existingCreatedBy) && string.IsNullOrEmpty(entity.CreatedBy))
+                            {
+                                entity.CreatedBy = existingCreatedBy;
+                            }
+                        }
+                    }
+
+                    // Perform the bulk update
+                    DbSet.UpdateRange(entityList);
+
+                    // Allow tracking of related entities (if overridden)
+                    foreach (var entity in entityList)
+                    {
+                        await TrackRelatedEntitiesAsync(entity, isCreate: false);
+                    }
+
+                    await Context.SaveChangesAsync();
+
+                    // Audit logging for each updated entity
+                    // Note: original values are not captured here (unlike single UpdateAsync)
+                    foreach (var entity in entityList)
+                    {
+                        // Using same entity as old/new — for real diff, fetch originals beforehand if needed
+                        await _auditLogRepository.LogUpdateAsync(entity, entity);
+                    }
+
+                    // Log any related entity changes detected by ChangeTracker
+                    await LogRelatedEntityChangesAsync();
+
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+        }
+
     public virtual async Task<bool> ExistsAsync(string id)
     {
         return await DbSet.AnyAsync(e => e.Id == id && !e.IsDeleted);
     }
 
-    public virtual async Task<IReadOnlyList<T>> QueryAsync(
-        Expression<Func<T, bool>>? predicate = null,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
-        Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
-        bool asNoTracking = true)
-    {
-        IQueryable<T> query = DbSet;
-
-        // Apply no-tracking if needed
-        if (asNoTracking)
-        {
-            query = query.AsNoTracking();
-        }
-
-        // Apply filter
-        if (predicate != null)
-        {
-            query = query.Where(predicate);
-        }
-
-        // Include related data
-        if (include != null)
-        {
-            query = include(query);
-        }
-
-        // Apply ordering
-        if (orderBy != null)
-        {
-            query = orderBy(query);
-        }
-
-        return await query.ToListAsync();
-    }
-
-    public virtual async Task<T?> FirstOrDefaultAsync(
-        Expression<Func<T, bool>> predicate,
-        Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = null,
-        bool asNoTracking = true)
-    {
-        IQueryable<T> query = DbSet;
-
-        // Apply no-tracking if needed
-        if (asNoTracking)
-        {
-            query = query.AsNoTracking();
-        }
-
-        // Include related data
-        if (include != null)
-        {
-            query = include(query);
-        }
-
-        return await query.FirstOrDefaultAsync(predicate);
-    }
-
     /// <summary>
     /// Tracks related entities that will be modified as a result of the current operation
     /// </summary>
-    private async Task TrackRelatedEntitiesAsync(T entity, bool isCreate)
+    protected virtual async Task TrackRelatedEntitiesAsync(T entity, bool isCreate)
     {
-        // This will be overridden in specific repositories if needed
+        // This can be overridden in specific repositories if needed
         await Task.CompletedTask;
     }
 

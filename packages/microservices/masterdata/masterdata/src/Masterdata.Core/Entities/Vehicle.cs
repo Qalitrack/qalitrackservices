@@ -42,12 +42,11 @@ namespace Masterdata.Core.Entities
         [MaxLength(50)]
         public string? BodyType { get; set; }
 
-        // Ownership
-        [Required]
-        public string OwnerId { get; set; } = null!;
+        // Ownership – now OPTIONAL (nullable)
+        public string? OwnerId { get; set; }               // ← Changed: no [Required]
 
         [ForeignKey(nameof(OwnerId))]
-        public virtual Owner Owner { get; set; } = null!;
+        public virtual Owner? Owner { get; set; }          // ← Changed: nullable reference
 
         [NotMapped]
         public OwnerType OwnerType => Owner?.Type ?? OwnerType.Individual;
@@ -70,21 +69,23 @@ namespace Masterdata.Core.Entities
         public virtual AxleConfiguration AxleConfiguration { get; set; } = null!;
 
         // Technical Specifications
-        public decimal? GrossWeight { get; set; } // in kg
-        public decimal? TareWeight { get; set; } // in kg
-        public decimal? NetWeightCapacity { get; set; } // in kg
+        public decimal? GrossWeight { get; set; }           // in kg
+        public decimal? TareWeight { get; set; }            // in kg
+        public decimal? NetWeightCapacity { get; set; }     // in kg
         public int? SeatingCapacity { get; set; }
-        public decimal? FuelTankCapacity { get; set; } // in liters
+        public decimal? FuelTankCapacity { get; set; }      // in liters
 
         // Insurance and Registration
         [MaxLength(50)]
         public string? InsurancePolicyNumber { get; set; }
-        
+
         public DateTime? InsuranceExpiryDate { get; set; }
-        
+
         [MaxLength(50)]
         public string? RoadWorthinessNumber { get; set; }
-        
+
+        public string? RfiDcode { get; set; }
+
         public DateTime? RoadWorthinessExpiryDate { get; set; }
 
         // Navigation properties

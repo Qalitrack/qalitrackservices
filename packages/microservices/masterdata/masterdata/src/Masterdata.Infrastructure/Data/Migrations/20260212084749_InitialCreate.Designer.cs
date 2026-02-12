@@ -9,10 +9,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Masterdata.Infrastructure.Migrations
+namespace Masterdata.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MasterdataDbContext))]
-    [Migration("20251021090014_InitialCreate")]
+    [Migration("20260212084749_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -37,8 +37,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Details")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -55,8 +54,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -80,32 +78,29 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
+                        .HasColumnType("text");
 
                     b.Property<string>("AffectedProperties")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("text");
 
                     b.Property<string>("EntityId")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<string>("EntityName")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<string>("IpAddress")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -123,22 +118,12 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("UserId")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<string>("UserName")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Action");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("EntityName", "EntityId");
 
                     b.ToTable("AuditLogs");
                 });
@@ -153,8 +138,8 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -163,8 +148,8 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -182,9 +167,6 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
 
                     b.ToTable("AxleConfigurations");
                 });
@@ -207,19 +189,14 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Logo")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -228,9 +205,6 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
@@ -267,6 +241,9 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<string>("NfCcode")
+                        .HasColumnType("text");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -276,12 +253,18 @@ namespace Masterdata.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasDefaultValue("Active");
 
                     b.Property<string>("SupplierId")
                         .HasColumnType("text");
 
+                    b.Property<string>("SupplierId1")
+                        .HasColumnType("text");
+
                     b.Property<string>("TransporterId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TransporterId1")
                         .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -297,7 +280,11 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.HasIndex("SupplierId");
 
+                    b.HasIndex("SupplierId1");
+
                     b.HasIndex("TransporterId");
+
+                    b.HasIndex("TransporterId1");
 
                     b.ToTable("Drivers");
                 });
@@ -328,10 +315,8 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime?>("UnassignedDate")
                         .HasColumnType("timestamp with time zone");
@@ -368,18 +353,13 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasColumnType("text");
 
                     b.Property<string>("Type")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -388,9 +368,6 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Organisations");
                 });
@@ -459,9 +436,10 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<int>("Type")
-                        .HasMaxLength(100)
-                        .HasColumnType("integer");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -484,8 +462,7 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("Code")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -494,20 +471,17 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Image")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -516,9 +490,6 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
 
                     b.ToTable("Products");
                 });
@@ -536,27 +507,21 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("EndPoint")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<string>("StartPoint")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -565,9 +530,6 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Routes");
                 });
@@ -591,8 +553,7 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<string>("OtherDetails")
                         .HasColumnType("jsonb");
@@ -609,9 +570,6 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
 
                     b.ToTable("Saccos");
                 });
@@ -634,8 +592,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Logo")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -646,7 +603,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasDefaultValue("Active");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -680,8 +637,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Logo")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -692,7 +648,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasDefaultValue("Active");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -715,6 +671,9 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("AxleConfigurationId")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("AxleConfigurationId1")
                         .HasColumnType("text");
 
                     b.Property<string>("BodyType")
@@ -760,20 +719,22 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<string>("Model")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal?>("NetWeightCapacity")
                         .HasColumnType("numeric");
 
                     b.Property<string>("OwnerId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RegistrationNumber")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("RfiDcode")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("RoadWorthinessExpiryDate")
                         .HasColumnType("timestamp with time zone");
@@ -790,7 +751,7 @@ namespace Masterdata.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasDefaultValue("Active");
 
                     b.Property<string>("SupplierId")
                         .HasColumnType("text");
@@ -803,8 +764,8 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.Property<string>("Type")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -822,6 +783,11 @@ namespace Masterdata.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AxleConfigurationId");
+
+                    b.HasIndex("AxleConfigurationId1");
+
+                    b.HasIndex("ChassisNumber")
+                        .IsUnique();
 
                     b.HasIndex("OwnerId");
 
@@ -847,22 +813,17 @@ namespace Masterdata.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Location")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Status")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasDefaultValue("active");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -872,9 +833,6 @@ namespace Masterdata.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Location")
-                        .IsUnique();
-
                     b.ToTable("Weighbridges");
                 });
 
@@ -882,13 +840,11 @@ namespace Masterdata.Infrastructure.Migrations
                 {
                     b.HasOne("Masterdata.Core.Entities.Organisation", "Organisation")
                         .WithMany("Affiliations")
-                        .HasForeignKey("OrganisationId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("OrganisationId");
 
                     b.HasOne("Masterdata.Core.Entities.Sacco", "Sacco")
                         .WithMany("Affiliations")
-                        .HasForeignKey("SaccoId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("SaccoId");
 
                     b.Navigation("Organisation");
 
@@ -898,14 +854,22 @@ namespace Masterdata.Infrastructure.Migrations
             modelBuilder.Entity("Masterdata.Core.Entities.Driver", b =>
                 {
                     b.HasOne("Masterdata.Core.Entities.Supplier", "Supplier")
-                        .WithMany("Drivers")
+                        .WithMany()
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Masterdata.Core.Entities.Transporter", "Transporter")
+                    b.HasOne("Masterdata.Core.Entities.Supplier", null)
                         .WithMany("Drivers")
+                        .HasForeignKey("SupplierId1");
+
+                    b.HasOne("Masterdata.Core.Entities.Transporter", "Transporter")
+                        .WithMany()
                         .HasForeignKey("TransporterId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Masterdata.Core.Entities.Transporter", null)
+                        .WithMany("Drivers")
+                        .HasForeignKey("TransporterId1");
 
                     b.Navigation("Supplier");
 
@@ -934,16 +898,19 @@ namespace Masterdata.Infrastructure.Migrations
             modelBuilder.Entity("Masterdata.Core.Entities.Vehicle", b =>
                 {
                     b.HasOne("Masterdata.Core.Entities.AxleConfiguration", "AxleConfiguration")
-                        .WithMany("Vehicles")
+                        .WithMany()
                         .HasForeignKey("AxleConfigurationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Masterdata.Core.Entities.AxleConfiguration", null)
+                        .WithMany("Vehicles")
+                        .HasForeignKey("AxleConfigurationId1");
+
                     b.HasOne("Masterdata.Core.Entities.Owner", "Owner")
                         .WithMany("Vehicles")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Masterdata.Core.Entities.Supplier", "Supplier")
                         .WithMany("Vehicles")

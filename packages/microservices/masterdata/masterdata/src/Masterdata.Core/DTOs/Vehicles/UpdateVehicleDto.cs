@@ -78,7 +78,9 @@ public class UpdateVehicleDto
 
     [Required(ErrorMessage = "Axle configuration ID is required")]
     public string AxleConfigurationId { get; set; } = null!;
-
+     
     // Driver assignments
     public List<string>? DriverIds { get; set; } = new();
+    
+    public string?RfiDcode { get; set; }
 }
