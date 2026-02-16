@@ -119,4 +119,5 @@ public class ConnectionSettings
             _ => $"Unknown: {ConnectionType}"
         };
     }
+    
 }
