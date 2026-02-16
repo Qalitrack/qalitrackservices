@@ -1,41 +1,64 @@
-// AxleConfigs.js
+// src/api/MasterData/AxleConfigs.js
 import { apiClient } from "../helpers/apiClients";
 
+const BASE_PATH = "/MasterData/AxleConfigurations";
+
 // Fetch all axle configurations
-export const getAxleConfigs = async (pageNumber = 1, pageSize = 10, searchTerm = "") => {
-  const response = await apiClient.get("/MasterData/AxleConfigurations", {
-    params: { pageNumber, pageSize, searchTerm },
-  });
-  console.log(response.data);
-  return response.data;
+export const getAxleConfigs = async (pageNumber = 1, pageSize = 100, searchTerm = "") => {
+  try {
+    console.log(`🔧 Fetching axle configs with params:`, { 
+      pageNumber, 
+      pageSize, 
+      searchTerm
+    });
+    
+    const response = await apiClient.get(BASE_PATH, {
+      params: { 
+        pageNumber, 
+        pageSize, 
+        searchTerm: searchTerm || undefined 
+      }
+    });
+    
+    console.log('✅ Axle Configs API Response:', response.data);
+    
+    return response.data;
+  } catch (error) {
+    console.error('❌ Axle Configs API Error:', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    throw error;
+  }
 };
 
 // Create new axle configuration
 export const createAxleConfig = async (data) => {
-  const response = await apiClient.post("/MasterData/AxleConfigurations", data);
+  const response = await apiClient.post(BASE_PATH, data);
   return response.data;
 };
 
 // Get axle configuration by ID
 export const getAxleConfigById = async (id) => {
-  const response = await apiClient.get(`/MasterData/AxleConfigurations/${id}`);
+  const response = await apiClient.get(`${BASE_PATH}/${id}`);
   return response.data;
 };
 
 // Update axle configuration
 export const updateAxleConfig = async (id, data) => {
-  const response = await apiClient.put(`/MasterData/AxleConfigurations/${id}`, data);
+  const response = await apiClient.put(`${BASE_PATH}/${id}`, data);
   return response.data;
 };
 
 // Delete axle configuration
 export const deleteAxleConfig = async (id) => {
-  const response = await apiClient.delete(`/MasterData/AxleConfigurations/${id}`);
+  const response = await apiClient.delete(`${BASE_PATH}/${id}`);
   return response.data;
 };
 
 // Toggle status
 export const toggleAxleConfigStatus = async (id, isActive) => {
-  const response = await apiClient.patch(`/MasterData/AxleConfigurations/${id}/status`, isActive);
+  const response = await apiClient.patch(`${BASE_PATH}/${id}/status`, isActive);
   return response.data;
 };
