@@ -454,12 +454,12 @@ export default function Vehicles() {
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm max-h-[50vh] overflow-y-auto">
         {/* Info Banner */}
-        <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-[10px] text-blue-800">
+        {/* <div className="mb-2 p-2 bg-blue-50 border border-blue-200 rounded text-[10px] text-blue-800">
           <strong>ℹ️ Required:</strong> Select an Owner and Axle Configuration from the dropdowns. 
           If you don't see the options you need, add them in the Owners and Axle Configurations sections first.
           <br/>
           <strong>📝 Note:</strong> RFID codes can only be assigned when <em>updating</em> a vehicle, not during initial creation.
-        </div>
+        </div> */}
         
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* Basic Information */}
@@ -904,6 +904,7 @@ export default function Vehicles() {
           <table className="w-full compact-table">
             <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
               <tr>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Reg. Number</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Type</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Make/Model</th>
@@ -922,6 +923,9 @@ export default function Vehicles() {
                     index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
+                  <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">
+                    {index + 1}
+                  </td>
                   <td className="px-3 py-2">
                     <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
                       {v.registrationNumber}
