@@ -73,6 +73,14 @@ public class ConfigurationController : ControllerBase
                         }) ?? Enumerable.Empty<object>(),
                         reconnectDelayMs = config.CameraSettings.ReconnectDelayMs,
                         frameBufferSize = config.CameraSettings.FrameBufferSize
+                    } : null,
+                    rfidSettings = config.RfidSettings != null ? new
+                    {
+                        enabled = config.RfidSettings.Enabled,
+                        host = config.RfidSettings.Host,
+                        port = config.RfidSettings.Port,
+                        scanIntervalMs = config.RfidSettings.ScanIntervalMs,
+                        reconnectDelayMs = config.RfidSettings.ReconnectDelayMs
                     } : null
                 }
             });

@@ -6,4 +6,5 @@ public class TcpListenerSettings
     public int Port { get; set; } = 3002;
     public int ReadTimeoutMs { get; set; } = 1000;
     public int ReconnectDelayMs { get; set; } = 5000;
+    public RfidSettings? Rfid { get; set; }
 }
