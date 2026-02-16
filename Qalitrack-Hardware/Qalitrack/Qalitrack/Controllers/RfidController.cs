@@ -40,17 +40,50 @@ public class RfidController : ControllerBase
 
         int count = 0;
         var sw = Stopwatch.StartNew();
+        var lastActivity = DateTime.UtcNow;
 
         try
         {
+            // Send initial connection confirmation
+            await Response.WriteAsync($"data: {{\"type\":\"connected\",\"clientId\":\"{clientId}\"}}\n\n", cancellationToken);
+            await Response.Body.FlushAsync(cancellationToken);
+
+            // Create keepalive timer
+            using var keepaliveTimer = new PeriodicTimer(TimeSpan.FromSeconds(15));
+            var keepaliveTask = Task.Run(async () =>
+            {
+                while (await keepaliveTimer.WaitForNextTickAsync(cancellationToken))
+                {
+                    var timeSinceLastActivity = DateTime.UtcNow - lastActivity;
+                    if (timeSinceLastActivity.TotalSeconds >= 15)
+                    {
+                        try
+                        {
+                            await Response.WriteAsync(": keepalive\n\n", cancellationToken);
+                            await Response.Body.FlushAsync(cancellationToken);
+                        }
+                        catch
+                        {
+                            break;
+                        }
+                    }
+                }
+            }, cancellationToken);
+
             await foreach (var json in _streamService.SubscribeAsync(clientId, cancellationToken))
             {
                 count++;
+                lastActivity = DateTime.UtcNow;
+                
                 await Response.WriteAsync($"data: {json}\n\n", cancellationToken);
                 await Response.Body.FlushAsync(cancellationToken);
             }
         }
-        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("RFID SSE client {ClientId} cancelled (normal disconnect)", clientId);
+        }
+        catch (Exception ex)
         {
             _logger.LogWarning(ex, "SSE stream error for {ClientId}", clientId);
         }
@@ -61,5 +94,11 @@ public class RfidController : ControllerBase
             _logger.LogInformation("RFID SSE client disconnected - ID: {ClientId} Messages: {Count} Duration: {Sec}s", 
                 clientId, count, sw.Elapsed.TotalSeconds.ToString("F1"));
         }
+    }
+
+    [HttpGet("health")]
+    public IActionResult Health()
+    {
+        return Ok(new { status = "healthy", service = "rfid", timestamp = DateTime.UtcNow });
     }
 }
