@@ -3,87 +3,259 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../../store/weighingSlice";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import isBetween from "dayjs/plugin/isBetween";
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
-  XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend
+  XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend,
+  AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  ScatterChart, Scatter, ComposedChart
 } from "recharts";
+import {
+  TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
+  Activity, Clock, Target, Zap, Award, Filter, X
+} from "lucide-react";
 
 dayjs.extend(relativeTime);
+dayjs.extend(isBetween);
 
-// Amber color palette with different shades
+// Amber color palette
 const AMBER_COLORS = {
-  darkest: "#78350f",   // amber-950
-  darker: "#92400e",    // amber-900
-  dark: "#b45309",      // amber-800
-  medium: "#d97706",    // amber-700
-  base: "#f59e0b",      // amber-500
-  light: "#fbbf24",     // amber-400
-  lighter: "#fcd34d",   // amber-300
-  lightest: "#fde68a",  // amber-200
+  darkest: "#78350f",
+  darker: "#92400e",
+  dark: "#b45309",
+  medium: "#d97706",
+  base: "#f59e0b",
+  light: "#fbbf24",
+  lighter: "#fcd34d",
+  lightest: "#fde68a",
 };
 
-const PIE_COLORS = [AMBER_COLORS.medium, AMBER_COLORS.light];
+const PIE_COLORS = [AMBER_COLORS.medium, AMBER_COLORS.light, "#10b981", "#3b82f6", "#ef4444"];
 
 export default function Analytics() {
   const dispatch = useDispatch();
   const { transactions, loading } = useSelector((state) => state.weighing);
   const [lastUpdated, setLastUpdated] = useState(dayjs());
+  
+  // NEW: Advanced filters
+  const [timeRange, setTimeRange] = useState("today");
+  const [showFilters, setShowFilters] = useState(false);
+  const [selectedCommodity, setSelectedCommodity] = useState("all");
+  const [selectedDriver, setSelectedDriver] = useState("all");
+  const [alertsOnly, setAlertsOnly] = useState(false);
 
   // Auto-refresh every 30 seconds
   useEffect(() => {
-    // Initial load
     dispatch(fetchTransactions({ pageSize: 10000 }));
     setLastUpdated(dayjs());
 
-    // Set up interval for auto-refresh
     const interval = setInterval(() => {
       dispatch(fetchTransactions({ pageSize: 10000 }));
       setLastUpdated(dayjs());
-    }, 30000); // 30 seconds
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [dispatch]);
 
+  // NEW: Filtered transactions based on time range and filters
+  const filteredTransactions = useMemo(() => {
+    let data = [...(transactions || [])];
+    const now = dayjs();
+
+    // Time range filter
+    switch (timeRange) {
+      case "today":
+        data = data.filter(t => dayjs(t.createdAt).isSame(now, "day"));
+        break;
+      case "yesterday":
+        data = data.filter(t => dayjs(t.createdAt).isSame(now.subtract(1, "day"), "day"));
+        break;
+      case "week":
+        data = data.filter(t => dayjs(t.createdAt).isAfter(now.subtract(7, "day")));
+        break;
+      case "month":
+        data = data.filter(t => dayjs(t.createdAt).isAfter(now.subtract(30, "day")));
+        break;
+      default:
+        break;
+    }
+
+    // Commodity filter
+    if (selectedCommodity !== "all") {
+      data = data.filter(t => t.commodityName === selectedCommodity);
+    }
+
+    // Driver filter
+    if (selectedDriver !== "all") {
+      data = data.filter(t => t.driverName === selectedDriver);
+    }
+
+    return data;
+  }, [transactions, timeRange, selectedCommodity, selectedDriver]);
+
   const completedTx = useMemo(
-    () =>
-      (transactions || []).filter(
-        (t) => t.secondWeight && parseFloat(t.secondWeight) > 0
-      ),
-    [transactions]
+    () => filteredTransactions.filter(t => t.secondWeight && parseFloat(t.secondWeight) > 0),
+    [filteredTransactions]
   );
 
   const inProgressTx = useMemo(
-    () =>
-      (transactions || []).filter(
-        (t) => !t.secondWeight || parseFloat(t.secondWeight) === 0
-      ),
-    [transactions]
+    () => filteredTransactions.filter(t => !t.secondWeight || parseFloat(t.secondWeight) === 0),
+    [filteredTransactions]
   );
 
-  const kpis = useMemo(() => {
-    const totalNet = completedTx.reduce(
-      (sum, t) => sum + (parseFloat(t.netWeight) || 0),
-      0
+  // NEW: Get unique commodities and drivers for filters
+  const commodities = useMemo(() => {
+    const unique = [...new Set(transactions.map(t => t.commodityName).filter(Boolean))];
+    return unique.sort();
+  }, [transactions]);
+
+  const drivers = useMemo(() => {
+    const unique = [...new Set(transactions.map(t => t.driverName).filter(Boolean))];
+    return unique.sort();
+  }, [transactions]);
+
+  // NEW: Advanced KPIs with comparisons
+  const advancedKPIs = useMemo(() => {
+    const totalNet = completedTx.reduce((sum, t) => sum + (parseFloat(t.netWeight) || 0), 0);
+    
+    // Calculate average TAT
+    const avgTAT = completedTx.reduce((sum, t) => {
+      if (!t.firstWeightTime || !t.secondWeightTime) return sum;
+      return sum + dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute");
+    }, 0) / (completedTx.length || 1);
+
+    // NEW: Efficiency score (completed / total * 100)
+    const efficiency = filteredTransactions.length > 0 
+      ? (completedTx.length / filteredTransactions.length) * 100 
+      : 0;
+
+    // NEW: Average weight per transaction
+    const avgWeight = completedTx.length > 0 ? totalNet / completedTx.length : 0;
+
+    // NEW: Capacity utilization (assume 50 transactions per day is 100%)
+    const targetPerDay = 50;
+    const actualToday = filteredTransactions.filter(t => 
+      dayjs(t.createdAt).isSame(dayjs(), "day")
+    ).length;
+    const capacityUtilization = (actualToday / targetPerDay) * 100;
+
+    // NEW: Transactions per hour (last hour)
+    const lastHour = filteredTransactions.filter(t =>
+      dayjs(t.createdAt).isAfter(dayjs().subtract(1, "hour"))
+    ).length;
+
+    // NEW: Previous period comparison (for growth indicators)
+    const now = dayjs();
+    let previousPeriodData = [];
+    
+    switch (timeRange) {
+      case "today":
+        previousPeriodData = transactions.filter(t => 
+          dayjs(t.createdAt).isSame(now.subtract(1, "day"), "day")
+        );
+        break;
+      case "week":
+        previousPeriodData = transactions.filter(t =>
+          dayjs(t.createdAt).isBetween(now.subtract(14, "day"), now.subtract(7, "day"))
+        );
+        break;
+      case "month":
+        previousPeriodData = transactions.filter(t =>
+          dayjs(t.createdAt).isBetween(now.subtract(60, "day"), now.subtract(30, "day"))
+        );
+        break;
+      default:
+        previousPeriodData = transactions.filter(t => 
+          dayjs(t.createdAt).isSame(now.subtract(1, "day"), "day")
+        );
+    }
+
+    const prevCompleted = previousPeriodData.filter(t => 
+      t.secondWeight && parseFloat(t.secondWeight) > 0
+    );
+    const prevTotalNet = prevCompleted.reduce((sum, t) => 
+      sum + (parseFloat(t.netWeight) || 0), 0
     );
 
-    // Calculate average TAT (same logic as Transactions.jsx)
-    const avgTAT =
-      completedTx.reduce((sum, t) => {
-        if (!t.firstWeightTime || !t.secondWeightTime) return sum;
-        return (
-          sum +
-          dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute")
-        );
-      }, 0) / (completedTx.length || 1);
+    // Growth calculations
+    const txGrowth = previousPeriodData.length > 0
+      ? ((filteredTransactions.length - previousPeriodData.length) / previousPeriodData.length) * 100
+      : 0;
+    const weightGrowth = prevTotalNet > 0
+      ? ((totalNet - prevTotalNet) / prevTotalNet) * 100
+      : 0;
 
     return {
-      totalTx: transactions.length,
+      totalTx: filteredTransactions.length,
       completed: completedTx.length,
       inProgress: inProgressTx.length,
       totalNetWeight: totalNet,
       avgTurnaround: Math.round(avgTAT),
+      efficiency: Math.round(efficiency),
+      avgWeight: Math.round(avgWeight),
+      capacityUtilization: Math.round(capacityUtilization),
+      txPerHour: lastHour,
+      txGrowth: txGrowth.toFixed(1),
+      weightGrowth: weightGrowth.toFixed(1),
     };
-  }, [transactions, completedTx, inProgressTx]);
+  }, [filteredTransactions, completedTx, inProgressTx, transactions, timeRange]);
+
+  // NEW: Alerts system
+  const alerts = useMemo(() => {
+    const alertList = [];
+
+    // Low efficiency alert
+    if (advancedKPIs.efficiency < 70) {
+      alertList.push({
+        type: "warning",
+        icon: AlertTriangle,
+        message: `Low completion rate: ${advancedKPIs.efficiency}%`,
+        color: "amber",
+      });
+    }
+
+    // High TAT alert
+    if (advancedKPIs.avgTurnaround > 60) {
+      alertList.push({
+        type: "warning",
+        icon: Clock,
+        message: `High turnaround time: ${advancedKPIs.avgTurnaround} min`,
+        color: "red",
+      });
+    }
+
+    // Capacity alert
+    if (advancedKPIs.capacityUtilization > 90) {
+      alertList.push({
+        type: "info",
+        icon: Activity,
+        message: `Near capacity: ${advancedKPIs.capacityUtilization}%`,
+        color: "blue",
+      });
+    }
+
+    // Low activity alert
+    if (advancedKPIs.txPerHour < 2 && dayjs().hour() >= 8 && dayjs().hour() <= 17) {
+      alertList.push({
+        type: "warning",
+        icon: TrendingDown,
+        message: `Low activity: ${advancedKPIs.txPerHour} tx/hour`,
+        color: "amber",
+      });
+    }
+
+    // Good performance
+    if (advancedKPIs.efficiency >= 90 && advancedKPIs.avgTurnaround < 30) {
+      alertList.push({
+        type: "success",
+        icon: CheckCircle,
+        message: "Excellent performance!",
+        color: "green",
+      });
+    }
+
+    return alertList;
+  }, [advancedKPIs]);
 
   const dailyTrend = useMemo(() => {
     const map = {};
@@ -93,7 +265,7 @@ export default function Analytics() {
       map[day].count += 1;
       map[day].weight += parseFloat(t.netWeight) || 0;
     });
-    return Object.values(map);
+    return Object.values(map).slice(-7); // Last 7 days
   }, [completedTx]);
 
   const tatTrend = useMemo(() => {
@@ -112,7 +284,7 @@ export default function Analytics() {
     return Object.values(map).map(item => ({
       day: item.day,
       avgTAT: Math.round(item.totalTAT / item.count)
-    }));
+    })).slice(-7);
   }, [completedTx]);
 
   const hourlyPerformance = useMemo(() => {
@@ -120,7 +292,7 @@ export default function Analytics() {
     
     for (let i = 0; i < 24; i++) {
       const hour = i.toString().padStart(2, '0') + ':00';
-      map[hour] = { hour, completed: 0, inProgress: 0, total: 0 };
+      map[hour] = { hour, completed: 0, inProgress: 0, total: 0, avgTAT: 0, tatSum: 0, tatCount: 0 };
     }
     
     completedTx.forEach((t) => {
@@ -128,6 +300,13 @@ export default function Analytics() {
       if (map[hour]) {
         map[hour].completed += 1;
         map[hour].total += 1;
+        
+        // Calculate TAT for this transaction
+        if (t.firstWeightTime && t.secondWeightTime) {
+          const tat = dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute");
+          map[hour].tatSum += tat;
+          map[hour].tatCount += 1;
+        }
       }
     });
     
@@ -138,16 +317,75 @@ export default function Analytics() {
         map[hour].total += 1;
       }
     });
+
+    // Calculate average TAT per hour
+    Object.values(map).forEach(item => {
+      if (item.tatCount > 0) {
+        item.avgTAT = Math.round(item.tatSum / item.tatCount);
+      }
+    });
     
     return Object.values(map);
   }, [completedTx, inProgressTx]);
+
+  // NEW: Performance by driver
+  const driverPerformance = useMemo(() => {
+    const map = {};
+    
+    completedTx.forEach(t => {
+      const driver = t.driverName || "Unknown";
+      if (!map[driver]) {
+        map[driver] = { 
+          driver, 
+          trips: 0, 
+          weight: 0, 
+          tatSum: 0, 
+          tatCount: 0 
+        };
+      }
+      
+      map[driver].trips += 1;
+      map[driver].weight += parseFloat(t.netWeight) || 0;
+      
+      if (t.firstWeightTime && t.secondWeightTime) {
+        const tat = dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute");
+        map[driver].tatSum += tat;
+        map[driver].tatCount += 1;
+      }
+    });
+    
+    return Object.values(map)
+      .map(d => ({
+        driver: d.driver,
+        trips: d.trips,
+        weight: Math.round(d.weight),
+        avgTAT: d.tatCount > 0 ? Math.round(d.tatSum / d.tatCount) : 0,
+      }))
+      .sort((a, b) => b.weight - a.weight)
+      .slice(0, 5);
+  }, [completedTx]);
+
+  // NEW: Radar chart data for multi-metric performance
+  const radarData = useMemo(() => {
+    const maxTx = Math.max(...driverPerformance.map(d => d.trips));
+    const maxWeight = Math.max(...driverPerformance.map(d => d.weight));
+    const maxTAT = Math.max(...driverPerformance.map(d => d.avgTAT));
+    
+    return driverPerformance.slice(0, 3).map(driver => ({
+      driver: driver.driver,
+      trips: maxTx > 0 ? (driver.trips / maxTx) * 100 : 0,
+      weight: maxWeight > 0 ? (driver.weight / maxWeight) * 100 : 0,
+      speed: maxTAT > 0 ? 100 - ((driver.avgTAT / maxTAT) * 100) : 0, // Inverse: lower TAT = higher score
+    }));
+  }, [driverPerformance]);
 
   const commodityStats = useMemo(() => {
     const map = {};
     completedTx.forEach((t) => {
       const key = t.commodityName || "Unknown";
-      if (!map[key]) map[key] = { name: key, weight: 0 };
+      if (!map[key]) map[key] = { name: key, weight: 0, count: 0 };
       map[key].weight += parseFloat(t.netWeight) || 0;
+      map[key].count += 1;
     });
     return Object.values(map).slice(0, 8);
   }, [completedTx]);
@@ -157,20 +395,33 @@ export default function Analytics() {
     { name: "In Progress", value: inProgressTx.length },
   ];
 
+  // NEW: Clear all filters
+  const clearFilters = () => {
+    setTimeRange("today");
+    setSelectedCommodity("all");
+    setSelectedDriver("all");
+    setAlertsOnly(false);
+  };
+
+  const activeFiltersCount = [
+    timeRange !== "today",
+    selectedCommodity !== "all",
+    selectedDriver !== "all",
+    alertsOnly
+  ].filter(Boolean).length;
+
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-y-scroll">
+    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
 
       {/* HEADER */}
-      <div className="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-10">
+      <div className="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md">
-              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-              </svg>
+              <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-gray-900">Analytics Dashboard</h1>
+              <h1 className="text-base sm:text-lg font-bold text-gray-900">Live Analytics Dashboard</h1>
               <p className="text-xs text-gray-500 font-medium">
                 Real-time insights • Auto-refresh every 30s
               </p>
@@ -189,214 +440,338 @@ export default function Analytics() {
               disabled={loading}
               className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-xs font-semibold text-amber-900 transition-all disabled:opacity-50"
             >
-              <svg className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-              </svg>
+              <Activity className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* CONTENT */}
-      <div className="p-3 sm:p-4 md:p-6 pb-20">
-        {/* KPI CARDS */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
-          {[
-            ["Total Tickets", kpis.totalTx, "from-amber-100 to-amber-50"],
-            ["Completed", kpis.completed, "from-amber-100 to-amber-50"],
-            ["In Progress", kpis.inProgress, "from-amber-100 to-amber-50"],
-            ["Total Net (kg)", kpis.totalNetWeight.toLocaleString(), "from-amber-100 to-amber-50"],
-            ["Avg TAT (min)", kpis.avgTurnaround, "from-amber-100 to-amber-50"],
-          ].map(([label, value, gradient]) => (
-            <div
-              key={label}
-              className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md border border-amber-200 text-amber-900 transform transition-transform hover:scale-105`}
+      {/* FILTERS BAR */}
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-2 shrink-0">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Time Range */}
+            <select
+              value={timeRange}
+              onChange={(e) => setTimeRange(e.target.value)}
+              className="border border-amber-300 rounded px-2 py-1 text-xs font-medium focus:ring-2 focus:ring-amber-200"
             >
-              <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide opacity-90">{label}</div>
-              <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1">{value}</div>
-            </div>
-          ))}
-        </div>
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="week">Last 7 Days</option>
+              <option value="month">Last 30 Days</option>
+            </select>
 
-        {/* GRAPHS GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
-          {/* DAILY THROUGHPUT */}
-          <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Daily Throughput</h3>
-            <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
-              <LineChart data={dailyTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="day" 
-                  tick={{ fontSize: 10 }} 
-                  className="sm:text-xs"
-                  interval="preserveStartEnd"
-                />
-                <YAxis tick={{ fontSize: 10 }} className="sm:text-xs" />
-                <Tooltip 
-                  contentStyle={{ fontSize: 11, backgroundColor: '#fff', border: '1px solid #e5e7eb' }} 
-                  className="sm:text-xs"
-                />
-                <Legend wrapperStyle={{ fontSize: 10 }} className="sm:text-xs" />
-                <Line 
-                  type="monotone" 
-                  dataKey="count" 
-                  stroke={AMBER_COLORS.dark} 
-                  strokeWidth={2} 
-                  name="Tickets" 
-                  dot={{ r: 3, fill: AMBER_COLORS.dark }} 
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="weight" 
-                  stroke={AMBER_COLORS.base} 
-                  strokeWidth={2} 
-                  name="Net Weight (kg)" 
-                  dot={{ r: 3, fill: AMBER_COLORS.base }} 
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+            {/* Toggle Filters */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all ${
+                showFilters 
+                  ? "bg-amber-500 text-white border border-amber-500" 
+                  : "border border-gray-300 hover:border-amber-400"
+              }`}
+            >
+              <Filter size={12} />
+              Filters
+              {activeFiltersCount > 0 && (
+                <span className="bg-white text-amber-900 rounded-full w-4 h-4 flex items-center justify-center text-[10px] font-bold">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </button>
 
-          {/* TRANSACTION STATUS PIE */}
-          <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Transaction Status</h3>
-            <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
-              <PieChart>
-                <Pie
-                  data={statusPie}
-                  dataKey="value"
-                  nameKey="name"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={40}
-                  outerRadius={70}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  labelStyle={{ fontSize: 10, fontWeight: 600, fill: '#000' }}
-                  className="sm:text-xs"
-                >
-                  {statusPie.map((_, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i]} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ fontSize: 11, backgroundColor: '#fff', border: '1px solid #e5e7eb' }} 
-                  className="sm:text-xs"
-                />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* TURNAROUND TIME TREND */}
-          <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Average Turnaround Time (Daily)</h3>
-            <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
-              <LineChart data={tatTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="day" 
-                  tick={{ fontSize: 10 }} 
-                  className="sm:text-xs"
-                  interval="preserveStartEnd"
-                />
-                <YAxis 
-                  tick={{ fontSize: 10 }} 
-                  className="sm:text-xs"
-                  label={{ 
-                    value: 'Minutes', 
-                    angle: -90, 
-                    position: 'insideLeft', 
-                    style: { fontSize: 10, fill: '#000' } 
-                  }} 
-                />
-                <Tooltip 
-                  contentStyle={{ fontSize: 11, backgroundColor: '#fff', border: '1px solid #e5e7eb' }} 
-                  formatter={(value) => [`${value} min`, 'Avg TAT']}
-                  className="sm:text-xs"
-                />
-                <Legend wrapperStyle={{ fontSize: 10 }} className="sm:text-xs" />
-                <Line 
-                  type="monotone" 
-                  dataKey="avgTAT" 
-                  stroke={AMBER_COLORS.darker} 
-                  strokeWidth={2} 
-                  name="Avg TAT (min)" 
-                  dot={{ r: 3, fill: AMBER_COLORS.darker }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* HOURLY PERFORMANCE */}
-          <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Hourly Performance</h3>
-            <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
-              <BarChart data={hourlyPerformance}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="hour" 
-                  tick={{ fontSize: 9 }} 
-                  interval={3}
-                  className="sm:text-[10px]"
-                />
-                <YAxis tick={{ fontSize: 10 }} className="sm:text-xs" />
-                <Tooltip 
-                  contentStyle={{ fontSize: 11, backgroundColor: '#fff', border: '1px solid #e5e7eb' }} 
-                  className="sm:text-xs"
-                />
-                <Legend wrapperStyle={{ fontSize: 10 }} className="sm:text-xs" />
-                <Bar 
-                  dataKey="completed" 
-                  stackId="a" 
-                  fill={AMBER_COLORS.dark} 
-                  name="Completed" 
-                />
-                <Bar 
-                  dataKey="inProgress" 
-                  stackId="a" 
-                  fill={AMBER_COLORS.light} 
-                  name="In Progress" 
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* COMMODITIES BAR - FULL WIDTH */}
-          <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow lg:col-span-2">
-            <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Top Commodities by Net Weight</h3>
-            <ResponsiveContainer width="100%" height={220} className="sm:h-[240px] md:h-[260px]">
-              <BarChart data={commodityStats}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis 
-                  dataKey="name" 
-                  tick={{ fontSize: 10 }} 
-                  angle={-45}
-                  textAnchor="end"
-                  height={80}
-                  className="sm:text-xs"
-                />
-                <YAxis tick={{ fontSize: 10 }} className="sm:text-xs" />
-                <Tooltip 
-                  contentStyle={{ fontSize: 11, backgroundColor: '#fff', border: '1px solid #e5e7eb' }} 
-                  formatter={(value) => [`${value.toLocaleString()} kg`, 'Net Weight']}
-                  className="sm:text-xs"
-                />
-                <Bar 
-                  dataKey="weight" 
-                  fill={AMBER_COLORS.medium} 
-                  radius={[6, 6, 0, 0]} 
-                />
-              </BarChart>
-            </ResponsiveContainer>
+            {activeFiltersCount > 0 && (
+              <button
+                onClick={clearFilters}
+                className="flex items-center gap-1 px-2 py-1 border border-red-300 bg-red-50 text-red-700 rounded text-xs font-medium hover:bg-red-100"
+              >
+                <X size={12} />
+                Clear
+              </button>
+            )}
           </div>
         </div>
 
-        {loading && (
-          <div className="text-center text-xs sm:text-sm text-gray-700 mt-4 sm:mt-6 py-3 bg-amber-50 rounded-lg border border-amber-300">
-            Loading analytics data…
+        {/* Collapsible Filters */}
+        {showFilters && (
+          <div className="mt-2 pt-2 border-t flex gap-2 flex-wrap">
+            <select
+              value={selectedCommodity}
+              onChange={(e) => setSelectedCommodity(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1 text-xs"
+            >
+              <option value="all">All Commodities</option>
+              {commodities.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
+            <select
+              value={selectedDriver}
+              onChange={(e) => setSelectedDriver(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1 text-xs"
+            >
+              <option value="all">All Drivers</option>
+              {drivers.map(d => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
           </div>
         )}
+      </div>
+
+      {/* SCROLLABLE CONTENT */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-3 sm:p-4 md:p-6 pb-20">
+          {/* ALERTS */}
+          {alerts.length > 0 && (
+            <div className="mb-4 space-y-2">
+              {alerts.map((alert, idx) => {
+                const Icon = alert.icon;
+                const colorClasses = {
+                  amber: "bg-amber-50 border-amber-300 text-amber-900",
+                  red: "bg-red-50 border-red-300 text-red-900",
+                  blue: "bg-blue-50 border-blue-300 text-blue-900",
+                  green: "bg-green-50 border-green-300 text-green-900",
+                };
+                
+                return (
+                  <div
+                    key={idx}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${colorClasses[alert.color]} text-xs font-semibold`}
+                  >
+                    <Icon size={14} />
+                    {alert.message}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* KPI CARDS */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 md:gap-4 mb-4 sm:mb-6">
+            {[
+              {
+                label: "Total Tickets",
+                value: advancedKPIs.totalTx,
+                growth: advancedKPIs.txGrowth,
+                icon: Activity,
+                gradient: "from-amber-100 to-amber-50",
+              },
+              {
+                label: "Completed",
+                value: advancedKPIs.completed,
+                icon: CheckCircle,
+                gradient: "from-green-100 to-green-50",
+              },
+              {
+                label: "Efficiency",
+                value: `${advancedKPIs.efficiency}%`,
+                icon: Target,
+                gradient: "from-blue-100 to-blue-50",
+              },
+              {
+                label: "Capacity",
+                value: `${advancedKPIs.capacityUtilization}%`,
+                icon: Zap,
+                gradient: "from-purple-100 to-purple-50",
+              },
+              {
+                label: "Avg TAT (min)",
+                value: advancedKPIs.avgTurnaround,
+                icon: Clock,
+                gradient: "from-amber-100 to-amber-50",
+              },
+              {
+                label: "Total Net (kg)",
+                value: advancedKPIs.totalNetWeight.toLocaleString(),
+                growth: advancedKPIs.weightGrowth,
+                icon: Award,
+                gradient: "from-amber-100 to-amber-50",
+              },
+              {
+                label: "Avg Weight",
+                value: advancedKPIs.avgWeight.toLocaleString(),
+                icon: TrendingUp,
+                gradient: "from-amber-100 to-amber-50",
+              },
+              {
+                label: "Tx/Hour",
+                value: advancedKPIs.txPerHour,
+                icon: Activity,
+                gradient: "from-amber-100 to-amber-50",
+              },
+            ].map(({ label, value, growth, icon: Icon, gradient }) => (
+              <div
+                key={label}
+                className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md border border-amber-200 transform transition-transform hover:scale-105`}
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide opacity-90">
+                    {label}
+                  </div>
+                  <Icon size={14} className="opacity-60" />
+                </div>
+                <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1">{value}</div>
+                {growth && (
+                  <div className={`text-[10px] font-bold mt-1 flex items-center gap-1 ${
+                    parseFloat(growth) >= 0 ? "text-green-700" : "text-red-700"
+                  }`}>
+                    {parseFloat(growth) >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                    {Math.abs(parseFloat(growth))}%
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* GRAPHS GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+            {/* DAILY THROUGHPUT */}
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Daily Throughput</h3>
+              <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
+                <ComposedChart data={dailyTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="day" tick={{ fontSize: 10 }} className="sm:text-xs" interval="preserveStartEnd" />
+                  <YAxis tick={{ fontSize: 10 }} className="sm:text-xs" />
+                  <Tooltip contentStyle={{ fontSize: 11, backgroundColor: '#fff', border: '1px solid #e5e7eb' }} />
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                  <Area type="monotone" dataKey="count" fill={AMBER_COLORS.lighter} stroke={AMBER_COLORS.dark} name="Tickets" />
+                  <Line type="monotone" dataKey="weight" stroke={AMBER_COLORS.base} strokeWidth={2} name="Weight (kg)" dot={{ r: 3 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* DRIVER PERFORMANCE RADAR */}
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Top Driver Performance</h3>
+              <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
+                <RadarChart data={radarData.length > 0 ? [
+                  { metric: "Trips", ...radarData.reduce((acc, d) => ({ ...acc, [d.driver]: d.trips }), {}) },
+                  { metric: "Weight", ...radarData.reduce((acc, d) => ({ ...acc, [d.driver]: d.weight }), {}) },
+                  { metric: "Speed", ...radarData.reduce((acc, d) => ({ ...acc, [d.driver]: d.speed }), {}) },
+                ] : []}>
+                  <PolarGrid stroke="#e5e7eb" />
+                  <PolarAngleAxis dataKey="metric" tick={{ fontSize: 10 }} />
+                  <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 9 }} />
+                  <Tooltip contentStyle={{ fontSize: 10 }} />
+                  {radarData.map((driver, idx) => (
+                    <Radar
+                      key={driver.driver}
+                      name={driver.driver}
+                      dataKey={driver.driver}
+                      stroke={PIE_COLORS[idx]}
+                      fill={PIE_COLORS[idx]}
+                      fillOpacity={0.3}
+                    />
+                  ))}
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* TURNAROUND TIME TREND */}
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Average Turnaround Time</h3>
+              <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
+                <AreaChart data={tatTrend}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="day" tick={{ fontSize: 10 }} interval="preserveStartEnd" />
+                  <YAxis tick={{ fontSize: 10 }} label={{ value: 'Minutes', angle: -90, position: 'insideLeft', style: { fontSize: 10 } }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} formatter={(value) => [`${value} min`, 'Avg TAT']} />
+                  <Area type="monotone" dataKey="avgTAT" stroke={AMBER_COLORS.darker} fill={AMBER_COLORS.light} fillOpacity={0.6} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* TRANSACTION STATUS PIE */}
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Transaction Status</h3>
+              <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
+                <PieChart>
+                  <Pie
+                    data={statusPie}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={70}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    labelStyle={{ fontSize: 10, fontWeight: 600 }}
+                  >
+                    {statusPie.map((_, i) => (
+                      <Cell key={i} fill={PIE_COLORS[i]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ fontSize: 11 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* HOURLY PERFORMANCE */}
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Hourly Performance</h3>
+              <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
+                <BarChart data={hourlyPerformance}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="hour" tick={{ fontSize: 9 }} interval={3} />
+                  <YAxis tick={{ fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} />
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                  <Bar dataKey="completed" stackId="a" fill={AMBER_COLORS.dark} name="Completed" />
+                  <Bar dataKey="inProgress" stackId="a" fill={AMBER_COLORS.light} name="In Progress" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* TOP DRIVERS TABLE */}
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Top Drivers</h3>
+              <div className="space-y-2">
+                {driverPerformance.map((driver, idx) => (
+                  <div key={driver.driver} className="flex items-center justify-between p-2 bg-amber-50 rounded border border-amber-200">
+                    <div className="flex items-center gap-2">
+                      <span className="flex items-center justify-center w-6 h-6 bg-amber-500 text-white rounded-full text-xs font-bold">
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <div className="text-xs font-semibold text-gray-900">{driver.driver}</div>
+                        <div className="text-[10px] text-gray-600">{driver.trips} trips • {driver.avgTAT} min TAT</div>
+                      </div>
+                    </div>
+                    <div className="text-xs font-bold text-amber-600">{driver.weight.toLocaleString()} kg</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* COMMODITIES BAR - FULL WIDTH */}
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow lg:col-span-2">
+              <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Commodities by Weight & Count</h3>
+              <ResponsiveContainer width="100%" height={220} className="sm:h-[240px] md:h-[260px]">
+                <ComposedChart data={commodityStats}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
+                  <YAxis yAxisId="left" tick={{ fontSize: 10 }} />
+                  <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} />
+                  <Tooltip contentStyle={{ fontSize: 11 }} />
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                  <Bar yAxisId="left" dataKey="weight" fill={AMBER_COLORS.medium} radius={[6, 6, 0, 0]} name="Weight (kg)" />
+                  <Line yAxisId="right" type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} name="Count" dot={{ r: 4 }} />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {loading && (
+            <div className="text-center text-xs sm:text-sm text-gray-700 mt-4 sm:mt-6 py-3 bg-amber-50 rounded-lg border border-amber-300">
+              Loading analytics data…
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

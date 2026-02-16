@@ -35,7 +35,7 @@ namespace Masterdata.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Global soft-delete filter
+            // ✅ Global soft-delete filter
             foreach (var entityType in modelBuilder.Model.GetEntityTypes()
                 .Where(t => typeof(BaseEntity).IsAssignableFrom(t.ClrType)))
             {
@@ -52,192 +52,107 @@ namespace Masterdata.Infrastructure.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).HasColumnType("text");
+                entity.Property(e => e.RegistrationNumber).IsRequired().HasMaxLength(50);
+                entity.Property(e => e.Type).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Active");
+                
+                // Weights and Capacities (Decimal Precision)
+                entity.Property(e => e.FuelTankCapacity).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.GrossWeight).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.NetWeightCapacity).HasColumnType("decimal(18,2)");
+                entity.Property(e => e.TareWeight).HasColumnType("decimal(18,2)");
 
-                entity.Property(e => e.RegistrationNumber)
-                    .IsRequired()
-                    .HasMaxLength(20);
-
-                entity.Property(e => e.Type)
-                    .IsRequired()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.Make).HasMaxLength(50);
-                entity.Property(e => e.Model).HasMaxLength(50);
-                entity.Property(e => e.Color).HasMaxLength(50);
-                entity.Property(e => e.ChassisNumber).HasMaxLength(50);
-                entity.Property(e => e.EngineNumber).HasMaxLength(50);
-
-                entity.Property(e => e.Status)
-                    .HasMaxLength(20)
-                    .HasDefaultValue("Active");
-
-                entity.Property(e => e.VehicleClass).HasMaxLength(50);
-                entity.Property(e => e.BodyType).HasMaxLength(50);
-
-                // Owner relationship – now properly nullable
-                entity.Property(e => e.OwnerId)
-                    .HasColumnType("text")
-                    .IsRequired(false);
+                // FK Relationships
+                entity.HasOne(v => v.AxleConfiguration)
+                    .WithMany(a => a.Vehicles)
+                    .HasForeignKey(v => v.AxleConfigurationId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .IsRequired(false); // 🛠 FIX: Prevents the 23503 FK Violation if ID is missing
 
                 entity.HasOne(v => v.Owner)
                     .WithMany(o => o.Vehicles)
                     .HasForeignKey(v => v.OwnerId)
                     .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired(false);                // ← Fixed: allows null
+                    .IsRequired(false);
 
-                entity.Property(e => e.SupplierId).HasColumnType("text");
                 entity.HasOne(v => v.Supplier)
-                    .WithMany(s => s.Vehicles)         // ← Added inverse
+                    .WithMany(s => s.Vehicles)
                     .HasForeignKey(v => v.SupplierId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
 
-                entity.Property(e => e.TransporterId).HasColumnType("text");
                 entity.HasOne(v => v.Transporter)
-                    .WithMany(t => t.Vehicles)         // ← Added inverse
+                    .WithMany(t => t.Vehicles)
                     .HasForeignKey(v => v.TransporterId)
                     .OnDelete(DeleteBehavior.Restrict)
                     .IsRequired(false);
 
-                entity.HasOne(v => v.AxleConfiguration)
-                    .WithMany()
-                    .HasForeignKey(v => v.AxleConfigurationId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
-
                 entity.HasIndex(e => e.RegistrationNumber).IsUnique();
-                entity.HasIndex(e => e.ChassisNumber).IsUnique(); // optional
             });
 
             // ──────────────────────────────────────────────────────────────
-            // Owner Configuration
-            // ──────────────────────────────────────────────────────────────
-            modelBuilder.Entity<Owner>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnType("text");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(200);
-
-                entity.Property(e => e.ContactInfo).HasColumnType("jsonb");
-                entity.Property(e => e.Email).HasMaxLength(100);
-                entity.Property(e => e.PhoneNumber).HasMaxLength(20);
-                entity.Property(e => e.Address).HasMaxLength(200);
-
-                entity.Property(e => e.Type)
-                    .HasConversion<string>()
-                    .HasMaxLength(50);
-
-                entity.Property(e => e.RegistrationNumber).HasMaxLength(50);
-                entity.Property(e => e.TaxIdentificationNumber).HasMaxLength(100);
-                entity.Property(e => e.NationalId).HasMaxLength(50);
-
-                entity.HasIndex(e => e.Name).IsUnique();
-
-                // Explicit inverse navigation (recommended)
-                entity.HasMany(o => o.Vehicles)
-                    .WithOne(v => v.Owner)
-                    .HasForeignKey(v => v.OwnerId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired(false);
-            });
-
-            // ──────────────────────────────────────────────────────────────
-            // DriverVehicle (Many-to-Many)
+            // Driver & DriverVehicle (Many-to-Many)
             // ──────────────────────────────────────────────────────────────
             modelBuilder.Entity<DriverVehicle>(entity =>
             {
                 entity.HasKey(e => new { e.DriverId, e.VehicleId });
-
-                entity.Property(e => e.DriverId).HasColumnType("text");
-                entity.Property(e => e.VehicleId).HasColumnType("text");
-
-                entity.HasOne(e => e.Driver)
-                    .WithMany(d => d.DriverVehicles)
-                    .HasForeignKey(e => e.DriverId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                entity.HasOne(e => e.Vehicle)
-                    .WithMany(v => v.DriverVehicles)
-                    .HasForeignKey(e => e.VehicleId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.Driver).WithMany(d => d.DriverVehicles).HasForeignKey(e => e.DriverId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(e => e.Vehicle).WithMany(v => v.DriverVehicles).HasForeignKey(e => e.VehicleId).OnDelete(DeleteBehavior.Restrict);
             });
 
-            // ──────────────────────────────────────────────────────────────
-            // Supplier (with inverse navigation)
-            // ──────────────────────────────────────────────────────────────
-            modelBuilder.Entity<Supplier>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnType("text");
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.ContactInfo).HasColumnType("jsonb");
-                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Active");
-                entity.HasIndex(e => e.Name).IsUnique();
-
-                entity.HasMany(s => s.Vehicles)
-                    .WithOne(v => v.Supplier)
-                    .HasForeignKey(v => v.SupplierId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired(false);
-            });
-
-            // ──────────────────────────────────────────────────────────────
-            // Transporter (with inverse navigation)
-            // ──────────────────────────────────────────────────────────────
-            modelBuilder.Entity<Transporter>(entity =>
-            {
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnType("text");
-                entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.ContactInfo).HasColumnType("jsonb");
-                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Active");
-                entity.HasIndex(e => e.Name).IsUnique();
-
-                entity.HasMany(t => t.Vehicles)
-                    .WithOne(v => v.Transporter)
-                    .HasForeignKey(v => v.TransporterId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired(false);
-            });
-
-            // ──────────────────────────────────────────────────────────────
-            // Driver
-            // ──────────────────────────────────────────────────────────────
             modelBuilder.Entity<Driver>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnType("text");
                 entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.LicenseNumber).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Active");
                 entity.HasIndex(e => e.LicenseNumber).IsUnique();
-
-                entity.HasOne(e => e.Transporter)
-                    .WithMany()
-                    .HasForeignKey(e => e.TransporterId)
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired(false);
-
-                entity.HasOne(e => e.Supplier)
-                    .WithMany()
-                    .HasForeignKey(e => e.SupplierId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .IsRequired(false);
+                entity.HasOne(e => e.Transporter).WithMany(t => t.Drivers).HasForeignKey(e => e.TransporterId).OnDelete(DeleteBehavior.Restrict);
             });
 
-            // AuditLog – minimal configuration (expand as needed)
+            // ──────────────────────────────────────────────────────────────
+            // Master Data Entities (Product, Route, Sacco, etc.)
+            // ──────────────────────────────────────────────────────────────
+            modelBuilder.Entity<Product>(entity => {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Code).IsRequired().HasMaxLength(50);
+                entity.HasIndex(e => e.Code).IsUnique();
+            });
+
+            modelBuilder.Entity<Route>(entity => {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.StartPoint).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.EndPoint).IsRequired().HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<Sacco>(entity => {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ContactInfo).HasColumnType("jsonb"); // ✅ Restored JSONB
+                entity.Property(e => e.OtherDetails).HasColumnType("jsonb");
+            });
+
+            modelBuilder.Entity<Organisation>(entity => {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ContactInfo).HasColumnType("jsonb");
+            });
+
+            modelBuilder.Entity<AxleConfiguration>(entity => {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Code).IsRequired().HasMaxLength(100);
+                entity.HasIndex(e => e.Code).IsUnique();
+            });
+
+            // ──────────────────────────────────────────────────────────────
+            // Audit and Logs
+            // ──────────────────────────────────────────────────────────────
             modelBuilder.Entity<AuditLog>(entity =>
             {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.Id).HasColumnType("text");
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-                // Add other properties as needed
+                entity.Property(e => e.OldValues).HasColumnType("jsonb");
+                entity.Property(e => e.NewValues).HasColumnType("jsonb");
+                entity.HasIndex(e => new { e.EntityName, e.EntityId });
+                entity.HasIndex(e => e.CreatedAt);
             });
-
-            // ... add other entity configurations (Product, Route, etc.) here as needed ...
         }
     }
 }
