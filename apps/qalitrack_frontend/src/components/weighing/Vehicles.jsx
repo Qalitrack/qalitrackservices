@@ -64,14 +64,33 @@ export default function Vehicles() {
       console.log("🚗 data.data.items:", data?.data?.items);
       
       // ✅ Extract items from response - try all possible structures
-      const items = data?.items || data?.data?.items || (Array.isArray(data?.data) ? data.data : []) || (Array.isArray(data) ? data : []);
+      let items = data?.items || data?.data?.items || (Array.isArray(data?.data) ? data.data : []) || (Array.isArray(data) ? data : []);
       
       console.log("🚗 Extracted items:", items);
       console.log("🚗 Items is array?:", Array.isArray(items));
       console.log("🚗 Items length:", items.length);
       
       if (items.length > 0) {
-        console.log("🚗 First vehicle:", items[0]);
+        console.log("🚗 First vehicle sample:", items[0]);
+        console.log("🚗 Vehicle fields:", Object.keys(items[0]));
+        console.log("🚗 ownerName field:", items[0].ownerName);
+        console.log("🚗 axleConfigurationName field:", items[0].axleConfigurationName);
+        
+        // ✅ If backend doesn't provide names, enrich with local data
+        if (!items[0].ownerName || !items[0].axleConfigurationName) {
+          console.log("⚠️ Backend not providing names, enriching locally...");
+          items = items.map(vehicle => {
+            const owner = owners.find(o => o.id === vehicle.ownerId);
+            const axleConfig = axleConfigs.find(a => a.id === vehicle.axleConfigurationId);
+            
+            return {
+              ...vehicle,
+              ownerName: vehicle.ownerName || owner?.name || owner?.ownerName || null,
+              axleConfigurationName: vehicle.axleConfigurationName || axleConfig?.name || axleConfig?.configurationName || null
+            };
+          });
+          console.log("✅ Enriched first vehicle:", items[0]);
+        }
       }
       
       setVehicles(Array.isArray(items) ? items : []);
@@ -865,6 +884,7 @@ export default function Vehicles() {
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Make/Model</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Owner</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Axle Config</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">RFID</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Status</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Actions</th>
               </tr>
@@ -889,8 +909,23 @@ export default function Vehicles() {
                   <td className="px-3 py-2 text-[10px] text-gray-600">
                     {v.ownerName || "-"}
                   </td>
-                  <td className="px-3 py-2 text-[10px] text-gray-600">
-                    {v.axleConfigurationName || "-"}
+                  <td className="px-3 py-2">
+                    {v.axleConfigurationName ? (
+                      <div className="inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-semibold border border-blue-300">
+                        {v.axleConfigurationName}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">-</span>
+                    )}
+                  </td>
+                  <td className="px-3 py-2">
+                    {v.nfCcode || v.rfiDcode ? (
+                      <div className="inline-block bg-purple-100 text-purple-800 px-2 py-0.5 rounded text-[9px] font-mono border border-purple-300">
+                        {v.nfCcode || v.rfiDcode}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400 text-[9px]">Not set</span>
+                    )}
                   </td>
                   <td className="px-3 py-2">
                     <span
