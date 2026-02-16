@@ -393,8 +393,10 @@ public class RuntimeConfiguration
     {
         TcpListener = new ConnectionSettings();
         CameraSettings = new CameraSettings();
+        RfidSettings = new RfidSettings();
     }
     
     public ConnectionSettings TcpListener { get; set; }
     public CameraSettings CameraSettings { get; set; }
+    public RfidSettings RfidSettings { get; set; }
 }

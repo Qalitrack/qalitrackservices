@@ -72,6 +72,10 @@ if (builder.Configuration.GetSection("CameraSettings").Exists())
 {
     builder.Configuration.Bind("CameraSettings", runtimeConfig.CameraSettings);
 }
+if (builder.Configuration.GetSection("RfidSettings").Exists())
+{
+    builder.Configuration.Bind("RfidSettings", runtimeConfig.RfidSettings);
+}
 
 // Create temporary logger for config loading
 var tempLoggerFactory = LoggerFactory.Create(b => b.AddConsole());
@@ -99,6 +103,42 @@ if (!string.IsNullOrWhiteSpace(tcpPort) && int.TryParse(tcpPort, out int port))
     tempLogger.LogInformation("TCP Port overridden from environment: {port}", port);
 }
 
+// RFID environment variable overrides
+var rfidEnabled = Environment.GetEnvironmentVariable("QALITRACK_RFID_ENABLED");
+if (!string.IsNullOrWhiteSpace(rfidEnabled) && bool.TryParse(rfidEnabled, out bool enabled))
+{
+    runtimeConfig.RfidSettings.Enabled = enabled;
+    tempLogger.LogInformation("RFID Enabled overridden from environment: {enabled}", enabled);
+}
+
+var rfidHost = Environment.GetEnvironmentVariable("QALITRACK_RFID_HOST");
+if (!string.IsNullOrWhiteSpace(rfidHost))
+{
+    runtimeConfig.RfidSettings.Host = rfidHost;
+    tempLogger.LogInformation("RFID Host overridden from environment: {host}", rfidHost);
+}
+
+var rfidPort = Environment.GetEnvironmentVariable("QALITRACK_RFID_PORT");
+if (!string.IsNullOrWhiteSpace(rfidPort) && int.TryParse(rfidPort, out int rport))
+{
+    runtimeConfig.RfidSettings.Port = rport;
+    tempLogger.LogInformation("RFID Port overridden from environment: {port}", rport);
+}
+
+var rfidScanInterval = Environment.GetEnvironmentVariable("QALITRACK_RFID_SCAN_INTERVAL_MS");
+if (!string.IsNullOrWhiteSpace(rfidScanInterval) && int.TryParse(rfidScanInterval, out int scan))
+{
+    runtimeConfig.RfidSettings.ScanIntervalMs = scan;
+    tempLogger.LogInformation("RFID ScanIntervalMs overridden from environment: {scan}", scan);
+}
+
+var rfidReconnect = Environment.GetEnvironmentVariable("QALITRACK_RFID_RECONNECT_DELAY_MS");
+if (!string.IsNullOrWhiteSpace(rfidReconnect) && int.TryParse(rfidReconnect, out int recon))
+{
+    runtimeConfig.RfidSettings.ReconnectDelayMs = recon;
+    tempLogger.LogInformation("RFID ReconnectDelayMs overridden from environment: {recon}", recon);
+}
+
 // Bind serial settings from TcpListener config if present
 if (builder.Configuration.GetSection("TcpListener:SerialPort").Exists())
 {
@@ -121,11 +161,13 @@ if (builder.Configuration.GetSection("TcpListener:BaudRate").Exists())
 // Use the runtime configuration
 var connectionSettings = runtimeConfig.TcpListener;
 var cameraSettings = runtimeConfig.CameraSettings;
+var rfidSettings = runtimeConfig.RfidSettings;
 
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddSingleton(connectionSettings);
 builder.Services.AddSingleton(cameraSettings);
+builder.Services.AddSingleton(rfidSettings);
 
 // Register ConfigurationManager for runtime config changes
 builder.Services.AddSingleton(configManager);
@@ -140,8 +182,17 @@ builder.Services.AddSingleton<CameraDataStreamService>();
 // Register PlateDataStreamService as a singleton (for plate recognition data)
 builder.Services.AddSingleton<PlateDataStreamService>();
 
+// Register RfidTagStreamService as a singleton (for RFID tags)
+builder.Services.AddSingleton<RfidTagStreamService>();
+
 // Register StreamingMetrics
 builder.Services.AddSingleton<StreamingMetrics>();
+
+// Configure RfidOptions
+builder.Services.Configure<RfidOptions>(builder.Configuration.GetSection("RfidSettings"));
+
+// Register RfidReaderBackgroundService as a hosted service
+builder.Services.AddHostedService<RfidReaderBackgroundService>();
 
 // Register for proper disposal
 builder.Services.AddSingleton<IHostedService>(serviceProvider => 
@@ -161,6 +212,9 @@ builder.Services.AddHostedService(provider => provider.GetRequiredService<Platfo
 // Register CameraStreamService as a singleton and hosted service
 builder.Services.AddSingleton<CameraStreamService>();
 builder.Services.AddHostedService(provider => provider.GetRequiredService<CameraStreamService>());
+
+// Register RfidReaderBackgroundService as a hosted service
+builder.Services.AddHostedService<RfidReaderBackgroundService>();
 
 // NPR cameras use HTTP push webhooks - no polling services needed
 // Webhook endpoint: /devicemanagement/php/plateresult.php
@@ -225,6 +279,13 @@ configManager.ConfigurationChanged += (newConfig) =>
         {
             reloadLogger.LogInformation("→ Camera settings updated (restart service for full effect)");
             // Note: Full camera reload may require service restart
+        }
+        
+        // RFID settings update
+        var rfidService = app.Services.GetService<RfidReaderBackgroundService>();
+        if (rfidService != null && newConfig.RfidSettings != null)
+        {
+            reloadLogger.LogInformation("→ RFID settings updated (restart service for full effect)");
         }
         
         reloadLogger.LogInformation("✓ Configuration reload complete");
@@ -338,6 +399,8 @@ app.MapGet("/", async (HttpContext context) =>
     response.AppendLine("✓ DataStreamService       → SSE broadcasting (weight)");
     response.AppendLine("✓ CameraDataStreamService → SSE broadcasting (camera frames)");
     response.AppendLine("✓ PlateDataStreamService  → SSE broadcasting (NPR plates)");
+    response.AppendLine("✓ RfidReaderBackgroundService → RFID tag reading (TCP)");
+    response.AppendLine("✓ RfidTagStreamService    → SSE broadcasting (RFID tags)");
     response.AppendLine();
     response.AppendLine("═══════════════════════════════════════════════════════════════");
     response.AppendLine("                    CONFIGURED CAMERAS");
@@ -373,6 +436,10 @@ app.MapGet("/", async (HttpContext context) =>
     response.AppendLine($"   {baseUrl}/api/PlatformData/plates/stream");
     response.AppendLine();
 
+    response.AppendLine("🏷️ RFID TAGS (SSE Stream - Real-time tags):");
+    response.AppendLine($"   {baseUrl}/api/rfid/stream");
+    response.AppendLine();
+
     response.AppendLine("📹 CAMERAS:");
     response.AppendLine($"   {baseUrl}/api/Camera/cameras              → List all cameras");
     response.AppendLine($"   {baseUrl}/api/Camera/{{id}}/snapshot        → Get snapshot");
@@ -395,6 +462,9 @@ app.MapGet("/", async (HttpContext context) =>
     response.AppendLine("📋 CURL - Listen for Plate Data:");
     response.AppendLine($"   curl -N {baseUrl}/api/PlatformData/plates/stream");
     response.AppendLine();
+    response.AppendLine("📋 CURL - Listen for RFID Tags:");
+    response.AppendLine($"   curl -N {baseUrl}/api/rfid/stream");
+    response.AppendLine();
     response.AppendLine("📋 JavaScript - Weight Data:");
     response.AppendLine($"   const es = new EventSource('{baseUrl}/api/PlatformData/stream');");
     response.AppendLine("   es.onmessage = (e) => console.log('Weight:', e.data);");
@@ -403,6 +473,9 @@ app.MapGet("/", async (HttpContext context) =>
     response.AppendLine($"   const es = new EventSource('{baseUrl}/api/PlatformData/plates/stream');");
     response.AppendLine("   es.onmessage = (e) => console.log('Plate:', JSON.parse(e.data));");
     response.AppendLine();
+    response.AppendLine("📋 JavaScript - RFID Tags:");
+    response.AppendLine($"   const es = new EventSource('{baseUrl}/api/rfid/stream');");
+    response.AppendLine("   es.onmessage = (e) => console.log('Tag:', JSON.parse(e.data));");
 
     if (localIps.Count() > 1)
     {
