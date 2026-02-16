@@ -1,18 +1,68 @@
 // src/api/MasterData/Vehicles.js
-import { apiClient } from "../helpers/apiClients"; // ✅ must be named import (matches your setup)
+import { apiClient } from "../helpers/apiClients";
 
 // 🔹 Centralized request wrapper
 const handleRequest = async (promise) => {
   try {
     const response = await promise;
-    // Normalize response to always return array or object data cleanly
-    return response.data?.items || response.data;
+    console.log("🔍 Raw API Response:", response.data);
+    
+    // ✅ Return the full response.data (which contains items, pageNumber, etc.)
+    return response.data;
   } catch (error) {
-    const message =
-      error.response?.data?.message ||
-      (typeof error.response?.data === "string"
-        ? error.response.data
-        : error.message);
+    // ✅ Log everything for debugging
+    console.error("🔍 Full error object:", error);
+    console.error("🔍 Error response:", error.response);
+    console.error("🔍 Error response data:", JSON.stringify(error.response?.data, null, 2));
+    console.error("🔍 Error status:", error.response?.status);
+    console.error("🔍 Error headers:", error.response?.headers);
+    
+    // ✅ Extract detailed error message
+    let message = "Request failed";
+    
+    if (error.response?.data) {
+      const errData = error.response.data;
+      
+      // Check for validation errors (check both lowercase 'errors' and any object with array values)
+      if (errData.errors || typeof errData === 'object') {
+        // ASP.NET Core validation errors - can be under 'errors' key or directly in response
+        const errorObj = errData.errors || errData;
+        
+        if (typeof errorObj === 'object' && errorObj !== null) {
+          const errorMessages = [];
+          
+          for (const [field, messages] of Object.entries(errorObj)) {
+            if (Array.isArray(messages)) {
+              // Field validation errors
+              errorMessages.push(`${field}: ${messages.join(", ")}`);
+            }
+          }
+          
+          if (errorMessages.length > 0) {
+            message = errorMessages.join("; ");
+          }
+        }
+      }
+      
+      // Fallback to other error formats if no validation errors found
+      if (message === "Request failed") {
+        if (errData.title && errData.detail) {
+          // Problem details format
+          message = `${errData.title}: ${errData.detail}`;
+        } else if (errData.message) {
+          message = errData.message;
+        } else if (typeof errData === "string") {
+          message = errData;
+        } else if (errData.title) {
+          message = errData.title;
+        } else {
+          message = `${error.response.status}: ${error.response.statusText}`;
+        }
+      }
+    } else if (error.message) {
+      message = error.message;
+    }
+    
     console.error("🚨 Vehicle API Error:", message);
     throw new Error(message);
   }
@@ -27,25 +77,37 @@ export const getVehicles = (pageNumber = 1, pageSize = 50, searchTerm = "") =>
   );
 
 // ✅ Create a new vehicle
-export const createVehicle = (vehicleData) =>
-  handleRequest(apiClient.post("/MasterData/Vehicles", vehicleData));
+export const createVehicle = (vehicleData) => {
+  console.log("📤 Creating vehicle with data:", vehicleData);
+  return handleRequest(apiClient.post("/MasterData/Vehicles", vehicleData));
+};
 
 // ✅ Fetch single vehicle by ID
 export const getVehicleById = (id) =>
   handleRequest(apiClient.get(`/MasterData/Vehicles/${id}`));
 
-// ✅ Update vehicle
-export const updateVehicle = (id, vehicleData) =>
-  handleRequest(apiClient.put(`/MasterData/Vehicles/${id}`, vehicleData));
+// ✅ Update vehicle (includes rfiDcode field)
+export const updateVehicle = (id, vehicleData) => {
+  console.log("📤 Updating vehicle", id, "with data:", vehicleData);
+  return handleRequest(apiClient.put(`/MasterData/Vehicles/${id}`, vehicleData));
+};
 
 // ✅ Delete vehicle
 export const deleteVehicle = (id) =>
   handleRequest(apiClient.delete(`/MasterData/Vehicles/${id}`));
 
-// ✅ Update vehicle status (Active/Inactive)
-export const updateVehicleStatus = (id, status) =>
-  handleRequest(apiClient.post(`/MasterData/Vehicles/${id}/status`, { status }));
+// ✅ Get vehicle by RFID code
+export const getVehicleByRfid = (rfidCode) => {
+  console.log("📤 Fetching vehicle by RFID:", rfidCode);
+  return handleRequest(apiClient.get(`/MasterData/Vehicles/rfid/${rfidCode}`));
+};
 
 // ✅ Get all drivers assigned to a vehicle
 export const getVehicleDrivers = (id) =>
   handleRequest(apiClient.get(`/MasterData/Vehicles/${id}/drivers`));
+
+// ✅ Update vehicle status (Active/Inactive)
+export const updateVehicleStatus = (id, status) => {
+  console.log("📤 Updating vehicle status:", id, "to", status);
+  return handleRequest(apiClient.post(`/MasterData/Vehicles/${id}/status`, { status }));
+};
