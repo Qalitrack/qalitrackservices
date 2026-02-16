@@ -6,8 +6,17 @@ import CustomerReport from "./reportFiles/CustomerReport";
 import CommodityReport from "./reportFiles/CommodityReport";
 import SupplierReport from "./reportFiles/SupplierReport";
 
+// NEW ADVANCED REPORT COMPONENTS
+import ReportAnalytics from "./ReportAnalytics";
+import CustomReportBuilder from "./CustomReportBuilder";
+import ReportScheduler from "./ReportScheduler";
+import CrossEntityComparison from "./CrossEntityComparison";
+
 import { fetchTransactions } from "../../store/weighingSlice";
-import { RotateCcw, FileDown, FileSpreadsheet, Filter, X } from "lucide-react";
+import {
+  RotateCcw, FileDown, FileSpreadsheet, Filter, X,
+  BarChart3, Settings, Calendar, GitCompare
+} from "lucide-react";
 import dayjs from "dayjs";
 
 import jsPDF from "jspdf";
@@ -18,7 +27,18 @@ export default function Reports() {
   const dispatch = useDispatch();
   const { transactions, loading } = useSelector((state) => state.weighing);
 
-  const REPORT_TABS = ["transactions", "drivers", "customers", "commodities", "suppliers"];
+  const REPORT_TABS = [
+    { id: "transactions", label: "Transactions", icon: null },
+    { id: "drivers", label: "Drivers", icon: null },
+    { id: "customers", label: "Customers", icon: null },
+    { id: "commodities", label: "Commodities", icon: null },
+    { id: "suppliers", label: "Suppliers", icon: null },
+    { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} />, badge: "NEW" },
+    { id: "comparison", label: "Comparison", icon: <GitCompare size={14} />, badge: "NEW" },
+    { id: "custom", label: "Custom Builder", icon: <Settings size={14} />, badge: "NEW" },
+    { id: "scheduler", label: "Scheduler", icon: <Calendar size={14} />, badge: "NEW" },
+  ];
+
   const [activeTab, setActiveTab] = useState("transactions");
 
   // Pagination (TABLE ONLY) — default 6 per page
@@ -282,6 +302,24 @@ export default function Reports() {
   };
 
   const renderActiveReport = () => {
+    // NEW ADVANCED REPORTS
+    if (activeTab === "report-analytics") {
+      return <ReportAnalytics transactions={filteredTransactions} />;
+    }
+    
+    if (activeTab === "comparison") {
+      return <CrossEntityComparison transactions={filteredTransactions} />;
+    }
+    
+    if (activeTab === "custom") {
+      return <CustomReportBuilder transactions={filteredTransactions} />;
+    }
+    
+    if (activeTab === "scheduler") {
+      return <ReportScheduler transactions={filteredTransactions} />;
+    }
+
+    // EXISTING REPORTS
     if (activeTab !== "transactions") {
       const ComponentMap = {
         drivers: DriverReport,
@@ -347,10 +385,15 @@ export default function Reports() {
     );
   };
 
+  // Don't show filters for advanced tabs
+  const showFiltersPanel = [
+    "transactions", "drivers", "customers", "commodities", "suppliers"
+  ].includes(activeTab);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
+    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="mb-4">
+      <div className="mb-4 px-4 sm:px-6 pt-4 sm:pt-6 shrink-0">
         <div className="flex items-center gap-2 mb-2">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
             <svg
@@ -377,24 +420,32 @@ export default function Reports() {
       </div>
 
       {/* TABS */}
-      <div className="flex gap-2 mb-4 flex-wrap">
+      <div className="flex gap-2 mb-4 flex-wrap px-4 sm:px-6 shrink-0">
         {REPORT_TABS.map((tab) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all ${
-              activeTab === tab
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`relative px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all flex items-center gap-1.5 ${
+              activeTab === tab.id
                 ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border border-amber-500 shadow-sm"
                 : "bg-white text-gray-700 hover:bg-amber-50 border border-gray-200"
             }`}
           >
-            {tab}
+            {tab.icon}
+            {tab.label}
+            {tab.badge && (
+              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full">
+                {tab.badge}
+              </span>
+            )}
           </button>
         ))}
       </div>
 
-      {/* FILTERS — transactions tab only */}
-      {activeTab === "transactions" && (
+      {/* MAIN CONTENT AREA - SCROLLABLE */}
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-6">
+        {/* FILTERS — only for basic report tabs */}
+        {showFiltersPanel && (
         <div className="bg-white border border-amber-200 rounded-lg shadow-sm mb-4">
           {/* Filter bar header */}
           <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between rounded-t-lg">
@@ -455,28 +506,30 @@ export default function Reports() {
                 Filters
               </button>
 
-              <div className="flex gap-1.5 ml-1">
-                <button
-                  onClick={() => {
-                    setExportType("pdf");
-                    setShowExportPreview(true);
-                  }}
-                  className="flex items-center gap-1.5 h-7 px-3 bg-amber-100 text-amber-900 border border-amber-300 rounded-md text-[10px] font-medium hover:bg-amber-200 transition-all"
-                >
-                  <FileDown size={13} />
-                  PDF
-                </button>
-                <button
-                  onClick={() => {
-                    setExportType("excel");
-                    setShowExportPreview(true);
-                  }}
-                  className="flex items-center gap-1.5 h-7 px-3 border border-gray-300 bg-white rounded-md text-[10px] font-medium hover:bg-gray-50 transition-colors"
-                >
-                  <FileSpreadsheet size={13} />
-                  Excel
-                </button>
-              </div>
+              {activeTab === "transactions" && (
+                <div className="flex gap-1.5 ml-1">
+                  <button
+                    onClick={() => {
+                      setExportType("pdf");
+                      setShowExportPreview(true);
+                    }}
+                    className="flex items-center gap-1.5 h-7 px-3 bg-amber-100 text-amber-900 border border-amber-300 rounded-md text-[10px] font-medium hover:bg-amber-200 transition-all"
+                  >
+                    <FileDown size={13} />
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => {
+                      setExportType("excel");
+                      setShowExportPreview(true);
+                    }}
+                    className="flex items-center gap-1.5 h-7 px-3 border border-gray-300 bg-white rounded-md text-[10px] font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    <FileSpreadsheet size={13} />
+                    Excel
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -574,8 +627,8 @@ export default function Reports() {
 
       {renderActiveReport()}
 
-      {/* EXPORT PREVIEW MODAL */}
-      {showExportPreview && (
+      {/* EXPORT PREVIEW MODAL - only for transactions */}
+      {showExportPreview && activeTab === "transactions" && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-7xl max-h-[90vh] flex flex-col shadow-2xl">
             {/* Modal Header */}
@@ -720,6 +773,7 @@ export default function Reports() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
