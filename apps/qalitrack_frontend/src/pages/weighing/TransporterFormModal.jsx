@@ -269,6 +269,7 @@ export default function TransportersPortal() {
                   <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50/80 border-b-[1.5px] border-amber-500">
                     <tr>
                       {[
+                        { label: "#", align: "text-left" },
                         { label: "Name", align: "text-left" },
                         { label: "Phone", align: "text-left" },
                         { label: "Email", align: "text-left" },
@@ -291,6 +292,9 @@ export default function TransportersPortal() {
                             ? 'hover:bg-emerald-50/50 bg-emerald-50/20' 
                             : 'hover:bg-amber-50'
                         }`}>
+                          <td className="px-4 py-2.5 text-[10px] text-gray-500 font-semibold">
+                            {(page - 1) * PAGE_SIZE + i + 1}
+                          </td>
                           <td className="px-4 py-2.5 text-[10px] text-blue-700 font-bold">{t.name}</td>
                           <td className="px-4 py-2.5 text-[10px] text-pink-600 font-medium">{ci.Phone || "—"}</td>
                           <td className="px-4 py-2.5 text-[10px] text-cyan-600">{ci.Email || "—"}</td>
