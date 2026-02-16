@@ -82,5 +82,5 @@ public class UpdateVehicleDto
     // Driver assignments
     public List<string>? DriverIds { get; set; } = new();
     
-    public string?RfiDcode { get; set; }
+    public string? RfiDcode { get; set; }
 }

@@ -17,8 +17,13 @@ public class CameraStreamService : BackgroundService
     private string? _ffmpegPath;
 
     // Health monitoring configuration
-    private const int FRAME_TIMEOUT_SECONDS = 10; // If no frame in 10 seconds, reconnect
-    private const int HEALTH_CHECK_INTERVAL_MS = 2000; // Check health every 2 seconds
+    private const int FRAME_TIMEOUT_SECONDS = 10;
+    private const int HEALTH_CHECK_INTERVAL_MS = 2000;
+    
+    // Reconnection backoff configuration
+    private const int MAX_CONSECUTIVE_FAILURES = 5; // After 5 failures, slow down significantly
+    private const int MAX_BACKOFF_MS = 300000; // Max 5 minutes between retries
+    private const int SLOW_RETRY_INTERVAL_MS = 60000; // 1 minute for persistent failures
 
     public CameraStreamService(
         ILogger<CameraStreamService> logger,
@@ -64,7 +69,8 @@ public class CameraStreamService : BackgroundService
                 FrameSize = stream.LatestFrame.Length,
                 LastFrameTime = stream.LastFrameTime,
                 IsHealthy = isHealthy,
-                SecondsSinceLastFrame = (int)timeSinceLastFrame.TotalSeconds
+                SecondsSinceLastFrame = (int)timeSinceLastFrame.TotalSeconds,
+                ConsecutiveFailures = stream.ConsecutiveFailures
             };
         }
         return new CameraStreamStatus { CameraId = cameraId, IsConnected = false, IsHealthy = false };
@@ -114,10 +120,7 @@ public class CameraStreamService : BackgroundService
             var cameraStream = new CameraStream(camera);
             _cameraStreams[camera.Id] = cameraStream;
             
-            // Start camera stream task
             tasks.Add(RunCameraStreamAsync(camera, cameraStream, stoppingToken));
-            
-            // Start health monitor task
             tasks.Add(MonitorCameraHealthAsync(camera, cameraStream, stoppingToken));
         }
 
@@ -128,7 +131,6 @@ public class CameraStreamService : BackgroundService
     {
         _logger.LogInformation("Starting health monitor for camera {id}", camera.Id);
         
-        // Give the camera time to connect initially
         await Task.Delay(5000, stoppingToken);
 
         while (!stoppingToken.IsCancellationRequested)
@@ -141,7 +143,6 @@ public class CameraStreamService : BackgroundService
                 var isStalled = stream.IsConnected && 
                                timeSinceLastFrame.TotalSeconds > FRAME_TIMEOUT_SECONDS;
 
-                // Check if FFmpeg process died unexpectedly
                 var processAlive = stream.FfmpegProcess != null && !stream.FfmpegProcess.HasExited;
 
                 if (isStalled)
@@ -152,7 +153,6 @@ public class CameraStreamService : BackgroundService
                         (int)timeSinceLastFrame.TotalSeconds
                     );
                     
-                    // Force reconnection by canceling the stream
                     stream.StreamCts?.Cancel();
                 }
                 else if (stream.IsConnected && !processAlive)
@@ -167,7 +167,6 @@ public class CameraStreamService : BackgroundService
                 }
                 else if (stream.IsConnected && stream.LatestFrame.Length > 0)
                 {
-                    // Only log healthy status every 30 seconds to avoid spam
                     if (timeSinceLastFrame.TotalSeconds < 3)
                     {
                         _logger.LogTrace(
@@ -177,14 +176,6 @@ public class CameraStreamService : BackgroundService
                             stream.LatestFrame.Length
                         );
                     }
-                }
-                else if (stream.IsConnected)
-                {
-                    _logger.LogDebug(
-                        "Camera {id}: Connected but waiting for first frame ({seconds}s elapsed)...",
-                        camera.Id,
-                        (int)timeSinceLastFrame.TotalSeconds
-                    );
                 }
             }
             catch (OperationCanceledException)
@@ -205,27 +196,26 @@ public class CameraStreamService : BackgroundService
         _logger.LogInformation("Starting camera stream for {name} ({id}) at {url}", 
             camera.Name, camera.Id, camera.GetRtspUrl());
 
-        var reconnectAttempt = 0;
-
         while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                reconnectAttempt++;
+                stream.ConsecutiveFailures++;
                 
-                if (reconnectAttempt > 1)
+                if (stream.ConsecutiveFailures > 1)
                 {
                     _logger.LogInformation(
-                        "Camera {id}: Reconnection attempt #{attempt}",
+                        "Camera {id}: Reconnection attempt (consecutive failures: {failures})",
                         camera.Id, 
-                        reconnectAttempt
+                        stream.ConsecutiveFailures
                     );
                 }
 
                 await ConnectAndStreamAsync(camera, stream, stoppingToken);
                 
-                // If we got here, the stream ended normally or was cancelled
-                reconnectAttempt = 0; // Reset counter on clean disconnect
+                // Successful connection - reset failure counter
+                stream.ConsecutiveFailures = 0;
+                stream.LastSuccessfulConnection = DateTime.UtcNow;
             }
             catch (OperationCanceledException)
             {
@@ -234,18 +224,28 @@ public class CameraStreamService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, 
-                    "Camera {id} stream error (attempt #{attempt}), reconnecting in {delay}ms", 
-                    camera.Id, 
-                    reconnectAttempt,
-                    _settings.ReconnectDelayMs);
+                var delay = CalculateReconnectDelay(stream.ConsecutiveFailures);
+                
+                if (stream.ConsecutiveFailures >= MAX_CONSECUTIVE_FAILURES)
+                {
+                    _logger.LogWarning(
+                        "Camera {id} has failed {failures} times. Using slow retry interval ({delay}ms). " +
+                        "Camera may be offline or unreachable.",
+                        camera.Id, 
+                        stream.ConsecutiveFailures,
+                        delay
+                    );
+                }
+                else
+                {
+                    _logger.LogError(ex, 
+                        "Camera {id} stream error (failure #{failures}), reconnecting in {delay}ms", 
+                        camera.Id, 
+                        stream.ConsecutiveFailures,
+                        delay);
+                }
                     
                 stream.IsConnected = false;
-                
-                // Exponential backoff for repeated failures (max 30 seconds)
-                var delay = Math.Min(_settings.ReconnectDelayMs * (int)Math.Pow(2, Math.Min(reconnectAttempt - 1, 4)), 30000);
-                _logger.LogDebug("Camera {id}: Using reconnect delay of {delay}ms", camera.Id, delay);
-                
                 await Task.Delay(delay, stoppingToken);
             }
             finally
@@ -253,6 +253,19 @@ public class CameraStreamService : BackgroundService
                 CleanupStream(stream);
             }
         }
+    }
+
+    private int CalculateReconnectDelay(int consecutiveFailures)
+    {
+        // After MAX_CONSECUTIVE_FAILURES, use slow retry interval
+        if (consecutiveFailures >= MAX_CONSECUTIVE_FAILURES)
+        {
+            return SLOW_RETRY_INTERVAL_MS;
+        }
+
+        // Exponential backoff: 5s, 10s, 20s, 40s, 60s
+        var delay = _settings.ReconnectDelayMs * (int)Math.Pow(2, Math.Min(consecutiveFailures - 1, 4));
+        return Math.Min(delay, MAX_BACKOFF_MS);
     }
 
     private string? FindFFmpegPath()
@@ -313,16 +326,15 @@ public class CameraStreamService : BackgroundService
         stream.StreamCts = new CancellationTokenSource();
         var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, stream.StreamCts.Token);
 
-        // Improved FFmpeg arguments for better reliability
         var ffmpegArgs = $"-rtsp_transport tcp " +
-                        $"-stimeout 5000000 " +           // 5 second socket timeout
-                        $"-max_delay 500000 " +           // Max demux delay
-                        $"-fflags +genpts+discardcorrupt " + // Generate PTS, discard corrupt packets
+                        $"-stimeout 5000000 " +
+                        $"-max_delay 500000 " +
+                        $"-fflags +genpts+discardcorrupt " +
                         $"-i \"{rtspUrl}\" " +
                         $"-f mjpeg " +
-                        $"-q:v 5 " +                      // Quality
-                        $"-r 15 " +                       // Frame rate
-                        $"-nostdin " +                    // Don't read stdin
+                        $"-q:v 5 " +
+                        $"-r 15 " +
+                        $"-nostdin " +
                         $"-";
 
         var startInfo = new ProcessStartInfo
@@ -363,14 +375,9 @@ public class CameraStreamService : BackgroundService
         };
 
         stream.FfmpegProcess.Start();
-        
-        // Close stdin to prevent FFmpeg from waiting for input
         stream.FfmpegProcess.StandardInput.Close();
-        
         stream.FfmpegProcess.BeginErrorReadLine();
         stream.IsConnected = true;
-        
-        // Reset frame tracking for new connection
         stream.LastFrameTime = DateTime.UtcNow;
 
         _logger.LogInformation("Camera {id}: FFmpeg process started (PID: {pid}), reading MJPEG stream", 
@@ -441,7 +448,6 @@ public class CameraStreamService : BackgroundService
 
                             cameraStream.FrameSemaphore.Release();
 
-                            // Log frame rate every 10 seconds
                             var timeSinceLog = DateTime.UtcNow - lastLogTime;
                             if (timeSinceLog.TotalSeconds >= 10)
                             {
@@ -544,7 +550,6 @@ public class CameraStreamService : BackgroundService
                 }
                 catch (InvalidOperationException)
                 {
-                    // Process already exited
                 }
                 catch (Exception ex)
                 {
@@ -557,7 +562,6 @@ public class CameraStreamService : BackgroundService
                 }
                 catch
                 {
-                    // Ignore disposal errors
                 }
 
                 stream.FfmpegProcess = null;
@@ -593,6 +597,8 @@ public class CameraStream
     public CancellationTokenSource? StreamCts { get; set; }
     public bool IsConnected { get; set; }
     public DateTime LastFrameTime { get; set; } = DateTime.MinValue;
+    public int ConsecutiveFailures { get; set; } = 0;
+    public DateTime? LastSuccessfulConnection { get; set; }
 
     public CameraStream(Camera camera)
     {
@@ -609,4 +615,5 @@ public class CameraStreamStatus
     public DateTime LastFrameTime { get; set; }
     public bool IsHealthy { get; set; }
     public int SecondsSinceLastFrame { get; set; }
+    public int ConsecutiveFailures { get; set; }
 }
