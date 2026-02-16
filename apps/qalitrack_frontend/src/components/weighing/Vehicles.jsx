@@ -44,7 +44,9 @@ export default function Vehicles() {
     rfiDcode: "", // ✅ Added RFID code field
   });
   const [editingVehicle, setEditingVehicle] = useState(null);
-  const [pageNumber] = useState(1);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [rfidSearchTerm, setRfidSearchTerm] = useState("");
@@ -52,9 +54,9 @@ export default function Vehicles() {
   const fetchVehicles = async () => {
     try {
       setLoading(true);
-      console.log("🚗 Fetching vehicles with params:", { pageNumber, pageSize: 50, searchTerm });
+      console.log("🚗 Fetching vehicles with params:", { pageNumber, pageSize, searchTerm });
       
-      const data = await getVehicles(pageNumber, 50, searchTerm);
+      const data = await getVehicles(pageNumber, pageSize, searchTerm);
       
       console.log("🚗 Vehicles RAW response:", data);
       console.log("🚗 Response type:", typeof data);
@@ -69,6 +71,12 @@ export default function Vehicles() {
       console.log("🚗 Extracted items:", items);
       console.log("🚗 Items is array?:", Array.isArray(items));
       console.log("🚗 Items length:", items.length);
+      
+      // ✅ Extract total items for pagination
+      const totalItems = data?.totalItems || data?.data?.totalItems || items.length;
+      const pages = Math.ceil(totalItems / pageSize);
+      setTotalPages(pages);
+      console.log("📊 Total items:", totalItems, "Total pages:", pages);
       
       if (items.length > 0) {
         console.log("🚗 First vehicle sample:", items[0]);
@@ -169,12 +177,30 @@ export default function Vehicles() {
 
   useEffect(() => {
     fetchVehicles();
-  }, [searchTerm]);
+  }, [pageNumber, searchTerm]);
 
   useEffect(() => {
     fetchOwners();
     fetchAxleConfigs();
   }, []);
+
+  // ✅ Re-enrich vehicles whenever owners or axleConfigs are loaded
+  useEffect(() => {
+    if (vehicles.length > 0 && (owners.length > 0 || axleConfigs.length > 0)) {
+      console.log("🔄 Re-enriching vehicles with updated owners/axle configs...");
+      const enrichedVehicles = vehicles.map(vehicle => {
+        const owner = owners.find(o => o.id === vehicle.ownerId);
+        const axleConfig = axleConfigs.find(a => a.id === vehicle.axleConfigurationId);
+        
+        return {
+          ...vehicle,
+          ownerName: vehicle.ownerName || owner?.name || owner?.ownerName || null,
+          axleConfigurationName: vehicle.axleConfigurationName || axleConfig?.name || axleConfig?.configurationName || null
+        };
+      });
+      setVehicles(enrichedVehicles);
+    }
+  }, [owners, axleConfigs]);
 
   const handleRfidSearch = async () => {
     if (!rfidSearchTerm.trim()) {
@@ -441,6 +467,7 @@ export default function Vehicles() {
               onClick={() => {
                 setSearchTerm("");
                 setRfidSearchTerm("");
+                setPageNumber(1);
                 fetchVehicles();
               }}
               className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
@@ -924,7 +951,7 @@ export default function Vehicles() {
                   }`}
                 >
                   <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">
-                    {index + 1}
+                    {(pageNumber - 1) * pageSize + index + 1}
                   </td>
                   <td className="px-3 py-2">
                     <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
@@ -992,11 +1019,30 @@ export default function Vehicles() {
         )}
       </div>
 
-      {/* Footer */}
+      {/* Footer with Pagination */}
       <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
         <span className="text-[10px] text-gray-600 font-medium">
-          <span className="font-semibold text-amber-600">{vehicles.length}</span> total vehicles
+          Page <span className="font-semibold text-amber-600">{pageNumber}</span> of{" "}
+          <span className="font-semibold text-amber-600">{totalPages}</span>
+          {" • "}
+          <span className="font-semibold text-amber-600">{vehicles.length}</span> vehicles on this page
         </span>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
+            disabled={pageNumber === 1}
+            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => setPageNumber((p) => Math.min(totalPages, p + 1))}
+            disabled={pageNumber === totalPages}
+            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       <style>{`
