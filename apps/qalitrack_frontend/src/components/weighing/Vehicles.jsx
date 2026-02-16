@@ -79,9 +79,20 @@ export default function Vehicles() {
         // ✅ If backend doesn't provide names, enrich with local data
         if (!items[0].ownerName || !items[0].axleConfigurationName) {
           console.log("⚠️ Backend not providing names, enriching locally...");
+          console.log("📊 Available owners:", owners.length, owners);
+          console.log("📊 Available axle configs:", axleConfigs.length, axleConfigs);
+          
           items = items.map(vehicle => {
+            console.log(`🔍 Processing vehicle ${vehicle.registrationNumber}:`, {
+              ownerId: vehicle.ownerId,
+              axleConfigurationId: vehicle.axleConfigurationId
+            });
+            
             const owner = owners.find(o => o.id === vehicle.ownerId);
             const axleConfig = axleConfigs.find(a => a.id === vehicle.axleConfigurationId);
+            
+            console.log(`  - Found owner:`, owner);
+            console.log(`  - Found axle config:`, axleConfig);
             
             return {
               ...vehicle,
@@ -107,12 +118,26 @@ export default function Vehicles() {
 
   const fetchOwners = async () => {
     try {
+      console.log("👤 Fetching owners...");
       const data = await getOwners(1, 100, "");
-      console.log("👤 Owners fetched:", data);
+      console.log("👤 Owners RAW response:", data);
+      console.log("👤 Response keys:", data ? Object.keys(data) : "null");
+      
       const items = data?.items || data || [];
+      console.log("👤 Extracted owners:", items);
+      console.log("👤 Owners is array?:", Array.isArray(items));
+      console.log("👤 Owners count:", items.length);
+      
+      if (items.length > 0) {
+        console.log("👤 First owner sample:", items[0]);
+        console.log("👤 Owner fields:", Object.keys(items[0]));
+      }
+      
       setOwners(Array.isArray(items) ? items : []);
+      console.log("✅ Owners set to state:", Array.isArray(items) ? items.length : 0);
     } catch (error) {
       console.error("❌ Failed to fetch owners:", error.message);
+      console.error("❌ Error details:", error);
       setOwners([]);
     }
   };
