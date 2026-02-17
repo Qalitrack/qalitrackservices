@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Concurrent;
-using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Channels;
@@ -13,7 +13,7 @@ public class RfidTagStreamService : IDisposable
 {
     private readonly ConcurrentDictionary<string, (Channel<string> Channel, DateTime LastActivity)> _streams = new();
     private readonly ILogger<RfidTagStreamService> _logger;
-    private readonly StreamingMetrics _metrics; // you can keep or remove metrics
+    private readonly StreamingMetrics _metrics;
     private readonly JsonSerializerOptions _jsonOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -22,6 +22,7 @@ public class RfidTagStreamService : IDisposable
 
     private bool _disposed;
     private readonly TimeSpan _inactiveTimeout = TimeSpan.FromMinutes(5);
+    private readonly CancellationTokenSource _cleanupCts = new();
 
     public RfidTagStreamService(
         ILogger<RfidTagStreamService> logger,
@@ -29,19 +30,19 @@ public class RfidTagStreamService : IDisposable
     {
         _logger = logger;
         _metrics = metrics;
-        _ = CleanupInactiveConnectionsAsync();
+        _ = CleanupInactiveConnectionsAsync(_cleanupCts.Token);
     }
 
-    public async Task PublishTagAsync(string epc, CancellationToken ct = default)
+    public async Task PublishTagAsync(string tid, CancellationToken ct = default)
     {
         if (_disposed) return;
 
-        var payload = new { epc = epc.Trim(), timestamp = DateTime.UtcNow };
-        var json = JsonSerializer.Serialize(payload, _jsonOptions);
+        // Just send the TID directly, no wrapping
+        var json = JsonSerializer.Serialize(tid, _jsonOptions);
 
-        var tasks = _streams.Select(async kvp =>
+        foreach (var kvp in _streams)
         {
-            var (clientId, (channel, _)) = kvp;
+            var (clientId, (channel, _)) = (kvp.Key, kvp.Value);
             try
             {
                 using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
@@ -52,20 +53,13 @@ public class RfidTagStreamService : IDisposable
                     await channel.Writer.WriteAsync(json, cts.Token);
                     _metrics?.MessageProcessed(clientId, json.Length, 0);
                     _streams[clientId] = (channel, DateTime.UtcNow);
-                    return true;
                 }
-                return false;
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                _logger.LogWarning(ex, "Failed to send tag to client {ClientId}", clientId);
             }
-        });
-
-        var results = await Task.WhenAll(tasks);
-        var failed = results.Where(r => !r).ToList();
-
-        // You can clean failed clients here if desired
+        }
     }
 
     public IAsyncEnumerable<string> SubscribeAsync(string clientId, CancellationToken ct = default)
@@ -89,6 +83,7 @@ public class RfidTagStreamService : IDisposable
             {
                 info.Channel.Writer.TryComplete();
                 _metrics?.ConnectionEnded(clientId, "Cancelled");
+                _logger.LogInformation("Client {ClientId} cancelled subscription", clientId);
             }
         }, useSynchronizationContext: false);
 
@@ -102,28 +97,40 @@ public class RfidTagStreamService : IDisposable
         {
             _metrics?.ConnectionEnded(clientId, "Unsubscribed");
             info.Channel.Writer.TryComplete();
+            _logger.LogInformation("Client {ClientId} unsubscribed", clientId);
         }
     }
 
-    private async Task CleanupInactiveConnectionsAsync()
+    private async Task CleanupInactiveConnectionsAsync(CancellationToken ct)
     {
-        while (!_disposed)
+        while (!ct.IsCancellationRequested)
         {
-            await Task.Delay(60000);
-            var now = DateTime.UtcNow;
-            var inactive = _streams
-                .Where(k => (now - k.Value.LastActivity) > _inactiveTimeout)
-                .Select(k => k.Key)
-                .ToList();
-
-            foreach (var id in inactive)
+            try
             {
-                if (_streams.TryRemove(id, out var info))
+                await Task.Delay(60000, ct);
+                var now = DateTime.UtcNow;
+                var inactive = _streams
+                    .Where(k => (now - k.Value.LastActivity) > _inactiveTimeout)
+                    .Select(k => k.Key)
+                    .ToList();
+
+                foreach (var id in inactive)
                 {
-                    info.Channel.Writer.TryComplete();
-                    _metrics?.ConnectionEnded(id, "Inactive");
-                    _logger.LogInformation("Removed inactive RFID client {ClientId}", id);
+                    if (_streams.TryRemove(id, out var info))
+                    {
+                        info.Channel.Writer.TryComplete();
+                        _metrics?.ConnectionEnded(id, "Inactive");
+                        _logger.LogInformation("Removed inactive RFID client {ClientId}", id);
+                    }
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                break;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in cleanup task");
             }
         }
     }
@@ -132,6 +139,9 @@ public class RfidTagStreamService : IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+
+        _cleanupCts.Cancel();
+        _cleanupCts.Dispose();
 
         foreach (var (_, (channel, _)) in _streams)
             channel.Writer.TryComplete();
