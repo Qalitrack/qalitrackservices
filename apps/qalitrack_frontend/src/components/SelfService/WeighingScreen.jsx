@@ -1,336 +1,605 @@
 /**
- * AuthenticationMethodModal.jsx
- *
- * SIMULATION MODE — NFC hardware not yet configured.
- * Simulates a card tap after 3 seconds, then auto-advances with mock driver data.
- * No apiClient calls → no auth interceptors → no login redirect.
- *
- * When real NFC is ready, replace the SIMULATION BLOCK with the real SSE stream.
+ * WeighingScreen.jsx  —  Kiosk weighing step
+ * Fully corrected version – labelStyle defined, layout preserved
  */
 
-import React, { useEffect, useRef, useState } from "react";
-import { Modal } from "antd";
-import { useTheme } from "../Context/ThemeContext.jsx";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { message, Select, Input } from "antd";
+const { Option } = Select;
+const { TextArea } = Input;
 
-// ── Mock drivers — swap for real API lookup when NFC is configured ────────────
-const MOCK_DRIVERS = [
-  {
-    id:         "DRV-001",
-    uid:        "NFC-SIMULATED-001",
-    name:       "John Kamau Mwangi",
-    employeeId: "EMP-2841",
-    phone:      "+254 712 345 678",
-    licenseNo:  "DL-294817",
-    role:       "Senior Driver",
-    photoUrl:   null,
-  },
-  {
-    id:         "DRV-002",
-    uid:        "NFC-SIMULATED-002",
-    name:       "Mary Wanjiku Njoroge",
-    employeeId: "EMP-1093",
-    phone:      "+254 723 456 789",
-    licenseNo:  "DL-187263",
-    role:       "Driver",
-    photoUrl:   null,
-  },
-  {
-    id:         "DRV-003",
-    uid:        "NFC-SIMULATED-003",
-    name:       "Peter Otieno Odhiambo",
-    employeeId: "EMP-3372",
-    phone:      "+254 734 567 890",
-    licenseNo:  "DL-356981",
-    role:       "Driver",
-    photoUrl:   null,
-  },
-];
+// ─── API Helpers ─────────────────────────────────────────────────────────────
+const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-// ─── COMPONENT ────────────────────────────────────────────────────────────────
-export default function AuthenticationMethodModal({ visible, onClose, onSelectNFC }) {
-  const { isDark } = useTheme();
+async function apiFetch(path, opts = {}) {
+  const res = await fetch(`${BASE_URL}${path}`, {
+    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+    ...opts,
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(body || `HTTP ${res.status}`);
+  }
+  return res.json();
+}
 
-  // status: waiting | tapping | reading | success
-  const [status,     setStatus]     = useState("waiting");
-  const [driverData, setDriverData] = useState(null);
-  const [countdown,  setCountdown]  = useState(3);
-  const [dotCount,   setDotCount]   = useState(0);
+async function searchVehicles(q)      { return apiFetch(`/vehicles?search=${encodeURIComponent(q)}&pageSize=20`).then(r => r.items || r || []); }
+async function searchDrivers(q)       { return apiFetch(`/drivers?search=${encodeURIComponent(q)}&pageSize=20`).then(r => r.items || r || []); }
+async function searchTransporters(q)  { return apiFetch(`/transporters?search=${encodeURIComponent(q)}&pageSize=20`).then(r => r.items || r || []); }
+async function searchProducts(q)      { return apiFetch(`/products?search=${encodeURIComponent(q)}&pageSize=20`).then(r => r.items || r || []); }
+async function searchSuppliers(q)     { return apiFetch(`/suppliers?search=${encodeURIComponent(q)}&pageSize=20`).then(r => r.items || r || []); }
+async function getWeighbridges()      { return apiFetch(`/weighbridges?pageSize=50`).then(r => r.items || r || []); }
+async function postTransaction(body)  { return apiFetch(`/transactions`, { method: "POST", body: JSON.stringify({ request: body }) }); }
 
-  const timerRef     = useRef(null);
-  const countdownRef = useRef(null);
-  const dotRef       = useRef(null);
+// ─── Debounce ────────────────────────────────────────────────────────────────
+function useDebounce(fn, delay) {
+  const timerRef = useRef(null);
+  return useCallback((...args) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => fn(...args), delay);
+  }, [fn, delay]);
+}
 
-  // Clear all timers
-  const clearAll = () => {
-    clearTimeout(timerRef.current);
-    clearInterval(countdownRef.current);
-    clearInterval(dotRef.current);
-  };
+// ══════════════════════════════════════════════════════════════════════════════
+export default function WeighingScreen({
+  vehicleData = {},
+  driverData  = {},
+  onWeighingComplete,
+  onBack,
+  error: parentError,
+}) {
+  // ── dropdown data ──
+  const [vehicles,     setVehicles]     = useState([]);
+  const [drivers,      setDrivers]      = useState([]);
+  const [transporters, setTransporters] = useState([]);
+  const [products,     setProducts]     = useState([]);
+  const [suppliers,    setSuppliers]    = useState([]);
+  const [weighbridges, setWeighbridges] = useState([]);
 
-  // Reset when modal opens / closes
+  // ── form state ──
+  const [form, setForm] = useState({
+    vehicleID:           null,
+    noPlate:             vehicleData?.plateNumber || vehicleData?.noPlate || "",
+    driverID:            null,
+    driverName:          driverData?.fullName || driverData?.name || "",
+    transporterID:       null,
+    transporterName:     "",
+    commodityID:         null,
+    commodityName:       "",
+    supplierID:          null,
+    supplierName:        "",
+    customerName:        "",
+    originName:          "",
+    destinationName:     "",
+    weighBridgeID:       null,
+    weighBridgeName:     "",
+    scaleName:           "",
+    weighMode:           "entry",
+    operation:           "weighing",
+    notes:               "",
+  });
+
+  // ── weight state ──
+  const [weightMode, setWeightMode]     = useState("captured");
+  const [capturedWeight, setCapturedWeight] = useState(0);
+  const [manualWeight,   setManualWeight]   = useState("");
+  const [isStable,       setIsStable]       = useState(false);
+
+  // ── submission state ──
+  const [submitting, setSubmitting] = useState(false);
+  const [apiError,   setApiError]   = useState(null);
+
+  // ── refs for stability ──
+  const bufferRef          = useRef(null);
+  const lastStableRef      = useRef(null);
+  const stabilityCounter   = useRef(0);
+  const STABILITY_CYCLES   = 5;
+
+  // ── load weighbridges ──
   useEffect(() => {
-    if (visible) {
-      setStatus("waiting");
-      setDriverData(null);
-      setCountdown(3);
-      setDotCount(0);
-      startSimulation();
-    } else {
-      clearAll();
-    }
-    return clearAll;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+    getWeighbridges().then(setWeighbridges).catch(() => {});
+  }, []);
 
-  // Animated dots
+  // ── simulated weight feed ──
   useEffect(() => {
-    if (status !== "waiting") return;
-    dotRef.current = setInterval(() => setDotCount(d => (d + 1) % 4), 500);
-    return () => clearInterval(dotRef.current);
-  }, [status]);
+    const BASE = 19011;
+    let iter = 0;
+    const id = setInterval(() => {
+      iter++;
+      const w = iter < 6 ? BASE + Math.floor(Math.random() * 40 - 20) : BASE;
+      bufferRef.current = w;
+      setCapturedWeight(w);
+    }, 1200);
+    return () => clearInterval(id);
+  }, []);
 
-  const startSimulation = () => {
-    clearAll();
-
-    // Countdown display: 3 → 2 → 1
-    setCountdown(3);
-    countdownRef.current = setInterval(() => {
-      setCountdown(c => {
-        if (c <= 1) { clearInterval(countdownRef.current); return 0; }
-        return c - 1;
-      });
-    }, 1000);
-
-    // After 3s: simulate tap
-    timerRef.current = setTimeout(() => {
-      clearInterval(countdownRef.current);
-      setStatus("tapping");
-
-      // After 0.6s: show "reading"
-      setTimeout(() => {
-        setStatus("reading");
-        const mock = MOCK_DRIVERS[Math.floor(Math.random() * MOCK_DRIVERS.length)];
-
-        // After 1.2s: show success
-        setTimeout(() => {
-          setDriverData(mock);
-          setStatus("success");
-          console.log("🎭 Simulated NFC driver:", mock);
-
-          // After 2s: auto-advance to weighing
-          setTimeout(() => onSelectNFC(mock), 2000);
-        }, 1200);
-      }, 600);
-    }, 3000);
-  };
-
-  const dots = ".".repeat(dotCount);
-
-  // ─── RENDER ───────────────────────────────────────────────────────────────
-  return (
-    <Modal
-      open={visible}
-      onCancel={onClose}
-      footer={null}
-      width={520}
-      centered
-      closeIcon={
-        <span className={`text-3xl leading-none ${isDark ? "text-gray-500 hover:text-gray-300" : "text-gray-400 hover:text-gray-700"}`}>
-          ×
-        </span>
+  // ── stability check ──
+  useEffect(() => {
+    const id = setInterval(() => {
+      const curr = bufferRef.current;
+      if (curr == null) return;
+      if (curr === lastStableRef.current) {
+        stabilityCounter.current++;
+        if (stabilityCounter.current >= STABILITY_CYCLES) setIsStable(true);
+      } else {
+        lastStableRef.current   = curr;
+        stabilityCounter.current = 1;
+        setIsStable(false);
       }
-      styles={{
-        body: {
-          padding: 0,
-          backgroundColor: isDark ? "#111827" : "#ffffff",
-          borderRadius: "1rem",
-          overflow: "hidden",
-        },
-        mask:    { backgroundColor: "rgba(0,0,0,0.75)" },
-        content: {
-          borderRadius: "1rem",
-          overflow: "hidden",
-          border: isDark ? "1px solid #374151" : "1px solid #e5e7eb",
-        },
-      }}
-    >
-      {/* Amber top stripe */}
-      <div className="h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-amber-600" />
+    }, 800);
+    return () => clearInterval(id);
+  }, []);
 
-      {/* Simulation badge */}
-      <div className={`mx-10 mt-6 flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-xs font-bold border ${
-        isDark ? "bg-purple-900/30 border-purple-700 text-purple-300" : "bg-purple-50 border-purple-200 text-purple-700"
-      }`}>
-        <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-        SIMULATION MODE — NFC hardware not yet configured
-      </div>
+  // ── debounced searches ──
+  const debounced = {
+    vehicles:     useDebounce(q => { if (q) searchVehicles(q).then(setVehicles); }, 400),
+    drivers:      useDebounce(q => { if (q) searchDrivers(q).then(setDrivers); }, 400),
+    transporters: useDebounce(q => { if (q) searchTransporters(q).then(setTransporters); }, 400),
+    products:     useDebounce(q => { if (q) searchProducts(q).then(setProducts); }, 400),
+    suppliers:    useDebounce(q => { if (q) searchSuppliers(q).then(setSuppliers); }, 400),
+  };
 
-      <div className="px-10 py-8">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <h2 className={`text-3xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>
-            Driver Authentication
-          </h2>
-          <p className={`mt-2 text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-            {status === "waiting"  && `Waiting for NFC card tap${dots}`}
-            {status === "tapping"  && "Card detected!"}
-            {status === "reading"  && "Reading card & verifying driver…"}
-            {status === "success"  && "Driver authenticated!"}
-          </p>
+  // ── helpers ──
+  const setField = (key, val) => setForm(p => ({ ...p, [key]: val }));
+
+  const pick = (list, id, idKey, nameKey) => {
+    const item = list.find(i => i.id === id);
+    setForm(p => ({
+      ...p,
+      [idKey]:   id,
+      [nameKey]: item?.name || item?.fullName || item?.registrationNumber || "",
+    }));
+  };
+
+  const effectiveWeight = weightMode === "manual"
+    ? Number(manualWeight) || 0
+    : capturedWeight;
+
+  // ── CAPTURE / SUBMIT ──
+  const handleCapture = async () => {
+    setApiError(null);
+
+    if (effectiveWeight <= 0) {
+      message.error("Weight must be greater than 0.");
+      return;
+    }
+    if (!form.noPlate?.trim()) {
+      message.error("Vehicle plate is required.");
+      return;
+    }
+    if (!form.weighBridgeID) {
+      message.error("Please select a weighbridge.");
+      return;
+    }
+    if (!form.transporterID) {
+      message.error("Transporter is required.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    const payload = {
+      noPlate:          form.noPlate.toUpperCase().trim(),
+      driverName:       form.driverName || "",
+      firstWeight:      String(effectiveWeight),
+      transporterID:    form.transporterID || null,
+      transporterName:  form.transporterName || "",
+      weighBridgeID:    form.weighBridgeID || null,
+      weighBridgeName:  form.weighBridgeName || form.scaleName || "",
+      scaleName:        form.scaleName || "",
+      operatorID:       null,
+      operatorName:     "Self-Service Kiosk",
+      commodityID:      form.commodityID || null,
+      commodityName:    form.commodityName || "",
+      supplierID:       form.supplierID || null,
+      supplierName:     form.supplierName || "",
+      customerName:     form.customerName || "",
+      originName:       form.originName || "",
+      destinationName:  form.destinationName || "",
+      weighMode:        form.weighMode || "entry",
+      operation:        form.operation || "weighing",
+      notes:            form.notes || "Self-service kiosk transaction",
+    };
+
+    // Only include valid GUIDs
+    if (form.vehicleID) payload.vehicleID = form.vehicleID;
+    if (form.driverID)   payload.driverID   = form.driverID;
+
+    console.log("📤 Kiosk posting:", payload);
+
+    try {
+      const result = await postTransaction(payload);
+      console.log("✅ Saved:", result);
+
+      message.success({
+        content: `Transaction saved! Receipt: ${result.receiptNo || result.ticketID || "Generated"}`,
+        duration: 4,
+      });
+
+      onWeighingComplete?.({
+        ...payload,
+        ...result,
+        weight: effectiveWeight,
+        weightMode,
+      });
+    } catch (e) {
+      console.error("❌ Failed:", e);
+      const msg = e.message || "Failed to save transaction";
+      setApiError(msg);
+      message.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // ─── shared styles ──────────────────────────────────────────────────────────
+  const labelStyle = "block text-xs font-semibold text-gray-600 mb-1.5";
+
+  const inputCls = {
+    width: "100%",
+    padding: "8px 10px",
+    borderRadius: "8px",
+    border: "1.5px solid #e5e7eb",
+    fontSize: "13px",
+    color: "#111827",
+    background: "#fff",
+    outline: "none",
+    transition: "border-color .2s, box-shadow .2s",
+  };
+
+  const focusStyle = (e) => {
+    e.target.style.borderColor = "#d97706";
+    e.target.style.boxShadow = "0 0 0 3px rgba(217,119,6,0.15)";
+  };
+
+  const blurStyle = (e) => {
+    e.target.style.borderColor = "#e5e7eb";
+    e.target.style.boxShadow = "none";
+  };
+
+  // ─── render ─────────────────────────────────────────────────────────────────
+  return (
+    <div className="min-h-screen flex flex-col" style={{ background: "#fafafa" }}>
+
+      {/* HEADER */}
+      <header className="shrink-0 px-6 py-3 flex items-center justify-between" style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg,#d97706,#f59e0b)" }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <div>
+            <h1 className="text-base font-bold" style={{ color: "#111827" }}>Weighing</h1>
+            <p className="text-xs" style={{ color: "#6b7280" }}>Capture or enter weight</p>
+          </div>
         </div>
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background: "#dcfce7", color: "#16a34a", border: "1px solid #bbf7d0" }}>● LIVE</span>
+          <span className="text-xs font-medium" style={{ color: "#6b7280" }}>Self-Service Kiosk</span>
+        </div>
+      </header>
 
-        {/* Central visual */}
-        <div className="flex justify-center mb-8">
-          <div className="relative">
-            {/* Pulse rings — waiting */}
-            {status === "waiting" && [0, 1].map(i => (
-              <span key={i} className="absolute inset-0 rounded-full border-2 animate-ping"
-                style={{
-                  borderColor: isDark ? "rgba(168,85,247,0.3)" : "rgba(126,34,206,0.2)",
-                  animationDuration: `${1.4 + i * 0.5}s`,
-                  animationDelay: `${i * 0.3}s`,
-                }} />
-            ))}
+      {/* BODY */}
+      <div className="flex-1 overflow-auto px-6 py-5 flex flex-col gap-5">
 
-            <div className={`w-36 h-36 rounded-full flex flex-col items-center justify-center shadow-2xl transition-all duration-500 bg-gradient-to-br ${
-              status === "success"  ? "from-green-400 to-emerald-600"
-              : status === "tapping" || status === "reading" ? "from-amber-400 to-orange-500"
-              : isDark ? "from-purple-700 to-indigo-700" : "from-purple-600 to-indigo-600"
-            }`}>
-              {status === "reading" ? (
-                <div className="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : status === "success" ? (
-                <svg className="w-16 h-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
-              ) : status === "tapping" ? (
-                <span className="text-5xl">📲</span>
+        {/* ROW 1: Vehicle | Driver | Weight */}
+        <div className="grid grid-cols-12 gap-4">
+
+          {/* Vehicle card */}
+          <div className="col-span-3 rounded-xl overflow-hidden" style={{ background: "#fff", border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+            <div className="px-4 py-2.5" style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "1px solid #f0ecdf" }}>
+              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Vehicle</p>
+            </div>
+            <div className="p-4">
+              <Select
+                showSearch
+                placeholder="Search vehicle / plate..."
+                onSearch={debounced.vehicles}
+                onChange={(id) => pick(vehicles, id, "vehicleID", "noPlate")}
+                value={form.vehicleID}
+                style={{ width: "100%" }}
+                allowClear
+              >
+                {vehicles.map(v => (
+                  <Option key={v.id} value={v.id}>
+                    {v.registrationNumber || v.plateNumber || v.noPlate}
+                  </Option>
+                ))}
+              </Select>
+              <p className="mt-3 text-2xl font-bold font-mono text-center" style={{ color: "#111827" }}>
+                {form.noPlate || "---"}
+              </p>
+              <div className="mt-3 h-[90px] bg-gray-100 rounded-lg flex items-center justify-center border border-dashed border-gray-300">
+                <span className="text-xs text-gray-500">Vehicle Image / ANPR</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Driver card */}
+          <div className="col-span-4 rounded-xl overflow-hidden" style={{ background: "#fff", border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+            <div className="px-4 py-2.5" style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "1px solid #f0ecdf" }}>
+              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Driver Details</p>
+            </div>
+            <div className="p-4">
+              <Select
+                showSearch
+                placeholder="Search driver..."
+                onSearch={debounced.drivers}
+                onChange={(id) => pick(drivers, id, "driverID", "driverName")}
+                value={form.driverID}
+                style={{ width: "100%" }}
+                allowClear
+              >
+                {drivers.map(d => (
+                  <Option key={d.id} value={d.id}>
+                    {d.fullName || d.name}
+                  </Option>
+                ))}
+              </Select>
+
+              <div className="mt-4 space-y-1 text-sm">
+                <div className="flex justify-between"><span style={{ color: "#6b7280" }}>Name</span><span>{form.driverName || "---"}</span></div>
+                {/* Add more driver fields if available in your data */}
+              </div>
+            </div>
+          </div>
+
+          {/* Weight card */}
+          <div className="col-span-5 rounded-xl overflow-hidden flex flex-col" style={{ background: "#fff", border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+            <div className="px-4 py-2.5 flex items-center justify-between" style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "1px solid #f0ecdf" }}>
+              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Weight Reading</p>
+              <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #e5e7eb" }}>
+                {["captured", "manual"].map(mode => (
+                  <button
+                    key={mode}
+                    onClick={() => setWeightMode(mode)}
+                    className="px-3 py-0.5 text-xs font-semibold transition-all"
+                    style={{
+                      background: weightMode === mode ? "#d97706" : "#fff",
+                      color:      weightMode === mode ? "#fff"     : "#6b7280",
+                    }}
+                  >
+                    {mode === "captured" ? "⚡ Captured" : "✏️ Manual"}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 flex flex-col items-center justify-center py-4 gap-2">
+              {weightMode === "captured" ? (
+                <>
+                  <p className="text-6xl font-mono font-bold" style={{ color: isStable ? "#16a34a" : "#d97706" }}>
+                    {capturedWeight.toLocaleString()}
+                  </p>
+                  <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG</p>
+                  <span
+                    className="px-3 py-0.5 rounded-full text-xs font-bold"
+                    style={{
+                      background: isStable ? "#dcfce7" : "#fef3c7",
+                      color:      isStable ? "#16a34a" : "#d97706",
+                      border:     isStable ? "1px solid #bbf7d0" : "1px solid #fcd34d",
+                    }}
+                  >
+                    {isStable ? "● Stable" : "● Stabilizing…"}
+                  </span>
+                </>
               ) : (
                 <>
-                  <span className="text-5xl">📡</span>
-                  {countdown > 0 && (
-                    <span className="text-white font-black text-lg mt-1">{countdown}s</span>
-                  )}
+                  <input
+                    type="number"
+                    placeholder="0"
+                    value={manualWeight}
+                    onChange={(e) => setManualWeight(e.target.value)}
+                    style={{ ...inputCls, width: "180px", fontSize: "32px", textAlign: "center" }}
+                    onFocus={focusStyle}
+                    onBlur={blurStyle}
+                  />
+                  <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG  (manual entry)</p>
                 </>
               )}
             </div>
           </div>
         </div>
 
-        {/* Status content */}
-
-        {/* WAITING */}
-        {status === "waiting" && (
-          <div className={`rounded-2xl p-5 text-center border ${
-            isDark ? "bg-gray-800/60 border-gray-700" : "bg-purple-50 border-purple-200"
-          }`}>
-            <p className={`font-semibold text-base mb-1 ${isDark ? "text-purple-300" : "text-purple-700"}`}>
-              Simulating NFC card tap in {countdown > 0 ? `${countdown}s` : "…"}
-            </p>
-            <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-              In production this will read the physical NFC card
-            </p>
-          </div>
-        )}
-
-        {/* TAPPING */}
-        {status === "tapping" && (
-          <div className={`rounded-2xl p-5 text-center border ${
-            isDark ? "bg-amber-900/20 border-amber-700" : "bg-amber-50 border-amber-200"
-          }`}>
-            <p className={`font-semibold ${isDark ? "text-amber-300" : "text-amber-700"}`}>
-              🎉 Card tap detected! Fetching driver details…
-            </p>
-          </div>
-        )}
-
-        {/* READING */}
-        {status === "reading" && (
-          <div className={`rounded-2xl p-5 text-center border ${
-            isDark ? "bg-blue-900/20 border-blue-700" : "bg-blue-50 border-blue-200"
-          }`}>
-            <div className="flex items-center justify-center gap-3">
-              <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-              <p className={`font-semibold ${isDark ? "text-blue-300" : "text-blue-700"}`}>
-                Verifying driver identity…
-              </p>
+        {/* Transaction Details */}
+        <div className="rounded-xl overflow-hidden" style={{ background: "#fff", border: "1px solid #e5e7eb", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+          <div className="px-5 py-3 flex items-center justify-between" style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "1px solid #f0ecdf" }}>
+            <div className="flex items-center gap-2">
+              <div className="w-1 h-5 rounded-full" style={{ background: "linear-gradient(180deg,#d97706,#f59e0b)" }} />
+              <p className="text-sm font-bold" style={{ color: "#111827" }}>Transaction Details</p>
             </div>
           </div>
-        )}
 
-        {/* SUCCESS */}
-        {status === "success" && driverData && (
-          <div className={`rounded-2xl overflow-hidden border ${
-            isDark ? "border-green-700" : "border-green-300"
-          }`}>
-            {/* Green header */}
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-6 py-4 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-4xl border-4 border-white/30 shadow-lg">
-                👤
-              </div>
+          <div className="p-5">
+            <div className="grid grid-cols-4 gap-4 mb-4">
               <div>
-                <p className="text-white/70 text-xs font-semibold uppercase tracking-wider">Verified Driver</p>
-                <p className="text-white text-2xl font-black leading-tight">{driverData.name}</p>
-                {driverData.role && <p className="text-green-100 text-xs mt-0.5">{driverData.role}</p>}
+                <label className={labelStyle}>Transporter <span style={{ color: "#ef4444" }}>*</span></label>
+                <Select
+                  showSearch
+                  placeholder="Search transporter…"
+                  onSearch={debounced.transporters}
+                  onChange={id => pick(transporters, id, "transporterID", "transporterName")}
+                  value={form.transporterID}
+                  style={{ width: "100%" }}
+                  allowClear
+                >
+                  {transporters.map(item => (
+                    <Option key={item.id} value={item.id}>{item.name}</Option>
+                  ))}
+                </Select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Commodity</label>
+                <Select
+                  showSearch
+                  placeholder="Search commodity…"
+                  onSearch={debounced.products}
+                  onChange={id => pick(products, id, "commodityID", "commodityName")}
+                  value={form.commodityID}
+                  style={{ width: "100%" }}
+                  allowClear
+                >
+                  {products.map(item => (
+                    <Option key={item.id} value={item.id}>{item.name}</Option>
+                  ))}
+                </Select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Supplier</label>
+                <Select
+                  showSearch
+                  placeholder="Search supplier…"
+                  onSearch={debounced.suppliers}
+                  onChange={id => pick(suppliers, id, "supplierID", "supplierName")}
+                  value={form.supplierID}
+                  style={{ width: "100%" }}
+                  allowClear
+                >
+                  {suppliers.map(item => (
+                    <Option key={item.id} value={item.id}>{item.name}</Option>
+                  ))}
+                </Select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Customer Name</label>
+                <Input
+                  placeholder="Customer name"
+                  value={form.customerName}
+                  onChange={e => setField("customerName", e.target.value)}
+                  style={inputCls}
+                  onFocus={focusStyle}
+                  onBlur={blurStyle}
+                />
               </div>
             </div>
 
-            {/* Details */}
-            <div className={`px-6 py-4 grid grid-cols-2 gap-3 ${isDark ? "bg-gray-800" : "bg-white"}`}>
-              {driverData.employeeId && <NfcField label="Employee ID" value={driverData.employeeId} isDark={isDark} mono />}
-              {driverData.phone      && <NfcField label="Phone"       value={driverData.phone}      isDark={isDark} />}
-              {driverData.licenseNo  && <NfcField label="Licence No." value={driverData.licenseNo}  isDark={isDark} mono />}
-              <NfcField label="NFC UID" value={driverData.uid} isDark={isDark} mono />
+            <div className="grid grid-cols-4 gap-4 mb-4">
+              <div>
+                <label className={labelStyle}>Origin</label>
+                <Input
+                  placeholder="Origin"
+                  value={form.originName}
+                  onChange={e => setField("originName", e.target.value)}
+                  style={inputCls}
+                  onFocus={focusStyle}
+                  onBlur={blurStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Destination</label>
+                <Input
+                  placeholder="Destination"
+                  value={form.destinationName}
+                  onChange={e => setField("destinationName", e.target.value)}
+                  style={inputCls}
+                  onFocus={focusStyle}
+                  onBlur={blurStyle}
+                />
+              </div>
+
+              <div>
+                <label className={labelStyle}>Weighbridge <span style={{ color: "#ef4444" }}>*</span></label>
+                <Select
+                  placeholder="Select weighbridge…"
+                  value={form.scaleName || form.weighBridgeName}
+                  onChange={v => {
+                    const wb = weighbridges.find(w => (w.location || w.name) === v);
+                    setForm(p => ({ ...p, weighBridgeID: wb?.id || null, weighBridgeName: v, scaleName: v }));
+                  }}
+                  style={{ width: "100%" }}
+                >
+                  {weighbridges.map(wb => (
+                    <Option key={wb.id} value={wb.location || wb.name}>{wb.location || wb.name}</Option>
+                  ))}
+                </Select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Weigh Mode</label>
+                <Select
+                  value={form.weighMode}
+                  onChange={v => setField("weighMode", v)}
+                  style={{ width: "100%" }}
+                >
+                  <Option value="entry">Entry</Option>
+                  <Option value="Gross/Tare">Kiosk</Option>
+                </Select>
+              </div>
             </div>
 
-            <div className={`px-6 py-3 text-center text-xs ${
-              isDark ? "bg-gray-900 text-gray-500" : "bg-gray-50 text-gray-400"
-            }`}>
-              Proceeding to weighing automatically…
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className={labelStyle}>Operation</label>
+                <Select
+                  value={form.operation}
+                  onChange={v => setField("operation", v)}
+                  style={{ width: "100%" }}
+                >
+                  <Option value="weighing">Weighing</Option>
+                  <Option value="Inbound Product Receipt">Inbound Receipt</Option>
+                  <Option value="Outbound Product Dispatch">Outbound Dispatch</Option>
+                </Select>
+              </div>
+
+              <div>
+                <label className={labelStyle}>Notes</label>
+                <TextArea
+                  rows={2}
+                  placeholder="Additional notes…"
+                  value={form.notes}
+                  onChange={e => setField("notes", e.target.value)}
+                  style={{ ...inputCls, resize: "vertical" }}
+                  onFocus={focusStyle}
+                  onBlur={blurStyle}
+                />
+              </div>
             </div>
           </div>
-        )}
+        </div>
 
-        {/* Manual trigger button — for testing */}
-        {(status === "waiting") && (
-          <button
-            onClick={() => {
-              clearAll();
-              setStatus("tapping");
-              setTimeout(() => {
-                setStatus("reading");
-                const mock = MOCK_DRIVERS[Math.floor(Math.random() * MOCK_DRIVERS.length)];
-                setTimeout(() => {
-                  setDriverData(mock);
-                  setStatus("success");
-                  setTimeout(() => onSelectNFC(mock), 2000);
-                }, 1200);
-              }, 600);
-            }}
-            className={`w-full mt-4 py-3 rounded-xl text-sm font-bold border-2 border-dashed transition-colors ${
-              isDark
-                ? "border-purple-700 text-purple-400 hover:bg-purple-900/30"
-                : "border-purple-300 text-purple-600 hover:bg-purple-50"
-            }`}
-          >
-            🚀 Tap Now (Skip countdown)
-          </button>
+        {/* Error banner */}
+        {(apiError || parentError) && (
+          <div className="rounded-xl px-4 py-3 flex items-center gap-3" style={{ background: "#fef2f2", border: "1px solid #fecaca" }}>
+            <span className="text-lg">⚠️</span>
+            <p className="text-sm font-medium" style={{ color: "#dc2626" }}>{apiError || parentError}</p>
+          </div>
         )}
       </div>
-    </Modal>
-  );
-}
 
-// ── Sub-component ─────────────────────────────────────────────────────────────
-function NfcField({ label, value, isDark, mono }) {
-  return (
-    <div>
-      <p className={`text-xs uppercase tracking-wider font-semibold mb-0.5 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-        {label}
-      </p>
-      <p className={`${mono ? "font-mono" : "font-semibold"} text-sm ${isDark ? "text-white" : "text-gray-900"}`}>
-        {value}
-      </p>
+      {/* FOOTER */}
+      <footer className="shrink-0 px-6 py-4 flex items-center justify-between" style={{ background: "#fff", borderTop: "1px solid #e5e7eb", boxShadow: "0 -1px 3px rgba(0,0,0,0.06)" }}>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={onBack}
+            className="px-4 py-2 rounded-lg text-sm font-semibold transition-all hover:shadow-md"
+            style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb" }}
+          >
+            ← Back
+          </button>
+          <div className="text-sm" style={{ color: "#6b7280" }}>
+            Weight: <span className="font-bold" style={{ color: "#111827" }}>{effectiveWeight.toLocaleString()} kg</span>
+            <span className="ml-2 text-xs" style={{ color: "#9ca3af" }}>({weightMode})</span>
+          </div>
+        </div>
+
+        <button
+          onClick={handleCapture}
+          disabled={submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0}
+          className="px-8 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
+          style={{
+            background: submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0
+              ? "#9ca3af"
+              : "linear-gradient(135deg, #d97706, #f59e0b)",
+            boxShadow: submitting ? "none" : "0 3px 10px rgba(217,119,6,0.35)",
+            cursor: submitting ? "not-allowed" : "pointer",
+          }}
+        >
+          {submitting ? "Saving…" : "⚡ Capture Weight"}
+        </button>
+      </footer>
     </div>
   );
 }
