@@ -176,12 +176,12 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-// Configure Authorization
+// Configure Authorization - open access, no token required
 builder.Services.AddAuthorization(options =>
 {
     options.DefaultPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder()
         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
-        .RequireAuthenticatedUser()
+        .RequireAssertion(_ => true) // Allow all requests regardless of auth state
         .Build();
 });
 
