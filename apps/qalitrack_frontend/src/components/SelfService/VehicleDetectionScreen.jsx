@@ -1,328 +1,528 @@
-import React, { useEffect, useState } from "react";
+/**
+ * VehicleDetectionScreen.jsx
+ *
+ * 1. Opens SSE stream → http://172.16.0.134:5000/api/rfid/stream
+ * 2. Parses payload:  data: "110520008553A225"  (JSON-encoded string)
+ * 3. Calls getVehicleByRfid(code) via existing apiClient
+ * 4. Shows vehicle details
+ * 5. Opens AuthenticationMethodModal for NFC driver auth
+ * 6. Calls onVehicleDetected({ vehicle, driver }) when both are done
+ */
+
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, Button } from "antd";
 import { useTheme } from "../Context/ThemeContext.jsx";
 import AuthenticationMethodModal from "./AuthenticationMethodModal.jsx";
+import { getVehicleByRfid } from "../../api/MasterData/Vehicles";
 
-export default function VehicleDetectionScreen({ onVehicleDetected, error, onReset }) {
-  const { theme, isDark } = useTheme();
-  const [detectedPlate, setDetectedPlate] = useState(null);
-  const [rfidDetected, setRfidDetected] = useState(false);
-  const [anprImage, setAnprImage] = useState(null);
+const RFID_STREAM_URL = "http://172.16.0.134:5000/api/rfid/stream";
+const CONTROL_TYPES   = new Set(["connected", "heartbeat", "ping", "pong", "keepalive"]);
+
+// ── Parse SSE event.data ───────────────────────────────────────────────────────
+// Stream sends:  data: "110520008553A225"   (a JSON-encoded string)
+// JSON.parse → the bare string "110520008553A225" — use it directly
+const parseRfidCode = (raw) => {
+  try {
+    const p = JSON.parse(raw);
+    if (typeof p === "string" && p.trim()) return p.trim();
+    if (p && typeof p === "object") {
+      if (CONTROL_TYPES.has(p.type)) return null;
+      return p.rfid ?? p.rfidCode ?? p.tag ?? p.tagId ?? p.code ?? p.uid ?? null;
+    }
+    return null;
+  } catch {
+    const s = String(raw).trim();
+    return s || null;
+  }
+};
+
+// ── Extract vehicle object from any API response shape ────────────────────────
+const extractVehicle = (raw) => {
+  if (!raw) return null;
+  const v = raw?.data?.data?.vehicle ?? raw?.data?.vehicle ?? raw?.data?.data
+         ?? raw?.vehicle ?? raw?.data ?? raw;
+  if (!v || typeof v !== "object" || Array.isArray(v)) return null;
+  if (Object.keys(v).length === 0) return null;
+  return v;
+};
+
+// ── Normalise vehicle fields ───────────────────────────────────────────────────
+const normaliseVehicle = (v, rfidCode) => ({
+  id:           v.id           ?? v.vehicleId    ?? v.vehicle_id   ?? null,
+  rfidTag:      rfidCode,
+  plateNumber:  v.plateNumber  ?? v.plate_number ?? v.plate        ??
+                v.registration ?? v.regNumber    ?? v.numberPlate  ?? "—",
+  vehicleType:  v.vehicleType  ?? v.vehicle_type ?? v.type         ?? null,
+  vehicleMake:  v.vehicleMake  ?? v.make         ?? v.brand        ?? null,
+  vehicleModel: v.vehicleModel ?? v.model                          ?? null,
+  capacity:     v.capacity     ?? v.maxCapacity  ?? v.max_capacity ?? null,
+  saccoName:    v.saccoName    ?? v.sacco_name   ?? v.sacco        ?? null,
+  saccoId:      v.saccoId      ?? v.sacco_id                       ?? null,
+  ownerName:    v.ownerName    ?? v.owner_name   ?? v.owner        ?? null,
+  status:       v.status       ?? v.vehicleStatus                  ?? null,
+  isActive:     v.isActive     ?? v.active       ?? true,
+  detectedAt:   new Date(),
+});
+
+// ─── COMPONENT ────────────────────────────────────────────────────────────────
+export default function VehicleDetectionScreen({ onVehicleDetected, error: externalError, onReset }) {
+  const { isDark } = useTheme();
+
+  // stream: connecting | listening | tag_received | error
+  const [streamStatus,  setStreamStatus]  = useState("connecting");
+  // vehicle: idle | loading | found | not_found | error
+  const [vehicleStatus, setVehicleStatus] = useState("idle");
+
+  const [rfidCode,      setRfidCode]      = useState(null);
+  const [vehicleData,   setVehicleData]   = useState(null);
+  const [streamError,   setStreamError]   = useState(null);
+  const [lookupError,   setLookupError]   = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [selectedAuthMethod, setSelectedAuthMethod] = useState(null);
-  const [vehicleData, setVehicleData] = useState(null);
+  const [pulsePhase,    setPulsePhase]    = useState(0);
+  const [debugLog,      setDebugLog]      = useState([]);
+  const [showDebug,     setShowDebug]     = useState(false);
 
-  // Simulated ANPR Detection
-  useEffect(() => {
-    console.log("🎭 SIMULATION MODE: ANPR detection active");
-    
-    const simulateANPR = setTimeout(() => {
-      const testPlates = ["KBU 510 G", "KBC 123 A", "KBC 465 B"];
-      const randomPlate = testPlates[Math.floor(Math.random() * testPlates.length)];
-      
-      console.log("📸 SIMULATED ANPR detected:", randomPlate);
-      setDetectedPlate(randomPlate);
-      setAnprImage("/api/placeholder/400/300");
-    }, 3000);
+  const esRef       = useRef(null);
+  const lookupRef   = useRef(false);
+  const lastCodeRef = useRef(null);
 
-    return () => clearTimeout(simulateANPR);
+  // ── Debug logger ──────────────────────────────────────────────────────────
+  const dbg = useCallback((msg, data) => {
+    const line = `[${new Date().toLocaleTimeString()}] ${msg}${data !== undefined ? " → " + JSON.stringify(data) : ""}`;
+    console.log("🔍", line);
+    setDebugLog(p => [line, ...p].slice(0, 40));
   }, []);
 
-  // Simulated RFID Detection
+  // ── Pulse animation ───────────────────────────────────────────────────────
   useEffect(() => {
-    console.log("🎭 SIMULATION MODE: RFID detection active");
-    
-    const simulateRFID = setTimeout(() => {
-      const testTags = ["RFID-ABC123456", "RFID-DEF789012", "RFID-GHI345678"];
-      const randomTag = testTags[Math.floor(Math.random() * testTags.length)];
-      
-      console.log("📡 SIMULATED RFID detected:", randomTag);
-      setRfidDetected(true);
-    }, 5000);
-
-    return () => clearTimeout(simulateRFID);
+    const id = setInterval(() => setPulsePhase(p => (p + 1) % 3), 800);
+    return () => clearInterval(id);
   }, []);
 
-  // Show authentication modal when both detected
-  useEffect(() => {
-    if (detectedPlate && rfidDetected && !showAuthModal) {
-      setVehicleData({
-        plateNumber: detectedPlate,
-        rfidTag: rfidDetected,
-        timestamp: new Date().toISOString(),
-      });
-      
-      setTimeout(() => {
-        console.log("🔐 Showing authentication modal");
-        setShowAuthModal(true);
-      }, 1000);
+  // ── Open SSE stream ───────────────────────────────────────────────────────
+  const openStream = useCallback(() => {
+    if (esRef.current) { esRef.current.close(); esRef.current = null; }
+    setStreamStatus("connecting");
+    setStreamError(null);
+    dbg("Opening RFID stream");
+
+    try {
+      const es = new EventSource(RFID_STREAM_URL);
+      esRef.current = es;
+
+      es.onopen = () => { setStreamStatus("listening"); dbg("Stream connected ✓"); };
+
+      es.onmessage = (event) => {
+        dbg("SSE raw", event.data);
+        const code = parseRfidCode(event.data);
+        if (!code) { dbg("Skipped (control msg)"); return; }
+
+        dbg("RFID code", code);
+        lastCodeRef.current = code;
+        lookupRef.current   = false;   // allow fresh lookup (handles rescan)
+        setRfidCode(code);
+        setStreamStatus("tag_received");
+      };
+
+      es.onerror = () => {
+        dbg("Stream error");
+        setStreamError("Cannot connect to RFID reader at " + RFID_STREAM_URL);
+        setStreamStatus("error");
+        es.close(); esRef.current = null;
+      };
+    } catch (err) {
+      setStreamError("Failed to open SSE connection.");
+      setStreamStatus("error");
     }
-  }, [detectedPlate, rfidDetected, showAuthModal]);
+  }, [dbg]);
 
-  const handleAuthMethodSelect = (method) => {
-    console.log("🔐 Authentication method selected:", method);
-    setSelectedAuthMethod(method);
+  useEffect(() => {
+    openStream();
+    return () => { if (esRef.current) esRef.current.close(); };
+  }, [openStream]);
+
+  // ── Vehicle lookup whenever rfidCode changes ──────────────────────────────
+  useEffect(() => {
+    if (!rfidCode || lookupRef.current) return;
+    lookupRef.current = true;
+
+    (async () => {
+      setVehicleStatus("loading");
+      setVehicleData(null);
+      setLookupError(null);
+      setShowAuthModal(false);
+      dbg("Fetching vehicle", rfidCode);
+
+      try {
+        const raw = await getVehicleByRfid(rfidCode);
+        dbg("Raw response", raw);
+        const v = extractVehicle(raw);
+        if (!v) { setVehicleStatus("not_found"); return; }
+        const normalised = normaliseVehicle(v, rfidCode);
+        dbg("Vehicle", normalised.plateNumber);
+        setVehicleData(normalised);
+        setVehicleStatus("found");
+        // Auto-open NFC modal after 1.2 s so user can see the vehicle card first
+        setTimeout(() => setShowAuthModal(true), 1200);
+      } catch (err) {
+        dbg("Lookup error", err.message);
+        const msg = err.message ?? "";
+        const notFound = msg.includes("404") || /not found|no vehicle|does not exist/i.test(msg);
+        if (notFound) { setVehicleStatus("not_found"); }
+        else          { setVehicleStatus("error"); setLookupError(msg || "Server error."); }
+      }
+    })();
+  }, [rfidCode, dbg]);
+
+  // ── Rescan — keep stream open, reset vehicle state ────────────────────────
+  const handleRescan = () => {
+    lastCodeRef.current = null;
+    lookupRef.current   = false;
+    setRfidCode(null);
+    setVehicleData(null);
+    setVehicleStatus("idle");
+    setStreamStatus("listening");
+    setLookupError(null);
     setShowAuthModal(false);
-    onVehicleDetected(vehicleData);
   };
 
-  const handleManualTrigger = () => {
-    if (!detectedPlate) {
-      setDetectedPlate("KBU 510 G");
-      setTimeout(() => setRfidDetected(true), 1000);
-    }
+  // ── Retry lookup without rescan ───────────────────────────────────────────
+  const handleRetryLookup = () => {
+    const code = lastCodeRef.current;
+    if (!code) return;
+    lookupRef.current = false;
+    setRfidCode(null);
+    setTimeout(() => setRfidCode(code), 50);
   };
 
+  // ── NFC auth complete → pass { vehicle, driver } up to orchestrator ───────
+  const handleAuthComplete = (driverData) => {
+    setShowAuthModal(false);
+    onVehicleDetected({ vehicle: vehicleData, driver: driverData });
+  };
+
+  // ─── Derived ──────────────────────────────────────────────────────────────
+  const isListening  = streamStatus === "connecting" || streamStatus === "listening";
+  const streamFailed = streamStatus === "error";
+
+  // ─── RENDER ───────────────────────────────────────────────────────────────
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black' : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'}`}>
+    <div className={`min-h-screen flex flex-col ${isDark ? "bg-gray-950" : "bg-slate-100"}`}>
+
       {/* Header */}
-      <div className={`${isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'} border-b px-8 py-6 shadow-sm`}>
+      <header className={`${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"} border-b px-8 py-5 shadow-sm`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-2xl font-bold">KW</span>
+            <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <span className="text-white text-xl font-black">KW</span>
             </div>
             <div>
-              <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                Self-Service Weighing
-              </h1>
-              <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                Automated tea collection system
-              </p>
+              <h1 className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>Self-Service Weighing</h1>
+              <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>Automated tea collection — RFID verification</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {/* Simulation Badge */}
-            <div className={`flex items-center gap-3 px-4 py-2 rounded-lg border ${
-              isDark 
-                ? 'bg-purple-900/30 text-purple-300 border-purple-700' 
-                : 'bg-purple-50 text-purple-700 border-purple-200'
+            {/* Stream status */}
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${
+              streamFailed
+                ? isDark ? "bg-red-900/30 border-red-700 text-red-400" : "bg-red-50 border-red-200 text-red-600"
+                : streamStatus === "tag_received"
+                ? isDark ? "bg-amber-900/30 border-amber-700 text-amber-400" : "bg-amber-50 border-amber-200 text-amber-700"
+                : isDark ? "bg-green-900/30 border-green-700 text-green-400" : "bg-green-50 border-green-200 text-green-700"
             }`}>
-              <span className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></span>
-              <span className="font-medium text-sm">SIMULATION MODE</span>
+              <span className={`w-1.5 h-1.5 rounded-full ${
+                streamFailed ? "bg-red-500" : streamStatus === "tag_received" ? "bg-amber-500" : "bg-green-500 animate-pulse"
+              }`} />
+              {streamStatus === "connecting"   && "Connecting…"}
+              {streamStatus === "listening"    && "Listening"}
+              {streamStatus === "tag_received" && rfidCode}
+              {streamStatus === "error"        && "Error"}
             </div>
-            <div className={`flex items-center gap-3 px-4 py-2 rounded-lg ${
-              isDark 
-                ? 'bg-green-900/30 text-green-300' 
-                : 'bg-green-50 text-green-700'
-            }`}>
-              <span className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-              <span className="font-medium text-sm">ONLINE</span>
-            </div>
+            <button onClick={() => setShowDebug(v => !v)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
+                isDark ? "border-gray-700 text-gray-500 hover:text-gray-300" : "border-gray-300 text-gray-400 hover:text-gray-600"
+              }`}>
+              {showDebug ? "Hide Debug" : "Debug"}
+            </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Main Content */}
-      <div className="flex items-center justify-center p-8 min-h-[calc(100vh-180px)]">
-        <div className="max-w-6xl w-full">
-          {error ? (
-            <div className="text-center">
-              <Alert 
-                type="error" 
-                message="Vehicle Not Recognized" 
-                description={error} 
-                showIcon 
-                className="mb-6" 
-              />
-              <Button 
-                size="large"
-                onClick={onReset} 
-                className="px-8 py-6 h-auto bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-semibold text-lg border-0"
-              >
-                Try Again
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* ANPR Section */}
-              <div className={`${
-                isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-              } rounded-2xl p-8 border-2 shadow-xl`}>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className={`w-14 h-14 rounded-xl ${
-                    isDark ? 'bg-blue-900/50' : 'bg-blue-50'
-                  } flex items-center justify-center`}>
-                    <span className="text-3xl">📸</span>
-                  </div>
-                  <div>
-                    <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      ANPR Number Plate
-                    </h3>
-                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {detectedPlate ? "✓ Detected" : "🎭 Simulating..."}
-                    </p>
-                  </div>
-                </div>
+      {/* Main */}
+      <main className="flex-1 flex items-start justify-center p-6 lg:p-10">
+        <div className="w-full max-w-4xl space-y-5">
 
-                {/* Camera Feed Placeholder */}
-                <div className={`mb-6 rounded-xl overflow-hidden ${
-                  isDark ? 'bg-gray-900' : 'bg-gray-100'
-                } flex items-center justify-center h-56 shadow-inner`}>
-                  <div className={`text-center ${isDark ? 'text-gray-600' : 'text-gray-400'}`}>
-                    <div className="text-7xl mb-3 opacity-50">🚗</div>
-                    <p className="text-sm font-medium">
-                      {anprImage ? "Camera Feed Active" : "Waiting for vehicle..."}
-                    </p>
-                  </div>
-                </div>
+          {externalError && (
+            <Alert type="error" message="Error" description={externalError} showIcon
+              action={<Button size="small" onClick={onReset}>Reset</Button>} />
+          )}
 
-                {/* Plate Display */}
-                <div className="text-center">
-                  {detectedPlate ? (
-                    <div className="bg-white rounded-xl py-8 px-6 shadow-2xl border-4 border-gray-200">
-                      <div className="text-6xl font-black text-gray-900 tracking-wider mb-3">
-                        {detectedPlate}
-                      </div>
-                      <div className="flex items-center justify-center gap-2 text-green-600 font-bold text-lg">
-                        <span className="text-2xl">✓</span>
-                        <span>DETECTED</span>
-                      </div>
-                    </div>
+          {/* RFID Status Card */}
+          <div className={`rounded-3xl border shadow-xl overflow-hidden ${
+            isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"
+          }`}>
+            {/* Accent bar */}
+            <div className={`h-1.5 w-full transition-colors duration-500 ${
+              streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error"
+                ? "bg-red-500"
+                : vehicleStatus === "found"
+                ? "bg-gradient-to-r from-green-400 to-emerald-500"
+                : vehicleStatus === "loading"
+                ? "bg-gradient-to-r from-amber-400 to-orange-500"
+                : "bg-gradient-to-r from-purple-500 to-indigo-500"
+            }`} />
+
+            <div className="p-8 flex flex-col sm:flex-row items-center gap-8">
+
+              {/* Animated icon */}
+              <div className="relative flex-shrink-0 w-44 h-44 flex items-center justify-center">
+                {isListening && [0,1,2].map(i => {
+                  const phase = (pulsePhase + i) % 3;
+                  return (
+                    <span key={i} className="absolute inset-0 rounded-full border-2 transition-all duration-700"
+                      style={{
+                        borderColor: isDark ? "rgba(139,92,246,0.3)" : "rgba(109,40,217,0.2)",
+                        transform:   `scale(${1 + (phase / 3) * 0.65})`,
+                        opacity:     1 - (phase / 3) * 0.9,
+                      }} />
+                  );
+                })}
+
+                <div className={`w-32 h-32 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 ${
+                  streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error"
+                    ? "bg-red-600"
+                    : vehicleStatus === "found"
+                    ? "bg-gradient-to-br from-green-400 to-emerald-600"
+                    : vehicleStatus === "loading"
+                    ? "bg-gradient-to-br from-amber-400 to-orange-500"
+                    : isDark ? "bg-gradient-to-br from-purple-700 to-indigo-700"
+                             : "bg-gradient-to-br from-purple-600 to-indigo-600"
+                }`}>
+                  {vehicleStatus === "loading" ? (
+                    <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : vehicleStatus === "found" ? (
+                    <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? (
+                    <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
                   ) : (
-                    <div className="py-16">
-                      <div className="w-20 h-20 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                      <p className={`text-lg ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                        🎭 Simulating detection...
-                      </p>
-                      <p className={`text-xs mt-2 ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>
-                        (3 seconds)
-                      </p>
-                    </div>
+                    <svg className="w-14 h-14 text-white opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round"
+                        d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
+                    </svg>
                   )}
                 </div>
               </div>
 
-              {/* RFID Section */}
-              <div className={`${
-                isDark ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-              } rounded-2xl p-8 border-2 shadow-xl`}>
-                <div className="flex items-center gap-3 mb-6">
-                  <div className={`w-14 h-14 rounded-xl ${
-                    isDark ? 'bg-purple-900/50' : 'bg-purple-50'
-                  } flex items-center justify-center`}>
-                    <span className="text-3xl">📡</span>
-                  </div>
-                  <div>
-                    <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                      RFID Tag
-                    </h3>
-                    <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                      {rfidDetected ? "✓ Verified" : "🎭 Simulating..."}
-                    </p>
-                  </div>
-                </div>
+              {/* Status text */}
+              <div className="flex-1 min-w-0">
+                {streamStatus === "connecting" && (
+                  <Blurb label="Initialising" color="purple" isDark={isDark}
+                    title="Connecting to RFID Reader…" sub={RFID_STREAM_URL} />
+                )}
 
-                <div className="text-center py-16">
-                  {rfidDetected ? (
-                    <div>
-                      <div className={`w-40 h-40 mx-auto mb-8 rounded-full ${
-                        isDark ? 'bg-green-900/50' : 'bg-green-50'
-                      } flex items-center justify-center shadow-2xl`}>
-                        <span className="text-7xl">✓</span>
-                      </div>
-                      <p className="text-3xl font-bold text-green-500 mb-3">RFID DETECTED</p>
-                      <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>
-                        Vehicle authorized
-                      </p>
+                {streamStatus === "listening" && vehicleStatus === "idle" && (
+                  <Blurb label="Ready" color="purple" isDark={isDark}
+                    title="Awaiting Vehicle RFID Tag"
+                    sub="Drive into the reader zone. The tag will be detected automatically.">
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {["Drive into zone", "Auto-detected", "Details populated"].map((s, i) => (
+                        <span key={i} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold ${
+                          isDark ? "bg-gray-800 text-gray-400" : "bg-slate-100 text-gray-500"
+                        }`}>
+                          <span className={`w-4 h-4 rounded-full flex items-center justify-center text-white text-xs font-black ${
+                            isDark ? "bg-purple-600" : "bg-purple-500"
+                          }`}>{i + 1}</span>
+                          {s}
+                        </span>
+                      ))}
                     </div>
-                  ) : (
-                    <div>
-                      <div className="w-40 h-40 mx-auto mb-8 rounded-full border-4 border-purple-500 border-dashed flex items-center justify-center animate-pulse">
-                        <span className="text-6xl">📡</span>
-                      </div>
-                      <p className={`text-2xl mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-                        🎭 Simulating RFID scan...
-                      </p>
-                      <p className={`text-sm ${isDark ? 'text-gray-600' : 'text-gray-500'}`}>
-                        (5 seconds)
-                      </p>
+                  </Blurb>
+                )}
+
+                {vehicleStatus === "loading" && (
+                  <Blurb label="Tag Detected" color="amber" isDark={isDark} title="Looking Up Vehicle…">
+                    <div className={`inline-flex items-center gap-2 font-mono text-sm px-4 py-2 rounded-xl mt-3 ${
+                      isDark ? "bg-gray-800 text-amber-300" : "bg-amber-50 text-amber-700 border border-amber-200"
+                    }`}>
+                      <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+                      {rfidCode}
                     </div>
-                  )}
+                    <p className={`text-xs mt-2 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                      Querying /MasterData/Vehicles/rfid/…
+                    </p>
+                  </Blurb>
+                )}
+
+                {vehicleStatus === "found" && vehicleData && (
+                  <Blurb label="Vehicle Verified ✓" color="green" isDark={isDark} title={vehicleData.plateNumber}>
+                    <p className={`font-mono text-xs mt-1 mb-4 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                      RFID: {vehicleData.rfidTag}
+                    </p>
+                    <div className="flex gap-3 flex-wrap">
+                      <Button type="primary" onClick={() => setShowAuthModal(true)}
+                        className="bg-green-600 hover:bg-green-700 border-0 h-10 px-6 font-bold rounded-xl">
+                        Authenticate Driver →
+                      </Button>
+                      <Button onClick={handleRescan}
+                        className={`h-10 px-5 rounded-xl border font-semibold ${
+                          isDark ? "border-gray-700 text-gray-300 bg-gray-800" : "border-gray-200 text-gray-600"
+                        }`}>
+                        🔄 Rescan
+                      </Button>
+                    </div>
+                  </Blurb>
+                )}
+
+                {vehicleStatus === "not_found" && (
+                  <Blurb label="Not Registered" color="red" isDark={isDark} title="Vehicle Not Found">
+                    <p className={`text-sm mt-1 mb-2 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+                      No vehicle linked to RFID tag:
+                    </p>
+                    <span className={`font-mono text-sm px-3 py-1 rounded-lg inline-block mb-4 ${
+                      isDark ? "bg-gray-800 text-red-300" : "bg-red-50 text-red-700 border border-red-200"
+                    }`}>{rfidCode}</span>
+                    <p className={`text-xs mb-4 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                      Contact the weighbridge office to register this vehicle.
+                    </p>
+                    <Button onClick={handleRescan}
+                      className={`h-10 px-5 rounded-xl border font-semibold ${
+                        isDark ? "border-gray-700 text-gray-300 bg-gray-800" : "border-gray-200 text-gray-600"
+                      }`}>🔄 Scan Again</Button>
+                  </Blurb>
+                )}
+
+                {vehicleStatus === "error" && (
+                  <Blurb label="Lookup Failed" color="red" isDark={isDark} title="Could Not Fetch Vehicle">
+                    <p className={`font-mono text-xs mt-2 mb-4 px-3 py-2 rounded-lg inline-block ${
+                      isDark ? "bg-gray-800 text-red-300" : "bg-red-50 text-red-600 border border-red-200"
+                    }`}>{lookupError}</p>
+                    <div className="flex gap-3">
+                      <Button onClick={handleRetryLookup}
+                        className="h-10 px-5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-0 font-semibold">
+                        Retry
+                      </Button>
+                      <Button onClick={handleRescan}
+                        className={`h-10 px-5 rounded-xl border font-semibold ${
+                          isDark ? "border-gray-700 text-gray-300 bg-gray-800" : "border-gray-200 text-gray-600"
+                        }`}>🔄 Rescan</Button>
+                    </div>
+                  </Blurb>
+                )}
+
+                {streamFailed && (
+                  <Blurb label="Connection Failed" color="red" isDark={isDark} title="RFID Stream Unavailable">
+                    <p className={`text-sm mt-1 mb-4 ${isDark ? "text-gray-400" : "text-gray-500"}`}>{streamError}</p>
+                    <Button onClick={openStream}
+                      className="h-10 px-5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-0 font-semibold">
+                      🔄 Reconnect
+                    </Button>
+                  </Blurb>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Vehicle Detail Card — shown after successful lookup */}
+          {vehicleStatus === "found" && vehicleData && (
+            <div className={`rounded-3xl border shadow-xl overflow-hidden ${
+              isDark ? "bg-gray-900 border-green-800" : "bg-white border-green-200"
+            }`}>
+              <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 px-8 py-5 flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-xs font-semibold uppercase tracking-widest">Registered Vehicle</p>
+                  <p className="text-white text-3xl font-black tracking-widest">{vehicleData.plateNumber}</p>
                 </div>
+                <div className="text-right">
+                  <p className="text-green-100 text-xs">RFID Tag</p>
+                  <p className="font-mono text-white text-sm">{vehicleData.rfidTag}</p>
+                  <p className="text-green-200 text-xs mt-1">{vehicleData.detectedAt?.toLocaleTimeString()}</p>
+                </div>
+              </div>
+
+              <div className={`p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 ${isDark ? "bg-gray-900" : "bg-white"}`}>
+                {[
+                  { label: "Type",     value: vehicleData.vehicleType },
+                  { label: "Make",     value: vehicleData.vehicleMake },
+                  { label: "Model",    value: vehicleData.vehicleModel },
+                  { label: "Capacity", value: vehicleData.capacity ? `${vehicleData.capacity} kg` : null },
+                  { label: "SACCO",    value: vehicleData.saccoName },
+                  { label: "Owner",    value: vehicleData.ownerName },
+                  { label: "Status",   value: vehicleData.status,
+                    badge: vehicleData.isActive ? "green" : "red" },
+                ].filter(f => f.value).map(f => (
+                  <div key={f.label} className={`p-3 rounded-2xl ${isDark ? "bg-gray-800" : "bg-slate-50 border border-slate-100"}`}>
+                    <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                      {f.label}
+                    </p>
+                    {f.badge
+                      ? <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold ${f.badge === "green" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{f.value}</span>
+                      : <p className={`font-bold text-sm ${isDark ? "text-white" : "text-gray-900"}`}>{f.value}</p>
+                    }
+                  </div>
+                ))}
+              </div>
+
+              <div className={`px-6 py-4 flex items-center justify-between border-t ${
+                isDark ? "bg-gray-900 border-gray-800" : "bg-slate-50 border-slate-100"
+              }`}>
+                <p className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+                  Tap your NFC card to authenticate and proceed
+                </p>
+                <Button type="primary" size="large" onClick={() => setShowAuthModal(true)}
+                  className="bg-green-600 hover:bg-green-700 border-0 h-11 px-8 font-black rounded-2xl">
+                  Authenticate Driver →
+                </Button>
               </div>
             </div>
           )}
 
-          {/* Instructions */}
-          {!error && (
-            <div className="mt-8 space-y-4">
-              {/* Simulation Info */}
-              <div className={`${
-                isDark 
-                  ? 'bg-purple-900/20 border-purple-700' 
-                  : 'bg-purple-50 border-purple-200'
-              } border rounded-xl p-6`}>
-                <div className="flex items-start gap-4">
-                  <span className="text-3xl">🎭</span>
-                  <div className="flex-1">
-                    <h4 className={`text-lg font-semibold mb-2 ${
-                      isDark ? 'text-purple-300' : 'text-purple-900'
-                    }`}>
-                      Simulation Mode Active
-                    </h4>
-                    <p className={`text-sm mb-4 ${isDark ? 'text-purple-200' : 'text-purple-800'}`}>
-                      ANPR and RFID detection are being simulated. In production, these will connect to real hardware.
-                    </p>
-                    <Button 
-                      type="primary" 
-                      onClick={handleManualTrigger} 
-                      disabled={detectedPlate}
-                      className="bg-purple-600 hover:bg-purple-700 border-0 h-10"
-                    >
-                      🚀 Trigger Detection Now
-                    </Button>
+          {/* Debug panel */}
+          {showDebug && (
+            <div className="rounded-2xl border border-gray-800 bg-gray-950 p-5 font-mono text-xs text-green-400">
+              <div className="flex items-center justify-between mb-3">
+                <span className="font-sans font-bold text-xs uppercase tracking-wider text-gray-500">SSE Debug</span>
+                <button onClick={() => setDebugLog([])} className="text-gray-600 hover:text-gray-400 text-xs">Clear</button>
+              </div>
+              {debugLog.length === 0
+                ? <p className="text-gray-600">No messages yet…</p>
+                : <div className="space-y-1 max-h-52 overflow-y-auto">
+                    {debugLog.map((e, i) => <p key={i} className="break-all leading-relaxed">{e}</p>)}
                   </div>
-                </div>
-              </div>
-
-              {/* Instructions */}
-              <div className={`${
-                isDark 
-                  ? 'bg-blue-900/20 border-blue-700' 
-                  : 'bg-blue-50 border-blue-200'
-              } border rounded-xl p-6`}>
-                <h4 className={`text-lg font-semibold mb-4 ${
-                  isDark ? 'text-blue-300' : 'text-blue-900'
-                }`}>
-                  Production Mode Instructions:
-                </h4>
-                <ol className={`space-y-3 ${isDark ? 'text-blue-200' : 'text-blue-800'}`}>
-                  <li className="flex items-start gap-3">
-                    <span className="font-bold text-blue-500">1.</span>
-                    <span>Drive slowly towards the weighbridge until your number plate is detected</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="font-bold text-blue-500">2.</span>
-                    <span>Ensure your RFID tag is active and readable</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="font-bold text-blue-500">3.</span>
-                    <span>Wait for both confirmations before proceeding</span>
-                  </li>
-                </ol>
-              </div>
+              }
             </div>
           )}
         </div>
-      </div>
+      </main>
 
-      {/* Authentication Modal */}
+      {/* NFC Auth Modal */}
       <AuthenticationMethodModal
         visible={showAuthModal}
         onClose={() => setShowAuthModal(false)}
-        onSelectNFC={() => handleAuthMethodSelect('nfc')}
+        onSelectNFC={handleAuthComplete}
       />
 
-      {/* Footer */}
-      <div className={`${
-        isDark ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-200'
-      } border-t px-8 py-5 text-center shadow-sm`}>
-        <p className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-600'}`}>
-          Powered by <span className="font-bold text-amber-500">QALIBRATED SYSTEMS</span>
-          <span className="text-purple-500"> • SIMULATION MODE</span>
+      <footer className={`${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"} border-t px-8 py-4 text-center`}>
+        <p className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>
+          Powered by <span className="font-black text-amber-500">QALIBRATED SYSTEMS</span>
         </p>
-      </div>
+      </footer>
+    </div>
+  );
+}
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+function Blurb({ label, color, title, sub, isDark, children }) {
+  const cls = { purple: isDark ? "text-purple-400" : "text-purple-600", amber: isDark ? "text-amber-400" : "text-amber-600", green: "text-green-500", red: "text-red-500" };
+  return (
+    <div>
+      <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${cls[color]}`}>{label}</p>
+      <h2 className={`text-2xl font-black mb-1 ${isDark ? "text-white" : "text-gray-900"}`}>{title}</h2>
+      {sub && <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>{sub}</p>}
+      {children}
     </div>
   );
 }
