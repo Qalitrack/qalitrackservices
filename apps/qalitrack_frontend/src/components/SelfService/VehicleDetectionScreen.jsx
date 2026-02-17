@@ -47,22 +47,64 @@ const extractVehicle = (raw) => {
 };
 
 // ── Normalise vehicle fields ───────────────────────────────────────────────────
-const normaliseVehicle = (v, rfidCode) => ({
-  id:           v.id           ?? v.vehicleId    ?? v.vehicle_id   ?? null,
-  rfidTag:      rfidCode,
-  plateNumber:  v.plateNumber  ?? v.plate_number ?? v.plate        ??
-                v.registration ?? v.regNumber    ?? v.numberPlate  ?? "—",
-  vehicleType:  v.vehicleType  ?? v.vehicle_type ?? v.type         ?? null,
-  vehicleMake:  v.vehicleMake  ?? v.make         ?? v.brand        ?? null,
-  vehicleModel: v.vehicleModel ?? v.model                          ?? null,
-  capacity:     v.capacity     ?? v.maxCapacity  ?? v.max_capacity ?? null,
-  saccoName:    v.saccoName    ?? v.sacco_name   ?? v.sacco        ?? null,
-  saccoId:      v.saccoId      ?? v.sacco_id                       ?? null,
-  ownerName:    v.ownerName    ?? v.owner_name   ?? v.owner        ?? null,
-  status:       v.status       ?? v.vehicleStatus                  ?? null,
-  isActive:     v.isActive     ?? v.active       ?? true,
-  detectedAt:   new Date(),
-});
+// Handles flat fields AND nested objects e.g. v.transporter = { id, name }
+const normaliseVehicle = (v, rfidCode) => {
+  // ── Helpers: nested object OR flat string ────────────────────────────────
+  const nestedId   = (obj) => obj?.id   ?? obj?.Id   ?? null;
+  const nestedName = (obj) => obj?.name ?? obj?.Name ?? null;
+
+  // ── Transporter ──────────────────────────────────────────────────────────
+  const tObj = v.transporter ?? v.Transporter ?? null;
+  const transporterID   = v.transporterID   ?? v.transporter_id   ?? nestedId(tObj)   ?? null;
+  const transporterName = v.transporterName ?? v.transporter_name ?? nestedName(tObj)
+                        ?? v.saccoName      ?? v.sacco_name        ?? v.sacco          ?? null;
+
+  // ── Supplier ─────────────────────────────────────────────────────────────
+  const sObj = v.supplier ?? v.Supplier ?? null;
+  const supplierID   = v.supplierID   ?? v.supplier_id   ?? nestedId(sObj)   ?? null;
+  const supplierName = v.supplierName ?? v.supplier_name ?? nestedName(sObj) ?? null;
+
+  // ── Owner ────────────────────────────────────────────────────────────────
+  const oObj = v.owner ?? v.Owner ?? null;
+  const ownerName = typeof oObj === "string" ? oObj
+                  : nestedName(oObj) ?? v.ownerName ?? v.owner_name ?? null;
+
+  // ── Commodity (pre-fill if vehicle carries it) ───────────────────────────
+  const cObj = v.commodity ?? v.Commodity ?? v.product ?? v.Product ?? null;
+  const commodityID   = v.commodityID   ?? v.commodity_id   ?? nestedId(cObj)   ?? null;
+  const commodityName = v.commodityName ?? v.commodity_name ?? nestedName(cObj) ?? null;
+
+  // ── Log everything for debugging ─────────────────────────────────────────
+  console.log("🚗 normaliseVehicle raw keys:", Object.keys(v));
+  console.log("🚗 transporter:", transporterID, transporterName);
+  console.log("🚗 supplier:",    supplierID,    supplierName);
+  console.log("🚗 owner:",       ownerName);
+  console.log("🚗 commodity:",   commodityID,   commodityName);
+
+  return {
+    id:             v.id           ?? v.vehicleId    ?? v.vehicle_id   ?? null,
+    rfidTag:        rfidCode,
+    plateNumber:    v.plateNumber  ?? v.plate_number ?? v.plate        ??
+                    v.registration ?? v.regNumber    ?? v.numberPlate  ?? "—",
+    vehicleType:    v.vehicleType  ?? v.vehicle_type ?? v.type         ?? null,
+    vehicleMake:    v.vehicleMake  ?? v.make         ?? v.brand        ?? null,
+    vehicleModel:   v.vehicleModel ?? v.model                          ?? null,
+    capacity:       v.capacity     ?? v.maxCapacity  ?? v.max_capacity ?? null,
+    saccoName:      v.saccoName    ?? v.sacco_name   ?? v.sacco        ?? null,
+    saccoId:        v.saccoId      ?? v.sacco_id                       ?? null,
+    status:         v.status       ?? v.vehicleStatus                  ?? null,
+    isActive:       v.isActive     ?? v.active       ?? true,
+    detectedAt:     new Date(),
+    // Resolved relational fields
+    ownerName,
+    transporterID,
+    transporterName,
+    supplierID,
+    supplierName,
+    commodityID,
+    commodityName,
+  };
+};
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function VehicleDetectionScreen({ onVehicleDetected, error: externalError, onReset }) {
