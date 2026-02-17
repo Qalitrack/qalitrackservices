@@ -52,7 +52,7 @@ async function apiFetch(path, opts = {}) {
 
 const searchProducts  = q => apiFetch(`/MasterData/Products?searchTerm=${encodeURIComponent(q)}&pageSize=20`).then(r => r?.items ?? r?.data?.items ?? r?.data?.data?.items ?? []);
 const getWeighbridges = () => apiFetch(`/MasterData/Weighbridges?pageSize=50`).then(r => r?.items ?? r?.data?.items ?? r?.data?.data?.items ?? []);
-const postTransaction = b => apiFetch(`/Transaction`, { method: "POST", body: JSON.stringify({ request: b }) });
+const postTransaction = b => apiFetch(`/Transaction/Transaction/Transaction`, { method: "POST", body: JSON.stringify({ request: b }) });
 
 // ── Debounce ──────────────────────────────────────────────────────────────────
 function useDebounce(fn, delay) {
@@ -260,7 +260,7 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
     const payload = {
       noPlate:      form.noPlate.toUpperCase().trim(),
       firstWeight:  String(effectiveWeight),
-      weighMode:    "Gross/Tare",
+      weighMode:    "Kiosk",
       operation:    form.operation,
       operatorName: form.operatorName || "Self-Service Kiosk",
     };
@@ -599,7 +599,7 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
                 <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
                   style={{ background: "#fffbeb", border: "1.5px solid #fcd34d" }}>
                   <span className="text-xs">🔒</span>
-                  <span className="text-sm font-semibold" style={{ color: "#111827" }}>Kiosk (Gross/Tare)</span>
+                  <span className="text-sm font-semibold" style={{ color: "#111827" }}>Kiosk</span>
                 </div>
               </div>
               <div>
