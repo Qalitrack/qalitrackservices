@@ -8,7 +8,8 @@ namespace Masterdata.Api.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [AllowAnonymous]
+
     public class DriversController : BaseController
     {
         private readonly IDriverService _driverService;
