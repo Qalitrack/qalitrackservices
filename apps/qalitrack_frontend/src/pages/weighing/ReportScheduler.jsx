@@ -118,7 +118,9 @@ export default function ReportScheduler({ transactions = [] }) {
 
   // Run schedule manually
   const runScheduleNow = (schedule) => {
-    // Simulate sending report
+    // In production, this would call your backend API to send emails
+    // Example: fetch('/api/reports/send', { method: 'POST', body: JSON.stringify(schedule) })
+    
     const updatedSchedule = {
       ...schedule,
       lastRun: new Date().toISOString(),
@@ -127,7 +129,10 @@ export default function ReportScheduler({ transactions = [] }) {
     };
 
     setSchedules(schedules.map(s => s.id === schedule.id ? updatedSchedule : s));
-    alert(`Report "${schedule.name}" sent successfully to ${schedule.recipients}`);
+    
+    // Show success message with recipient details
+    const recipientList = schedule.recipients.split(',').map(e => e.trim()).join(', ');
+    alert(`✅ Report "${schedule.name}" scheduled for delivery!\n\nRecipients: ${recipientList}\nFormat: ${schedule.format.toUpperCase()}\n\nNote: In production, this will send actual emails via your backend API.`);
   };
 
   // Reset form
@@ -168,9 +173,9 @@ export default function ReportScheduler({ transactions = [] }) {
 
   return (
     <div className="space-y-4">
-      {/* HEADER */}
-      <div className="bg-white border border-amber-200 rounded-lg p-4">
-        <div className="flex items-center justify-between">
+      {/* HEADER - STICKY */}
+      <div className="bg-white border border-amber-200 rounded-lg p-4 sticky top-0 z-10 shadow-sm backdrop-blur-sm bg-white/95">
+        <div className="flex items-center justify-between mb-3">
           <div>
             <h2 className="text-lg font-bold text-gray-900">Report Scheduler</h2>
             <p className="text-xs text-gray-600 mt-1">
@@ -184,6 +189,19 @@ export default function ReportScheduler({ transactions = [] }) {
             <Calendar size={16} />
             New Schedule
           </button>
+        </div>
+        
+        {/* Email Integration Notice */}
+        <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="flex items-start gap-2">
+            <Mail size={14} className="text-blue-600 mt-0.5 shrink-0" />
+            <div className="text-xs text-blue-900">
+              <span className="font-semibold">📧 Email Integration Required:</span> This scheduler creates automation rules. 
+              To send actual emails, integrate with your backend email service (SendGrid, AWS SES, NodeMailer). 
+              Currently simulates delivery for testing.
+              <a href="#email-setup" className="ml-2 underline font-semibold hover:text-blue-700">Setup Guide →</a>
+            </div>
+          </div>
         </div>
       </div>
 
