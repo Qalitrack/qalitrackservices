@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as filters_rest
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from django.utils import timezone
+from fleet.models import Material, MaterialCost
 
 from .models import Trip, TripType, Expense, Receipt, VehicleMileage, TripMaterial
 from .serializers import TripSerializer, TripTypeSerializer, ExpenseSerializer, ReceiptSerializer, VehicleMileageSerializer, TripMaterialSerializer
