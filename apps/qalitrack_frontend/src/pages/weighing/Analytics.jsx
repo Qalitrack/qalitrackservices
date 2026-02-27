@@ -563,19 +563,19 @@ export default function Analytics() {
                 label: "Completed",
                 value: advancedKPIs.completed,
                 icon: CheckCircle,
-                gradient: "from-green-100 to-green-50",
+                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Efficiency",
                 value: `${advancedKPIs.efficiency}%`,
                 icon: Target,
-                gradient: "from-blue-100 to-blue-50",
+                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Capacity",
                 value: `${advancedKPIs.capacityUtilization}%`,
                 icon: Zap,
-                gradient: "from-purple-100 to-purple-50",
+                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Avg TAT (min)",
