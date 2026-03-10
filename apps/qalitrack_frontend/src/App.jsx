@@ -1,19 +1,17 @@
-// App.jsx - Clean version that uses routes from separate file
+// App.jsx
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { routes } from './App/routes.jsx'; // Import routes configuration
+import { routes } from './App/routes.jsx';
+import { SidebarSettingsProvider } from './components/Context/Sidebarsettingscontext'; // 👈 add this
 
-// Loading component
 const Loading = () => (
     <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-amber-500"></div>
     </div>
 );
 
-// Recursive function to render routes from configuration
 const renderRoute = (route, index) => {
     const { path, element, children, ...props } = route;
-
     if (children && children.length > 0) {
         return (
             <Route key={index} path={path} element={element} {...props}>
@@ -21,7 +19,6 @@ const renderRoute = (route, index) => {
             </Route>
         );
     }
-
     return <Route key={index} path={path} element={element} {...props} />;
 };
 
@@ -33,11 +30,13 @@ function App() {
                 v7_relativeSplatPath: true,
             }}
         >
-            <Suspense fallback={<Loading />}>
-                <Routes>
-                    {routes.map((route, index) => renderRoute(route, index))}
-                </Routes>
-            </Suspense>
+            <SidebarSettingsProvider>  {/* 👈 wrap here, inside BrowserRouter */}
+                <Suspense fallback={<Loading />}>
+                    <Routes>
+                        {routes.map((route, index) => renderRoute(route, index))}
+                    </Routes>
+                </Suspense>
+            </SidebarSettingsProvider>
         </BrowserRouter>
     );
 }
