@@ -3,6 +3,7 @@
  *
  * TABS:
  *   1. General          — Company info, timezone, currency, language
+ *                         + LIVE sidebar logo & theme (via SidebarSettingsContext)
  *   2. Tickets          — PDF theme, colors, font size, logo/QR toggle
  *   3. Hardware         — RFID, NFC, ANPR, Scale, Printer
  *   4. Kiosk            — Self-service mode, auto-advance, timeouts
@@ -12,6 +13,12 @@
  *
  * Ticket theme changes are broadcast LIVE to Transactions.jsx via
  * window CustomEvent — no page refresh required.
+ *
+ * Sidebar logo + theme changes are broadcast LIVE via SidebarSettingsContext —
+ * pure in-memory mutation, no save needed.
+ *
+ * Save  → writes to localStorage (+ tries API as bonus)
+ * Reset → restores from localStorage, falls back to API defaults
  */
 
 import React, { useState, useEffect } from "react";
@@ -46,11 +53,16 @@ import {
 import dayjs from "dayjs";
 
 // ── Shared ticket theme utility ──────────────────────────────────────────────
-// Adjust path to match your project structure
 import {
   saveTicketSettings,
   TICKET_THEMES,
 } from "../../utils/ticketThemeConfig";
+
+// ── Sidebar live-mutation context ────────────────────────────────────────────
+import {
+  useSidebarSettings,
+  SIDEBAR_THEMES,
+} from "../../components/Context/Sidebarsettingscontext";
 
 const { Option } = Select;
 
@@ -82,6 +94,98 @@ const TICKET_KEYS = new Set([
   "companyEmail",
 ]);
 
+const DEFAULT_SETTINGS = {
+  // General / Branding
+  companyName: "QALIBRATED SYSTEMS LTD",
+  companyLogo: null,
+  companyAddress: "PO BOX 34463-00100, NAIROBI",
+  companyPhone: "+254 714 999 996",
+  companyEmail: "info@qalibrated.co.ke",
+  timezone: "Africa/Nairobi",
+  currency: "KES",
+  language: "en",
+  dateFormat: "DD/MM/YYYY",
+  timeFormat: "24h",
+
+  // Ticket / PDF theme
+  ticketTheme: "modern",
+  ticketPrimaryColor: "#f59e0b",
+  ticketSecondaryColor: "#f97316",
+  ticketAccentColor: "#d97706",
+  ticketShowLogo: true,
+  ticketShowQRCode: true,
+  ticketFontSize: "normal",
+
+  // Hardware — RFID
+  rfidEnabled: true,
+  rfidStreamUrl: "http://172.16.0.134:5000/api/rfid/stream",
+  rfidReaderType: "UHF Reader",
+
+  // Hardware — NFC
+  nfcEnabled: true,
+  nfcStreamUrl: "http://172.16.0.134:5000/api/nfc/stream",
+  nfcReaderType: "MIFARE Classic",
+
+  // Hardware — ANPR
+  anprEnabled: false,
+  anprCameraUrl: "http://192.168.1.50/stream",
+  anprApiUrl: "http://192.168.1.50/api/detect",
+  anprConfidenceThreshold: 85,
+  anprCameraPosition: "entry",
+  anprFallbackToManual: true,
+
+  // Hardware — Scale
+  scaleEnabled: true,
+  scaleStreamUrl: "http://172.16.0.134:5000/api/scale/stream",
+  scaleBrand: "Avery Weigh-Tronix",
+  scaleCapacity: 60000,
+  scaleStabilityThreshold: 5,
+
+  // Hardware — Printer
+  printerEnabled: true,
+  printerModel: "Zebra ZD420",
+  printerIp: "192.168.1.100",
+
+  // Kiosk
+  kioskMode: true,
+  kioskAutoAdvance: true,
+  kioskVehicleTimeout: 120,
+  kioskDriverTimeout: 60,
+  kioskWeighingTimeout: 300,
+  kioskResetTimeout: 10,
+  kioskDefaultWeighbridge: "Factory A",
+  kioskWeighMode: "Gross/Tare",
+  kioskShowDebug: false,
+
+  // Users & Auth
+  passwordMinLength: 8,
+  passwordRequireUppercase: true,
+  passwordRequireNumbers: true,
+  passwordRequireSymbols: false,
+  passwordExpiryDays: 90,
+  sessionTimeout: 30,
+  maxLoginAttempts: 5,
+  lockoutDuration: 15,
+  twoFactorEnabled: false,
+
+  // API & Integration
+  webhookEnabled: false,
+  webhookUrl: "",
+  webhookEvents: ["transaction.created", "vehicle.detected", "driver.authenticated"],
+  apiRateLimit: 100,
+  apiLogging: true,
+
+  // Backup & Logs
+  autoBackupEnabled: true,
+  backupFrequency: "daily",
+  backupTime: "02:00",
+  backupRetentionDays: 30,
+  auditLogEnabled: true,
+  auditLogRetentionDays: 365,
+  errorLogEnabled: true,
+  errorLogRetentionDays: 90,
+};
+
 // ═════════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
 // ═════════════════════════════════════════════════════════════════════════════
@@ -98,98 +202,12 @@ export default function SystemSettings() {
   const [activeTab, setActiveTab] = useState("general");
   const [lastSaved, setLastSaved] = useState(null);
 
-  const [settings, setSettings] = useState({
-    // General / Branding
-    companyName: "QALIBRATED SYSTEMS LTD",
-    companyLogo: null,
-    companyAddress: "PO BOX 34463-00100, NAIROBI",
-    companyPhone: "+254 714 999 996",
-    companyEmail: "info@qalibrated.co.ke",
-    timezone: "Africa/Nairobi",
-    currency: "KES",
-    language: "en",
-    dateFormat: "DD/MM/YYYY",
-    timeFormat: "24h",
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
-    // Ticket / PDF theme
-    ticketTheme: "modern",
-    ticketPrimaryColor: "#f59e0b",
-    ticketSecondaryColor: "#f97316",
-    ticketAccentColor: "#d97706",
-    ticketShowLogo: true,
-    ticketShowQRCode: true,
-    ticketFontSize: "normal",
+  // ── Pull updateSidebarSettings here so Reset can restore sidebar state ─────
+  const { updateSidebarSettings } = useSidebarSettings();
 
-    // Hardware — RFID
-    rfidEnabled: true,
-    rfidStreamUrl: "http://172.16.0.134:5000/api/rfid/stream",
-    rfidReaderType: "UHF Reader",
-
-    // Hardware — NFC
-    nfcEnabled: true,
-    nfcStreamUrl: "http://172.16.0.134:5000/api/nfc/stream",
-    nfcReaderType: "MIFARE Classic",
-
-    // Hardware — ANPR
-    anprEnabled: false,
-    anprCameraUrl: "http://192.168.1.50/stream",
-    anprApiUrl: "http://192.168.1.50/api/detect",
-    anprConfidenceThreshold: 85,
-    anprCameraPosition: "entry",
-    anprFallbackToManual: true,
-
-    // Hardware — Scale
-    scaleEnabled: true,
-    scaleStreamUrl: "http://172.16.0.134:5000/api/scale/stream",
-    scaleBrand: "Avery Weigh-Tronix",
-    scaleCapacity: 60000,
-    scaleStabilityThreshold: 5,
-
-    // Hardware — Printer
-    printerEnabled: true,
-    printerModel: "Zebra ZD420",
-    printerIp: "192.168.1.100",
-
-    // Kiosk
-    kioskMode: true,
-    kioskAutoAdvance: true,
-    kioskVehicleTimeout: 120,
-    kioskDriverTimeout: 60,
-    kioskWeighingTimeout: 300,
-    kioskResetTimeout: 10,
-    kioskDefaultWeighbridge: "Factory A",
-    kioskWeighMode: "Gross/Tare",
-    kioskShowDebug: false,
-
-    // Users & Auth
-    passwordMinLength: 8,
-    passwordRequireUppercase: true,
-    passwordRequireNumbers: true,
-    passwordRequireSymbols: false,
-    passwordExpiryDays: 90,
-    sessionTimeout: 30,
-    maxLoginAttempts: 5,
-    lockoutDuration: 15,
-    twoFactorEnabled: false,
-
-    // API & Integration
-    webhookEnabled: false,
-    webhookUrl: "",
-    webhookEvents: ["transaction.created", "vehicle.detected", "driver.authenticated"],
-    apiRateLimit: 100,
-    apiLogging: true,
-
-    // Backup & Logs
-    autoBackupEnabled: true,
-    backupFrequency: "daily",
-    backupTime: "02:00",
-    backupRetentionDays: 30,
-    auditLogEnabled: true,
-    auditLogRetentionDays: 365,
-    errorLogEnabled: true,
-    errorLogRetentionDays: 90,
-  });
-
+  // ── On mount: prefer API, fall back to localStorage ───────────────────────
   useEffect(() => {
     loadSettings();
   }, []);
@@ -199,24 +217,48 @@ export default function SystemSettings() {
     try {
       const data = await getSettings();
       if (data?.settings) {
-        const merged = { ...settings, ...data.settings };
+        const merged = { ...DEFAULT_SETTINGS, ...data.settings };
         setSettings(merged);
-        // Sync stored ticket settings on load
         saveTicketSettings(merged);
+        localStorage.setItem("systemSettings", JSON.stringify(merged));
       }
     } catch (error) {
-      console.warn("Using default settings:", error.message);
+      // API unavailable — restore from localStorage
+      const saved = localStorage.getItem("systemSettings");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          const merged = { ...DEFAULT_SETTINGS, ...parsed };
+          setSettings(merged);
+          saveTicketSettings(merged);
+        } catch (_) {
+          console.warn("Corrupt localStorage settings, using defaults");
+        }
+      } else {
+        console.warn("Using default settings:", error.message);
+      }
     } finally {
       setLoading(false);
     }
   };
 
+  // ── Save: always writes to localStorage, tries API as a bonus ────────────
   const handleSave = async () => {
     setSaving(true);
     try {
-      await postSettings(settings);
-      // Persist ticket settings to localStorage so Transactions picks them up
+      // Broadcast ticket-related changes live
       saveTicketSettings(settings);
+
+      // Try API — fail silently if backend is unavailable
+      try {
+        await postSettings(settings);
+      } catch (_) {
+        // backend unavailable — localStorage is the source of truth
+      }
+
+      // Always persist to localStorage
+      localStorage.setItem("systemSettings", JSON.stringify(settings));
+
       setLastSaved(new Date());
       message.success("Settings saved successfully!");
     } catch (error) {
@@ -226,20 +268,40 @@ export default function SystemSettings() {
     }
   };
 
+  // ── Reset: restore from localStorage, fall back to API ───────────────────
   const handleReset = () => {
+    const saved = localStorage.getItem("systemSettings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        const merged = { ...DEFAULT_SETTINGS, ...parsed };
+        setSettings(merged);
+        saveTicketSettings(merged);
+
+        // Re-sync sidebar context to match saved state
+        updateSidebarSettings({
+          companyLogo: merged.companyLogo ?? null,
+          companyName: merged.companyName,
+        });
+
+        message.info("Settings reset to last saved values");
+        return;
+      } catch (_) {
+        // Corrupt data — fall through to API reload
+      }
+    }
     loadSettings();
     message.info("Settings reset to last saved values");
   };
 
   /**
    * setField — updates local state AND immediately broadcasts ticket-related
-   * changes to Transactions.jsx via a CustomEvent on window.
+   * changes to Transactions.jsx via saveTicketSettings.
    */
   const setField = (key, value) => {
     setSettings((prev) => {
       const next = { ...prev, [key]: value };
       if (TICKET_KEYS.has(key)) {
-        // Live sync — no need to hit Save first
         saveTicketSettings(next);
       }
       return next;
@@ -264,7 +326,6 @@ export default function SystemSettings() {
       label: (
         <span className="flex items-center gap-1.5 text-xs">
           <Palette className="w-3.5 h-3.5" /> Tickets &amp; Printing
-          {/* Live indicator dot */}
           <span
             className="w-2 h-2 rounded-full ml-0.5"
             style={{ backgroundColor: currentThemeMeta.preview.header }}
@@ -354,7 +415,7 @@ export default function SystemSettings() {
             <Button
               onClick={handleReset}
               icon={<RotateCcw className="w-4 h-4" />}
-              disabled={loading}
+              disabled={loading || saving}
               className={`${isDark ? "border-gray-700 text-gray-300" : ""}`}
             >
               Reset
@@ -363,6 +424,7 @@ export default function SystemSettings() {
               type="primary"
               onClick={handleSave}
               loading={saving}
+              disabled={loading}
               icon={<Save className="w-4 h-4" />}
               className="bg-gradient-to-r from-amber-500 to-orange-600 border-0 shadow-md"
             >
@@ -405,22 +467,51 @@ export default function SystemSettings() {
 // TAB: GENERAL
 // ═════════════════════════════════════════════════════════════════════════════
 function GeneralTab({ settings, setField, isDark }) {
+  const { sidebarSettings, updateSidebarSettings } = useSidebarSettings();
+
+  // ── Logo: update SystemSettings state + sidebar context instantly ──────────
   const handleLogoUpload = (file) => {
     const reader = new FileReader();
     reader.onload = (e) => {
-      setField("companyLogo", e.target.result);
-      localStorage.setItem("tempCompanyLogo", e.target.result);
+      const base64 = e.target.result;
+      setField("companyLogo", base64);
+      updateSidebarSettings({ companyLogo: base64 });
     };
     reader.readAsDataURL(file);
     return false;
   };
 
+  const handleLogoRemove = () => {
+    setField("companyLogo", null);
+    updateSidebarSettings({ companyLogo: null });
+  };
+
+  // ── Company name — also pushes to sidebar ────────────────────────────────
+  const handleCompanyNameChange = (value) => {
+    setField("companyName", value);
+    updateSidebarSettings({ companyName: value });
+  };
+
+  // ── Sidebar preset theme ──────────────────────────────────────────────────
+  const handleThemeSelect = (themeKey) => {
+    updateSidebarSettings({ sidebarTheme: themeKey });
+  };
+
+  // ── Custom sidebar color — auto-activates "custom" theme ─────────────────
+  const handleCustomColor = (key, value) => {
+    const patch = { [key]: value };
+    if (sidebarSettings.sidebarTheme !== "custom") patch.sidebarTheme = "custom";
+    updateSidebarSettings(patch);
+  };
+
   return (
     <div className="space-y-5 pb-6 pt-2">
-      {/* Branding */}
+
+      {/* ── Branding ──────────────────────────────────────────────────────── */}
       <Section title="Branding" icon={<Building2 className="w-4 h-4 text-amber-600" />}>
         <div className="space-y-4">
-          {/* Logo */}
+
+          {/* Logo upload */}
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-2">
               Company Logo
@@ -440,27 +531,27 @@ function GeneralTab({ settings, setField, isDark }) {
               <div className="flex gap-2">
                 <Upload beforeUpload={handleLogoUpload} showUploadList={false} accept="image/*">
                   <Button size="small" icon={<Building2 className="w-3.5 h-3.5" />}>
-                    {settings.companyLogo ? "Change" : "Upload Logo"}
+                    {settings.companyLogo ? "Change Logo" : "Upload Logo"}
                   </Button>
                 </Upload>
                 {settings.companyLogo && (
-                  <Button size="small" danger onClick={() => setField("companyLogo", null)}>
+                  <Button size="small" danger onClick={handleLogoRemove}>
                     Remove
                   </Button>
                 )}
               </div>
             </div>
             <p className="text-[10px] text-gray-400 mt-1.5">
-              💡 Updates sidebar immediately. Save Settings to persist.
+              ✨ Logo updates in the sidebar instantly — no save needed.
             </p>
           </div>
 
-          {/* Company Name */}
+          {/* Company fields */}
           <div className="grid grid-cols-2 gap-4">
             <Field label="Company Name">
               <Input
                 value={settings.companyName}
-                onChange={(e) => setField("companyName", e.target.value)}
+                onChange={(e) => handleCompanyNameChange(e.target.value)}
                 placeholder="Company name"
               />
             </Field>
@@ -489,7 +580,135 @@ function GeneralTab({ settings, setField, isDark }) {
         </div>
       </Section>
 
-      {/* Localization */}
+      {/* ── Sidebar Theme ─────────────────────────────────────────────────── */}
+      <Section
+        title="Sidebar Theme"
+        icon={<Palette className="w-4 h-4 text-purple-500" />}
+      >
+        <p className="text-xs text-gray-400 mb-4">
+          Changes apply live to the sidebar — no save required.
+        </p>
+
+        {/* Preset swatches */}
+        <div className="grid grid-cols-3 gap-3 mb-5">
+          {Object.entries(SIDEBAR_THEMES)
+            .filter(([key]) => key !== "custom")
+            .map(([key, theme]) => {
+              const isActive = sidebarSettings.sidebarTheme === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => handleThemeSelect(key)}
+                  className={`
+                    relative p-3 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer
+                    ${isActive
+                      ? "border-amber-500 shadow-lg scale-[1.02]"
+                      : "border-gray-200 hover:border-amber-300 hover:shadow-md"
+                    }
+                  `}
+                  style={{ background: theme.bg }}
+                >
+                  {isActive && (
+                    <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center shadow">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                    </div>
+                  )}
+                  {isActive && (
+                    <div className="absolute top-1.5 left-1.5 flex items-center gap-0.5 bg-green-500/20 border border-green-400/40 text-green-300 text-[8px] font-bold px-1 py-0.5 rounded-full">
+                      <span className="w-1 h-1 rounded-full bg-green-400 animate-pulse" />
+                      LIVE
+                    </div>
+                  )}
+
+                  {/* Mini sidebar preview */}
+                  <div
+                    className="w-full h-16 rounded-lg mb-2 flex flex-col justify-between p-2 mt-4"
+                    style={{ background: theme.bg, border: `1px solid ${theme.border}` }}
+                  >
+                    <div className="flex items-center gap-1">
+                      <div className="w-4 h-4 rounded" style={{ background: theme.accent, opacity: 0.9 }} />
+                      <div className="h-1.5 w-10 rounded" style={{ background: theme.text, opacity: 0.3 }} />
+                    </div>
+                    <div className="space-y-1">
+                      {[0.5, 0.3, 0.4].map((op, i) => (
+                        <div key={i} className="flex items-center gap-1">
+                          <div
+                            className="w-2 h-2 rounded-sm"
+                            style={{ background: i === 0 ? theme.accent : theme.text, opacity: op }}
+                          />
+                          <div
+                            className="h-1 rounded"
+                            style={{ width: `${[55, 40, 48][i]}%`, background: theme.text, opacity: op * 0.7 }}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] font-semibold" style={{ color: theme.text }}>{theme.name}</p>
+                  <p className="text-[9px] mt-0.5 leading-tight" style={{ color: theme.text, opacity: 0.5 }}>
+                    {theme.description}
+                  </p>
+
+                  <div className="flex gap-1 mt-2">
+                    <div className="w-3 h-3 rounded-full border border-white/10" style={{ background: theme.bg }} />
+                    <div className="w-3 h-3 rounded-full" style={{ background: theme.accent }} />
+                    <div className="w-3 h-3 rounded-full opacity-40" style={{ background: theme.text }} />
+                  </div>
+                </button>
+              );
+            })}
+        </div>
+
+        {/* Custom color overrides */}
+        <div
+          className={`rounded-xl border p-4 transition-all duration-200 ${
+            sidebarSettings.sidebarTheme === "custom"
+              ? "border-purple-300 bg-purple-50"
+              : "border-gray-200 bg-gray-50"
+          }`}
+        >
+          <div className="flex items-center gap-2 mb-3">
+            <Palette className="w-3.5 h-3.5 text-purple-500" />
+            <span className="text-xs font-bold text-gray-700">Custom Colors</span>
+            {sidebarSettings.sidebarTheme === "custom" && (
+              <span className="text-[9px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded-full ml-auto">
+                ACTIVE
+              </span>
+            )}
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              ["customBg",     "Background"],
+              ["customAccent", "Accent / Icons"],
+              ["customText",   "Text"],
+            ].map(([key, label]) => (
+              <Field key={key} label={label}>
+                <div className="flex items-center gap-1.5">
+                  <input
+                    type="color"
+                    value={sidebarSettings[key]}
+                    onChange={(e) => handleCustomColor(key, e.target.value)}
+                    className="w-8 h-7 rounded border border-gray-300 cursor-pointer p-0.5 flex-shrink-0"
+                  />
+                  <input
+                    type="text"
+                    value={sidebarSettings[key]}
+                    onChange={(e) => handleCustomColor(key, e.target.value)}
+                    className="w-full text-xs font-mono border border-gray-300 rounded px-2 py-1 focus:border-purple-400 focus:outline-none bg-white"
+                    placeholder="#000000"
+                  />
+                </div>
+              </Field>
+            ))}
+          </div>
+          <p className="text-[10px] text-gray-400 mt-2.5">
+            Picking any custom color automatically activates the Custom theme.
+          </p>
+        </div>
+      </Section>
+
+      {/* ── Localization ──────────────────────────────────────────────────── */}
       <Section title="Localization" icon={<Settings className="w-4 h-4 text-blue-500" />}>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Timezone">
@@ -532,7 +751,7 @@ function GeneralTab({ settings, setField, isDark }) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// TAB: TICKETS & PRINTING  (with live sync)
+// TAB: TICKETS & PRINTING
 // ═════════════════════════════════════════════════════════════════════════════
 function TicketsTab({ settings, setField, isDark }) {
   const themesArray = Object.entries(TICKET_THEMES).map(([key, val]) => ({
@@ -542,7 +761,6 @@ function TicketsTab({ settings, setField, isDark }) {
 
   return (
     <div className="space-y-5 pb-6 pt-2">
-      {/* Theme selector */}
       <Section title="PDF Theme" icon={<Palette className="w-4 h-4 text-amber-600" />}>
         <div className="grid grid-cols-2 gap-4 mb-5">
           {themesArray.map((theme) => {
@@ -559,13 +777,11 @@ function TicketsTab({ settings, setField, isDark }) {
                   }
                 `}
               >
-                {/* Active checkmark */}
                 {isActive && (
                   <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center shadow">
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
                 )}
-                {/* LIVE badge */}
                 {isActive && (
                   <div className="absolute top-2 left-2 flex items-center gap-1 bg-green-100 border border-green-300 text-green-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
@@ -578,7 +794,6 @@ function TicketsTab({ settings, setField, isDark }) {
                   <p className="text-xs text-gray-400">{theme.description}</p>
                 </div>
 
-                {/* Preview card */}
                 <div
                   className="rounded-lg p-3 border-2"
                   style={{ backgroundColor: theme.preview.bg, borderColor: theme.preview.accent }}
@@ -607,7 +822,6 @@ function TicketsTab({ settings, setField, isDark }) {
                   <div className="mt-2 h-2 rounded" style={{ backgroundColor: theme.preview.accent }} />
                 </div>
 
-                {/* Color swatches */}
                 <div className="flex gap-1.5 mt-2.5">
                   <div className="w-5 h-2.5 rounded-sm" style={{ backgroundColor: theme.preview.header }} title="Header" />
                   <div className="w-5 h-2.5 rounded-sm" style={{ backgroundColor: theme.preview.accent }} title="Accent" />
@@ -619,7 +833,6 @@ function TicketsTab({ settings, setField, isDark }) {
           })}
         </div>
 
-        {/* Options */}
         <div className="grid grid-cols-2 gap-4 border-t border-gray-100 pt-4">
           <div className="flex items-center justify-between">
             <div>
@@ -658,7 +871,6 @@ function TicketsTab({ settings, setField, isDark }) {
         </div>
       </Section>
 
-      {/* Custom Colors */}
       <Section title="Custom Colors (Advanced)" icon={<Palette className="w-4 h-4 text-purple-500" />}>
         <p className="text-xs text-gray-400 mb-4">
           Override the selected theme's header and accent colors. Applied live.

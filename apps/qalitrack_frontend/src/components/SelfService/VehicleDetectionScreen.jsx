@@ -1,20 +1,14 @@
 /**
  * VehicleDetectionScreen.jsx
  *
- * ── ENRICHMENT PATTERN (copied from Vehicles.jsx admin page) ─────────────────
- *
- * The RFID endpoint returns the vehicle with these relational fields:
- *   supplierName, transporterName, ownerName  ← populated IF linked in DB
- *   supplierId,   transporterId,   ownerId    ← always present when linked
- *
- * If *Name fields are null/empty (vehicle not yet linked in admin),
- * we fall back exactly like Vehicles.jsx does:
- *   - GET /MasterData/Suppliers/{supplierId}     → extract name
- *   - GET /MasterData/Transporters/{transporterId} → extract name
- *   - GET /Owners/{ownerId}                      → extract name
- *   - GET /MasterData/Saccos (search saccoId)    → extract name
- *
- * This guarantees all four fields always show up in WeighingScreen.
+ * Changes from original:
+ *  1. RFID stream URL now comes from SystemSettings (useHardwareConfig) — live,
+ *     no page reload needed when the URL is changed in System Settings → Save.
+ *  2. After a vehicle is confirmed, usePendingTransaction checks whether that
+ *     plate already has an "Incomplete" transaction:
+ *       • None found  → normal first-weighing flow (opens NFC modal)
+ *       • Found       → opens NFC modal with pendingTxn attached so the
+ *                        parent can route to second-weight capture instead.
  */
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -22,10 +16,11 @@ import { Alert, Button } from "antd";
 import { useTheme } from "../Context/ThemeContext.jsx";
 import AuthenticationMethodModal from "./AuthenticationMethodModal.jsx";
 import { getVehicleByRfid } from "../../api/MasterData/Vehicles";
-import { apiClient } from "../../api/helpers/apiClients"; // ← same client used by Vehicles.jsx
+import { apiClient } from "../../api/helpers/apiClients";
+import { useHardwareConfig } from "../../hooks/useHardwareConfig";
+import { usePendingTransaction } from "../../hooks/usePendingTransaction";
 
-const RFID_STREAM_URL = "http://172.16.0.134:5000/api/rfid/stream";
-const CONTROL_TYPES   = new Set(["connected","heartbeat","ping","pong","keepalive"]);
+const CONTROL_TYPES = new Set(["connected", "heartbeat", "ping", "pong", "keepalive"]);
 
 // ── Parse SSE ─────────────────────────────────────────────────────────────────
 const parseRfidCode = (raw) => {
@@ -37,10 +32,11 @@ const parseRfidCode = (raw) => {
       return p.rfid ?? p.rfidCode ?? p.tag ?? p.tagId ?? p.code ?? p.uid ?? null;
     }
     return null;
-  } catch { return String(raw).trim() || null; }
+  } catch {
+    return String(raw).trim() || null;
+  }
 };
 
-// ── Extract vehicle from any wrapper shape ────────────────────────────────────
 const extractVehicle = (raw) => {
   if (!raw) return null;
   for (const c of [raw, raw?.data, raw?.data?.data, raw?.vehicle, raw?.data?.vehicle]) {
@@ -49,72 +45,31 @@ const extractVehicle = (raw) => {
   return null;
 };
 
-// ── Helper: extract name from a single-entity API response ───────────────────
 const pickName = (res) => {
   const obj = res?.data?.data ?? res?.data ?? res ?? {};
-  return obj.name        ?? obj.fullName     ?? obj.ownerName
-      ?? obj.saccoName   ?? obj.companyName  ?? obj.businessName
-      ?? null;
+  return obj.name ?? obj.fullName ?? obj.ownerName ?? obj.saccoName ?? obj.companyName ?? obj.businessName ?? null;
 };
 
-// ── Enrichment: fetch missing names by ID (mirrors Vehicles.jsx pattern) ──────
 const enrichVehicleNames = async (v) => {
-  let ownerName       = v.ownerName        ?? null;
-  let transporterName = v.transporterName  ?? null;
-  let supplierName    = v.supplierName     ?? null;
-  let saccoName       = v.saccoName        ?? null;
-
+  let ownerName       = v.ownerName       ?? null;
+  let transporterName = v.transporterName ?? null;
+  let supplierName    = v.supplierName    ?? null;
+  let saccoName       = v.saccoName       ?? null;
   const fetches = [];
 
-  // Owner
-  if (!ownerName && v.ownerId) {
-    fetches.push(
-      apiClient.get(`/Owners/${v.ownerId}`)
-        .then(r  => { ownerName = pickName(r) ?? ownerName; })
-        .catch(() => {})
-    );
-  }
-
-  // Supplier
-  if (!supplierName && v.supplierId) {
-    fetches.push(
-      apiClient.get(`/MasterData/Suppliers/${v.supplierId}`)
-        .then(r  => { supplierName = pickName(r) ?? supplierName; })
-        .catch(() => {})
-    );
-  }
-
-  // Transporter
-  if (!transporterName && v.transporterId) {
-    fetches.push(
-      apiClient.get(`/MasterData/Transporters/${v.transporterId}`)
-        .then(r  => { transporterName = pickName(r) ?? transporterName; })
-        .catch(() => {})
-    );
-  }
-
-  // SACCO (transporter alias used in tea industry) — try if still missing
-  if (!transporterName && v.saccoId) {
-    fetches.push(
-      apiClient.get(`/MasterData/Saccos/${v.saccoId}`)
-        .then(r  => { saccoName = pickName(r) ?? saccoName; transporterName = transporterName ?? saccoName; })
-        .catch(() => {})
-    );
-  }
+  if (!ownerName && v.ownerId)
+    fetches.push(apiClient.get(`/Owners/${v.ownerId}`).then(r => { ownerName = pickName(r) ?? ownerName; }).catch(() => {}));
+  if (!supplierName && v.supplierId)
+    fetches.push(apiClient.get(`/MasterData/Suppliers/${v.supplierId}`).then(r => { supplierName = pickName(r) ?? supplierName; }).catch(() => {}));
+  if (!transporterName && v.transporterId)
+    fetches.push(apiClient.get(`/MasterData/Transporters/${v.transporterId}`).then(r => { transporterName = pickName(r) ?? transporterName; }).catch(() => {}));
+  if (!transporterName && v.saccoId)
+    fetches.push(apiClient.get(`/MasterData/Saccos/${v.saccoId}`).then(r => { saccoName = pickName(r) ?? saccoName; transporterName = transporterName ?? saccoName; }).catch(() => {}));
 
   await Promise.allSettled(fetches);
-
-  console.group("🔍 enrichVehicleNames result");
-  console.log("ownerName:      ", ownerName);
-  console.log("supplierName:   ", supplierName);
-  console.log("transporterName:", transporterName);
-  console.log("saccoName:      ", saccoName);
-  console.groupEnd();
-
   return { ownerName, supplierName, transporterName, saccoName };
 };
 
-// ── Normalise: exact Swagger fields + enriched names ─────────────────────────
 const normaliseVehicle = (v, rfidCode, enriched = {}) => ({
   id:                 v.id,
   rfidTag:            v.rfiDcode           ?? rfidCode,
@@ -126,7 +81,6 @@ const normaliseVehicle = (v, rfidCode, enriched = {}) => ({
   status:             v.status             ?? null,
   isActive:           !v.isDeleted,
   detectedAt:         new Date(),
-  // Use API value first, fall back to enriched lookup
   ownerId:            v.ownerId            ?? null,
   ownerName:          v.ownerName          ?? enriched.ownerName       ?? null,
   transporterId:      v.transporterId      ?? null,
@@ -142,6 +96,13 @@ const normaliseVehicle = (v, rfidCode, enriched = {}) => ({
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function VehicleDetectionScreen({ onVehicleDetected, error: externalError, onReset }) {
   const { isDark } = useTheme();
+
+  // ── Live hardware config from SystemSettings localStorage ─────────────────
+  const hwConfig = useHardwareConfig();
+  const rfidStreamUrl = hwConfig.rfidStreamUrl;
+
+  // ── Pending transaction check ─────────────────────────────────────────────
+  const { checking: checkingPending, pendingTxn, checkPending, clearPending } = usePendingTransaction();
 
   const [streamStatus,  setStreamStatus]  = useState("connecting");
   const [vehicleStatus, setVehicleStatus] = useState("idle");
@@ -170,31 +131,39 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
     return () => clearInterval(id);
   }, []);
 
-  // ── SSE stream ────────────────────────────────────────────────────────────
+  // ── SSE stream — reconnects whenever rfidStreamUrl changes ───────────────
   const openStream = useCallback(() => {
     if (esRef.current) { esRef.current.close(); esRef.current = null; }
-    setStreamStatus("connecting"); setStreamError(null); dbg("Opening RFID stream");
+    setStreamStatus("connecting"); setStreamError(null);
+    dbg("Opening RFID stream", rfidStreamUrl);
+
     try {
-      const es = new EventSource(RFID_STREAM_URL); esRef.current = es;
+      const es = new EventSource(rfidStreamUrl);
+      esRef.current = es;
       es.onopen = () => { setStreamStatus("listening"); dbg("Stream connected ✓"); };
       es.onmessage = (event) => {
         dbg("SSE raw", event.data);
         const code = parseRfidCode(event.data);
         if (!code) { dbg("Skipped (control msg)"); return; }
         dbg("RFID code", code);
-        lastCode.current = code; lookupRef.current = false;
-        setRfidCode(code); setStreamStatus("tag_received");
+        lastCode.current = code;
+        lookupRef.current = false;
+        setRfidCode(code);
+        setStreamStatus("tag_received");
       };
       es.onerror = () => {
-        setStreamError("Cannot connect to RFID reader at " + RFID_STREAM_URL);
-        setStreamStatus("error"); es.close(); esRef.current = null;
+        setStreamError("Cannot connect to RFID reader at " + rfidStreamUrl);
+        setStreamStatus("error");
+        es.close();
+        esRef.current = null;
       };
     } catch {
       setStreamError("Failed to open SSE connection.");
       setStreamStatus("error");
     }
-  }, [dbg]);
+  }, [rfidStreamUrl, dbg]);
 
+  // Restart stream if URL changes (SystemSettings save)
   useEffect(() => {
     openStream();
     return () => { if (esRef.current) esRef.current.close(); };
@@ -210,47 +179,40 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       setVehicleData(null);
       setLookupError(null);
       setShowAuthModal(false);
+      clearPending();
       dbg("Fetching vehicle", rfidCode);
 
       try {
         const raw = await getVehicleByRfid(rfidCode);
-        console.log("📡 Raw RFID response:", JSON.stringify(raw, null, 2));
-
-        const v = extractVehicle(raw);
+        const v   = extractVehicle(raw);
         if (!v) { dbg("No vehicle found"); setVehicleStatus("not_found"); return; }
 
-        console.group("🚗 Vehicle from API");
-        console.log("registrationNumber:", v.registrationNumber);
-        console.log("ownerName:         ", v.ownerName,         "| ownerId:        ", v.ownerId);
-        console.log("transporterName:   ", v.transporterName,   "| transporterId:  ", v.transporterId);
-        console.log("supplierName:      ", v.supplierName,       "| supplierId:    ", v.supplierId);
-        console.groupEnd();
-
-        // ── Step 1: show vehicle immediately (plate visible right away) ──────
+        // Step 1: show partial vehicle immediately
         const partial = normaliseVehicle(v, rfidCode);
         setVehicleData(partial);
         setVehicleStatus("found");
 
-        // ── Step 2: enrich missing names (mirrors Vehicles.jsx pattern) ──────
+        // Step 2: enrich missing relational names
         const needsEnrichment = !v.ownerName || !v.supplierName || !v.transporterName;
         if (needsEnrichment) {
-          dbg("Enriching names via ID lookups…");
+          dbg("Enriching names…");
           setEnriching(true);
           try {
             const enriched = await enrichVehicleNames(v);
-            const full     = normaliseVehicle(v, rfidCode, enriched);
+            const full = normaliseVehicle(v, rfidCode, enriched);
             setVehicleData(full);
-            dbg("Enrichment done", {
-              owner:       full.ownerName,
-              supplier:    full.supplierName,
-              transporter: full.transporterName,
-            });
+            dbg("Enrichment done");
           } finally {
             setEnriching(false);
           }
         }
 
-        // ── Step 3: open auth modal ───────────────────────────────────────────
+        // Step 3: check for pending transaction on this plate
+        const plate = v.registrationNumber ?? partial.registrationNumber;
+        dbg("Checking for pending transaction", plate);
+        await checkPending(plate);
+
+        // Step 4: open auth modal (pendingTxn state is now set)
         setTimeout(() => setShowAuthModal(true), 1200);
 
       } catch (err) {
@@ -260,17 +222,26 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
         else { setVehicleStatus("error"); setLookupError(err.message || "Server error."); }
       }
     })();
-  }, [rfidCode, dbg]);
+  }, [rfidCode, dbg, checkPending, clearPending]);
 
   const handleRescan = () => {
-    lastCode.current = null; lookupRef.current = false;
-    setRfidCode(null); setVehicleData(null); setVehicleStatus("idle");
-    setStreamStatus("listening"); setLookupError(null); setShowAuthModal(false);
+    lastCode.current = null;
+    lookupRef.current = false;
+    setRfidCode(null);
+    setVehicleData(null);
+    setVehicleStatus("idle");
+    setStreamStatus("listening");
+    setLookupError(null);
+    setShowAuthModal(false);
+    clearPending();
   };
 
   const handleRetryLookup = () => {
-    const code = lastCode.current; if (!code) return;
-    lookupRef.current = false; setRfidCode(null); setTimeout(() => setRfidCode(code), 50);
+    const code = lastCode.current;
+    if (!code) return;
+    lookupRef.current = false;
+    setRfidCode(null);
+    setTimeout(() => setRfidCode(code), 50);
   };
 
   const handleAuthComplete = (rawD) => {
@@ -284,11 +255,51 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       employeeId: d.employeeId ?? d.employee_id ?? "",
       uid:        d.uid        ?? d.nfcUid      ?? "",
     };
-    onVehicleDetected({ vehicle: vehicleData, driver });
+    // Pass pendingTxn to parent so it can route to second-weight screen
+    onVehicleDetected({ vehicle: vehicleData, driver, pendingTxn: pendingTxn ?? null });
   };
 
   const isListening  = streamStatus === "connecting" || streamStatus === "listening";
   const streamFailed = streamStatus === "error";
+
+  // ── Pending transaction banner (shown on vehicle card while checking/found)
+  const PendingBanner = () => {
+    if (vehicleStatus !== "found") return null;
+    if (checkingPending) {
+      return (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold"
+          style={{ background: "#fffbeb", border: "1px solid #fcd34d", color: "#92400e" }}>
+          <span className="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+          Checking for pending transaction…
+        </div>
+      );
+    }
+    if (pendingTxn) {
+      const fw = pendingTxn.firstWeight ?? pendingTxn.grossWeight ?? "—";
+      const at = pendingTxn.createdAt
+        ? new Date(pendingTxn.createdAt).toLocaleString()
+        : "Unknown time";
+      return (
+        <div className="px-3 py-2.5 rounded-xl text-xs"
+          style={{ background: "#fef2f2", border: "1.5px solid #fca5a5" }}>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-base">⚠️</span>
+            <p className="font-bold text-sm" style={{ color: "#dc2626" }}>
+              Pending Transaction Detected
+            </p>
+          </div>
+          <p style={{ color: "#7f1d1d" }}>
+            This vehicle has an incomplete weighing from <strong>{at}</strong>.
+            First weight: <strong>{fw} kg</strong>.
+          </p>
+          <p className="mt-1 font-semibold" style={{ color: "#dc2626" }}>
+            This visit will be recorded as the <u>second (tare) weight</u>.
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   // ─── RENDER ───────────────────────────────────────────────────────────────
   return (
@@ -303,7 +314,9 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
             </div>
             <div>
               <h1 className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>Self-Service Weighing</h1>
-              <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>RFID verification · NFC authentication</p>
+              <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>
+                RFID: <span className="font-mono">{rfidStreamUrl}</span>
+              </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -315,12 +328,13 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
                 : "bg-green-50 border-green-200 text-green-700"
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full ${streamFailed ? "bg-red-500" : streamStatus === "tag_received" ? "bg-amber-500" : "bg-green-500 animate-pulse"}`} />
-              {streamStatus === "connecting"   && "Connecting…"}
-              {streamStatus === "listening"    && "Listening"}
-              {streamStatus === "tag_received" && rfidCode}
-              {streamStatus === "error"        && "Error"}
+              {streamStatus === "connecting"    && "Connecting…"}
+              {streamStatus === "listening"     && "Listening"}
+              {streamStatus === "tag_received"  && rfidCode}
+              {streamStatus === "error"         && "Error"}
             </div>
-            <button onClick={() => setShowDebug(v => !v)} className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${isDark ? "border-gray-700 text-gray-500" : "border-gray-300 text-gray-400"}`}>
+            <button onClick={() => setShowDebug(v => !v)}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${isDark ? "border-gray-700 text-gray-500" : "border-gray-300 text-gray-400"}`}>
               {showDebug ? "Hide Log" : "Debug"}
             </button>
           </div>
@@ -331,7 +345,10 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       <main className="flex-1 flex items-start justify-center p-6 lg:p-10">
         <div className="w-full max-w-4xl space-y-5">
 
-          {externalError && <Alert type="error" message="Error" description={externalError} showIcon action={<Button size="small" onClick={onReset}>Reset</Button>} />}
+          {externalError && (
+            <Alert type="error" message="Error" description={externalError} showIcon
+              action={<Button size="small" onClick={onReset}>Reset</Button>} />
+          )}
 
           {/* RFID Status Card */}
           <div className={`rounded-3xl border shadow-xl overflow-hidden ${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
@@ -344,12 +361,12 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
 
             <div className="p-8 flex flex-col sm:flex-row items-center gap-8">
 
-              {/* Icon */}
+              {/* Animated icon */}
               <div className="relative flex-shrink-0 w-44 h-44 flex items-center justify-center">
                 {isListening && [0,1,2].map(i => {
                   const ph = (pulsePhase + i) % 3;
                   return <span key={i} className="absolute inset-0 rounded-full border-2 transition-all duration-700"
-                    style={{ borderColor:"rgba(109,40,217,0.2)", transform:`scale(${1+(ph/3)*0.65})`, opacity:1-(ph/3)*0.9 }} />;
+                    style={{ borderColor: "rgba(109,40,217,0.2)", transform: `scale(${1 + (ph / 3) * 0.65})`, opacity: 1 - (ph / 3) * 0.9 }} />;
                 })}
                 <div className={`w-32 h-32 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 ${
                   streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? "bg-red-600"
@@ -378,14 +395,14 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
               {/* Status text */}
               <div className="flex-1 min-w-0">
                 {streamStatus === "connecting" && (
-                  <Blurb label="Initialising" color="purple" isDark={isDark} title="Connecting to RFID Reader…" sub={RFID_STREAM_URL} />
+                  <Blurb label="Initialising" color="purple" isDark={isDark} title="Connecting to RFID Reader…" sub={rfidStreamUrl} />
                 )}
                 {streamStatus === "listening" && vehicleStatus === "idle" && (
                   <Blurb label="Ready" color="purple" isDark={isDark} title="Awaiting Vehicle RFID Tag" sub="Drive into the reader zone. The tag will be detected automatically.">
                     <div className="flex flex-wrap gap-2 mt-4">
-                      {["Drive into zone","Auto-detected","Details populated"].map((s,i) => (
+                      {["Drive into zone","Auto-detected","Details populated"].map((s, i) => (
                         <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-gray-500">
-                          <span className="w-4 h-4 rounded-full flex items-center justify-center bg-purple-500 text-white text-xs font-black">{i+1}</span>{s}
+                          <span className="w-4 h-4 rounded-full flex items-center justify-center bg-purple-500 text-white text-xs font-black">{i + 1}</span>{s}
                         </span>
                       ))}
                     </div>
@@ -399,18 +416,21 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
                   </Blurb>
                 )}
                 {vehicleStatus === "found" && vehicleData && (
-                  <Blurb label="Vehicle Verified ✓" color="green" isDark={isDark} title={vehicleData.registrationNumber}>
+                  <Blurb label={pendingTxn ? "⚠️ Second Weighing" : "Vehicle Verified ✓"} color={pendingTxn ? "amber" : "green"} isDark={isDark} title={vehicleData.registrationNumber}>
                     <p className={`font-mono text-xs mt-1 mb-3 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
                       RFID: {vehicleData.rfidTag}
                     </p>
 
-                    {/* Relational fields with enrichment spinner */}
+                    {/* Pending transaction banner */}
+                    <div className="mb-3"><PendingBanner /></div>
+
+                    {/* Relational fields */}
                     <div className="grid grid-cols-2 gap-2 mb-4">
                       {[
-                        { label:"Owner",       value: vehicleData.ownerName       },
-                        { label:"Supplier",    value: vehicleData.supplierName    },
-                        { label:"Transporter", value: vehicleData.transporterName },
-                        { label:"SACCO",       value: vehicleData.saccoName       },
+                        { label: "Owner",       value: vehicleData.ownerName       },
+                        { label: "Supplier",    value: vehicleData.supplierName    },
+                        { label: "Transporter", value: vehicleData.transporterName },
+                        { label: "SACCO",       value: vehicleData.saccoName       },
                       ].map(f => (
                         <div key={f.label} className={`px-3 py-2 rounded-xl text-xs border flex items-center gap-2 ${
                           f.value
@@ -434,8 +454,8 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
 
                     <div className="flex gap-3 flex-wrap">
                       <Button type="primary" onClick={() => setShowAuthModal(true)}
-                        className="bg-green-600 hover:bg-green-700 border-0 h-10 px-6 font-bold rounded-xl">
-                        Authenticate Driver →
+                        className={`${pendingTxn ? "bg-amber-600 hover:bg-amber-700" : "bg-green-600 hover:bg-green-700"} border-0 h-10 px-6 font-bold rounded-xl`}>
+                        {pendingTxn ? "Authenticate for 2nd Weight →" : "Authenticate Driver →"}
                       </Button>
                       <Button onClick={handleRescan}
                         className={`h-10 px-5 rounded-xl border font-semibold ${isDark ? "border-gray-700 text-gray-300 bg-gray-800" : "border-gray-200 text-gray-600"}`}>
@@ -472,10 +492,22 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
           {/* Vehicle Detail Card */}
           {vehicleStatus === "found" && vehicleData && (
             <div className={`rounded-3xl border shadow-xl overflow-hidden ${isDark ? "bg-gray-900 border-green-800" : "bg-white border-green-200"}`}>
-              <div className="bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 px-8 py-5 flex items-center justify-between">
+              <div className={`px-8 py-5 flex items-center justify-between ${
+                pendingTxn
+                  ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-500"
+                  : "bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500"
+              }`}>
                 <div>
-                  <p className="text-green-100 text-xs font-semibold uppercase tracking-widest">Registered Vehicle</p>
+                  <p className="text-green-100 text-xs font-semibold uppercase tracking-widest">
+                    {pendingTxn ? "Second (Tare) Weighing" : "Registered Vehicle"}
+                  </p>
                   <p className="text-white text-3xl font-black tracking-widest">{vehicleData.registrationNumber}</p>
+                  {pendingTxn && (
+                    <p className="text-orange-100 text-xs mt-1">
+                      Completing transaction from {pendingTxn.createdAt ? new Date(pendingTxn.createdAt).toLocaleString() : "earlier"}
+                      {" · "}First weight: <strong>{pendingTxn.firstWeight ?? pendingTxn.grossWeight ?? "—"} kg</strong>
+                    </p>
+                  )}
                 </div>
                 <div className="text-right">
                   <p className="text-green-100 text-xs">RFID Tag</p>
@@ -486,15 +518,15 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
 
               <div className={`p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 ${isDark ? "bg-gray-900" : "bg-white"}`}>
                 {[
-                  { label:"Type",        value: vehicleData.vehicleType        },
-                  { label:"Make",        value: vehicleData.vehicleMake        },
-                  { label:"Model",       value: vehicleData.vehicleModel       },
-                  { label:"Capacity",    value: vehicleData.capacity ? `${vehicleData.capacity} kg` : null },
-                  { label:"Owner",       value: vehicleData.ownerName          },
-                  { label:"Supplier",    value: vehicleData.supplierName       },
-                  { label:"Transporter", value: vehicleData.transporterName    },
-                  { label:"SACCO",       value: vehicleData.saccoName          },
-                  { label:"Status",      value: vehicleData.status, badge: vehicleData.isActive ? "green" : "red" },
+                  { label: "Type",        value: vehicleData.vehicleType     },
+                  { label: "Make",        value: vehicleData.vehicleMake     },
+                  { label: "Model",       value: vehicleData.vehicleModel    },
+                  { label: "Capacity",    value: vehicleData.capacity ? `${vehicleData.capacity} kg` : null },
+                  { label: "Owner",       value: vehicleData.ownerName       },
+                  { label: "Supplier",    value: vehicleData.supplierName    },
+                  { label: "Transporter", value: vehicleData.transporterName },
+                  { label: "SACCO",       value: vehicleData.saccoName       },
+                  { label: "Status",      value: vehicleData.status, badge: vehicleData.isActive ? "green" : "red" },
                 ].filter(f => f.value).map(f => (
                   <div key={f.label} className={`p-3 rounded-2xl ${isDark ? "bg-gray-800" : "bg-slate-50 border border-slate-100"}`}>
                     <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>{f.label}</p>
@@ -503,8 +535,6 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
                       : <p className={`font-bold text-sm ${isDark ? "text-white" : "text-gray-900"}`}>{f.value}</p>}
                   </div>
                 ))}
-
-                {/* Enriching spinner shown in detail card */}
                 {enriching && (
                   <div className={`p-3 rounded-2xl col-span-2 flex items-center gap-2 ${isDark ? "bg-gray-800" : "bg-amber-50 border border-amber-100"}`}>
                     <span className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
@@ -517,11 +547,14 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
 
               <div className={`px-6 py-4 flex items-center justify-between border-t ${isDark ? "bg-gray-900 border-gray-800" : "bg-slate-50 border-slate-100"}`}>
                 <p className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>
-                  Tap your NFC card to authenticate and proceed
+                  {pendingTxn
+                    ? "Tap your NFC card to authenticate and capture the second (tare) weight"
+                    : "Tap your NFC card to authenticate and proceed to weighing"
+                  }
                 </p>
                 <Button type="primary" size="large" onClick={() => setShowAuthModal(true)}
-                  className="bg-green-600 hover:bg-green-700 border-0 h-11 px-8 font-black rounded-2xl">
-                  Authenticate Driver →
+                  className={`${pendingTxn ? "bg-amber-600 hover:bg-amber-700" : "bg-green-600 hover:bg-green-700"} border-0 h-11 px-8 font-black rounded-2xl`}>
+                  {pendingTxn ? "Authenticate for 2nd Weight →" : "Authenticate Driver →"}
                 </Button>
               </div>
             </div>
@@ -536,7 +569,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
               </div>
               {debugLog.length === 0
                 ? <p className="text-gray-600">No messages yet…</p>
-                : <div className="space-y-1 max-h-52 overflow-y-auto">{debugLog.map((e,i) => <p key={i} className="break-all leading-relaxed">{e}</p>)}</div>}
+                : <div className="space-y-1 max-h-52 overflow-y-auto">{debugLog.map((e, i) => <p key={i} className="break-all leading-relaxed">{e}</p>)}</div>}
             </div>
           )}
         </div>
@@ -558,12 +591,12 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
 }
 
 function Blurb({ label, color, title, sub, isDark, children }) {
-  const cls = { purple: isDark?"text-purple-400":"text-purple-600", amber: isDark?"text-amber-400":"text-amber-600", green:"text-green-500", red:"text-red-500" };
+  const cls = { purple: isDark ? "text-purple-400" : "text-purple-600", amber: isDark ? "text-amber-400" : "text-amber-600", green: "text-green-500", red: "text-red-500" };
   return (
     <div>
       <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${cls[color]}`}>{label}</p>
-      <h2 className={`text-2xl font-black mb-1 ${isDark?"text-white":"text-gray-900"}`}>{title}</h2>
-      {sub && <p className={`text-sm ${isDark?"text-gray-400":"text-gray-500"}`}>{sub}</p>}
+      <h2 className={`text-2xl font-black mb-1 ${isDark ? "text-white" : "text-gray-900"}`}>{title}</h2>
+      {sub && <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>{sub}</p>}
       {children}
     </div>
   );
