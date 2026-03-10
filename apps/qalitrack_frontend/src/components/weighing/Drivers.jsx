@@ -1,5 +1,22 @@
+/**
+ * DriverPortal.jsx — Driver Management (mirrors Vehicle RFID pattern)
+ *
+ * NEW FIELDS ADDED:
+ *   ✅ nfCcode (NFC UID) — each driver gets one NFC card, stored as unique identifier
+ *   ✅ transporterId, supplierId — company assignments (read from API response)
+ *   ✅ assignedVehicleIds — list of vehicles this driver operates
+ *   ✅ vehicleAssignments — detailed vehicle assignment history
+ *
+ * API ENDPOINTS (from Swagger):
+ *   GET    /MasterData/Drivers?pageNumber=1&pageSize=10&searchTerm=
+ *   POST   /MasterData/Drivers
+ *   PUT    /MasterData/Drivers/{id}
+ *   DELETE /MasterData/Drivers/{id}
+ *   GET    /MasterData/Drivers/nfc/{nfcCode}  ← for kiosk NFC lookup
+ */
+
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, UserPlus, Search, X } from "lucide-react";
+import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2 } from "lucide-react";
 import {
   getDrivers,
   createDriver,
@@ -25,6 +42,7 @@ export default function DriverPortal() {
     phone: "",
     licenseNumber: "",
     licenseExpiryDate: "",
+    nfCcode: "",  // ← NFC UID (API field name: nfCcode - note capital C)
     status: "Active",
   });
 
@@ -38,14 +56,16 @@ export default function DriverPortal() {
       setError(null);
       console.log("📡 Fetching drivers... page:", page, "search:", search);
 
-      const data = await getDrivers({ pageNumber: page, pageSize, search });
+      const data = await getDrivers({ pageNumber: page, pageSize, searchTerm: search });
 
       console.log("🚀 Drivers API Response:", data);
 
       const driverList = Array.isArray(data?.data?.items)
         ? data.data.items
+        : Array.isArray(data?.items)
+        ? data.items
         : [];
-      const totalItems = data?.data?.totalItems || driverList.length;
+      const totalItems = data?.data?.totalItems || data?.totalItems || driverList.length;
       const pages = Math.ceil(totalItems / pageSize);
 
       setDrivers(driverList);
@@ -67,10 +87,23 @@ export default function DriverPortal() {
     e.preventDefault();
     setLoading(true);
     try {
+      // Clean payload — only send fields that API expects
+      const payload = {
+        fullName: form.fullName.trim(),
+        email: form.email.trim() || undefined,
+        phone: form.phone.trim(),
+        licenseNumber: form.licenseNumber.trim() || undefined,
+        licenseExpiryDate: form.licenseExpiryDate || undefined,
+        nfCcode: form.nfCcode.trim() || undefined,  // ← NFC UID
+        status: form.status,
+      };
+
+      console.log("📤 Saving driver:", payload);
+
       if (editingDriver) {
-        await updateDriver(editingDriver.id, form);
+        await updateDriver(editingDriver.id, payload);
       } else {
-        await createDriver(form);
+        await createDriver(payload);
       }
       await fetchDrivers();
       resetForm();
@@ -89,6 +122,7 @@ export default function DriverPortal() {
       phone: driver.phone || "",
       licenseNumber: driver.licenseNumber || "",
       licenseExpiryDate: driver.licenseExpiryDate?.split("T")[0] || "",
+      nfCcode: driver.nfCcode || "",  // ← NFC UID
       status: driver.status || "Active",
     });
     setEditingDriver(driver);
@@ -102,6 +136,7 @@ export default function DriverPortal() {
       await fetchDrivers();
     } catch (error) {
       console.error("Delete failed:", error.message);
+      alert(`Delete failed: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -114,6 +149,7 @@ export default function DriverPortal() {
       phone: "",
       licenseNumber: "",
       licenseExpiryDate: "",
+      nfCcode: "",
       status: "Active",
     });
     setEditingDriver(null);
@@ -133,7 +169,7 @@ export default function DriverPortal() {
                 Drivers
               </span>
               <span className="text-[9px] text-amber-700 font-medium">
-                {drivers.length} registered drivers
+                {drivers.length} registered · NFC-enabled
               </span>
             </div>
           </div>
@@ -164,7 +200,7 @@ export default function DriverPortal() {
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">
-        <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-2">
+        <form onSubmit={handleSubmit} className="grid grid-cols-5 gap-2">
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
               Full Name *
@@ -177,6 +213,64 @@ export default function DriverPortal() {
               required
               className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
               placeholder="Driver name"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              Phone *
+            </label>
+            <input
+              type="text"
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              required
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              placeholder="+254 7XX XXX XXX"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+              <CreditCard className="w-3 h-3 text-purple-600" />
+              NFC UID
+            </label>
+            <input
+              type="text"
+              name="nfCcode"
+              value={form.nfCcode}
+              onChange={handleChange}
+              className="w-full h-7 text-[11px] rounded border-purple-300 px-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 font-mono"
+              placeholder="e.g. 3CD2FF9D"
+              title="NFC card unique identifier (8-16 hex chars)"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              License Number
+            </label>
+            <input
+              type="text"
+              name="licenseNumber"
+              value={form.licenseNumber}
+              onChange={handleChange}
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 font-mono"
+              placeholder="License number"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              License Expiry
+            </label>
+            <input
+              type="date"
+              name="licenseExpiryDate"
+              value={form.licenseExpiryDate}
+              onChange={handleChange}
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             />
           </div>
 
@@ -196,47 +290,6 @@ export default function DriverPortal() {
 
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Phone
-            </label>
-            <input
-              type="text"
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
-              placeholder="+254 7XX XXX XXX"
-            />
-          </div>
-
-          <div>
-            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              License Number
-            </label>
-            <input
-              type="text"
-              name="licenseNumber"
-              value={form.licenseNumber}
-              onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
-              placeholder="License number"
-            />
-          </div>
-
-          <div>
-            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              License Expiry Date
-            </label>
-            <input
-              type="date"
-              name="licenseExpiryDate"
-              value={form.licenseExpiryDate}
-              onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
-            />
-          </div>
-
-          <div>
-            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
               Status
             </label>
             <select
@@ -250,7 +303,7 @@ export default function DriverPortal() {
             </select>
           </div>
 
-          <div className="col-span-4 flex gap-2 justify-end mt-1">
+          <div className="col-span-5 flex gap-2 justify-end mt-1">
             {editingDriver && (
               <button
                 type="button"
@@ -264,7 +317,7 @@ export default function DriverPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1"
+              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <UserPlus className="w-3 h-3" />
               {editingDriver ? "Update" : "Add"} Driver
@@ -277,15 +330,25 @@ export default function DriverPortal() {
       <div className="flex-1 overflow-auto bg-white">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">Loading drivers...</p>
+            <div className="text-center">
+              <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+              <p className="text-gray-500 text-sm">Loading drivers...</p>
+            </div>
           </div>
         ) : error ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-red-500 text-sm">Error: {error}</p>
+            <div className="text-center">
+              <p className="text-red-500 text-sm font-semibold mb-2">⚠️ Error</p>
+              <p className="text-red-400 text-xs">{error}</p>
+            </div>
           </div>
         ) : drivers.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">No drivers found.</p>
+            <div className="text-center">
+              <UserPlus className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No drivers found.</p>
+              <p className="text-gray-400 text-xs mt-1">Add a driver using the form above</p>
+            </div>
           </div>
         ) : (
           <table className="w-full compact-table">
@@ -293,63 +356,132 @@ export default function DriverPortal() {
               <tr>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
-                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Email</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Phone</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
+                  <div className="flex items-center gap-1">
+                    <CreditCard className="w-3 h-3" />
+                    NFC UID
+                  </div>
+                </th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">License</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Expiry</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Email</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Assignments</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Status</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {drivers.map((driver, index) => (
-                <tr
-                  key={driver.id}
-                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
-                    index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                  }`}
-                >
-                  <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">
-                    {(page - 1) * pageSize + index + 1}
-                  </td>
-                  <td className="px-3 py-2 text-[10px] text-gray-900 font-bold">{driver.fullName}</td>
-                  <td className="px-3 py-2 text-[10px] text-gray-600">{driver.email || "-"}</td>
-                  <td className="px-3 py-2 text-[10px] text-gray-600 font-medium">{driver.phone || "-"}</td>
-                  <td className="px-3 py-2 text-[10px] text-gray-700 font-mono font-semibold">{driver.licenseNumber || "-"}</td>
-                  <td className="px-3 py-2 text-[10px] text-gray-600">
-                    {driver.licenseExpiryDate?.split("T")[0] || "-"}
-                  </td>
-                  <td className="px-3 py-2">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
-                        driver.status === "Active"
-                          ? "bg-green-100 text-green-700 border border-green-300"
-                          : "bg-red-100 text-red-700 border border-red-300"
-                      }`}
-                    >
-                      {driver.status === "Active" ? "✓ Active" : "✕ Inactive"}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex gap-1 justify-center">
-                      <button
-                        onClick={() => handleEdit(driver)}
-                        className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"
-                        title="Edit"
+              {drivers.map((driver, index) => {
+                // Extract company assignments (API may populate these)
+                const hasTransporter = Boolean(driver.transporterId);
+                const hasSupplier = Boolean(driver.supplierId);
+                const vehicleCount = driver.assignedVehicleIds?.length || 0;
+
+                // Check license expiry
+                const expiryDate = driver.licenseExpiryDate ? new Date(driver.licenseExpiryDate) : null;
+                const isExpired = expiryDate && expiryDate < new Date();
+                const isExpiringSoon = expiryDate && expiryDate < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+                return (
+                  <tr
+                    key={driver.id}
+                    className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                      index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                    }`}
+                  >
+                    <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">
+                      {(page - 1) * pageSize + index + 1}
+                    </td>
+                    <td className="px-3 py-2 text-[10px] text-gray-900 font-bold">
+                      {driver.fullName}
+                    </td>
+                    <td className="px-3 py-2 text-[10px] text-gray-600 font-medium">
+                      {driver.phone || "-"}
+                    </td>
+                    <td className="px-3 py-2">
+                      {driver.nfCcode ? (
+                        <div className="flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-md bg-purple-50 border border-purple-200 text-purple-700 font-mono text-[10px] font-bold">
+                            {driver.nfCcode}
+                          </span>
+                          <CreditCard className="w-3 h-3 text-purple-500" />
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-gray-400 italic">No NFC</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 text-[10px] text-gray-700 font-mono font-semibold">
+                      {driver.licenseNumber || "-"}
+                    </td>
+                    <td className="px-3 py-2 text-[10px]">
+                      {expiryDate ? (
+                        <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold ${
+                          isExpired 
+                            ? "bg-red-100 text-red-700 border border-red-300"
+                            : isExpiringSoon
+                            ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                            : "text-gray-600"
+                        }`}>
+                          {driver.licenseExpiryDate?.split("T")[0]}
+                        </span>
+                      ) : (
+                        <span className="text-gray-400">-</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 text-[10px] text-gray-600">
+                      {driver.email || <span className="text-gray-400 italic">-</span>}
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex items-center gap-1 flex-wrap">
+                        {vehicleCount > 0 && (
+                          <span className="px-1.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[9px] font-semibold flex items-center gap-0.5" title={`${vehicleCount} vehicle(s) assigned`}>
+                            🚗 {vehicleCount}
+                          </span>
+                        )}
+                        {hasTransporter && (
+                          <Truck className="w-3 h-3 text-green-600" title="Assigned to transporter" />
+                        )}
+                        {hasSupplier && (
+                          <Building2 className="w-3 h-3 text-orange-600" title="Assigned to supplier" />
+                        )}
+                        {!vehicleCount && !hasTransporter && !hasSupplier && (
+                          <span className="text-[9px] text-gray-400 italic">None</span>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-3 py-2">
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
+                          driver.status === "Active"
+                            ? "bg-green-100 text-green-700 border border-green-300"
+                            : "bg-red-100 text-red-700 border border-red-300"
+                        }`}
                       >
-                        <Pencil className="w-3 h-3" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(driver.id)}
-                        className="p-1 rounded text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-3 h-3" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {driver.status === "Active" ? "✓ Active" : "✕ Inactive"}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2">
+                      <div className="flex gap-1 justify-center">
+                        <button
+                          onClick={() => handleEdit(driver)}
+                          className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"
+                          title="Edit driver"
+                        >
+                          <Pencil className="w-3 h-3" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(driver.id)}
+                          className="p-1 rounded text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all"
+                          title="Delete driver"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         )}
@@ -360,6 +492,8 @@ export default function DriverPortal() {
         <span className="text-[10px] text-gray-600 font-medium">
           Page <span className="font-semibold text-amber-600">{page}</span> of{" "}
           <span className="font-semibold text-amber-600">{totalPages}</span>
+          {" · "}
+          <span className="text-gray-500">{drivers.length} drivers shown</span>
         </span>
         <div className="flex gap-2">
           <button
