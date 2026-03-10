@@ -1,10 +1,7 @@
 /**
  * AuthenticationMethodModal.jsx — REAL NFC MODE
- *
- * Changes from original:
- *  - NFC stream URL now comes from SystemSettings via useHardwareConfig()
- *    (no hardcoded URL — updates live when System Settings are saved)
- *  - Stream reconnects automatically if the URL changes while modal is open
+ * Theme: White / Black / Amber-600 — light + dark mode
+ * Removed: all purple — replaced with amber/black system
  */
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
@@ -38,27 +35,25 @@ const extractDriver = (raw) => {
 };
 
 const normaliseDriver = (d, nfcCode) => ({
-  id:           d.id,
-  uid:          d.nfCcode ?? nfcCode,
-  name:         d.fullName,
-  employeeId:   d.employeeId    ?? null,
-  phone:        d.phone         ?? null,
-  email:        d.email         ?? null,
-  licenseNo:    d.licenseNumber ?? null,
+  id:            d.id,
+  uid:           d.nfCcode ?? nfcCode,
+  name:          d.fullName,
+  employeeId:    d.employeeId    ?? null,
+  phone:         d.phone         ?? null,
+  email:         d.email         ?? null,
+  licenseNo:     d.licenseNumber ?? null,
   licenseExpiry: d.licenseExpiryDate ?? null,
-  status:       d.status        ?? "Active",
-  transporterId:  d.transporterId  ?? null,
-  supplierId:     d.supplierId     ?? null,
+  status:        d.status        ?? "Active",
+  transporterId: d.transporterId ?? null,
+  supplierId:    d.supplierId    ?? null,
   assignedVehicleIds: d.assignedVehicleIds ?? [],
-  detectedAt:   new Date(),
+  detectedAt:    new Date(),
 });
 
-// ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function AuthenticationMethodModal({ visible, onClose, onSelectNFC }) {
   const { isDark } = useTheme();
 
-  // ── Live NFC URL from SystemSettings ─────────────────────────────────────
-  const hwConfig = useHardwareConfig();
+  const hwConfig     = useHardwareConfig();
   const nfcStreamUrl = hwConfig.nfcStreamUrl;
 
   const [streamStatus, setStreamStatus] = useState("connecting");
@@ -80,56 +75,38 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
     setDebugLog(p => [line, ...p].slice(0, 30));
   }, []);
 
-  // ── Connect / reconnect when modal opens OR nfcStreamUrl changes ──────────
   useEffect(() => {
     if (!visible) return;
-
-    setStreamStatus("connecting");
-    setLookupStatus("idle");
-    setNfcCode(null);
-    setDriverData(null);
-    setStreamError(null);
-    setLookupError(null);
-    lookupRef.current = false;
-    lastCodeRef.current = null;
-
-    dbg("Opening NFC stream", nfcStreamUrl);
+    setStreamStatus("connecting"); setLookupStatus("idle");
+    setNfcCode(null); setDriverData(null);
+    setStreamError(null); setLookupError(null);
+    lookupRef.current = false; lastCodeRef.current = null;
 
     try {
       const es = new EventSource(nfcStreamUrl);
       esRef.current = es;
-
       es.onopen = () => { setStreamStatus("listening"); dbg("NFC stream connected ✓"); };
-
       es.onmessage = (event) => {
-        dbg("SSE raw", event.data);
         const code = parseNfcCode(event.data);
-        if (!code) { dbg("Skipped (control msg)"); return; }
-        dbg("NFC code detected", code);
+        if (!code) return;
         lastCodeRef.current = code;
         lookupRef.current = false;
         setNfcCode(code);
         setStreamStatus("code_detected");
       };
-
       es.onerror = () => {
         setStreamError(`Cannot connect to NFC reader at ${nfcStreamUrl}`);
         setStreamStatus("error");
-        es.close();
-        esRef.current = null;
+        es.close(); esRef.current = null;
       };
     } catch {
       setStreamError("Failed to open NFC stream.");
       setStreamStatus("error");
     }
 
-    return () => {
-      if (esRef.current) { dbg("Closing NFC stream"); esRef.current.close(); esRef.current = null; }
-    };
-  // Re-run if nfcStreamUrl changes while modal is open
+    return () => { if (esRef.current) { esRef.current.close(); esRef.current = null; } };
   }, [visible, nfcStreamUrl, dbg]);
 
-  // ── Driver lookup ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (!nfcCode || lookupRef.current) return;
     lookupRef.current = true;
@@ -138,23 +115,16 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
       setLookupStatus("loading");
       setDriverData(null);
       setLookupError(null);
-      dbg("Fetching driver", nfcCode);
 
       try {
         const raw = await getDriverByNfc(nfcCode);
-        dbg("Raw response", raw);
-        const d = extractDriver(raw);
-        if (!d) { dbg("No driver found"); setLookupStatus("not_found"); return; }
-
+        const d   = extractDriver(raw);
+        if (!d) { setLookupStatus("not_found"); return; }
         const normalised = normaliseDriver(d, nfcCode);
-        dbg("Driver authenticated", normalised.name);
         setDriverData(normalised);
         setLookupStatus("found");
-
         setTimeout(() => onSelectNFC(normalised), 2000);
-
       } catch (err) {
-        dbg("Lookup error", err.message);
         const notFound = err.message?.includes("404") || /not found|no driver/i.test(err.message ?? "");
         if (notFound) setLookupStatus("not_found");
         else { setLookupStatus("error"); setLookupError(err.message || "Server error."); }
@@ -172,104 +142,101 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
 
   const handleReconnect = () => {
     if (esRef.current) esRef.current.close();
-    setStreamStatus("connecting");
-    setLookupStatus("idle");
-    setNfcCode(null);
-    setDriverData(null);
-    setStreamError(null);
-    setLookupError(null);
+    setStreamStatus("connecting"); setLookupStatus("idle");
+    setNfcCode(null); setDriverData(null);
+    setStreamError(null); setLookupError(null);
   };
 
   const isListening  = streamStatus === "connecting" || streamStatus === "listening";
   const streamFailed = streamStatus === "error";
+
+  // ── Colours ─────────────────────────────────────────────────────────────────
+  const bg   = isDark ? "#111827" : "#ffffff";
+  const bdr  = isDark ? "#1f2937" : "#e5e7eb";
+  const txt  = isDark ? "#f9fafb" : "#111827";
+  const muted= isDark ? "#6b7280" : "#9ca3af";
+  const sub  = isDark ? "#1f2937" : "#f9fafb";
 
   return (
     <Modal
       open={visible}
       onCancel={onClose}
       footer={null}
-      width={700}
+      width={640}
       centered
-      className={isDark ? "dark-modal" : ""}
       destroyOnClose
+      styles={{ content: { padding: 0, borderRadius: 20, overflow: "hidden", background: bg } }}
     >
-      <div className={`${isDark ? "bg-gray-900 text-white" : "bg-white"}`}>
+      <div style={{ background: bg, fontFamily: "'Inter', system-ui, sans-serif" }}>
 
         {/* Header */}
-        <div className={`px-6 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg">
-                <span className="text-white text-xl">💳</span>
-              </div>
-              <div>
-                <h3 className={`text-lg font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
-                  Driver Authentication
-                </h3>
-                <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                  Tap your NFC card on the reader
-                </p>
-              </div>
+        <div style={{ padding: "20px 24px", borderBottom: `1px solid ${bdr}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: "linear-gradient(135deg,#d97706,#b45309)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(180,83,9,0.3)", fontSize: 20 }}>
+              💳
             </div>
-            <div className="flex items-center gap-2">
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${
-                streamFailed
-                  ? "bg-red-50 border-red-200 text-red-600"
-                  : streamStatus === "code_detected"
-                  ? "bg-purple-50 border-purple-200 text-purple-700"
-                  : "bg-green-50 border-green-200 text-green-700"
-              }`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${
-                  streamFailed ? "bg-red-500" : streamStatus === "code_detected" ? "bg-purple-500" : "bg-green-500 animate-pulse"
-                }`} />
-                {streamStatus === "connecting"    && "Connecting…"}
-                {streamStatus === "listening"     && "Listening"}
-                {streamStatus === "code_detected" && nfcCode}
-                {streamStatus === "error"         && "Error"}
-              </div>
-              <button
-                onClick={() => setShowDebug(v => !v)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${isDark ? "border-gray-700 text-gray-500" : "border-gray-300 text-gray-400"}`}>
-                {showDebug ? "Hide Log" : "Debug"}
-              </button>
+            <div>
+              <h3 style={{ fontSize: 17, fontWeight: 800, color: txt, margin: 0 }}>Driver Authentication</h3>
+              <p style={{ fontSize: 12, color: muted, margin: 0 }}>Tap your NFC card on the reader</p>
             </div>
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {/* Status pill */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: 6, padding: "5px 12px", borderRadius: 20,
+              fontSize: 11, fontWeight: 700,
+              background: streamFailed ? "#fef2f2" : streamStatus === "code_detected" ? "#fff7ed" : "#fff7ed",
+              border: `1px solid ${streamFailed ? "#fca5a5" : "#fcd34d"}`,
+              color: streamFailed ? "#dc2626" : "#92400e",
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: streamFailed ? "#ef4444" : "#d97706", display: "inline-block", animation: streamFailed ? "none" : "pulse 1.5s ease-in-out infinite" }} />
+              {streamStatus === "connecting"    && "Connecting…"}
+              {streamStatus === "listening"     && "Listening"}
+              {streamStatus === "code_detected" && nfcCode}
+              {streamStatus === "error"         && "Error"}
+            </div>
+            <button onClick={() => setShowDebug(v => !v)} style={{ padding: "5px 10px", borderRadius: 8, fontSize: 10, fontWeight: 600, background: sub, border: `1px solid ${bdr}`, color: muted, cursor: "pointer" }}>
+              {showDebug ? "Hide Log" : "Debug"}
+            </button>
           </div>
         </div>
 
-        {/* Main content */}
-        <div className="p-6">
+        {/* Body */}
+        <div style={{ padding: 28 }}>
 
           {/* Stream error */}
           {streamFailed && (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-                <span className="text-3xl">⚠️</span>
-              </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>NFC Stream Unavailable</h4>
-              <p className={`text-sm mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>{streamError}</p>
-              <p className="text-xs font-mono mb-4 text-gray-400">{nfcStreamUrl}</p>
-              <Button onClick={handleReconnect} className="bg-purple-500 hover:bg-purple-600 text-white border-0 font-semibold">
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 28 }}>⚠️</div>
+              <h4 style={{ fontSize: 18, fontWeight: 800, color: txt, marginBottom: 6 }}>NFC Stream Unavailable</h4>
+              <p style={{ fontSize: 13, color: muted, marginBottom: 4 }}>{streamError}</p>
+              <p style={{ fontFamily: "monospace", fontSize: 11, color: muted, marginBottom: 20 }}>{nfcStreamUrl}</p>
+              <button onClick={handleReconnect} style={{ padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 700, color: "#fff", background: "#d97706", border: "none", cursor: "pointer" }}>
                 🔄 Reconnect
-              </Button>
+              </button>
             </div>
           )}
 
           {/* Waiting for tap */}
           {isListening && lookupStatus === "idle" && (
-            <div className="text-center py-12">
-              <div className="relative w-32 h-32 mx-auto mb-6">
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ position: "relative", width: 120, height: 120, margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 {[0, 1, 2].map(i => (
-                  <span key={i} className="absolute inset-0 rounded-full border-2 border-purple-500 animate-ping"
-                    style={{ animationDelay: `${i * 0.3}s`, opacity: 0.3 }} />
+                  <span key={i} style={{
+                    position: "absolute", inset: 0, borderRadius: "50%",
+                    border: "2px solid rgba(217,119,6,0.25)",
+                    animation: `ping 2s ease-out ${i * 0.5}s infinite`,
+                  }} />
                 ))}
-                <div className="absolute inset-0 rounded-full border-4 border-dashed border-purple-500 flex items-center justify-center animate-pulse">
-                  <span className="text-6xl">📡</span>
+                <div style={{ width: 80, height: 80, borderRadius: "50%", border: "3px dashed #d97706", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 40, animation: "pulse 2s ease-in-out infinite" }}>
+                  📡
                 </div>
               </div>
-              <h4 className={`text-2xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Tap Your NFC Card</h4>
-              <p className={`text-sm mb-6 ${isDark ? "text-gray-400" : "text-gray-500"}`}>Hold your card against the NFC reader</p>
-              <div className={`max-w-md mx-auto p-4 rounded-lg ${isDark ? "bg-gray-800" : "bg-blue-50"}`}>
-                <p className={`text-xs font-semibold ${isDark ? "text-blue-300" : "text-blue-800"}`}>
+              <h4 style={{ fontSize: 22, fontWeight: 800, color: txt, marginBottom: 8 }}>Tap Your NFC Card</h4>
+              <p style={{ fontSize: 14, color: muted, marginBottom: 20 }}>Hold your card flat against the NFC reader</p>
+              <div style={{ maxWidth: 380, margin: "0 auto", padding: "12px 16px", borderRadius: 12, background: isDark ? "#1f2937" : "#fff7ed", border: `1px solid ${isDark ? "#374151" : "#fcd34d"}` }}>
+                <p style={{ fontSize: 12, fontWeight: 600, color: isDark ? "#fcd34d" : "#92400e", margin: 0 }}>
                   💡 Make sure your card is flat against the reader
                 </p>
               </div>
@@ -278,57 +245,50 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
 
           {/* Loading driver */}
           {lookupStatus === "loading" && (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
-                <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#fff7ed", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+                <div style={{ width: 36, height: 36, border: "3px solid #fcd34d", borderTopColor: "#d97706", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
               </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Authenticating...</h4>
-              <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                Looking up driver from NFC: <span className="font-mono">{nfcCode}</span>
+              <h4 style={{ fontSize: 18, fontWeight: 800, color: txt, marginBottom: 6 }}>Authenticating...</h4>
+              <p style={{ fontSize: 13, color: muted }}>
+                Looking up driver for NFC: <span style={{ fontFamily: "monospace", color: "#d97706" }}>{nfcCode}</span>
               </p>
             </div>
           )}
 
           {/* Driver authenticated */}
           {lookupStatus === "found" && driverData && (
-            <div className="py-6">
-              <div className="text-center mb-6">
-                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center shadow-2xl">
-                  <span className="text-5xl">✓</span>
+            <div style={{ padding: "8px 0" }}>
+              <div style={{ textAlign: "center", marginBottom: 24 }}>
+                <div style={{ width: 84, height: 84, borderRadius: "50%", background: "linear-gradient(135deg,#d97706,#b45309)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 12px", boxShadow: "0 8px 28px rgba(180,83,9,0.35)", fontSize: 40 }}>
+                  ✓
                 </div>
-                <h4 className="text-2xl font-black text-green-500 mb-2">Authenticated!</h4>
-                <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                  Driver verified · Proceeding to weighing...
-                </p>
+                <h4 style={{ fontSize: 20, fontWeight: 900, color: "#d97706", marginBottom: 4 }}>Authenticated!</h4>
+                <p style={{ fontSize: 13, color: muted }}>Driver verified · Proceeding to weighing…</p>
               </div>
 
-              <div className={`rounded-2xl border-2 p-6 ${isDark ? "bg-gray-800 border-green-700" : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"}`}>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-3xl flex-shrink-0">
-                    👤
-                  </div>
+              <div style={{ borderRadius: 16, border: `1.5px solid #fcd34d`, background: isDark ? "#1f2937" : "#fffbeb", padding: 20 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg,#374151,#111827)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26, flexShrink: 0 }}>👤</div>
                   <div>
-                    <h5 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>{driverData.name}</h5>
-                    {driverData.employeeId && (
-                      <p className={`text-sm font-mono ${isDark ? "text-gray-400" : "text-gray-600"}`}>ID: {driverData.employeeId}</p>
-                    )}
+                    <h5 style={{ fontSize: 18, fontWeight: 800, color: txt, margin: 0 }}>{driverData.name}</h5>
+                    {driverData.employeeId && <p style={{ fontSize: 12, fontFamily: "monospace", color: muted, margin: 0 }}>ID: {driverData.employeeId}</p>}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
                   {[
-                    { label: "NFC UID", value: driverData.uid,       mono: true },
+                    { label: "NFC UID", value: driverData.uid,       mono: true  },
                     { label: "Phone",   value: driverData.phone,     mono: false },
-                    { label: "License", value: driverData.licenseNo, mono: true },
+                    { label: "License", value: driverData.licenseNo, mono: true  },
                     { label: "Status",  value: driverData.status,    badge: driverData.status === "Active" },
                   ].filter(f => f.value).map(f => (
-                    <div key={f.label} className={`p-3 rounded-xl ${isDark ? "bg-gray-900" : "bg-white border border-gray-100"}`}>
-                      <p className={`text-xs font-bold uppercase mb-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>{f.label}</p>
+                    <div key={f.label} style={{ padding: "10px 12px", borderRadius: 10, background: isDark ? "#111827" : "#fff", border: `1px solid ${bdr}` }}>
+                      <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: muted, marginBottom: 3 }}>{f.label}</p>
                       {f.badge ? (
-                        <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">✓ {f.value}</span>
+                        <span style={{ padding: "2px 8px", borderRadius: 20, fontSize: 11, fontWeight: 700, background: "#fff7ed", color: "#d97706", border: "1px solid #fcd34d" }}>✓ {f.value}</span>
                       ) : (
-                        <p className={`text-sm font-semibold ${f.mono ? "font-mono" : ""} ${isDark ? "text-white" : "text-gray-900"}`}>
-                          {f.value}
-                        </p>
+                        <p style={{ fontSize: 13, fontWeight: 600, fontFamily: f.mono ? "monospace" : "inherit", color: txt, margin: 0 }}>{f.value}</p>
                       )}
                     </div>
                   ))}
@@ -339,56 +299,61 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
 
           {/* Not found */}
           {lookupStatus === "not_found" && (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
-                <span className="text-3xl">❓</span>
-              </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Driver Not Found</h4>
-              <p className={`text-sm mb-4 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                No driver registered with NFC: <span className="font-mono">{nfcCode}</span>
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#fff7ed", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 28 }}>❓</div>
+              <h4 style={{ fontSize: 18, fontWeight: 800, color: txt, marginBottom: 6 }}>Driver Not Found</h4>
+              <p style={{ fontSize: 13, color: muted, marginBottom: 20 }}>
+                No driver registered with NFC: <span style={{ fontFamily: "monospace", color: "#d97706" }}>{nfcCode}</span>
               </p>
-              <Button onClick={handleRetry} className="bg-amber-500 hover:bg-amber-600 text-white border-0 font-semibold">Try Again</Button>
+              <button onClick={handleRetry} style={{ padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 700, color: "#fff", background: "#d97706", border: "none", cursor: "pointer" }}>
+                Try Again
+              </button>
             </div>
           )}
 
           {/* Lookup error */}
           {lookupStatus === "error" && (
-            <div className="text-center py-12">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
-                <span className="text-3xl">⚠️</span>
+            <div style={{ textAlign: "center", padding: "40px 0" }}>
+              <div style={{ width: 72, height: 72, borderRadius: "50%", background: "#fef2f2", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px", fontSize: 28 }}>⚠️</div>
+              <h4 style={{ fontSize: 18, fontWeight: 800, color: txt, marginBottom: 6 }}>Lookup Failed</h4>
+              <p style={{ fontSize: 13, color: muted, marginBottom: 4 }}>Could not fetch driver from server</p>
+              <p style={{ fontFamily: "monospace", fontSize: 11, padding: "6px 12px", borderRadius: 8, display: "inline-block", background: "#fef2f2", color: "#dc2626", border: "1px solid #fecaca", marginBottom: 20 }}>{lookupError}</p>
+              <div>
+                <button onClick={handleRetry} style={{ padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 700, color: "#fff", background: "#ef4444", border: "none", cursor: "pointer" }}>
+                  Retry
+                </button>
               </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Lookup Failed</h4>
-              <p className={`text-sm mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>Could not fetch driver from server</p>
-              <p className="font-mono text-xs mb-4 px-3 py-2 rounded-lg inline-block bg-red-50 text-red-600">{lookupError}</p>
-              <Button onClick={handleRetry} className="bg-red-500 hover:bg-red-600 text-white border-0 font-semibold">Retry</Button>
             </div>
           )}
 
           {/* Debug log */}
           {showDebug && (
-            <div className="mt-6 rounded-xl border border-gray-800 bg-gray-950 p-4 font-mono text-xs text-green-400">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-sans font-bold text-xs uppercase tracking-wider text-gray-500">NFC Debug Log</span>
-                <button onClick={() => setDebugLog([])} className="text-gray-600 hover:text-gray-400 text-xs">Clear</button>
+            <div style={{ marginTop: 20, borderRadius: 12, border: "1px solid #1f2937", background: "#030712", padding: 16, fontFamily: "monospace", fontSize: 10, color: "#34d399" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontFamily: "system-ui", fontWeight: 700, fontSize: 9, textTransform: "uppercase", letterSpacing: "0.1em", color: "#4b5563" }}>NFC Debug Log</span>
+                <button onClick={() => setDebugLog([])} style={{ fontSize: 9, color: "#4b5563", background: "none", border: "none", cursor: "pointer" }}>Clear</button>
               </div>
-              {debugLog.length === 0 ? (
-                <p className="text-gray-600">No messages yet…</p>
-              ) : (
-                <div className="space-y-1 max-h-40 overflow-y-auto">
-                  {debugLog.map((e, i) => <p key={i} className="break-all leading-relaxed">{e}</p>)}
-                </div>
-              )}
+              {debugLog.length === 0
+                ? <p style={{ color: "#374151" }}>No messages yet…</p>
+                : <div style={{ maxHeight: 140, overflowY: "auto" }}>{debugLog.map((e, i) => <p key={i} style={{ margin: "2px 0", wordBreak: "break-all" }}>{e}</p>)}</div>
+              }
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className={`px-6 py-3 border-t ${isDark ? "border-gray-700" : "border-gray-200"}`}>
-          <p className={`text-xs text-center ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-            NFC stream: <span className="font-mono">{nfcStreamUrl}</span>
+        <div style={{ padding: "12px 24px", borderTop: `1px solid ${bdr}`, background: sub }}>
+          <p style={{ fontSize: 11, textAlign: "center", color: muted, margin: 0 }}>
+            NFC stream: <span style={{ fontFamily: "monospace" }}>{nfcStreamUrl}</span>
           </p>
         </div>
       </div>
+
+      <style>{`
+        @keyframes spin  { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.45; } }
+        @keyframes ping  { 0% { transform: scale(1); opacity:0.6; } 100% { transform: scale(2.2); opacity:0; } }
+      `}</style>
     </Modal>
   );
 }

@@ -1,62 +1,47 @@
 /**
  * WeighingScreen.jsx — Self-Service Kiosk Weighing
+ * Theme: White / Black / Amber-600 — light + dark mode
  *
- * Changes from original:
- *  1. Accepts `existingTransaction` prop — when present, switches to
- *     second-weight (tare) mode:
- *       • Header shows "2nd Weight" banner with first-weight details
- *       • Submit calls PATCH to update existing transaction instead of POST
- *       • Payload sends secondWeight instead of firstWeight
- *  2. Scale stream URL read from SystemSettings via useHardwareConfig()
- *     (live — updates without page reload when System Settings are saved)
+ * Layout: Fully contained — no overflow, no spill.
+ * Weight reading section: ALWAYS gray/neutral regardless of mode or theme.
+ * Removed: all purple, replaced green accents with amber/black.
  */
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { message, Select } from "antd";
 import { useHardwareConfig } from "../../hooks/useHardwareConfig";
-const { Option } = Select;
+import { useTheme } from "../Context/ThemeContext.jsx";
 
+const { Option } = Select;
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-// ── Auth token ────────────────────────────────────────────────────────────────
 function getKioskToken() {
   try {
     const s1 = sessionStorage.getItem("authSession");
     if (s1) { const p = JSON.parse(s1); const t = p?.token ?? p?.accessToken ?? p?.access_token ?? p?.userData?.token; if (t) return t; }
     const s2 = sessionStorage.getItem("user");
     if (s2) { const p = JSON.parse(s2); const t = p?.token ?? p?.accessToken ?? p?.access_token; if (t) return t; }
-    const l1 = localStorage.getItem("token");      if (l1) return l1;
-    const l2 = localStorage.getItem("authToken");  if (l2) return l2;
+    const l1 = localStorage.getItem("token");     if (l1) return l1;
+    const l2 = localStorage.getItem("authToken"); if (l2) return l2;
     const l3 = localStorage.getItem("authSession");
     if (l3) { const p = JSON.parse(l3); const t = p?.token ?? p?.accessToken ?? p?.access_token; if (t) return t; }
   } catch {}
   return null;
 }
 
-// ── API helpers ───────────────────────────────────────────────────────────────
 async function apiFetch(path, opts = {}) {
   const token = getKioskToken();
-  const headers = {
-    "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    ...(opts.headers || {}),
-  };
+  const headers = { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(opts.headers || {}) };
   const res = await fetch(`${BASE_URL}${path}`, { ...opts, headers });
   if (!res.ok) { const b = await res.text(); throw new Error(b || `HTTP ${res.status}`); }
   return res.json();
 }
 
 const searchProducts  = q => apiFetch(`/MasterData/Products?searchTerm=${encodeURIComponent(q)}&pageSize=20`).then(r => r?.items ?? r?.data?.items ?? r?.data?.data?.items ?? []);
-const getWeighbridges = () => apiFetch(`/MasterData/Weighbridges?pageSize=50`).then(r => r?.items ?? r?.data?.items ?? r?.data?.data?.items ?? []);
-
-// First weighing — POST new transaction
-const postTransaction  = b => apiFetch(`/Transaction/Transaction/Transaction`, { method: "POST", body: JSON.stringify({ request: b }) });
-
-// Second weighing — PATCH existing transaction to add second weight
-// Adjust endpoint/payload to match your actual API
+const getWeighbridges = ()  => apiFetch(`/MasterData/Weighbridges?pageSize=50`).then(r => r?.items ?? r?.data?.items ?? r?.data?.data?.items ?? []);
+const postTransaction  = b  => apiFetch(`/Transaction/Transaction/Transaction`, { method: "POST", body: JSON.stringify({ request: b }) });
 const patchTransaction = (id, b) => apiFetch(`/Transaction/Transaction/Transaction/${id}`, { method: "PATCH", body: JSON.stringify(b) });
 
-// ── Debounce ──────────────────────────────────────────────────────────────────
 function useDebounce(fn, delay) {
   const t = useRef(null);
   return useCallback((...args) => {
@@ -65,7 +50,6 @@ function useDebounce(fn, delay) {
   }, [fn, delay]);
 }
 
-// ── extractVehicleFields ──────────────────────────────────────────────────────
 const extractVehicleFields = (vehicleData = {}) => {
   const v = vehicleData?.vehicle ?? vehicleData ?? {};
   return {
@@ -102,21 +86,35 @@ const extractDriverFields = (vehicleData = {}, driverData = {}) => {
 
 const isValidGuid = g => g && g !== "00000000-0000-0000-0000-000000000000" && String(g).length > 10;
 
-// ─── COMPONENT ────────────────────────────────────────────────────────────────
+// ─── COMPONENT ─────────────────────────────────────────────────────────────────
 export default function WeighingScreen({
   vehicleData = {},
   driverData  = {},
-  existingTransaction = null,  // ← null: first weight | object: second weight
+  existingTransaction = null,
   onWeighingComplete,
   onBack,
   error: parentError,
 }) {
-  // ── Live scale URL from SystemSettings ────────────────────────────────────
+  const { isDark, toggleTheme } = useTheme();
   const hwConfig = useHardwareConfig();
 
   const isSecondWeigh = Boolean(existingTransaction);
   const vf = extractVehicleFields(vehicleData);
   const df = extractDriverFields(vehicleData, driverData);
+
+  // ── Colour system ────────────────────────────────────────────────────────────
+  const bg    = isDark ? "#0a0a0a"   : "#f4f4f4";
+  const card  = isDark ? "#111827"   : "#ffffff";
+  const bdr   = isDark ? "#1f2937"   : "#e5e7eb";
+  const txt   = isDark ? "#f9fafb"   : "#111827";
+  const muted = isDark ? "#6b7280"   : "#9ca3af";
+  const sub   = isDark ? "#1a2234"   : "#f9fafb";
+  const field = isDark ? "#1f2937"   : "#fff";
+
+  // Weight area is ALWAYS neutral gray
+  const weightBg   = isDark ? "#1c1c1c" : "#f0f0f0";
+  const weightBdr  = isDark ? "#2a2a2a" : "#d1d5db";
+  const weightCard = isDark ? "#242424" : "#e8e8e8";
 
   const [showInspector, setShowInspector] = useState(false);
   const [products,      setProducts]      = useState([]);
@@ -157,38 +155,23 @@ export default function WeighingScreen({
     notes:           existingTransaction?.notes           ?? "",
   });
 
-  // Re-sync on vehicleData updates
   useEffect(() => {
     const newVf = extractVehicleFields(vehicleData);
     const newDf = extractDriverFields(vehicleData, driverData);
     setForm(prev => ({
       ...prev,
-      vehicleID:       newVf.vehicleID,
-      noPlate:         newVf.noPlate,
-      rfidTag:         newVf.rfidTag,
-      vehicleType:     newVf.vehicleType,
-      vehicleMake:     newVf.vehicleMake,
-      vehicleModel:    newVf.vehicleModel,
-      capacity:        newVf.capacity,
-      ownerId:         newVf.ownerId,
-      transporterID:   newVf.transporterID,
-      transporterName: newVf.transporterName,
-      supplierID:      newVf.supplierID,
-      supplierName:    newVf.supplierName,
-      saccoName:       newVf.saccoName,
-      driverID:        newDf.driverID,
-      driverName:      newDf.driverName,
-      driverPhone:     newDf.driverPhone,
-      licenseNo:       newDf.licenseNo,
-      employeeId:      newDf.employeeId,
-      nfcUid:          newDf.nfcUid,
-      operatorID:      newDf.driverID   || null,
-      operatorName:    newDf.driverName || "Self-Service Kiosk",
+      vehicleID: newVf.vehicleID, noPlate: newVf.noPlate, rfidTag: newVf.rfidTag,
+      vehicleType: newVf.vehicleType, vehicleMake: newVf.vehicleMake, vehicleModel: newVf.vehicleModel,
+      capacity: newVf.capacity, ownerId: newVf.ownerId,
+      transporterID: newVf.transporterID, transporterName: newVf.transporterName,
+      supplierID: newVf.supplierID, supplierName: newVf.supplierName, saccoName: newVf.saccoName,
+      driverID: newDf.driverID, driverName: newDf.driverName, driverPhone: newDf.driverPhone,
+      licenseNo: newDf.licenseNo, employeeId: newDf.employeeId, nfcUid: newDf.nfcUid,
+      operatorID: newDf.driverID || null, operatorName: newDf.driverName || "Self-Service Kiosk",
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicleData, driverData]);
 
-  // ── Weight (TODO: replace interval with real scale SSE from hwConfig.scaleStreamUrl) ──
   const [weightMode,     setWeightMode]     = useState("captured");
   const [capturedWeight, setCapturedWeight] = useState(0);
   const [manualWeight,   setManualWeight]   = useState("");
@@ -204,25 +187,14 @@ export default function WeighingScreen({
       setWeighbridges(list);
       if (existingTransaction?.weighBridgeID) {
         const wb = list.find(w => w.id === existingTransaction.weighBridgeID);
-        if (wb) setForm(p => ({
-          ...p,
-          weighBridgeID:   wb.id,
-          weighBridgeName: wb.location ?? wb.name,
-          scaleName:       wb.location ?? wb.name,
-        }));
+        if (wb) setForm(p => ({ ...p, weighBridgeID: wb.id, weighBridgeName: wb.location ?? wb.name, scaleName: wb.location ?? wb.name }));
         return;
       }
       const factoryA = list.find(wb => /factory\s*a/i.test(wb.location ?? wb.name ?? ""));
-      if (factoryA) setForm(p => ({
-        ...p,
-        weighBridgeID:   factoryA.id,
-        weighBridgeName: factoryA.location ?? factoryA.name,
-        scaleName:       factoryA.location ?? factoryA.name,
-      }));
+      if (factoryA) setForm(p => ({ ...p, weighBridgeID: factoryA.id, weighBridgeName: factoryA.location ?? factoryA.name, scaleName: factoryA.location ?? factoryA.name }));
     }).catch(() => {});
   }, [existingTransaction]);
 
-  // Simulated scale readings (replace with real SSE using hwConfig.scaleStreamUrl)
   useEffect(() => {
     const BASE = isSecondWeigh ? 8400 : 19011;
     let iter = 0;
@@ -255,7 +227,6 @@ export default function WeighingScreen({
   const setField      = (k, v) => setForm(p => ({ ...p, [k]: v }));
   const effectiveWeight = weightMode === "manual" ? Number(manualWeight) || 0 : capturedWeight;
 
-  // ── Submit ────────────────────────────────────────────────────────────────
   const handleCapture = async () => {
     setApiError(null);
     if (effectiveWeight <= 0)          { message.error("Weight must be greater than 0"); return; }
@@ -264,81 +235,34 @@ export default function WeighingScreen({
     if (!form.transporterName?.trim()) { message.error("Transporter is required");       return; }
 
     setSubmitting(true);
-
     try {
       let result;
-
       if (isSecondWeigh) {
-        // ── Second weight: PATCH existing transaction ────────────────────────
         const txnId = existingTransaction.id ?? existingTransaction.ticketID;
-        const patchPayload = {
-          secondWeight: String(effectiveWeight),
-          weighMode:    "Kiosk",
-          isCompleted:  true,
-          status:       "Complete",
-          notes:        form.notes?.trim() || "Self-service kiosk — second weight",
-        };
+        const patchPayload = { secondWeight: String(effectiveWeight), weighMode: "Kiosk", isCompleted: true, status: "Complete", notes: form.notes?.trim() || "Self-service kiosk — second weight" };
         if (isValidGuid(form.driverID)) patchPayload.driverID = form.driverID;
         if (form.driverName?.trim())    patchPayload.driverName = form.driverName.trim();
-
-        console.log("📤 Second-weight PATCH payload:", patchPayload, "for txnId:", txnId);
         result = await patchTransaction(txnId, patchPayload);
-        message.success(
-          `Transaction completed! Net weight: ${effectiveWeight - (existingTransaction.firstWeight ?? 0)} kg`,
-          4,
-        );
+        message.success(`Transaction completed! Net weight: ${effectiveWeight - (existingTransaction.firstWeight ?? 0)} kg`, 4);
       } else {
-        // ── First weight: POST new transaction ───────────────────────────────
-        const payload = {
-          noPlate:      form.noPlate.toUpperCase().trim(),
-          firstWeight:  String(effectiveWeight),
-          weighMode:    "Kiosk",
-          operation:    form.operation,
-          operatorName: form.operatorName || "Self-Service Kiosk",
-        };
-
+        const payload = { noPlate: form.noPlate.toUpperCase().trim(), firstWeight: String(effectiveWeight), weighMode: "Kiosk", operation: form.operation, operatorName: form.operatorName || "Self-Service Kiosk" };
         if (isValidGuid(form.vehicleID))  payload.vehicleID  = form.vehicleID;
         if (isValidGuid(form.driverID))   payload.driverID   = form.driverID;
         if (isValidGuid(form.operatorID)) payload.operatorID = form.operatorID;
         if (form.driverName?.trim())      payload.driverName = form.driverName.trim();
-
-        if (isValidGuid(form.transporterID)) {
-          payload.transporterID   = form.transporterID;
-          payload.transporterName = form.transporterName;
-        } else if (form.transporterName?.trim()) {
-          payload.transporterName = form.transporterName.trim();
-        }
-
-        if (isValidGuid(form.weighBridgeID)) {
-          payload.weighBridgeID   = form.weighBridgeID;
-          payload.weighBridgeName = form.weighBridgeName;
-          payload.scaleName       = form.scaleName;
-        }
-
-        if (isValidGuid(form.supplierID)) {
-          payload.supplierID   = form.supplierID;
-          payload.supplierName = form.supplierName;
-        } else if (form.supplierName?.trim()) {
-          payload.supplierName = form.supplierName.trim();
-        }
-
-        if (isValidGuid(form.commodityID)) {
-          payload.commodityID   = form.commodityID;
-          payload.commodityName = form.commodityName;
-        }
+        if (isValidGuid(form.transporterID)) { payload.transporterID = form.transporterID; payload.transporterName = form.transporterName; }
+        else if (form.transporterName?.trim()) payload.transporterName = form.transporterName.trim();
+        if (isValidGuid(form.weighBridgeID)) { payload.weighBridgeID = form.weighBridgeID; payload.weighBridgeName = form.weighBridgeName; payload.scaleName = form.scaleName; }
+        if (isValidGuid(form.supplierID)) { payload.supplierID = form.supplierID; payload.supplierName = form.supplierName; }
+        else if (form.supplierName?.trim()) payload.supplierName = form.supplierName.trim();
+        if (isValidGuid(form.commodityID)) { payload.commodityID = form.commodityID; payload.commodityName = form.commodityName; }
         if (form.customerName?.trim())    payload.customerName    = form.customerName.trim();
         if (form.originName?.trim())      payload.originName      = form.originName.trim();
         if (form.destinationName?.trim()) payload.destinationName = form.destinationName.trim();
         payload.notes = form.notes?.trim() || "Self-service kiosk transaction";
-
-        console.log("📤 First-weight POST payload:", payload);
         result = await postTransaction(payload);
-        message.success(
-          `Saved! Receipt: ${result?.data?.receiptNo ?? result?.receiptNo ?? result?.ticketID ?? "Generated"}`,
-          4,
-        );
+        message.success(`Saved! Receipt: ${result?.data?.receiptNo ?? result?.receiptNo ?? result?.ticketID ?? "Generated"}`, 4);
       }
-
       onWeighingComplete?.({ ...form, ...result, weight: effectiveWeight, weightMode });
     } catch (e) {
       const msg = e.message || "Failed to save transaction";
@@ -349,241 +273,261 @@ export default function WeighingScreen({
     }
   };
 
-  // ── Styles ────────────────────────────────────────────────────────────────
-  const card    = { background: "#fff", border: "1px solid #e5e7eb", borderRadius: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden" };
-  const cardHdr = { padding: "10px 16px", background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "1px solid #f0ecdf", display: "flex", alignItems: "center", justifyContent: "space-between" };
-  const inputStyle = { width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1.5px solid #e5e7eb", fontSize: "13px", color: "#111827", background: "#fff", outline: "none" };
+  // ── Input styles ─────────────────────────────────────────────────────────────
+  const inputStyle = {
+    width: "100%", padding: "8px 12px", borderRadius: 8,
+    border: `1.5px solid ${bdr}`, fontSize: 13, color: txt,
+    background: field, outline: "none",
+  };
   const onFoc = e => { e.target.style.borderColor = "#d97706"; e.target.style.boxShadow = "0 0 0 3px rgba(217,119,6,0.12)"; };
-  const onBlr = e => { e.target.style.borderColor = "#e5e7eb"; e.target.style.boxShadow = "none"; };
+  const onBlr = e => { e.target.style.borderColor = bdr; e.target.style.boxShadow = "none"; };
 
-  // ─── RENDER ───────────────────────────────────────────────────────────────
+  // ── Section card ─────────────────────────────────────────────────────────────
+  const SectionCard = ({ title, badge, children, style = {} }) => (
+    <div style={{ background: card, border: `1px solid ${bdr}`, borderRadius: 14, overflow: "hidden", ...style }}>
+      <div style={{ padding: "10px 16px", borderBottom: `1px solid ${bdr}`, background: sub, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#d97706", margin: 0 }}>{title}</p>
+        {badge}
+      </div>
+      <div style={{ padding: 16 }}>{children}</div>
+    </div>
+  );
+
+  const Badge = ({ label, icon }) => (
+    <span style={{ display: "flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 20, fontSize: 10, fontWeight: 700, background: isDark ? "#1f2937" : "#fff7ed", border: `1px solid ${isDark ? "#374151" : "#fcd34d"}`, color: isDark ? "#fcd34d" : "#92400e" }}>
+      {icon && <span>{icon}</span>}{label}
+    </span>
+  );
+
+  const DataRow = ({ label, value, mono }) => (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "6px 8px", borderRadius: 6, background: sub, marginBottom: 4 }}>
+      <span style={{ fontSize: 11, color: muted }}>{label}</span>
+      <span style={{ fontSize: 11, fontWeight: 600, fontFamily: mono ? "monospace" : "inherit", color: txt }}>{value}</span>
+    </div>
+  );
+
+  const LockedField = ({ label, value, icon, required }) => {
+    const has = Boolean(value?.trim?.());
+    return (
+      <div style={{ marginBottom: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: "#d97706" }}>{label}{required && <span style={{ color: "#ef4444" }}>*</span>}</span>
+          <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 4, background: "#fff7ed", color: "#d97706", border: "1px solid #fcd34d" }}>RFID</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 8, background: has ? (isDark ? "#1a2010" : "#fffbeb") : sub, border: `1.5px solid ${has ? "#fcd34d" : bdr}` }}>
+          <span>{icon}</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: has ? txt : muted, fontStyle: has ? "normal" : "italic", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+            {has ? value : "Not provided"}
+          </span>
+          {has && <span style={{ fontSize: 10, color: "#d97706" }}>🔒</span>}
+        </div>
+      </div>
+    );
+  };
+
+  const canSubmit = !submitting && (weightMode === "manual" || isStable) && effectiveWeight > 0;
+
+  // ─── RENDER ──────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#f8fafc" }}>
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: bg, fontFamily: "'Inter', system-ui, sans-serif", overflow: "hidden" }}>
 
-      {/* ── HEADER ─────────────────────────────────────────────────────────── */}
-      <header className="shrink-0 px-6 py-3 flex items-center justify-between"
-        style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: isSecondWeigh ? "linear-gradient(135deg,#d97706,#ea580c)" : "linear-gradient(135deg,#d97706,#f59e0b)" }}>
+      {/* ── HEADER ─────────────────────────────────────────────────────────────── */}
+      <header style={{ flexShrink: 0, padding: "12px 24px", background: card, borderBottom: `1px solid ${bdr}`, display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 38, height: 38, borderRadius: 10, background: isSecondWeigh ? "linear-gradient(135deg,#dc2626,#b91c1c)" : "linear-gradient(135deg,#d97706,#b45309)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5">
               <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
             </svg>
           </div>
           <div>
-            <h1 className="text-base font-bold" style={{ color: "#111827" }}>
+            <h1 style={{ fontSize: 15, fontWeight: 800, color: txt, margin: 0 }}>
               {isSecondWeigh ? "Second (Tare) Weight" : "Weighing"}
             </h1>
-            <p className="text-xs" style={{ color: "#6b7280" }}>
+            <p style={{ fontSize: 11, color: muted, margin: 0 }}>
               {isSecondWeigh
                 ? `Completing transaction · First weight: ${existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg`
-                : "RFID verified · NFC authenticated · Kiosk mode"
-              }
+                : "RFID verified · NFC authenticated · Kiosk mode"}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          {form.noPlate    && <Pill bg="#f0fdf4" border="#bbf7d0" color="#16a34a">✓ {form.noPlate}</Pill>}
-          {form.driverName && <Pill bg="#eff6ff" border="#bfdbfe" color="#1d4ed8">✓ {form.driverName}</Pill>}
-          {isSecondWeigh && (
-            <Pill bg="#fef2f2" border="#fca5a5" color="#dc2626">
-              ⚠️ 2nd Weight · 1st: {existingTransaction?.firstWeight ?? "—"} kg
-            </Pill>
-          )}
-          <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">🔒 {form.weighBridgeName}</Pill>
-          <Pill bg="#dcfce7" border="#bbf7d0" color="#16a34a">● LIVE</Pill>
-          <button
-            onClick={() => setShowInspector(v => !v)}
-            style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "6px", background: showInspector ? "#fef3c7" : "#f3f4f6", border: "1px solid #e5e7eb", cursor: "pointer", color: "#6b7280" }}>
-            🔍 {showInspector ? "Hide" : "Inspect"}
+
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          {form.noPlate    && <Badge label={form.noPlate}    icon="🚗" />}
+          {form.driverName && <Badge label={form.driverName} icon="👤" />}
+          {isSecondWeigh   && <Badge label={`2nd Weight · 1st: ${existingTransaction?.firstWeight ?? "—"} kg`} icon="⚠️" />}
+          <Badge label={form.weighBridgeName} icon="🔒" />
+          <span style={{ display: "flex", alignItems: "center", gap: 4, padding: "3px 8px", borderRadius: 20, fontSize: 10, fontWeight: 700, background: "#1f2937", border: "1px solid #374151", color: "#4ade80" }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#4ade80", animation: "pulse 1.5s ease-in-out infinite" }} /> LIVE
+          </span>
+          <button onClick={() => setShowInspector(v => !v)} style={{ padding: "4px 8px", borderRadius: 6, fontSize: 10, background: sub, border: `1px solid ${bdr}`, color: muted, cursor: "pointer" }}>
+            {showInspector ? "Hide" : "🔍 Inspect"}
+          </button>
+          <button onClick={toggleTheme} style={{ padding: "6px 10px", borderRadius: 8, fontSize: 13, background: sub, border: `1px solid ${bdr}`, cursor: "pointer" }}>
+            {isDark ? "☀️" : "🌙"}
           </button>
         </div>
       </header>
 
-      {/* ── SECOND WEIGHT BANNER ────────────────────────────────────────────── */}
+      {/* ── SECOND WEIGHT BANNER ───────────────────────────────────────────────── */}
       {isSecondWeigh && (
-        <div className="shrink-0 px-6 py-3 flex items-center gap-4"
-          style={{ background: "linear-gradient(135deg,#fef2f2,#fff7ed)", borderBottom: "2px solid #fca5a5" }}>
-          <span className="text-2xl">⚖️</span>
+        <div style={{ flexShrink: 0, padding: "10px 24px", display: "flex", alignItems: "center", gap: 12, background: "#fff7ed", borderBottom: "2px solid #d97706" }}>
+          <span style={{ fontSize: 20 }}>⚖️</span>
           <div>
-            <p className="text-sm font-black" style={{ color: "#dc2626" }}>
-              SECOND WEIGHING MODE — Completing Existing Transaction
-            </p>
-            <p className="text-xs" style={{ color: "#7f1d1d" }}>
+            <p style={{ fontSize: 13, fontWeight: 900, color: "#92400e", margin: 0 }}>SECOND WEIGHING MODE — Completing Existing Transaction</p>
+            <p style={{ fontSize: 11, color: "#78350f", margin: 0 }}>
               Ticket: <strong>{existingTransaction?.ticketID ?? existingTransaction?.id ?? "—"}</strong>
-              {" · "}
-              First weight (gross): <strong>{existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg</strong>
-              {" · "}
-              Captured: <strong>{existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}</strong>
+              {" · "}First weight: <strong>{existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg</strong>
+              {" · "}Captured: <strong>{existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}</strong>
             </p>
           </div>
         </div>
       )}
 
-      {/* ── DATA INSPECTOR ─────────────────────────────────────────────────── */}
+      {/* ── INSPECTOR ──────────────────────────────────────────────────────────── */}
       {showInspector && (
-        <div style={{ background: "#0f172a", borderBottom: "2px solid #1e293b", padding: "12px 24px", fontFamily: "monospace", fontSize: "11px", color: "#94a3b8", maxHeight: "220px", overflowY: "auto" }}>
-          <p style={{ color: "#f59e0b", fontWeight: "bold", marginBottom: "6px" }}>🔍 Data Inspector</p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-            <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>vehicleData.vehicle:</p>
-              <pre style={{ color: "#86efac", fontSize: "10px", whiteSpace: "pre-wrap", wordBreak: "break-all", margin: 0 }}>
-                {JSON.stringify(vehicleData?.vehicle ?? vehicleData, null, 2)}
-              </pre>
-            </div>
-            <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>Resolved form:</p>
-              <pre style={{ color: "#93c5fd", fontSize: "10px", margin: 0 }}>
-                {JSON.stringify({ noPlate: form.noPlate, ownerId: form.ownerId, transporterName: form.transporterName, supplierName: form.supplierName, driverName: form.driverName }, null, 2)}
-              </pre>
-            </div>
-            <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>existingTransaction:</p>
-              <pre style={{ color: "#fda4af", fontSize: "10px", whiteSpace: "pre-wrap", wordBreak: "break-all", margin: 0 }}>
-                {JSON.stringify(existingTransaction, null, 2)}
-              </pre>
-            </div>
+        <div style={{ flexShrink: 0, background: "#030712", borderBottom: "2px solid #1e293b", padding: "12px 24px", fontFamily: "monospace", fontSize: 10, color: "#94a3b8", maxHeight: 180, overflowY: "auto" }}>
+          <p style={{ color: "#f59e0b", fontWeight: "bold", marginBottom: 6, margin: "0 0 6px" }}>🔍 Data Inspector</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+            <div><p style={{ color: "#64748b", fontSize: 9, marginBottom: 3 }}>vehicleData.vehicle:</p><pre style={{ color: "#86efac", fontSize: 9, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{JSON.stringify(vehicleData?.vehicle ?? vehicleData, null, 2)}</pre></div>
+            <div><p style={{ color: "#64748b", fontSize: 9, marginBottom: 3 }}>Resolved form:</p><pre style={{ color: "#93c5fd", fontSize: 9, margin: 0 }}>{JSON.stringify({ noPlate: form.noPlate, ownerId: form.ownerId, transporterName: form.transporterName, supplierName: form.supplierName, driverName: form.driverName }, null, 2)}</pre></div>
+            <div><p style={{ color: "#64748b", fontSize: 9, marginBottom: 3 }}>existingTransaction:</p><pre style={{ color: "#fda4af", fontSize: 9, margin: 0, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{JSON.stringify(existingTransaction, null, 2)}</pre></div>
           </div>
         </div>
       )}
 
-      {/* ── BODY ───────────────────────────────────────────────────────────── */}
-      <div className="flex-1 overflow-auto px-6 py-5 flex flex-col gap-5">
-        <div className="grid grid-cols-12 gap-4">
+      {/* ── BODY: 3-column grid, scrollable ────────────────────────────────────── */}
+      <div style={{ flex: 1, overflow: "auto", padding: "16px 24px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1.4fr", gap: 16, marginBottom: 16 }}>
 
-          {/* ── Vehicle Card ─────────────────────────────────────────────── */}
-          <div className="col-span-4" style={card}>
-            <div style={cardHdr}>
-              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Vehicle</p>
-              <Pill bg="#f0fdf4" border="#bbf7d0" color="#16a34a">✓ RFID Verified</Pill>
+          {/* ── Column 1: Vehicle ─────────────────────────────────────────────── */}
+          <SectionCard title="Vehicle" badge={<Badge label="RFID Verified" />}>
+            {/* Plate */}
+            <div style={{ textAlign: "center", padding: "12px 0 16px", borderRadius: 10, marginBottom: 14, background: isDark ? "#0f1117" : "#f8f8f8", border: `1.5px solid ${isSecondWeigh ? "#d97706" : bdr}` }}>
+              <p style={{ fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: isSecondWeigh ? "#92400e" : muted, marginBottom: 4 }}>Registration</p>
+              <p style={{ fontSize: 28, fontWeight: 900, letterSpacing: "0.12em", color: txt, margin: 0, fontFamily: "monospace" }}>{form.noPlate || "—"}</p>
+              {form.rfidTag && <p style={{ fontFamily: "monospace", fontSize: 10, color: muted, marginTop: 4 }}>{form.rfidTag}</p>}
             </div>
-            <div className="p-4 space-y-3">
-              <div className="rounded-xl py-3 text-center"
-                style={{ background: isSecondWeigh ? "linear-gradient(135deg,#fef2f2,#fff1f2)" : "linear-gradient(135deg,#fffbeb,#fff7ed)", border: `2px solid ${isSecondWeigh ? "#fca5a5" : "#fcd34d"}` }}>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-0.5" style={{ color: isSecondWeigh ? "#991b1b" : "#92400e" }}>Registration</p>
-                <p className="text-3xl font-black tracking-widest" style={{ color: "#111827" }}>{form.noPlate || "—"}</p>
-                {form.rfidTag && <p className="font-mono text-xs mt-1" style={{ color: "#9ca3af" }}>{form.rfidTag}</p>}
-              </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: "Type",     value: form.vehicleType  },
-                  { label: "Make",     value: form.vehicleMake  },
-                  { label: "Model",    value: form.vehicleModel },
-                  { label: "Capacity", value: form.capacity ? `${form.capacity} kg` : null },
-                ].filter(f => f.value).map(f => <InfoChip key={f.label} label={f.label} value={f.value} />)}
-              </div>
-
-              <ReadOnlyField label="Owner"       value={form.ownerId}         icon="👤" fromRfid />
-              <ReadOnlyField label="Transporter" value={form.transporterName} icon="🚛" fromRfid required />
-              <ReadOnlyField label="Supplier"    value={form.supplierName}    icon="🏭" fromRfid />
-              {form.saccoName && <ReadOnlyField label="SACCO" value={form.saccoName} icon="🤝" fromRfid />}
-            </div>
-          </div>
-
-          {/* ── Driver Card ──────────────────────────────────────────────── */}
-          <div className="col-span-3" style={card}>
-            <div style={cardHdr}>
-              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Driver / Operator</p>
-              <Pill bg="#eff6ff" border="#bfdbfe" color="#1d4ed8">✓ NFC Auth</Pill>
-            </div>
-            <div className="p-4 space-y-3">
-              {form.driverName ? (
-                <>
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
-                      style={{ background: "linear-gradient(135deg,#dbeafe,#eff6ff)", border: "2px solid #bfdbfe" }}>
-                      👤
-                    </div>
-                    <div>
-                      <p className="font-bold text-sm" style={{ color: "#111827" }}>{form.driverName}</p>
-                      {form.employeeId && <p className="text-xs font-mono" style={{ color: "#6b7280" }}>ID: {form.employeeId}</p>}
-                    </div>
-                  </div>
-                  <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-                    style={{ background: "#fffbeb", border: "1px solid #fcd34d" }}>
-                    <span>🔒</span>
-                    <div>
-                      <p className="text-xs font-bold" style={{ color: "#92400e" }}>Operator (locked)</p>
-                      <p className="text-xs font-semibold" style={{ color: "#111827" }}>{form.operatorName}</p>
-                    </div>
-                  </div>
-                  {form.driverPhone && <DRow label="Phone"   value={form.driverPhone} />}
-                  {form.licenseNo   && <DRow label="Licence" value={form.licenseNo}   />}
-                  {form.nfcUid      && <DRow label="NFC UID" value={form.nfcUid} mono />}
-                </>
-              ) : (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <span className="text-4xl mb-2">👤</span>
-                  <p className="text-xs" style={{ color: "#9ca3af" }}>No driver authenticated</p>
+            {/* Vehicle attributes */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6, marginBottom: 14 }}>
+              {[
+                { label: "Type",     value: form.vehicleType  },
+                { label: "Make",     value: form.vehicleMake  },
+                { label: "Model",    value: form.vehicleModel },
+                { label: "Capacity", value: form.capacity ? `${form.capacity} kg` : null },
+              ].filter(f => f.value).map(f => (
+                <div key={f.label} style={{ padding: "7px 10px", borderRadius: 8, background: sub, border: `1px solid ${bdr}` }}>
+                  <p style={{ fontSize: 9, fontWeight: 700, textTransform: "uppercase", color: muted, marginBottom: 2 }}>{f.label}</p>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: txt, margin: 0 }}>{f.value}</p>
                 </div>
-              )}
-
-              {/* Show first weight card in second-weigh mode */}
-              {isSecondWeigh && (
-                <div className="rounded-xl p-3 mt-2"
-                  style={{ background: "linear-gradient(135deg,#fef2f2,#fff1f2)", border: "1.5px solid #fca5a5" }}>
-                  <p className="text-xs font-bold uppercase mb-1" style={{ color: "#dc2626" }}>First Weight (Gross)</p>
-                  <p className="text-2xl font-black font-mono" style={{ color: "#111827" }}>
-                    {existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} <span className="text-sm font-normal text-gray-400">kg</span>
-                  </p>
-                  <p className="text-xs mt-1" style={{ color: "#7f1d1d" }}>
-                    Captured: {existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}
-                  </p>
-                </div>
-              )}
+              ))}
             </div>
-          </div>
 
-          {/* ── Weight Card ──────────────────────────────────────────────── */}
-          <div className="col-span-5 flex flex-col" style={card}>
-            <div style={cardHdr}>
-              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>
+            <LockedField label="Owner"       value={form.ownerId}         icon="👤" />
+            <LockedField label="Transporter" value={form.transporterName} icon="🚛" required />
+            <LockedField label="Supplier"    value={form.supplierName}    icon="🏭" />
+            {form.saccoName && <LockedField label="SACCO" value={form.saccoName} icon="🤝" />}
+          </SectionCard>
+
+          {/* ── Column 2: Driver ──────────────────────────────────────────────── */}
+          <SectionCard title="Driver / Operator" badge={<Badge label="NFC Auth" />}>
+            {form.driverName ? (
+              <>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: isDark ? "#1f2937" : "#f3f4f6", border: `2px solid ${bdr}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>👤</div>
+                  <div>
+                    <p style={{ fontSize: 14, fontWeight: 800, color: txt, margin: 0 }}>{form.driverName}</p>
+                    {form.employeeId && <p style={{ fontSize: 11, fontFamily: "monospace", color: muted, margin: 0 }}>ID: {form.employeeId}</p>}
+                  </div>
+                </div>
+
+                {/* Operator locked chip */}
+                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", borderRadius: 8, background: isDark ? "#1a1a0f" : "#fffbeb", border: "1px solid #fcd34d", marginBottom: 12 }}>
+                  <span>🔒</span>
+                  <div>
+                    <p style={{ fontSize: 10, fontWeight: 700, color: "#d97706", margin: 0 }}>Operator (locked)</p>
+                    <p style={{ fontSize: 12, fontWeight: 600, color: txt, margin: 0 }}>{form.operatorName}</p>
+                  </div>
+                </div>
+
+                {form.driverPhone && <DataRow label="Phone"   value={form.driverPhone} />}
+                {form.licenseNo   && <DataRow label="Licence" value={form.licenseNo}   />}
+                {form.nfcUid      && <DataRow label="NFC UID" value={form.nfcUid} mono />}
+              </>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "32px 0", textAlign: "center" }}>
+                <span style={{ fontSize: 36, marginBottom: 8 }}>👤</span>
+                <p style={{ fontSize: 12, color: muted }}>No driver authenticated</p>
+              </div>
+            )}
+
+            {/* First weight recap in second-weigh mode */}
+            {isSecondWeigh && (
+              <div style={{ marginTop: 14, padding: "12px 14px", borderRadius: 12, background: isDark ? "#1a0f00" : "#fff7ed", border: "1.5px solid #d97706" }}>
+                <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#d97706", marginBottom: 6 }}>First Weight (Gross)</p>
+                <p style={{ fontSize: 26, fontWeight: 900, fontFamily: "monospace", color: txt, margin: 0 }}>
+                  {existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"}
+                  <span style={{ fontSize: 13, fontWeight: 400, color: muted }}> kg</span>
+                </p>
+                <p style={{ fontSize: 11, color: "#92400e", margin: "4px 0 0" }}>
+                  {existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}
+                </p>
+              </div>
+            )}
+          </SectionCard>
+
+          {/* ── Column 3: Weight — ALWAYS GRAY ────────────────────────────────── */}
+          <div style={{ background: weightBg, border: `1px solid ${weightBdr}`, borderRadius: 14, overflow: "hidden", display: "flex", flexDirection: "column" }}>
+            {/* Weight card header */}
+            <div style={{ padding: "10px 16px", borderBottom: `1px solid ${weightBdr}`, background: weightCard, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <p style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: "#6b7280", margin: 0 }}>
                 {isSecondWeigh ? "Second (Tare) Weight" : "Weight Reading"}
               </p>
-              <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #e5e7eb" }}>
+              {/* Mode toggle */}
+              <div style={{ display: "flex", borderRadius: 8, overflow: "hidden", border: "1.5px solid #9ca3af" }}>
                 {["captured", "manual"].map(m => (
                   <button key={m} onClick={() => setWeightMode(m)}
-                    className="px-3 py-0.5 text-xs font-semibold transition-all"
-                    style={{ background: weightMode === m ? "#d97706" : "#fff", color: weightMode === m ? "#fff" : "#6b7280" }}>
-                    {m === "captured" ? "⚡ Captured" : "✏️ Manual"}
+                    style={{ padding: "4px 10px", fontSize: 10, fontWeight: 700, cursor: "pointer", border: "none", transition: "all 0.15s", background: weightMode === m ? "#374151" : weightCard, color: weightMode === m ? "#fff" : "#9ca3af" }}>
+                    {m === "captured" ? "⚡ Live" : "✏️ Manual"}
                   </button>
                 ))}
               </div>
             </div>
-            <div className="flex-1 flex flex-col items-center justify-center py-6 gap-2">
+
+            {/* Big weight display */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "20px 16px", gap: 8 }}>
               {weightMode === "captured" ? (
                 <>
-                  <p className="text-6xl font-mono font-bold" style={{ color: isStable ? "#16a34a" : "#d97706" }}>
+                  <p style={{ fontSize: 64, fontWeight: 900, fontFamily: "monospace", color: "#374151", margin: 0, lineHeight: 1, letterSpacing: "-2px" }}>
                     {capturedWeight.toLocaleString()}
                   </p>
-                  <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG</p>
-                  <span className="px-3 py-0.5 rounded-full text-xs font-bold" style={{
-                    background: isStable ? "#dcfce7" : "#fef3c7",
-                    color:      isStable ? "#16a34a" : "#d97706",
-                    border:     isStable ? "1px solid #bbf7d0" : "1px solid #fcd34d",
+                  <p style={{ fontSize: 14, fontWeight: 600, color: "#9ca3af", margin: 0 }}>KG</p>
+                  {/* Stability indicator */}
+                  <span style={{
+                    padding: "4px 14px", borderRadius: 20, fontSize: 11, fontWeight: 700,
+                    background: isStable ? "#d1fae5" : "#e5e7eb",
+                    color: isStable ? "#065f46" : "#6b7280",
+                    border: `1px solid ${isStable ? "#6ee7b7" : "#d1d5db"}`,
                   }}>
                     {isStable ? "● Stable" : "● Stabilising…"}
                   </span>
 
-                  {/* Net weight preview in second-weigh mode */}
+                  {/* Net weight preview for 2nd weigh */}
                   {isSecondWeigh && capturedWeight > 0 && (existingTransaction?.firstWeight ?? 0) > 0 && (
-                    <div className="mt-3 px-4 py-2 rounded-xl"
-                      style={{ background: "#f0fdf4", border: "1.5px solid #bbf7d0" }}>
-                      <p className="text-xs font-bold uppercase" style={{ color: "#166534" }}>Net Weight Preview</p>
-                      <p className="text-xl font-black font-mono" style={{ color: "#16a34a" }}>
-                        {Math.abs((existingTransaction?.firstWeight ?? 0) - capturedWeight).toLocaleString()} kg
+                    <div style={{ marginTop: 8, padding: "10px 20px", borderRadius: 12, background: weightCard, border: `1px solid ${weightBdr}`, textAlign: "center" }}>
+                      <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: "#6b7280", marginBottom: 4 }}>Net Weight Preview</p>
+                      <p style={{ fontSize: 24, fontWeight: 900, fontFamily: "monospace", color: "#374151", margin: 0 }}>
+                        {Math.abs((existingTransaction?.firstWeight ?? 0) - capturedWeight).toLocaleString()}
+                        <span style={{ fontSize: 13, fontWeight: 400, color: "#9ca3af" }}> kg</span>
                       </p>
                     </div>
                   )}
 
-                  <div className="mt-2 flex gap-2 flex-wrap justify-center">
-                    <span className="text-xs px-2 py-1 rounded-lg font-semibold"
-                      style={{ background: "#fffbeb", color: "#92400e", border: "1px solid #fcd34d" }}>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center", marginTop: 4 }}>
+                    <span style={{ fontSize: 11, padding: "4px 10px", borderRadius: 8, fontWeight: 600, background: weightCard, color: "#6b7280", border: `1px solid ${weightBdr}` }}>
                       🔒 {form.weighBridgeName || "Factory A"}
                     </span>
-                    <span className="text-xs px-2 py-1 rounded-lg font-semibold"
-                      style={{ background: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0" }}>
+                    <span style={{ fontSize: 11, padding: "4px 10px", borderRadius: 8, fontWeight: 600, background: weightCard, color: "#6b7280", border: `1px solid ${weightBdr}` }}>
                       Mode: Kiosk
                     </span>
                   </div>
@@ -592,227 +536,131 @@ export default function WeighingScreen({
                 <>
                   <input type="number" placeholder="0" value={manualWeight}
                     onChange={e => setManualWeight(e.target.value)}
-                    style={{ ...inputStyle, width: "180px", fontSize: "32px", textAlign: "center" }}
-                    onFocus={onFoc} onBlur={onBlr} />
-                  <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG (manual)</p>
+                    style={{ width: 160, padding: "8px 12px", fontSize: 36, fontFamily: "monospace", fontWeight: 900, textAlign: "center", borderRadius: 10, border: "2px solid #9ca3af", background: weightCard, color: "#374151", outline: "none" }}
+                  />
+                  <p style={{ fontSize: 13, fontWeight: 600, color: "#9ca3af" }}>KG (manual)</p>
                 </>
               )}
             </div>
           </div>
         </div>
 
-        {/* ── Transaction Details ──────────────────────────────────────────── */}
-        <div style={card}>
-          <div style={cardHdr}>
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-5 rounded-full" style={{ background: "linear-gradient(180deg,#d97706,#f59e0b)" }} />
-              <p className="text-sm font-bold" style={{ color: "#111827" }}>
-                {isSecondWeigh ? "Transaction Details (from first weighing)" : "Transaction Details"}
-              </p>
+        {/* ── Transaction Details Row ───────────────────────────────────────────── */}
+        <SectionCard
+          title={isSecondWeigh ? "Transaction Details (from first weighing)" : "Transaction Details"}
+          badge={<span style={{ fontSize: 11, color: muted }}>{isSecondWeigh ? "Pre-filled — update if needed" : "🔒 = auto-filled from RFID"}</span>}
+        >
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+            {/* Row 1 */}
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>Commodity</label>
+              <Select showSearch placeholder="Search commodity…" onSearch={debouncedP}
+                onChange={id => { const item = products.find(i => i.id === id); setForm(p => ({ ...p, commodityID: id, commodityName: item?.name ?? "" })); }}
+                value={form.commodityID || undefined} style={{ width: "100%" }} allowClear>
+                {products.map(i => <Option key={i.id} value={i.id}>{i.name}</Option>)}
+              </Select>
             </div>
-            <p className="text-xs" style={{ color: "#9ca3af" }}>
-              {isSecondWeigh
-                ? "Pre-filled from original transaction — update if needed"
-                : "🔒 = auto-filled from RFID · remaining fields are optional"
-              }
-            </p>
-          </div>
-          <div className="p-5">
-            <div className="grid grid-cols-4 gap-4 mb-4">
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Commodity</label>
-                <Select
-                  showSearch placeholder="Search commodity…"
-                  onSearch={debouncedP}
-                  onChange={id => {
-                    const item = products.find(i => i.id === id);
-                    setForm(p => ({ ...p, commodityID: id, commodityName: item?.name ?? "" }));
-                  }}
-                  value={form.commodityID || undefined}
-                  style={{ width: "100%" }} allowClear>
-                  {products.map(i => <Option key={i.id} value={i.id}>{i.name}</Option>)}
-                </Select>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Customer Name</label>
-                <input placeholder="Customer name" value={form.customerName}
-                  onChange={e => setField("customerName", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Origin</label>
-                <input placeholder="Origin" value={form.originName}
-                  onChange={e => setField("originName", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Destination</label>
-                <input placeholder="Destination" value={form.destinationName}
-                  onChange={e => setField("destinationName", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
-              </div>
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>Customer</label>
+              <input placeholder="Customer name" value={form.customerName} onChange={e => setField("customerName", e.target.value)} style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+            </div>
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>Origin</label>
+              <input placeholder="Origin" value={form.originName} onChange={e => setField("originName", e.target.value)} style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+            </div>
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>Destination</label>
+              <input placeholder="Destination" value={form.destinationName} onChange={e => setField("destinationName", e.target.value)} style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
             </div>
 
-            <div className="grid grid-cols-4 gap-4">
-              <div>
-                <label className="block text-xs font-semibold mb-1"
-                  style={{ color: isSecondWeigh ? "#7f1d1d" : "#d97706" }}>
-                  Weighbridge {isSecondWeigh ? "(locked to original)" : <span style={{ color: "#ef4444" }}>*</span>}
-                </label>
-                {isSecondWeigh ? (
-                  <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
-                    style={{ background: "#fef2f2", border: "1.5px solid #fca5a5" }}>
-                    <span className="text-xs">🔒</span>
-                    <span className="text-sm font-semibold" style={{ color: "#111827" }}>{form.weighBridgeName}</span>
-                  </div>
-                ) : (
-                  <Select value={form.weighBridgeName || undefined}
-                    onChange={v => {
-                      const wb = weighbridges.find(w => (w.location ?? w.name) === v);
-                      setForm(p => ({ ...p, weighBridgeID: wb?.id || null, weighBridgeName: v, scaleName: v }));
-                    }}
-                    style={{ width: "100%" }} placeholder="Select weighbridge…">
-                    {weighbridges.map(wb => <Option key={wb.id} value={wb.location ?? wb.name}>{wb.location ?? wb.name}</Option>)}
-                  </Select>
-                )}
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-amber-600 mb-1">Weigh Mode (locked)</label>
-                <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
-                  style={{ background: "#fffbeb", border: "1.5px solid #fcd34d" }}>
-                  <span className="text-xs">🔒</span>
-                  <span className="text-sm font-semibold" style={{ color: "#111827" }}>Kiosk</span>
+            {/* Row 2 */}
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>
+                Weighbridge {!isSecondWeigh && <span style={{ color: "#ef4444" }}>*</span>}
+              </label>
+              {isSecondWeigh ? (
+                <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", height: 36, borderRadius: 8, background: isDark ? "#1a1a0f" : "#fffbeb", border: "1.5px solid #fcd34d" }}>
+                  <span style={{ fontSize: 11 }}>🔒</span>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: txt }}>{form.weighBridgeName}</span>
                 </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Operation</label>
-                {isSecondWeigh ? (
-                  <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
-                    style={{ background: "#f9fafb", border: "1.5px solid #e5e7eb" }}>
-                    <span className="text-sm font-semibold" style={{ color: "#374151" }}>{form.operation}</span>
-                  </div>
-                ) : (
-                  <Select value={form.operation} onChange={v => setField("operation", v)} style={{ width: "100%" }}>
-                    <Option value="weighing">Weighing</Option>
-                    <Option value="Inbound Product Receipt">Inbound Receipt</Option>
-                    <Option value="Outbound Product Dispatch">Outbound Dispatch</Option>
-                  </Select>
-                )}
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Notes</label>
-                <input placeholder="Additional notes…" value={form.notes}
-                  onChange={e => setField("notes", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+              ) : (
+                <Select value={form.weighBridgeName || undefined}
+                  onChange={v => { const wb = weighbridges.find(w => (w.location ?? w.name) === v); setForm(p => ({ ...p, weighBridgeID: wb?.id || null, weighBridgeName: v, scaleName: v })); }}
+                  style={{ width: "100%" }} placeholder="Select weighbridge…">
+                  {weighbridges.map(wb => <Option key={wb.id} value={wb.location ?? wb.name}>{wb.location ?? wb.name}</Option>)}
+                </Select>
+              )}
+            </div>
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>Weigh Mode</label>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 12px", height: 36, borderRadius: 8, background: isDark ? "#1a1a0f" : "#fffbeb", border: "1.5px solid #fcd34d" }}>
+                <span style={{ fontSize: 11 }}>🔒</span>
+                <span style={{ fontSize: 12, fontWeight: 600, color: txt }}>Kiosk</span>
               </div>
             </div>
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>Operation</label>
+              {isSecondWeigh ? (
+                <div style={{ display: "flex", alignItems: "center", padding: "8px 12px", height: 36, borderRadius: 8, background: sub, border: `1.5px solid ${bdr}` }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: txt }}>{form.operation}</span>
+                </div>
+              ) : (
+                <Select value={form.operation} onChange={v => setField("operation", v)} style={{ width: "100%" }}>
+                  <Option value="weighing">Weighing</Option>
+                  <Option value="Inbound Product Receipt">Inbound Receipt</Option>
+                  <Option value="Outbound Product Dispatch">Outbound Dispatch</Option>
+                </Select>
+              )}
+            </div>
+            <div>
+              <label style={{ display: "block", fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: muted, marginBottom: 5 }}>Notes</label>
+              <input placeholder="Additional notes…" value={form.notes} onChange={e => setField("notes", e.target.value)} style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+            </div>
           </div>
-        </div>
+        </SectionCard>
 
-        {/* ── Error Banner ─────────────────────────────────────────────────── */}
+        {/* Error banner */}
         {(apiError || parentError) && (
-          <div className="rounded-xl px-4 py-3 flex items-center gap-3"
-            style={{ background: "#fef2f2", border: "1px solid #fecaca" }}>
-            <span className="text-lg">⚠️</span>
-            <p className="text-sm font-medium" style={{ color: "#dc2626" }}>{apiError || parentError}</p>
+          <div style={{ marginTop: 14, padding: "12px 16px", borderRadius: 10, background: "#fef2f2", border: "1px solid #fecaca", display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 18 }}>⚠️</span>
+            <p style={{ fontSize: 13, fontWeight: 600, color: "#dc2626", margin: 0 }}>{apiError || parentError}</p>
           </div>
         )}
       </div>
 
-      {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
-      <footer className="shrink-0 px-6 py-4 flex items-center justify-between"
-        style={{ background: "#fff", borderTop: "1px solid #e5e7eb", boxShadow: "0 -1px 3px rgba(0,0,0,0.06)" }}>
-        <div className="flex items-center gap-4">
-          <button onClick={onBack} className="px-4 py-2 rounded-lg text-sm font-semibold"
-            style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb" }}>
+      {/* ── FOOTER ─────────────────────────────────────────────────────────────── */}
+      <footer style={{ flexShrink: 0, padding: "14px 24px", background: card, borderTop: `1px solid ${bdr}`, display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 -2px 8px rgba(0,0,0,0.06)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <button onClick={onBack} style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, background: sub, border: `1px solid ${bdr}`, color: txt, cursor: "pointer" }}>
             ← Back
           </button>
-          <div className="text-sm" style={{ color: "#6b7280" }}>
-            {isSecondWeigh ? "Tare weight: " : "Weight: "}
-            <span className="font-bold" style={{ color: "#111827" }}>{effectiveWeight.toLocaleString()} kg</span>
+          <div style={{ fontSize: 13, color: muted }}>
+            {isSecondWeigh ? "Tare: " : "Weight: "}
+            <strong style={{ color: txt }}>{effectiveWeight.toLocaleString()} kg</strong>
             {isSecondWeigh && (existingTransaction?.firstWeight ?? 0) > 0 && effectiveWeight > 0 && (
-              <span className="ml-2 text-xs text-green-600 font-semibold">
+              <span style={{ marginLeft: 12, fontSize: 12, fontWeight: 700, color: "#d97706" }}>
                 Net: {Math.abs((existingTransaction?.firstWeight ?? 0) - effectiveWeight).toLocaleString()} kg
               </span>
             )}
           </div>
         </div>
-        <button
-          onClick={handleCapture}
-          disabled={submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0}
-          className="px-8 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
-          style={{
-            background: submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0
-              ? "#9ca3af"
-              : isSecondWeigh
-              ? "linear-gradient(135deg,#dc2626,#ef4444)"
-              : "linear-gradient(135deg,#d97706,#f59e0b)",
-            boxShadow: submitting ? "none" : `0 3px 10px ${isSecondWeigh ? "rgba(220,38,38,0.35)" : "rgba(217,119,6,0.35)"}`,
-            cursor: submitting ? "not-allowed" : "pointer",
-          }}>
-          {submitting
-            ? "Saving…"
-            : isSecondWeigh
-            ? "⚡ Capture Tare Weight"
-            : "⚡ Capture Weight"
-          }
+
+        <button onClick={handleCapture} disabled={!canSubmit} style={{
+          padding: "12px 32px", borderRadius: 12, fontSize: 14, fontWeight: 800, color: "#fff",
+          border: "none", cursor: canSubmit ? "pointer" : "not-allowed", transition: "all 0.15s",
+          background: !canSubmit ? "#9ca3af"
+            : isSecondWeigh ? "linear-gradient(135deg,#dc2626,#b91c1c)"
+            : "linear-gradient(135deg,#d97706,#b45309)",
+          boxShadow: canSubmit ? `0 4px 14px ${isSecondWeigh ? "rgba(220,38,38,0.4)" : "rgba(180,83,9,0.4)"}` : "none",
+        }}>
+          {submitting ? "Saving…" : isSecondWeigh ? "⚡ Capture Tare Weight" : "⚡ Capture Weight"}
         </button>
       </footer>
-    </div>
-  );
-}
 
-// ── Sub-components ────────────────────────────────────────────────────────────
-function Pill({ bg, border, color, children }) {
-  return (
-    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold"
-      style={{ background: bg, border: `1px solid ${border}`, color }}>
-      {children}
-    </span>
-  );
-}
-
-function InfoChip({ label, value }) {
-  return (
-    <div className="rounded-lg p-2" style={{ background: "#f9fafb", border: "1px solid #f3f4f6" }}>
-      <p className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: "#9ca3af" }}>{label}</p>
-      <p className="text-xs font-bold truncate" style={{ color: "#374151" }}>{value}</p>
-    </div>
-  );
-}
-
-function ReadOnlyField({ label, value, icon, fromRfid, required }) {
-  const hasValue = Boolean(value && String(value).trim().length > 0);
-  return (
-    <div>
-      <div className="flex items-center gap-1 mb-1">
-        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "#d97706" }}>
-          {label}{required && <span style={{ color: "#ef4444" }}>*</span>}
-        </p>
-        {fromRfid && (
-          <span className="text-xs px-1.5 py-0 rounded font-semibold"
-            style={{ background: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0" }}>
-            RFID
-          </span>
-        )}
-      </div>
-      <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-        style={{ background: hasValue ? "#fffbeb" : "#f9fafb", border: hasValue ? "1.5px solid #fcd34d" : "1.5px solid #f3f4f6" }}>
-        <span className="text-base">{icon}</span>
-        <span className="text-sm font-semibold" style={{ color: hasValue ? "#111827" : "#9ca3af" }}>
-          {hasValue ? value : "Not provided"}
-        </span>
-        {hasValue && <span className="ml-auto text-xs" style={{ color: "#d97706" }}>🔒</span>}
-      </div>
-    </div>
-  );
-}
-
-function DRow({ label, value, mono }) {
-  return (
-    <div className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: "#f9fafb" }}>
-      <span className="text-xs" style={{ color: "#9ca3af" }}>{label}</span>
-      <span className={`text-xs font-semibold ${mono ? "font-mono" : ""}`} style={{ color: "#374151" }}>{value}</span>
+      <style>{`
+        @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.4} }
+        @keyframes spin  { to{transform:rotate(360deg)} }
+      `}</style>
     </div>
   );
 }

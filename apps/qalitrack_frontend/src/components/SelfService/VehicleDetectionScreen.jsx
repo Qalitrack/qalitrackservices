@@ -1,14 +1,7 @@
 /**
  * VehicleDetectionScreen.jsx
- *
- * Changes from original:
- *  1. RFID stream URL now comes from SystemSettings (useHardwareConfig) — live,
- *     no page reload needed when the URL is changed in System Settings → Save.
- *  2. After a vehicle is confirmed, usePendingTransaction checks whether that
- *     plate already has an "Incomplete" transaction:
- *       • None found  → normal first-weighing flow (opens NFC modal)
- *       • Found       → opens NFC modal with pendingTxn attached so the
- *                        parent can route to second-weight capture instead.
+ * Theme: White / Black / Amber-600 — full light + dark mode
+ * Removed: all purple, all green accents replaced with amber/black
  */
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -22,7 +15,6 @@ import { usePendingTransaction } from "../../hooks/usePendingTransaction";
 
 const CONTROL_TYPES = new Set(["connected", "heartbeat", "ping", "pong", "keepalive"]);
 
-// ── Parse SSE ─────────────────────────────────────────────────────────────────
 const parseRfidCode = (raw) => {
   try {
     const p = JSON.parse(raw);
@@ -51,57 +43,56 @@ const pickName = (res) => {
 };
 
 const enrichVehicleNames = async (v) => {
-  let ownerName       = v.ownerName       ?? null;
-  let transporterName = v.transporterName ?? null;
-  let supplierName    = v.supplierName    ?? null;
-  let saccoName       = v.saccoName       ?? null;
+  let ownerName = v.ownerName ?? null, transporterName = v.transporterName ?? null,
+      supplierName = v.supplierName ?? null, saccoName = v.saccoName ?? null;
   const fetches = [];
-
-  if (!ownerName && v.ownerId)
-    fetches.push(apiClient.get(`/Owners/${v.ownerId}`).then(r => { ownerName = pickName(r) ?? ownerName; }).catch(() => {}));
-  if (!supplierName && v.supplierId)
-    fetches.push(apiClient.get(`/MasterData/Suppliers/${v.supplierId}`).then(r => { supplierName = pickName(r) ?? supplierName; }).catch(() => {}));
-  if (!transporterName && v.transporterId)
-    fetches.push(apiClient.get(`/MasterData/Transporters/${v.transporterId}`).then(r => { transporterName = pickName(r) ?? transporterName; }).catch(() => {}));
-  if (!transporterName && v.saccoId)
-    fetches.push(apiClient.get(`/MasterData/Saccos/${v.saccoId}`).then(r => { saccoName = pickName(r) ?? saccoName; transporterName = transporterName ?? saccoName; }).catch(() => {}));
-
+  if (!ownerName && v.ownerId)       fetches.push(apiClient.get(`/Owners/${v.ownerId}`).then(r => { ownerName = pickName(r) ?? ownerName; }).catch(() => {}));
+  if (!supplierName && v.supplierId) fetches.push(apiClient.get(`/MasterData/Suppliers/${v.supplierId}`).then(r => { supplierName = pickName(r) ?? supplierName; }).catch(() => {}));
+  if (!transporterName && v.transporterId) fetches.push(apiClient.get(`/MasterData/Transporters/${v.transporterId}`).then(r => { transporterName = pickName(r) ?? transporterName; }).catch(() => {}));
+  if (!transporterName && v.saccoId) fetches.push(apiClient.get(`/MasterData/Saccos/${v.saccoId}`).then(r => { saccoName = pickName(r) ?? saccoName; transporterName = transporterName ?? saccoName; }).catch(() => {}));
   await Promise.allSettled(fetches);
   return { ownerName, supplierName, transporterName, saccoName };
 };
 
 const normaliseVehicle = (v, rfidCode, enriched = {}) => ({
-  id:                 v.id,
-  rfidTag:            v.rfiDcode           ?? rfidCode,
+  id: v.id,
+  rfidTag: v.rfiDcode ?? rfidCode,
   registrationNumber: v.registrationNumber ?? "—",
-  vehicleType:        v.type               ?? null,
-  vehicleMake:        v.make               ?? null,
-  vehicleModel:       v.model              ?? null,
-  capacity:           v.netWeightCapacity  ?? v.grossWeight ?? null,
-  status:             v.status             ?? null,
-  isActive:           !v.isDeleted,
-  detectedAt:         new Date(),
-  ownerId:            v.ownerId            ?? null,
-  ownerName:          v.ownerName          ?? enriched.ownerName       ?? null,
-  transporterId:      v.transporterId      ?? null,
-  transporterName:    v.transporterName    ?? enriched.transporterName ?? enriched.saccoName ?? null,
-  supplierId:         v.supplierId         ?? null,
-  supplierName:       v.supplierName       ?? enriched.supplierName    ?? null,
-  saccoId:            v.saccoId            ?? null,
-  saccoName:          v.saccoName          ?? enriched.saccoName       ?? null,
-  driverIds:          v.driverIds          ?? [],
-  driverNames:        v.driverNames        ?? [],
+  vehicleType:    v.type              ?? null,
+  vehicleMake:    v.make              ?? null,
+  vehicleModel:   v.model             ?? null,
+  capacity:       v.netWeightCapacity ?? v.grossWeight ?? null,
+  status:         v.status            ?? null,
+  isActive:       !v.isDeleted,
+  detectedAt:     new Date(),
+  ownerId:        v.ownerId           ?? null,
+  ownerName:      v.ownerName         ?? enriched.ownerName       ?? null,
+  transporterId:  v.transporterId     ?? null,
+  transporterName:v.transporterName   ?? enriched.transporterName ?? enriched.saccoName ?? null,
+  supplierId:     v.supplierId        ?? null,
+  supplierName:   v.supplierName      ?? enriched.supplierName    ?? null,
+  saccoId:        v.saccoId           ?? null,
+  saccoName:      v.saccoName         ?? enriched.saccoName       ?? null,
+  driverIds:      v.driverIds         ?? [],
+  driverNames:    v.driverNames       ?? [],
 });
+
+// ─── TOKEN ────────────────────────────────────────────────────────────────────
+function getKioskToken() {
+  try {
+    const s1 = sessionStorage.getItem("authSession");
+    if (s1) { const p = JSON.parse(s1); const t = p?.token ?? p?.accessToken; if (t) return t; }
+  } catch {}
+  return null;
+}
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function VehicleDetectionScreen({ onVehicleDetected, error: externalError, onReset }) {
-  const { isDark } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
 
-  // ── Live hardware config from SystemSettings localStorage ─────────────────
-  const hwConfig = useHardwareConfig();
+  const hwConfig      = useHardwareConfig();
   const rfidStreamUrl = hwConfig.rfidStreamUrl;
 
-  // ── Pending transaction check ─────────────────────────────────────────────
   const { checking: checkingPending, pendingTxn, checkPending, clearPending } = usePendingTransaction();
 
   const [streamStatus,  setStreamStatus]  = useState("connecting");
@@ -131,21 +122,18 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
     return () => clearInterval(id);
   }, []);
 
-  // ── SSE stream — reconnects whenever rfidStreamUrl changes ───────────────
   const openStream = useCallback(() => {
     if (esRef.current) { esRef.current.close(); esRef.current = null; }
     setStreamStatus("connecting"); setStreamError(null);
     dbg("Opening RFID stream", rfidStreamUrl);
-
     try {
       const es = new EventSource(rfidStreamUrl);
       esRef.current = es;
-      es.onopen = () => { setStreamStatus("listening"); dbg("Stream connected ✓"); };
+      es.onopen    = () => { setStreamStatus("listening"); dbg("Stream connected ✓"); };
       es.onmessage = (event) => {
         dbg("SSE raw", event.data);
         const code = parseRfidCode(event.data);
         if (!code) { dbg("Skipped (control msg)"); return; }
-        dbg("RFID code", code);
         lastCode.current = code;
         lookupRef.current = false;
         setRfidCode(code);
@@ -154,8 +142,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       es.onerror = () => {
         setStreamError("Cannot connect to RFID reader at " + rfidStreamUrl);
         setStreamStatus("error");
-        es.close();
-        esRef.current = null;
+        es.close(); esRef.current = null;
       };
     } catch {
       setStreamError("Failed to open SSE connection.");
@@ -163,13 +150,11 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
     }
   }, [rfidStreamUrl, dbg]);
 
-  // Restart stream if URL changes (SystemSettings save)
   useEffect(() => {
     openStream();
     return () => { if (esRef.current) esRef.current.close(); };
   }, [openStream]);
 
-  // ── Vehicle lookup + enrichment ───────────────────────────────────────────
   useEffect(() => {
     if (!rfidCode || lookupRef.current) return;
     lookupRef.current = true;
@@ -185,38 +170,28 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       try {
         const raw = await getVehicleByRfid(rfidCode);
         const v   = extractVehicle(raw);
-        if (!v) { dbg("No vehicle found"); setVehicleStatus("not_found"); return; }
+        if (!v) { setVehicleStatus("not_found"); return; }
 
-        // Step 1: show partial vehicle immediately
         const partial = normaliseVehicle(v, rfidCode);
         setVehicleData(partial);
         setVehicleStatus("found");
 
-        // Step 2: enrich missing relational names
         const needsEnrichment = !v.ownerName || !v.supplierName || !v.transporterName;
         if (needsEnrichment) {
-          dbg("Enriching names…");
           setEnriching(true);
           try {
             const enriched = await enrichVehicleNames(v);
-            const full = normaliseVehicle(v, rfidCode, enriched);
-            setVehicleData(full);
-            dbg("Enrichment done");
+            setVehicleData(normaliseVehicle(v, rfidCode, enriched));
           } finally {
             setEnriching(false);
           }
         }
 
-        // Step 3: check for pending transaction on this plate
         const plate = v.registrationNumber ?? partial.registrationNumber;
-        dbg("Checking for pending transaction", plate);
         await checkPending(plate);
-
-        // Step 4: open auth modal (pendingTxn state is now set)
         setTimeout(() => setShowAuthModal(true), 1200);
 
       } catch (err) {
-        dbg("Lookup error", err.message);
         const notFound = err.message?.includes("404") || /not found|no vehicle/i.test(err.message ?? "");
         if (notFound) setVehicleStatus("not_found");
         else { setVehicleStatus("error"); setLookupError(err.message || "Server error."); }
@@ -225,15 +200,10 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
   }, [rfidCode, dbg, checkPending, clearPending]);
 
   const handleRescan = () => {
-    lastCode.current = null;
-    lookupRef.current = false;
-    setRfidCode(null);
-    setVehicleData(null);
-    setVehicleStatus("idle");
-    setStreamStatus("listening");
-    setLookupError(null);
-    setShowAuthModal(false);
-    clearPending();
+    lastCode.current = null; lookupRef.current = false;
+    setRfidCode(null); setVehicleData(null); setVehicleStatus("idle");
+    setStreamStatus("listening"); setLookupError(null);
+    setShowAuthModal(false); clearPending();
   };
 
   const handleRetryLookup = () => {
@@ -255,45 +225,54 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       employeeId: d.employeeId ?? d.employee_id ?? "",
       uid:        d.uid        ?? d.nfcUid      ?? "",
     };
-    // Pass pendingTxn to parent so it can route to second-weight screen
     onVehicleDetected({ vehicle: vehicleData, driver, pendingTxn: pendingTxn ?? null });
   };
 
   const isListening  = streamStatus === "connecting" || streamStatus === "listening";
   const streamFailed = streamStatus === "error";
 
-  // ── Pending transaction banner (shown on vehicle card while checking/found)
+  // ── Colours ────────────────────────────────────────────────────────────────
+  const bg    = isDark ? "#0a0a0a"   : "#f8f7f4";
+  const card  = isDark ? "#111827"   : "#ffffff";
+  const bdr   = isDark ? "#1f2937"   : "#e5e7eb";
+  const txt   = isDark ? "#f9fafb"   : "#111827";
+  const muted = isDark ? "#6b7280"   : "#9ca3af";
+  const sub   = isDark ? "#374151"   : "#f3f4f6";
+
+  const statusColor = streamFailed           ? "#ef4444"
+                    : streamStatus === "tag_received" ? "#d97706"
+                    : "#d97706";
+
+  const vehicleStatusColor = vehicleStatus === "found"    ? "#d97706"
+                           : vehicleStatus === "loading"  ? "#d97706"
+                           : vehicleStatus === "error" || vehicleStatus === "not_found" ? "#ef4444"
+                           : "#d97706";
+
+  // Pending banner
   const PendingBanner = () => {
     if (vehicleStatus !== "found") return null;
     if (checkingPending) {
       return (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold"
-          style={{ background: "#fffbeb", border: "1px solid #fcd34d", color: "#92400e" }}>
-          <span className="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
+        <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 14px", borderRadius: 10, background: "#fffbeb", border: "1px solid #fcd34d", fontSize: 12, fontWeight: 600, color: "#92400e" }}>
+          <span style={{ width: 12, height: 12, borderRadius: "50%", border: "2px solid #d97706", borderTopColor: "transparent", display: "inline-block", animation: "spin 0.7s linear infinite", flexShrink: 0 }} />
           Checking for pending transaction…
         </div>
       );
     }
     if (pendingTxn) {
       const fw = pendingTxn.firstWeight ?? pendingTxn.grossWeight ?? "—";
-      const at = pendingTxn.createdAt
-        ? new Date(pendingTxn.createdAt).toLocaleString()
-        : "Unknown time";
+      const at = pendingTxn.createdAt ? new Date(pendingTxn.createdAt).toLocaleString() : "Unknown time";
       return (
-        <div className="px-3 py-2.5 rounded-xl text-xs"
-          style={{ background: "#fef2f2", border: "1.5px solid #fca5a5" }}>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-base">⚠️</span>
-            <p className="font-bold text-sm" style={{ color: "#dc2626" }}>
-              Pending Transaction Detected
-            </p>
+        <div style={{ padding: "12px 14px", borderRadius: 10, background: "#fff7ed", border: "1.5px solid #d97706" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+            <span>⚠️</span>
+            <p style={{ fontWeight: 800, fontSize: 13, color: "#92400e", margin: 0 }}>Pending Transaction Detected</p>
           </div>
-          <p style={{ color: "#7f1d1d" }}>
-            This vehicle has an incomplete weighing from <strong>{at}</strong>.
-            First weight: <strong>{fw} kg</strong>.
+          <p style={{ fontSize: 12, color: "#78350f", margin: "0 0 4px" }}>
+            Incomplete weighing from <strong>{at}</strong>. First weight: <strong>{fw} kg</strong>.
           </p>
-          <p className="mt-1 font-semibold" style={{ color: "#dc2626" }}>
-            This visit will be recorded as the <u>second (tare) weight</u>.
+          <p style={{ fontSize: 12, fontWeight: 700, color: "#d97706", margin: 0 }}>
+            This visit → second (tare) weight.
           </p>
         </div>
       );
@@ -301,222 +280,232 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
     return null;
   };
 
-  // ─── RENDER ───────────────────────────────────────────────────────────────
   return (
-    <div className={`min-h-screen flex flex-col ${isDark ? "bg-gray-950" : "bg-slate-100"}`}>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: bg, fontFamily: "'Inter', system-ui, sans-serif" }}>
 
       {/* Header */}
-      <header className={`${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"} border-b px-8 py-5 shadow-sm`}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-xl font-black">KW</span>
-            </div>
-            <div>
-              <h1 className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>Self-Service Weighing</h1>
-              <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-                RFID: <span className="font-mono">{rfidStreamUrl}</span>
-              </p>
-            </div>
+      <header style={{ background: card, borderBottom: `1px solid ${bdr}`, padding: "16px 32px", display: "flex", alignItems: "center", justifyContent: "space-between", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div style={{ width: 48, height: 48, borderRadius: 14, background: "linear-gradient(135deg,#d97706,#b45309)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 12px rgba(180,83,9,0.3)" }}>
+            <span style={{ color: "#fff", fontSize: 18, fontWeight: 900 }}>KW</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${
-              streamFailed
-                ? "bg-red-50 border-red-200 text-red-600"
-                : streamStatus === "tag_received"
-                ? "bg-amber-50 border-amber-200 text-amber-700"
-                : "bg-green-50 border-green-200 text-green-700"
-            }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${streamFailed ? "bg-red-500" : streamStatus === "tag_received" ? "bg-amber-500" : "bg-green-500 animate-pulse"}`} />
-              {streamStatus === "connecting"    && "Connecting…"}
-              {streamStatus === "listening"     && "Listening"}
-              {streamStatus === "tag_received"  && rfidCode}
-              {streamStatus === "error"         && "Error"}
-            </div>
-            <button onClick={() => setShowDebug(v => !v)}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${isDark ? "border-gray-700 text-gray-500" : "border-gray-300 text-gray-400"}`}>
-              {showDebug ? "Hide Log" : "Debug"}
-            </button>
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 900, color: txt, margin: 0 }}>Self-Service Weighing</h1>
+            <p style={{ fontSize: 11, color: muted, margin: 0, fontFamily: "monospace" }}>RFID: {rfidStreamUrl}</p>
           </div>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* Stream status pill */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 20,
+            fontSize: 11, fontWeight: 700,
+            background: streamFailed ? "#fef2f2" : "#fff7ed",
+            border: `1px solid ${streamFailed ? "#fca5a5" : "#fcd34d"}`,
+            color: streamFailed ? "#dc2626" : "#92400e",
+          }}>
+            <span style={{ width: 7, height: 7, borderRadius: "50%", background: streamFailed ? "#ef4444" : "#d97706", display: "inline-block", animation: streamFailed ? "none" : "pulse 1.5s ease-in-out infinite" }} />
+            {streamStatus === "connecting"   && "Connecting…"}
+            {streamStatus === "listening"    && "Listening"}
+            {streamStatus === "tag_received" && rfidCode}
+            {streamStatus === "error"        && "Error"}
+          </div>
+
+          {/* Debug toggle */}
+          <button onClick={() => setShowDebug(v => !v)} style={{ padding: "6px 12px", borderRadius: 8, fontSize: 11, fontWeight: 600, background: sub, border: `1px solid ${bdr}`, color: muted, cursor: "pointer" }}>
+            {showDebug ? "Hide Log" : "Debug"}
+          </button>
+
+          {/* Theme toggle */}
+          <button onClick={toggleTheme} style={{ padding: "6px 12px", borderRadius: 8, fontSize: 13, background: sub, border: `1px solid ${bdr}`, cursor: "pointer" }}>
+            {isDark ? "☀️" : "🌙"}
+          </button>
         </div>
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-start justify-center p-6 lg:p-10">
-        <div className="w-full max-w-4xl space-y-5">
+      <main style={{ flex: 1, padding: "32px", display: "flex", justifyContent: "center" }}>
+        <div style={{ width: "100%", maxWidth: 860 }}>
 
           {externalError && (
             <Alert type="error" message="Error" description={externalError} showIcon
-              action={<Button size="small" onClick={onReset}>Reset</Button>} />
+              action={<Button size="small" onClick={onReset}>Reset</Button>}
+              style={{ marginBottom: 20, borderRadius: 10 }} />
           )}
 
-          {/* RFID Status Card */}
-          <div className={`rounded-3xl border shadow-xl overflow-hidden ${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
-            <div className={`h-1.5 w-full transition-colors duration-500 ${
-              streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? "bg-red-500"
-              : vehicleStatus === "found"   ? "bg-gradient-to-r from-green-400 to-emerald-500"
-              : vehicleStatus === "loading" ? "bg-gradient-to-r from-amber-400 to-orange-500"
-              : "bg-gradient-to-r from-purple-500 to-indigo-500"
-            }`} />
+          {/* Main RFID detection card */}
+          <div style={{ background: card, border: `1px solid ${bdr}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.08)", marginBottom: 20 }}>
 
-            <div className="p-8 flex flex-col sm:flex-row items-center gap-8">
+            {/* Colour bar */}
+            <div style={{ height: 4, background: vehicleStatus === "found" ? "linear-gradient(90deg,#d97706,#f59e0b)" : vehicleStatus === "loading" ? "linear-gradient(90deg,#d97706,#fbbf24)" : vehicleStatus === "error" || vehicleStatus === "not_found" ? "#ef4444" : streamFailed ? "#ef4444" : "linear-gradient(90deg,#d97706,#b45309)" }} />
+
+            <div style={{ padding: 32, display: "flex", alignItems: "center", gap: 32 }}>
 
               {/* Animated icon */}
-              <div className="relative flex-shrink-0 w-44 h-44 flex items-center justify-center">
-                {isListening && [0,1,2].map(i => {
+              <div style={{ position: "relative", width: 144, height: 144, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                {isListening && [0, 1, 2].map(i => {
                   const ph = (pulsePhase + i) % 3;
-                  return <span key={i} className="absolute inset-0 rounded-full border-2 transition-all duration-700"
-                    style={{ borderColor: "rgba(109,40,217,0.2)", transform: `scale(${1 + (ph / 3) * 0.65})`, opacity: 1 - (ph / 3) * 0.9 }} />;
+                  return (
+                    <span key={i} style={{
+                      position: "absolute", inset: 0, borderRadius: "50%",
+                      border: "2px solid rgba(217,119,6,0.2)",
+                      transform: `scale(${1 + (ph / 3) * 0.65})`,
+                      opacity: 1 - (ph / 3) * 0.9,
+                      transition: "all 0.7s ease",
+                    }} />
+                  );
                 })}
-                <div className={`w-32 h-32 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 ${
-                  streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? "bg-red-600"
-                  : vehicleStatus === "found"   ? "bg-gradient-to-br from-green-400 to-emerald-600"
-                  : vehicleStatus === "loading" ? "bg-gradient-to-br from-amber-400 to-orange-500"
-                  : "bg-gradient-to-br from-purple-600 to-indigo-600"
-                }`}>
+                <div style={{
+                  width: 112, height: 112, borderRadius: "50%",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  boxShadow: "0 8px 32px rgba(180,83,9,0.3)",
+                  background: vehicleStatus === "error" || vehicleStatus === "not_found" || streamFailed
+                    ? "#ef4444"
+                    : "linear-gradient(135deg,#d97706,#b45309)",
+                }}>
                   {vehicleStatus === "loading" ? (
-                    <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                    <div style={{ width: 36, height: 36, border: "3px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
                   ) : vehicleStatus === "found" ? (
-                    <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? (
-                    <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
+                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>
+                  ) : vehicleStatus === "not_found" || vehicleStatus === "error" || streamFailed ? (
+                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                   ) : (
-                    <svg className="w-14 h-14 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
-                    </svg>
+                    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" /></svg>
                   )}
                 </div>
               </div>
 
               {/* Status text */}
-              <div className="flex-1 min-w-0">
+              <div style={{ flex: 1, minWidth: 0 }}>
                 {streamStatus === "connecting" && (
-                  <Blurb label="Initialising" color="purple" isDark={isDark} title="Connecting to RFID Reader…" sub={rfidStreamUrl} />
+                  <StatusBlurb label="Initialising" title="Connecting to RFID Reader…" sub={rfidStreamUrl} txt={txt} muted={muted} />
                 )}
+
                 {streamStatus === "listening" && vehicleStatus === "idle" && (
-                  <Blurb label="Ready" color="purple" isDark={isDark} title="Awaiting Vehicle RFID Tag" sub="Drive into the reader zone. The tag will be detected automatically.">
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {["Drive into zone","Auto-detected","Details populated"].map((s, i) => (
-                        <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-gray-500">
-                          <span className="w-4 h-4 rounded-full flex items-center justify-center bg-purple-500 text-white text-xs font-black">{i + 1}</span>{s}
+                  <StatusBlurb label="Ready" title="Awaiting Vehicle RFID Tag" sub="Drive into the reader zone. The tag will be detected automatically." txt={txt} muted={muted}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 16 }}>
+                      {["Drive into zone", "Auto-detected", "Details populated"].map((s, i) => (
+                        <span key={i} style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 20, fontSize: 11, fontWeight: 600, background: sub, color: muted, border: `1px solid ${bdr}` }}>
+                          <span style={{ width: 18, height: 18, borderRadius: "50%", background: "#d97706", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, fontWeight: 900, flexShrink: 0 }}>{i + 1}</span>
+                          {s}
                         </span>
                       ))}
                     </div>
-                  </Blurb>
+                  </StatusBlurb>
                 )}
+
                 {vehicleStatus === "loading" && (
-                  <Blurb label="Tag Detected" color="amber" isDark={isDark} title="Looking Up Vehicle…">
-                    <div className="inline-flex items-center gap-2 font-mono text-sm px-4 py-2 rounded-xl mt-3 bg-amber-50 text-amber-700 border border-amber-200">
-                      <span className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />{rfidCode}
+                  <StatusBlurb label="Tag Detected" title="Looking Up Vehicle…" txt={txt} muted={muted}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "monospace", fontSize: 13, padding: "8px 16px", borderRadius: 10, marginTop: 12, background: "#fff7ed", color: "#92400e", border: "1px solid #fcd34d" }}>
+                      <span style={{ width: 8, height: 8, background: "#d97706", borderRadius: "50%", animation: "pulse 1.5s ease-in-out infinite" }} />
+                      {rfidCode}
                     </div>
-                  </Blurb>
+                  </StatusBlurb>
                 )}
+
                 {vehicleStatus === "found" && vehicleData && (
-                  <Blurb label={pendingTxn ? "⚠️ Second Weighing" : "Vehicle Verified ✓"} color={pendingTxn ? "amber" : "green"} isDark={isDark} title={vehicleData.registrationNumber}>
-                    <p className={`font-mono text-xs mt-1 mb-3 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-                      RFID: {vehicleData.rfidTag}
-                    </p>
+                  <StatusBlurb
+                    label={pendingTxn ? "⚠️ Second Weighing Required" : "Vehicle Verified"}
+                    title={vehicleData.registrationNumber}
+                    txt={txt} muted={muted}
+                  >
+                    <p style={{ fontFamily: "monospace", fontSize: 11, color: muted, marginTop: 2, marginBottom: 12 }}>RFID: {vehicleData.rfidTag}</p>
 
-                    {/* Pending transaction banner */}
-                    <div className="mb-3"><PendingBanner /></div>
+                    <div style={{ marginBottom: 12 }}><PendingBanner /></div>
 
-                    {/* Relational fields */}
-                    <div className="grid grid-cols-2 gap-2 mb-4">
+                    {/* Relational fields grid */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 16 }}>
                       {[
                         { label: "Owner",       value: vehicleData.ownerName       },
                         { label: "Supplier",    value: vehicleData.supplierName    },
                         { label: "Transporter", value: vehicleData.transporterName },
                         { label: "SACCO",       value: vehicleData.saccoName       },
                       ].map(f => (
-                        <div key={f.label} className={`px-3 py-2 rounded-xl text-xs border flex items-center gap-2 ${
-                          f.value
-                            ? isDark ? "bg-gray-800 border-gray-700" : "bg-slate-50 border-slate-200"
-                            : "bg-amber-50 border-amber-200"
-                        }`}>
-                          <span className={`text-xs font-bold w-20 flex-shrink-0 ${f.value ? "text-gray-400" : "text-amber-500"}`}>{f.label}</span>
+                        <div key={f.label} style={{ padding: "8px 12px", borderRadius: 10, fontSize: 11, border: `1px solid ${f.value ? bdr : "#fcd34d"}`, background: f.value ? sub : "#fffbeb", display: "flex", alignItems: "center", gap: 8 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, width: 76, flexShrink: 0, color: f.value ? muted : "#d97706" }}>{f.label}</span>
                           {enriching && !f.value ? (
-                            <span className="flex items-center gap-1.5 text-amber-600">
-                              <span className="w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
-                              <span className="text-xs italic">fetching…</span>
+                            <span style={{ display: "flex", alignItems: "center", gap: 6, color: "#d97706", fontSize: 11, fontStyle: "italic" }}>
+                              <span style={{ width: 10, height: 10, border: "2px solid #d97706", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
+                              fetching…
                             </span>
                           ) : (
-                            <span className={`font-semibold truncate ${f.value ? isDark ? "text-white" : "text-gray-800" : "text-amber-400 italic text-xs"}`}>
-                              {f.value || "not linked in DB"}
+                            <span style={{ fontWeight: 600, color: f.value ? txt : "#d97706", fontStyle: f.value ? "normal" : "italic", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                              {f.value || "not linked"}
                             </span>
                           )}
                         </div>
                       ))}
                     </div>
 
-                    <div className="flex gap-3 flex-wrap">
-                      <Button type="primary" onClick={() => setShowAuthModal(true)}
-                        className={`${pendingTxn ? "bg-amber-600 hover:bg-amber-700" : "bg-green-600 hover:bg-green-700"} border-0 h-10 px-6 font-bold rounded-xl`}>
+                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                      <button onClick={() => setShowAuthModal(true)} style={{
+                        padding: "10px 20px", borderRadius: 10, fontSize: 13, fontWeight: 800,
+                        color: "#fff", border: "none", cursor: "pointer",
+                        background: "linear-gradient(135deg,#d97706,#b45309)",
+                        boxShadow: "0 4px 12px rgba(180,83,9,0.3)",
+                      }}>
                         {pendingTxn ? "Authenticate for 2nd Weight →" : "Authenticate Driver →"}
-                      </Button>
-                      <Button onClick={handleRescan}
-                        className={`h-10 px-5 rounded-xl border font-semibold ${isDark ? "border-gray-700 text-gray-300 bg-gray-800" : "border-gray-200 text-gray-600"}`}>
+                      </button>
+                      <button onClick={handleRescan} style={{ padding: "10px 16px", borderRadius: 10, fontSize: 13, fontWeight: 600, background: sub, border: `1px solid ${bdr}`, color: txt, cursor: "pointer" }}>
                         🔄 Rescan
-                      </Button>
+                      </button>
                     </div>
-                  </Blurb>
+                  </StatusBlurb>
                 )}
+
                 {vehicleStatus === "not_found" && (
-                  <Blurb label="Not Registered" color="red" isDark={isDark} title="Vehicle Not Found">
-                    <p className="text-sm mt-1 mb-4 text-gray-500">No vehicle linked to RFID: <span className="font-mono">{rfidCode}</span></p>
-                    <Button onClick={handleRescan} className="h-10 px-5 rounded-xl border font-semibold border-gray-200 text-gray-600">🔄 Scan Again</Button>
-                  </Blurb>
+                  <StatusBlurb label="Not Registered" title="Vehicle Not Found" txt={txt} muted={muted}>
+                    <p style={{ fontSize: 13, color: muted, margin: "8px 0 16px" }}>No vehicle linked to RFID: <span style={{ fontFamily: "monospace" }}>{rfidCode}</span></p>
+                    <button onClick={handleRescan} style={{ padding: "10px 16px", borderRadius: 10, fontSize: 13, fontWeight: 600, background: sub, border: `1px solid ${bdr}`, color: txt, cursor: "pointer" }}>🔄 Scan Again</button>
+                  </StatusBlurb>
                 )}
+
                 {vehicleStatus === "error" && (
-                  <Blurb label="Lookup Failed" color="red" isDark={isDark} title="Could Not Fetch Vehicle">
-                    <p className="font-mono text-xs mt-2 mb-4 px-3 py-2 rounded-lg inline-block bg-red-50 text-red-600 border border-red-200">{lookupError}</p>
-                    <div className="flex gap-3">
-                      <Button onClick={handleRetryLookup} className="h-10 px-5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-0 font-semibold">Retry</Button>
-                      <Button onClick={handleRescan} className="h-10 px-5 rounded-xl border font-semibold border-gray-200 text-gray-600">🔄 Rescan</Button>
+                  <StatusBlurb label="Lookup Failed" title="Could Not Fetch Vehicle" txt={txt} muted={muted}>
+                    <p style={{ fontFamily: "monospace", fontSize: 11, color: "#ef4444", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: 8, padding: "6px 12px", display: "inline-block", margin: "8px 0 16px" }}>{lookupError}</p>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button onClick={handleRetryLookup} style={{ padding: "10px 16px", borderRadius: 10, fontSize: 13, fontWeight: 700, color: "#fff", background: "#d97706", border: "none", cursor: "pointer" }}>Retry</button>
+                      <button onClick={handleRescan} style={{ padding: "10px 16px", borderRadius: 10, fontSize: 13, fontWeight: 600, background: sub, border: `1px solid ${bdr}`, color: txt, cursor: "pointer" }}>🔄 Rescan</button>
                     </div>
-                  </Blurb>
+                  </StatusBlurb>
                 )}
+
                 {streamFailed && (
-                  <Blurb label="Connection Failed" color="red" isDark={isDark} title="RFID Stream Unavailable">
-                    <p className="text-sm mt-1 mb-4 text-gray-500">{streamError}</p>
-                    <Button onClick={openStream} className="h-10 px-5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white border-0 font-semibold">🔄 Reconnect</Button>
-                  </Blurb>
+                  <StatusBlurb label="Connection Failed" title="RFID Stream Unavailable" txt={txt} muted={muted}>
+                    <p style={{ fontSize: 13, color: muted, margin: "8px 0 16px" }}>{streamError}</p>
+                    <button onClick={openStream} style={{ padding: "10px 16px", borderRadius: 10, fontSize: 13, fontWeight: 700, color: "#fff", background: "#d97706", border: "none", cursor: "pointer" }}>🔄 Reconnect</button>
+                  </StatusBlurb>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Vehicle Detail Card */}
+          {/* Expanded vehicle detail card */}
           {vehicleStatus === "found" && vehicleData && (
-            <div className={`rounded-3xl border shadow-xl overflow-hidden ${isDark ? "bg-gray-900 border-green-800" : "bg-white border-green-200"}`}>
-              <div className={`px-8 py-5 flex items-center justify-between ${
-                pendingTxn
-                  ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-500"
-                  : "bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500"
-              }`}>
+            <div style={{ background: card, border: `1px solid ${bdr}`, borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
+              {/* Card header band */}
+              <div style={{ padding: "20px 28px", display: "flex", alignItems: "center", justifyContent: "space-between", background: pendingTxn ? "linear-gradient(135deg,#d97706,#b45309)" : "linear-gradient(135deg,#111827,#374151)" }}>
                 <div>
-                  <p className="text-green-100 text-xs font-semibold uppercase tracking-widest">
+                  <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255,255,255,0.6)", margin: "0 0 4px" }}>
                     {pendingTxn ? "Second (Tare) Weighing" : "Registered Vehicle"}
                   </p>
-                  <p className="text-white text-3xl font-black tracking-widest">{vehicleData.registrationNumber}</p>
+                  <p style={{ fontSize: 28, fontWeight: 900, letterSpacing: "0.12em", color: "#fff", margin: 0 }}>{vehicleData.registrationNumber}</p>
                   {pendingTxn && (
-                    <p className="text-orange-100 text-xs mt-1">
+                    <p style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", marginTop: 4 }}>
                       Completing transaction from {pendingTxn.createdAt ? new Date(pendingTxn.createdAt).toLocaleString() : "earlier"}
                       {" · "}First weight: <strong>{pendingTxn.firstWeight ?? pendingTxn.grossWeight ?? "—"} kg</strong>
                     </p>
                   )}
                 </div>
-                <div className="text-right">
-                  <p className="text-green-100 text-xs">RFID Tag</p>
-                  <p className="font-mono text-white text-sm">{vehicleData.rfidTag}</p>
-                  <p className="text-green-200 text-xs mt-1">{vehicleData.detectedAt?.toLocaleTimeString()}</p>
+                <div style={{ textAlign: "right" }}>
+                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", margin: "0 0 2px" }}>RFID Tag</p>
+                  <p style={{ fontFamily: "monospace", fontSize: 13, color: "#fff", margin: "0 0 4px" }}>{vehicleData.rfidTag}</p>
+                  <p style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", margin: 0 }}>{vehicleData.detectedAt?.toLocaleTimeString()}</p>
                 </div>
               </div>
 
-              <div className={`p-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 ${isDark ? "bg-gray-900" : "bg-white"}`}>
+              {/* Vehicle attributes grid */}
+              <div style={{ padding: 24, display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
                 {[
                   { label: "Type",        value: vehicleData.vehicleType     },
                   { label: "Make",        value: vehicleData.vehicleMake     },
@@ -526,50 +515,54 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
                   { label: "Supplier",    value: vehicleData.supplierName    },
                   { label: "Transporter", value: vehicleData.transporterName },
                   { label: "SACCO",       value: vehicleData.saccoName       },
-                  { label: "Status",      value: vehicleData.status, badge: vehicleData.isActive ? "green" : "red" },
+                  { label: "Status",      value: vehicleData.status, badge: vehicleData.isActive ? "amber" : "red" },
                 ].filter(f => f.value).map(f => (
-                  <div key={f.label} className={`p-3 rounded-2xl ${isDark ? "bg-gray-800" : "bg-slate-50 border border-slate-100"}`}>
-                    <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>{f.label}</p>
-                    {f.badge
-                      ? <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold ${f.badge === "green" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>{f.value}</span>
-                      : <p className={`font-bold text-sm ${isDark ? "text-white" : "text-gray-900"}`}>{f.value}</p>}
+                  <div key={f.label} style={{ padding: "12px 14px", borderRadius: 12, background: sub, border: `1px solid ${bdr}` }}>
+                    <p style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: muted, marginBottom: 4 }}>{f.label}</p>
+                    {f.badge ? (
+                      <span style={{ padding: "2px 8px", borderRadius: 20, fontSize: 11, fontWeight: 700, background: f.badge === "amber" ? "#fff7ed" : "#fef2f2", color: f.badge === "amber" ? "#d97706" : "#dc2626", border: `1px solid ${f.badge === "amber" ? "#fcd34d" : "#fca5a5"}` }}>
+                        {f.value}
+                      </span>
+                    ) : (
+                      <p style={{ fontSize: 13, fontWeight: 700, color: txt, margin: 0 }}>{f.value}</p>
+                    )}
                   </div>
                 ))}
                 {enriching && (
-                  <div className={`p-3 rounded-2xl col-span-2 flex items-center gap-2 ${isDark ? "bg-gray-800" : "bg-amber-50 border border-amber-100"}`}>
-                    <span className="w-4 h-4 border-2 border-amber-400 border-t-transparent rounded-full animate-spin flex-shrink-0" />
-                    <p className={`text-xs font-semibold ${isDark ? "text-amber-400" : "text-amber-600"}`}>
-                      Fetching owner / supplier / transporter names…
-                    </p>
+                  <div style={{ gridColumn: "span 2", padding: "12px 14px", borderRadius: 12, background: "#fffbeb", border: "1px solid #fcd34d", display: "flex", alignItems: "center", gap: 8 }}>
+                    <span style={{ width: 14, height: 14, border: "2px solid #d97706", borderTopColor: "transparent", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "#92400e" }}>Fetching relational names…</span>
                   </div>
                 )}
               </div>
 
-              <div className={`px-6 py-4 flex items-center justify-between border-t ${isDark ? "bg-gray-900 border-gray-800" : "bg-slate-50 border-slate-100"}`}>
-                <p className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>
-                  {pendingTxn
-                    ? "Tap your NFC card to authenticate and capture the second (tare) weight"
-                    : "Tap your NFC card to authenticate and proceed to weighing"
-                  }
+              <div style={{ padding: "16px 24px", borderTop: `1px solid ${bdr}`, display: "flex", alignItems: "center", justifyContent: "space-between", background: sub }}>
+                <p style={{ fontSize: 12, color: muted, margin: 0 }}>
+                  {pendingTxn ? "Tap your NFC card to authenticate and capture the second (tare) weight" : "Tap your NFC card to authenticate and proceed to weighing"}
                 </p>
-                <Button type="primary" size="large" onClick={() => setShowAuthModal(true)}
-                  className={`${pendingTxn ? "bg-amber-600 hover:bg-amber-700" : "bg-green-600 hover:bg-green-700"} border-0 h-11 px-8 font-black rounded-2xl`}>
+                <button onClick={() => setShowAuthModal(true)} style={{
+                  padding: "12px 28px", borderRadius: 12, fontSize: 14, fontWeight: 800,
+                  color: "#fff", border: "none", cursor: "pointer",
+                  background: "linear-gradient(135deg,#d97706,#b45309)",
+                  boxShadow: "0 4px 14px rgba(180,83,9,0.35)",
+                }}>
                   {pendingTxn ? "Authenticate for 2nd Weight →" : "Authenticate Driver →"}
-                </Button>
+                </button>
               </div>
             </div>
           )}
 
           {/* Debug log */}
           {showDebug && (
-            <div className="rounded-2xl border border-gray-800 bg-gray-950 p-5 font-mono text-xs text-green-400">
-              <div className="flex items-center justify-between mb-3">
-                <span className="font-sans font-bold text-xs uppercase tracking-wider text-gray-500">Debug Log</span>
-                <button onClick={() => setDebugLog([])} className="text-gray-600 hover:text-gray-400 text-xs">Clear</button>
+            <div style={{ marginTop: 20, borderRadius: 14, border: "1px solid #1f2937", background: "#030712", padding: 20, fontFamily: "monospace", fontSize: 11, color: "#34d399" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <span style={{ fontFamily: "system-ui", fontWeight: 700, fontSize: 10, textTransform: "uppercase", letterSpacing: "0.1em", color: "#4b5563" }}>Debug Log</span>
+                <button onClick={() => setDebugLog([])} style={{ fontSize: 10, color: "#4b5563", background: "none", border: "none", cursor: "pointer" }}>Clear</button>
               </div>
               {debugLog.length === 0
-                ? <p className="text-gray-600">No messages yet…</p>
-                : <div className="space-y-1 max-h-52 overflow-y-auto">{debugLog.map((e, i) => <p key={i} className="break-all leading-relaxed">{e}</p>)}</div>}
+                ? <p style={{ color: "#374151" }}>No messages yet…</p>
+                : <div style={{ maxHeight: 200, overflowY: "auto" }}>{debugLog.map((e, i) => <p key={i} style={{ margin: "2px 0", wordBreak: "break-all", lineHeight: 1.5 }}>{e}</p>)}</div>
+              }
             </div>
           )}
         </div>
@@ -581,22 +574,26 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
         onSelectNFC={handleAuthComplete}
       />
 
-      <footer className={`${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"} border-t px-8 py-4 text-center`}>
-        <p className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>
-          Powered by <span className="font-black text-amber-500">QALIBRATED SYSTEMS</span>
+      <footer style={{ background: card, borderTop: `1px solid ${bdr}`, padding: "14px 32px", textAlign: "center" }}>
+        <p style={{ fontSize: 11, color: muted, margin: 0 }}>
+          Powered by <span style={{ fontWeight: 900, color: "#d97706" }}>QALIBRATED SYSTEMS</span>
         </p>
       </footer>
+
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+      `}</style>
     </div>
   );
 }
 
-function Blurb({ label, color, title, sub, isDark, children }) {
-  const cls = { purple: isDark ? "text-purple-400" : "text-purple-600", amber: isDark ? "text-amber-400" : "text-amber-600", green: "text-green-500", red: "text-red-500" };
+function StatusBlurb({ label, title, sub, txt, muted, children }) {
   return (
     <div>
-      <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${cls[color]}`}>{label}</p>
-      <h2 className={`text-2xl font-black mb-1 ${isDark ? "text-white" : "text-gray-900"}`}>{title}</h2>
-      {sub && <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>{sub}</p>}
+      <p style={{ fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.12em", color: "#d97706", marginBottom: 4 }}>{label}</p>
+      <h2 style={{ fontSize: 26, fontWeight: 900, color: txt, margin: "0 0 4px", letterSpacing: "-0.5px" }}>{title}</h2>
+      {sub && <p style={{ fontSize: 13, color: muted, margin: 0 }}>{sub}</p>}
       {children}
     </div>
   );
