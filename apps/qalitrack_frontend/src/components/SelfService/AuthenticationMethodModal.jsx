@@ -1,83 +1,68 @@
 /**
  * AuthenticationMethodModal.jsx — REAL NFC MODE
  *
- * Flow (mirrors RFID vehicle detection pattern):
- *   1. Modal opens → connect to NFC SSE stream: http://172.16.0.134:5000/api/nfc/stream
- *   2. Parse NFC codes from stream (format: data: "3CD2FF9D")
- *   3. Call getDriverByNfc(code) → API: /MasterData/Drivers/nfc/{code}
- *   4. Display driver card → auto-advance after 2s
- *   5. onSelectNFC(driverData) fires → parent proceeds to WeighingScreen
- *
- * NFC Stream format examples:
- *   data: {"type":"connected","clientId":"sse_ecb94812c02649c980a8c13168d5a219"}
- *   data: "3CD2FF9D"
- *   data: "0CBBDA9D"
- *   data: "53F889AB"
+ * Changes from original:
+ *  - NFC stream URL now comes from SystemSettings via useHardwareConfig()
+ *    (no hardcoded URL — updates live when System Settings are saved)
+ *  - Stream reconnects automatically if the URL changes while modal is open
  */
 
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Modal, Button } from "antd";
 import { useTheme } from "../Context/ThemeContext.jsx";
 import { getDriverByNfc } from "../../api/MasterData/Drivers";
+import { useHardwareConfig } from "../../hooks/useHardwareConfig";
 
-const NFC_STREAM_URL = "http://172.16.0.134:5000/api/nfc/stream";
 const CONTROL_TYPES = new Set(["connected", "heartbeat", "ping", "pong", "keepalive"]);
 
-// ── Parse NFC code from SSE event ─────────────────────────────────────────────
 const parseNfcCode = (raw) => {
   try {
     const p = JSON.parse(raw);
-    // Skip control messages
     if (typeof p === "object" && p !== null && CONTROL_TYPES.has(p.type)) return null;
-    // Plain string code
     if (typeof p === "string" && p.trim()) return p.trim().toUpperCase();
-    // Object with nfc/uid field
     if (p && typeof p === "object") {
       return (p.nfc ?? p.nfcCode ?? p.uid ?? p.code ?? p.cardId ?? null)?.toUpperCase();
     }
     return null;
   } catch {
-    // Plain text fallback
     return String(raw).trim().toUpperCase() || null;
   }
 };
 
-// ── Extract driver from API response ──────────────────────────────────────────
 const extractDriver = (raw) => {
   if (!raw) return null;
-  // Try multiple wrapper shapes
   for (const c of [raw, raw?.data, raw?.data?.data, raw?.driver, raw?.data?.driver]) {
     if (c && typeof c === "object" && !Array.isArray(c) && (c.id || c.fullName)) return c;
   }
   return null;
 };
 
-// ── Normalise driver fields ───────────────────────────────────────────────────
 const normaliseDriver = (d, nfcCode) => ({
-  id:          d.id,
-  uid:         d.nfCcode ?? nfcCode,  // API uses nfCcode (capital C)
-  name:        d.fullName,
-  employeeId:  d.employeeId  ?? null,
-  phone:       d.phone       ?? null,
-  email:       d.email       ?? null,
-  licenseNo:   d.licenseNumber ?? null,
+  id:           d.id,
+  uid:          d.nfCcode ?? nfcCode,
+  name:         d.fullName,
+  employeeId:   d.employeeId    ?? null,
+  phone:        d.phone         ?? null,
+  email:        d.email         ?? null,
+  licenseNo:    d.licenseNumber ?? null,
   licenseExpiry: d.licenseExpiryDate ?? null,
-  status:      d.status      ?? "Active",
-  transporterId: d.transporterId ?? null,
-  supplierId:    d.supplierId    ?? null,
+  status:       d.status        ?? "Active",
+  transporterId:  d.transporterId  ?? null,
+  supplierId:     d.supplierId     ?? null,
   assignedVehicleIds: d.assignedVehicleIds ?? [],
-  detectedAt:  new Date(),
+  detectedAt:   new Date(),
 });
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
 export default function AuthenticationMethodModal({ visible, onClose, onSelectNFC }) {
   const { isDark } = useTheme();
 
-  // Stream state: connecting | listening | code_detected | error
-  const [streamStatus, setStreamStatus] = useState("connecting");
-  // Lookup state: idle | loading | found | not_found | error
-  const [lookupStatus, setLookupStatus] = useState("idle");
+  // ── Live NFC URL from SystemSettings ─────────────────────────────────────
+  const hwConfig = useHardwareConfig();
+  const nfcStreamUrl = hwConfig.nfcStreamUrl;
 
+  const [streamStatus, setStreamStatus] = useState("connecting");
+  const [lookupStatus, setLookupStatus] = useState("idle");
   const [nfcCode,      setNfcCode]      = useState(null);
   const [driverData,   setDriverData]   = useState(null);
   const [streamError,  setStreamError]  = useState(null);
@@ -95,11 +80,10 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
     setDebugLog(p => [line, ...p].slice(0, 30));
   }, []);
 
-  // ── Connect to NFC stream when modal opens ────────────────────────────────
+  // ── Connect / reconnect when modal opens OR nfcStreamUrl changes ──────────
   useEffect(() => {
     if (!visible) return;
 
-    // Reset state
     setStreamStatus("connecting");
     setLookupStatus("idle");
     setNfcCode(null);
@@ -109,24 +93,18 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
     lookupRef.current = false;
     lastCodeRef.current = null;
 
-    dbg("Opening NFC stream");
+    dbg("Opening NFC stream", nfcStreamUrl);
 
     try {
-      const es = new EventSource(NFC_STREAM_URL);
+      const es = new EventSource(nfcStreamUrl);
       esRef.current = es;
 
-      es.onopen = () => {
-        setStreamStatus("listening");
-        dbg("NFC stream connected ✓");
-      };
+      es.onopen = () => { setStreamStatus("listening"); dbg("NFC stream connected ✓"); };
 
       es.onmessage = (event) => {
         dbg("SSE raw", event.data);
         const code = parseNfcCode(event.data);
-        if (!code) {
-          dbg("Skipped (control msg)");
-          return;
-        }
+        if (!code) { dbg("Skipped (control msg)"); return; }
         dbg("NFC code detected", code);
         lastCodeRef.current = code;
         lookupRef.current = false;
@@ -135,7 +113,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
       };
 
       es.onerror = () => {
-        setStreamError(`Cannot connect to NFC reader at ${NFC_STREAM_URL}`);
+        setStreamError(`Cannot connect to NFC reader at ${nfcStreamUrl}`);
         setStreamStatus("error");
         es.close();
         esRef.current = null;
@@ -145,17 +123,13 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
       setStreamStatus("error");
     }
 
-    // Cleanup on modal close
     return () => {
-      if (esRef.current) {
-        dbg("Closing NFC stream");
-        esRef.current.close();
-        esRef.current = null;
-      }
+      if (esRef.current) { dbg("Closing NFC stream"); esRef.current.close(); esRef.current = null; }
     };
-  }, [visible, dbg]);
+  // Re-run if nfcStreamUrl changes while modal is open
+  }, [visible, nfcStreamUrl, dbg]);
 
-  // ── Driver lookup when NFC code detected ──────────────────────────────────
+  // ── Driver lookup ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (!nfcCode || lookupRef.current) return;
     lookupRef.current = true;
@@ -169,38 +143,25 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
       try {
         const raw = await getDriverByNfc(nfcCode);
         dbg("Raw response", raw);
-
         const d = extractDriver(raw);
-        if (!d) {
-          dbg("No driver found");
-          setLookupStatus("not_found");
-          return;
-        }
+        if (!d) { dbg("No driver found"); setLookupStatus("not_found"); return; }
 
         const normalised = normaliseDriver(d, nfcCode);
         dbg("Driver authenticated", normalised.name);
         setDriverData(normalised);
         setLookupStatus("found");
 
-        // Auto-advance after 2 seconds (user sees driver card briefly)
-        setTimeout(() => {
-          onSelectNFC(normalised);
-        }, 2000);
+        setTimeout(() => onSelectNFC(normalised), 2000);
 
       } catch (err) {
         dbg("Lookup error", err.message);
         const notFound = err.message?.includes("404") || /not found|no driver/i.test(err.message ?? "");
-        if (notFound) {
-          setLookupStatus("not_found");
-        } else {
-          setLookupStatus("error");
-          setLookupError(err.message || "Server error.");
-        }
+        if (notFound) setLookupStatus("not_found");
+        else { setLookupStatus("error"); setLookupError(err.message || "Server error."); }
       }
     })();
   }, [nfcCode, dbg, onSelectNFC]);
 
-  // ── Retry lookup ──────────────────────────────────────────────────────────
   const handleRetry = () => {
     const code = lastCodeRef.current;
     if (!code) return;
@@ -209,7 +170,6 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
     setTimeout(() => setNfcCode(code), 50);
   };
 
-  // ── Reconnect stream ──────────────────────────────────────────────────────
   const handleReconnect = () => {
     if (esRef.current) esRef.current.close();
     setStreamStatus("connecting");
@@ -220,8 +180,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
     setLookupError(null);
   };
 
-  // ─── RENDER ───────────────────────────────────────────────────────────────
-  const isListening = streamStatus === "connecting" || streamStatus === "listening";
+  const isListening  = streamStatus === "connecting" || streamStatus === "listening";
   const streamFailed = streamStatus === "error";
 
   return (
@@ -235,6 +194,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
       destroyOnClose
     >
       <div className={`${isDark ? "bg-gray-900 text-white" : "bg-white"}`}>
+
         {/* Header */}
         <div className={`px-6 py-4 border-b ${isDark ? "border-gray-700" : "border-gray-200"}`}>
           <div className="flex items-center justify-between">
@@ -252,7 +212,6 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
               </div>
             </div>
             <div className="flex items-center gap-2">
-              {/* Stream status badge */}
               <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${
                 streamFailed
                   ? "bg-red-50 border-red-200 text-red-600"
@@ -261,23 +220,16 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
                   : "bg-green-50 border-green-200 text-green-700"
               }`}>
                 <span className={`w-1.5 h-1.5 rounded-full ${
-                  streamFailed
-                    ? "bg-red-500"
-                    : streamStatus === "code_detected"
-                    ? "bg-purple-500"
-                    : "bg-green-500 animate-pulse"
+                  streamFailed ? "bg-red-500" : streamStatus === "code_detected" ? "bg-purple-500" : "bg-green-500 animate-pulse"
                 }`} />
-                {streamStatus === "connecting"   && "Connecting…"}
-                {streamStatus === "listening"    && "Listening"}
+                {streamStatus === "connecting"    && "Connecting…"}
+                {streamStatus === "listening"     && "Listening"}
                 {streamStatus === "code_detected" && nfcCode}
-                {streamStatus === "error"        && "Error"}
+                {streamStatus === "error"         && "Error"}
               </div>
               <button
                 onClick={() => setShowDebug(v => !v)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
-                  isDark ? "border-gray-700 text-gray-500" : "border-gray-300 text-gray-400"
-                }`}
-              >
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${isDark ? "border-gray-700 text-gray-500" : "border-gray-300 text-gray-400"}`}>
                 {showDebug ? "Hide Log" : "Debug"}
               </button>
             </div>
@@ -286,22 +238,17 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
 
         {/* Main content */}
         <div className="p-6">
+
           {/* Stream error */}
           {streamFailed && (
             <div className="text-center py-12">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
                 <span className="text-3xl">⚠️</span>
               </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
-                NFC Stream Unavailable
-              </h4>
-              <p className={`text-sm mb-4 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                {streamError}
-              </p>
-              <Button
-                onClick={handleReconnect}
-                className="bg-purple-500 hover:bg-purple-600 text-white border-0 font-semibold"
-              >
+              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>NFC Stream Unavailable</h4>
+              <p className={`text-sm mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>{streamError}</p>
+              <p className="text-xs font-mono mb-4 text-gray-400">{nfcStreamUrl}</p>
+              <Button onClick={handleReconnect} className="bg-purple-500 hover:bg-purple-600 text-white border-0 font-semibold">
                 🔄 Reconnect
               </Button>
             </div>
@@ -311,27 +258,16 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
           {isListening && lookupStatus === "idle" && (
             <div className="text-center py-12">
               <div className="relative w-32 h-32 mx-auto mb-6">
-                {/* Pulsing rings */}
                 {[0, 1, 2].map(i => (
-                  <span
-                    key={i}
-                    className="absolute inset-0 rounded-full border-2 border-purple-500 animate-ping"
-                    style={{
-                      animationDelay: `${i * 0.3}s`,
-                      opacity: 0.3,
-                    }}
-                  />
+                  <span key={i} className="absolute inset-0 rounded-full border-2 border-purple-500 animate-ping"
+                    style={{ animationDelay: `${i * 0.3}s`, opacity: 0.3 }} />
                 ))}
                 <div className="absolute inset-0 rounded-full border-4 border-dashed border-purple-500 flex items-center justify-center animate-pulse">
                   <span className="text-6xl">📡</span>
                 </div>
               </div>
-              <h4 className={`text-2xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
-                Tap Your NFC Card
-              </h4>
-              <p className={`text-sm mb-6 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                Hold your card against the NFC reader
-              </p>
+              <h4 className={`text-2xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Tap Your NFC Card</h4>
+              <p className={`text-sm mb-6 ${isDark ? "text-gray-400" : "text-gray-500"}`}>Hold your card against the NFC reader</p>
               <div className={`max-w-md mx-auto p-4 rounded-lg ${isDark ? "bg-gray-800" : "bg-blue-50"}`}>
                 <p className={`text-xs font-semibold ${isDark ? "text-blue-300" : "text-blue-800"}`}>
                   💡 Make sure your card is flat against the reader
@@ -346,9 +282,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
                 <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
               </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
-                Authenticating...
-              </h4>
+              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Authenticating...</h4>
               <p className={`text-sm ${isDark ? "text-gray-400" : "text-gray-500"}`}>
                 Looking up driver from NFC: <span className="font-mono">{nfcCode}</span>
               </p>
@@ -368,49 +302,31 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
                 </p>
               </div>
 
-              {/* Driver card */}
-              <div className={`rounded-2xl border-2 p-6 ${
-                isDark
-                  ? "bg-gray-800 border-green-700"
-                  : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"
-              }`}>
+              <div className={`rounded-2xl border-2 p-6 ${isDark ? "bg-gray-800 border-green-700" : "bg-gradient-to-br from-green-50 to-emerald-50 border-green-200"}`}>
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center text-3xl flex-shrink-0">
                     👤
                   </div>
                   <div>
-                    <h5 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
-                      {driverData.name}
-                    </h5>
+                    <h5 className={`text-xl font-bold ${isDark ? "text-white" : "text-gray-900"}`}>{driverData.name}</h5>
                     {driverData.employeeId && (
-                      <p className={`text-sm font-mono ${isDark ? "text-gray-400" : "text-gray-600"}`}>
-                        ID: {driverData.employeeId}
-                      </p>
+                      <p className={`text-sm font-mono ${isDark ? "text-gray-400" : "text-gray-600"}`}>ID: {driverData.employeeId}</p>
                     )}
                   </div>
                 </div>
-
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: "NFC UID",   value: driverData.uid,       mono: true },
-                    { label: "Phone",     value: driverData.phone,     mono: false },
-                    { label: "License",   value: driverData.licenseNo, mono: true },
-                    { label: "Status",    value: driverData.status,    badge: driverData.status === "Active" },
+                    { label: "NFC UID", value: driverData.uid,       mono: true },
+                    { label: "Phone",   value: driverData.phone,     mono: false },
+                    { label: "License", value: driverData.licenseNo, mono: true },
+                    { label: "Status",  value: driverData.status,    badge: driverData.status === "Active" },
                   ].filter(f => f.value).map(f => (
-                    <div key={f.label} className={`p-3 rounded-xl ${
-                      isDark ? "bg-gray-900" : "bg-white border border-gray-100"
-                    }`}>
-                      <p className={`text-xs font-bold uppercase mb-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-                        {f.label}
-                      </p>
+                    <div key={f.label} className={`p-3 rounded-xl ${isDark ? "bg-gray-900" : "bg-white border border-gray-100"}`}>
+                      <p className={`text-xs font-bold uppercase mb-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>{f.label}</p>
                       {f.badge ? (
-                        <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">
-                          ✓ {f.value}
-                        </span>
+                        <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-700">✓ {f.value}</span>
                       ) : (
-                        <p className={`text-sm font-semibold ${f.mono ? "font-mono" : ""} ${
-                          isDark ? "text-white" : "text-gray-900"
-                        }`}>
+                        <p className={`text-sm font-semibold ${f.mono ? "font-mono" : ""} ${isDark ? "text-white" : "text-gray-900"}`}>
                           {f.value}
                         </p>
                       )}
@@ -427,15 +343,11 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-amber-100 flex items-center justify-center">
                 <span className="text-3xl">❓</span>
               </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
-                Driver Not Found
-              </h4>
+              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Driver Not Found</h4>
               <p className={`text-sm mb-4 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
                 No driver registered with NFC: <span className="font-mono">{nfcCode}</span>
               </p>
-              <Button onClick={handleRetry} className="bg-amber-500 hover:bg-amber-600 text-white border-0 font-semibold">
-                Try Again
-              </Button>
+              <Button onClick={handleRetry} className="bg-amber-500 hover:bg-amber-600 text-white border-0 font-semibold">Try Again</Button>
             </div>
           )}
 
@@ -445,18 +357,10 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-red-100 flex items-center justify-center">
                 <span className="text-3xl">⚠️</span>
               </div>
-              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>
-                Lookup Failed
-              </h4>
-              <p className={`text-sm mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
-                Could not fetch driver from server
-              </p>
-              <p className="font-mono text-xs mb-4 px-3 py-2 rounded-lg inline-block bg-red-50 text-red-600">
-                {lookupError}
-              </p>
-              <Button onClick={handleRetry} className="bg-red-500 hover:bg-red-600 text-white border-0 font-semibold">
-                Retry
-              </Button>
+              <h4 className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-900"}`}>Lookup Failed</h4>
+              <p className={`text-sm mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>Could not fetch driver from server</p>
+              <p className="font-mono text-xs mb-4 px-3 py-2 rounded-lg inline-block bg-red-50 text-red-600">{lookupError}</p>
+              <Button onClick={handleRetry} className="bg-red-500 hover:bg-red-600 text-white border-0 font-semibold">Retry</Button>
             </div>
           )}
 
@@ -464,23 +368,14 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
           {showDebug && (
             <div className="mt-6 rounded-xl border border-gray-800 bg-gray-950 p-4 font-mono text-xs text-green-400">
               <div className="flex items-center justify-between mb-2">
-                <span className="font-sans font-bold text-xs uppercase tracking-wider text-gray-500">
-                  NFC Debug Log
-                </span>
-                <button
-                  onClick={() => setDebugLog([])}
-                  className="text-gray-600 hover:text-gray-400 text-xs"
-                >
-                  Clear
-                </button>
+                <span className="font-sans font-bold text-xs uppercase tracking-wider text-gray-500">NFC Debug Log</span>
+                <button onClick={() => setDebugLog([])} className="text-gray-600 hover:text-gray-400 text-xs">Clear</button>
               </div>
               {debugLog.length === 0 ? (
                 <p className="text-gray-600">No messages yet…</p>
               ) : (
                 <div className="space-y-1 max-h-40 overflow-y-auto">
-                  {debugLog.map((e, i) => (
-                    <p key={i} className="break-all leading-relaxed">{e}</p>
-                  ))}
+                  {debugLog.map((e, i) => <p key={i} className="break-all leading-relaxed">{e}</p>)}
                 </div>
               )}
             </div>
@@ -490,7 +385,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
         {/* Footer */}
         <div className={`px-6 py-3 border-t ${isDark ? "border-gray-700" : "border-gray-200"}`}>
           <p className={`text-xs text-center ${isDark ? "text-gray-500" : "text-gray-400"}`}>
-            NFC stream: <span className="font-mono">{NFC_STREAM_URL}</span>
+            NFC stream: <span className="font-mono">{nfcStreamUrl}</span>
           </p>
         </div>
       </div>

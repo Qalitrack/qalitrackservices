@@ -1,23 +1,19 @@
 /**
  * WeighingScreen.jsx — Self-Service Kiosk Weighing
  *
- * Receives: vehicleData = { vehicle: <normalised by VehicleDetectionScreen>, driver: {...} }
- *
- * Field chain (Swagger → normaliseVehicle → here):
- *   registrationNumber → noPlate
- *   ownerId          → ownerId          (direct)
- *   transporterId      → transporterID
- *   transporterName    → transporterName    (direct, with saccoName fallback)
- *   supplierId         → supplierID
- *   supplierName       → supplierName       (direct)
- *   saccoName          → saccoName          (tea-industry transporter alias)
- *   rfiDcode           → rfidTag
- *   netWeightCapacity  → capacity
- *   type               → vehicleType
+ * Changes from original:
+ *  1. Accepts `existingTransaction` prop — when present, switches to
+ *     second-weight (tare) mode:
+ *       • Header shows "2nd Weight" banner with first-weight details
+ *       • Submit calls PATCH to update existing transaction instead of POST
+ *       • Payload sends secondWeight instead of firstWeight
+ *  2. Scale stream URL read from SystemSettings via useHardwareConfig()
+ *     (live — updates without page reload when System Settings are saved)
  */
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { message, Select } from "antd";
+import { useHardwareConfig } from "../../hooks/useHardwareConfig";
 const { Option } = Select;
 
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
@@ -52,7 +48,13 @@ async function apiFetch(path, opts = {}) {
 
 const searchProducts  = q => apiFetch(`/MasterData/Products?searchTerm=${encodeURIComponent(q)}&pageSize=20`).then(r => r?.items ?? r?.data?.items ?? r?.data?.data?.items ?? []);
 const getWeighbridges = () => apiFetch(`/MasterData/Weighbridges?pageSize=50`).then(r => r?.items ?? r?.data?.items ?? r?.data?.data?.items ?? []);
-const postTransaction = b => apiFetch(`/Transaction/Transaction/Transaction`, { method: "POST", body: JSON.stringify({ request: b }) });
+
+// First weighing — POST new transaction
+const postTransaction  = b => apiFetch(`/Transaction/Transaction/Transaction`, { method: "POST", body: JSON.stringify({ request: b }) });
+
+// Second weighing — PATCH existing transaction to add second weight
+// Adjust endpoint/payload to match your actual API
+const patchTransaction = (id, b) => apiFetch(`/Transaction/Transaction/Transaction/${id}`, { method: "PATCH", body: JSON.stringify(b) });
 
 // ── Debounce ──────────────────────────────────────────────────────────────────
 function useDebounce(fn, delay) {
@@ -64,12 +66,9 @@ function useDebounce(fn, delay) {
 }
 
 // ── extractVehicleFields ──────────────────────────────────────────────────────
-// vehicleData is { vehicle: <normalised>, driver: {...} } from VehicleDetectionScreen.
-// The normalised vehicle uses exact Swagger field names + saccoName from enrichment.
 const extractVehicleFields = (vehicleData = {}) => {
   const v = vehicleData?.vehicle ?? vehicleData ?? {};
-
-  const fields = {
+  return {
     vehicleID:       v.id                  ?? null,
     noPlate:         v.registrationNumber  ?? "",
     rfidTag:         v.rfidTag             ?? "",
@@ -77,30 +76,18 @@ const extractVehicleFields = (vehicleData = {}) => {
     vehicleMake:     v.vehicleMake         ?? "",
     vehicleModel:    v.vehicleModel        ?? "",
     capacity:        v.capacity            ?? "",
-    ownerId:       v.ownerId           ?? "",
-    transporterID:   v.transporterId       ?? null,           // Swagger: transporterId
-    transporterName: v.transporterName     ?? v.saccoName ?? "", // saccoName fallback
-    supplierID:      v.supplierId          ?? null,           // Swagger: supplierId
+    ownerId:         v.ownerId             ?? "",
+    transporterID:   v.transporterId       ?? null,
+    transporterName: v.transporterName     ?? v.saccoName ?? "",
+    supplierID:      v.supplierId          ?? null,
     supplierName:    v.supplierName        ?? "",
     saccoName:       v.saccoName           ?? "",
     commodityID:     null,
     commodityName:   "",
     customerName:    "",
   };
-
-  console.group("📋 extractVehicleFields");
-  console.log("noPlate:         ", fields.noPlate);
-  console.log("ownerId:       ", fields.ownerId);
-  console.log("transporterName: ", fields.transporterName, "| ID:", fields.transporterID);
-  console.log("supplierName:    ", fields.supplierName,    "| ID:", fields.supplierID);
-  console.log("saccoName:       ", fields.saccoName);
-  console.groupEnd();
-
-  return fields;
 };
 
-// ── extractDriverFields ───────────────────────────────────────────────────────
-// Driver is nested inside vehicleData.driver (set by VehicleDetectionScreen).
 const extractDriverFields = (vehicleData = {}, driverData = {}) => {
   const d = vehicleData?.driver ?? driverData ?? {};
   return {
@@ -113,11 +100,21 @@ const extractDriverFields = (vehicleData = {}, driverData = {}) => {
   };
 };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 const isValidGuid = g => g && g !== "00000000-0000-0000-0000-000000000000" && String(g).length > 10;
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
-export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWeighingComplete, onBack, error: parentError }) {
+export default function WeighingScreen({
+  vehicleData = {},
+  driverData  = {},
+  existingTransaction = null,  // ← null: first weight | object: second weight
+  onWeighingComplete,
+  onBack,
+  error: parentError,
+}) {
+  // ── Live scale URL from SystemSettings ────────────────────────────────────
+  const hwConfig = useHardwareConfig();
+
+  const isSecondWeigh = Boolean(existingTransaction);
   const vf = extractVehicleFields(vehicleData);
   const df = extractDriverFields(vehicleData, driverData);
 
@@ -133,15 +130,15 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
     vehicleMake:     vf.vehicleMake,
     vehicleModel:    vf.vehicleModel,
     capacity:        vf.capacity,
-    ownerId:       vf.ownerId,
+    ownerId:         vf.ownerId,
     transporterID:   vf.transporterID,
     transporterName: vf.transporterName,
     supplierID:      vf.supplierID,
     supplierName:    vf.supplierName,
     saccoName:       vf.saccoName,
-    commodityID:     null,
-    commodityName:   "",
-    customerName:    "",
+    commodityID:     existingTransaction?.commodityID   ?? null,
+    commodityName:   existingTransaction?.commodityName ?? "",
+    customerName:    existingTransaction?.customerName  ?? "",
     driverID:        df.driverID,
     driverName:      df.driverName,
     driverPhone:     df.driverPhone,
@@ -152,15 +149,15 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
     operatorName:    df.driverName || "Self-Service Kiosk",
     weighMode:       "Gross/Tare",
     weighBridgeID:   null,
-    weighBridgeName: "Factory A",
-    scaleName:       "Factory A",
-    originName:      "",
-    destinationName: "",
-    operation:       "weighing",
-    notes:           "",
+    weighBridgeName: existingTransaction?.weighBridgeName ?? "Factory A",
+    scaleName:       existingTransaction?.weighBridgeName ?? "Factory A",
+    originName:      existingTransaction?.originName      ?? "",
+    destinationName: existingTransaction?.destinationName ?? "",
+    operation:       existingTransaction?.operation       ?? "weighing",
+    notes:           existingTransaction?.notes           ?? "",
   });
 
-  // Re-sync when vehicleData updates (e.g. enrichment completes after rescan)
+  // Re-sync on vehicleData updates
   useEffect(() => {
     const newVf = extractVehicleFields(vehicleData);
     const newDf = extractDriverFields(vehicleData, driverData);
@@ -173,7 +170,7 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
       vehicleMake:     newVf.vehicleMake,
       vehicleModel:    newVf.vehicleModel,
       capacity:        newVf.capacity,
-      ownerId:       newVf.ownerId,
+      ownerId:         newVf.ownerId,
       transporterID:   newVf.transporterID,
       transporterName: newVf.transporterName,
       supplierID:      newVf.supplierID,
@@ -191,7 +188,7 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicleData, driverData]);
 
-  // ── Weight simulation (replace with real scale SSE) ──────────────────────
+  // ── Weight (TODO: replace interval with real scale SSE from hwConfig.scaleStreamUrl) ──
   const [weightMode,     setWeightMode]     = useState("captured");
   const [capturedWeight, setCapturedWeight] = useState(0);
   const [manualWeight,   setManualWeight]   = useState("");
@@ -202,10 +199,19 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
   const lastStableRef    = useRef(null);
   const stabilityCounter = useRef(0);
 
-  // Fetch weighbridges on mount
   useEffect(() => {
     getWeighbridges().then(list => {
       setWeighbridges(list);
+      if (existingTransaction?.weighBridgeID) {
+        const wb = list.find(w => w.id === existingTransaction.weighBridgeID);
+        if (wb) setForm(p => ({
+          ...p,
+          weighBridgeID:   wb.id,
+          weighBridgeName: wb.location ?? wb.name,
+          scaleName:       wb.location ?? wb.name,
+        }));
+        return;
+      }
       const factoryA = list.find(wb => /factory\s*a/i.test(wb.location ?? wb.name ?? ""));
       if (factoryA) setForm(p => ({
         ...p,
@@ -214,20 +220,21 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
         scaleName:       factoryA.location ?? factoryA.name,
       }));
     }).catch(() => {});
-  }, []);
+  }, [existingTransaction]);
 
-  // Simulate scale readings (replace with real WebSocket/SSE from scale hardware)
+  // Simulated scale readings (replace with real SSE using hwConfig.scaleStreamUrl)
   useEffect(() => {
-    const BASE = 19011; let iter = 0;
+    const BASE = isSecondWeigh ? 8400 : 19011;
+    let iter = 0;
     const id = setInterval(() => {
       iter++;
       const w = iter < 6 ? BASE + Math.floor(Math.random() * 40 - 20) : BASE;
-      bufferRef.current = w; setCapturedWeight(w);
+      bufferRef.current = w;
+      setCapturedWeight(w);
     }, 1200);
     return () => clearInterval(id);
-  }, []);
+  }, [isSecondWeigh]);
 
-  // Stability detection
   useEffect(() => {
     const id = setInterval(() => {
       const curr = bufferRef.current;
@@ -253,63 +260,90 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
     setApiError(null);
     if (effectiveWeight <= 0)          { message.error("Weight must be greater than 0"); return; }
     if (!form.noPlate?.trim())         { message.error("Vehicle plate is required");     return; }
-    if (!form.weighBridgeID)           { message.error("Weighbridge not resolved — ensure 'Factory A' exists"); return; }
+    if (!form.weighBridgeID)           { message.error("Weighbridge not resolved");      return; }
     if (!form.transporterName?.trim()) { message.error("Transporter is required");       return; }
 
     setSubmitting(true);
-    const payload = {
-      noPlate:      form.noPlate.toUpperCase().trim(),
-      firstWeight:  String(effectiveWeight),
-      weighMode:    "Kiosk",
-      operation:    form.operation,
-      operatorName: form.operatorName || "Self-Service Kiosk",
-    };
 
-    if (isValidGuid(form.vehicleID))  payload.vehicleID  = form.vehicleID;
-    if (isValidGuid(form.driverID))   payload.driverID   = form.driverID;
-    if (isValidGuid(form.operatorID)) payload.operatorID = form.operatorID;
-    if (form.driverName?.trim())      payload.driverName = form.driverName.trim();
-
-    if (isValidGuid(form.transporterID)) {
-      payload.transporterID   = form.transporterID;
-      payload.transporterName = form.transporterName;
-    } else if (form.transporterName?.trim()) {
-      payload.transporterName = form.transporterName.trim();
-    }
-
-    if (isValidGuid(form.weighBridgeID)) {
-      payload.weighBridgeID   = form.weighBridgeID;
-      payload.weighBridgeName = form.weighBridgeName;
-      payload.scaleName       = form.scaleName;
-    }
-
-    if (isValidGuid(form.supplierID)) {
-      payload.supplierID   = form.supplierID;
-      payload.supplierName = form.supplierName;
-    } else if (form.supplierName?.trim()) {
-      payload.supplierName = form.supplierName.trim();
-    }
-
-    if (isValidGuid(form.commodityID)) {
-      payload.commodityID   = form.commodityID;
-      payload.commodityName = form.commodityName;
-    }
-    if (form.customerName?.trim())    payload.customerName    = form.customerName.trim();
-    if (form.originName?.trim())      payload.originName      = form.originName.trim();
-    if (form.destinationName?.trim()) payload.destinationName = form.destinationName.trim();
-    payload.notes = form.notes?.trim() || "Self-service kiosk transaction";
-
-    console.log("📤 Kiosk transaction payload:", payload);
     try {
-      const result = await postTransaction(payload);
-      message.success(
-        `Saved! Receipt: ${result?.data?.receiptNo ?? result?.receiptNo ?? result?.ticketID ?? "Generated"}`,
-        4,
-      );
-      onWeighingComplete?.({ ...payload, ...result, weight: effectiveWeight, weightMode });
+      let result;
+
+      if (isSecondWeigh) {
+        // ── Second weight: PATCH existing transaction ────────────────────────
+        const txnId = existingTransaction.id ?? existingTransaction.ticketID;
+        const patchPayload = {
+          secondWeight: String(effectiveWeight),
+          weighMode:    "Kiosk",
+          isCompleted:  true,
+          status:       "Complete",
+          notes:        form.notes?.trim() || "Self-service kiosk — second weight",
+        };
+        if (isValidGuid(form.driverID)) patchPayload.driverID = form.driverID;
+        if (form.driverName?.trim())    patchPayload.driverName = form.driverName.trim();
+
+        console.log("📤 Second-weight PATCH payload:", patchPayload, "for txnId:", txnId);
+        result = await patchTransaction(txnId, patchPayload);
+        message.success(
+          `Transaction completed! Net weight: ${effectiveWeight - (existingTransaction.firstWeight ?? 0)} kg`,
+          4,
+        );
+      } else {
+        // ── First weight: POST new transaction ───────────────────────────────
+        const payload = {
+          noPlate:      form.noPlate.toUpperCase().trim(),
+          firstWeight:  String(effectiveWeight),
+          weighMode:    "Kiosk",
+          operation:    form.operation,
+          operatorName: form.operatorName || "Self-Service Kiosk",
+        };
+
+        if (isValidGuid(form.vehicleID))  payload.vehicleID  = form.vehicleID;
+        if (isValidGuid(form.driverID))   payload.driverID   = form.driverID;
+        if (isValidGuid(form.operatorID)) payload.operatorID = form.operatorID;
+        if (form.driverName?.trim())      payload.driverName = form.driverName.trim();
+
+        if (isValidGuid(form.transporterID)) {
+          payload.transporterID   = form.transporterID;
+          payload.transporterName = form.transporterName;
+        } else if (form.transporterName?.trim()) {
+          payload.transporterName = form.transporterName.trim();
+        }
+
+        if (isValidGuid(form.weighBridgeID)) {
+          payload.weighBridgeID   = form.weighBridgeID;
+          payload.weighBridgeName = form.weighBridgeName;
+          payload.scaleName       = form.scaleName;
+        }
+
+        if (isValidGuid(form.supplierID)) {
+          payload.supplierID   = form.supplierID;
+          payload.supplierName = form.supplierName;
+        } else if (form.supplierName?.trim()) {
+          payload.supplierName = form.supplierName.trim();
+        }
+
+        if (isValidGuid(form.commodityID)) {
+          payload.commodityID   = form.commodityID;
+          payload.commodityName = form.commodityName;
+        }
+        if (form.customerName?.trim())    payload.customerName    = form.customerName.trim();
+        if (form.originName?.trim())      payload.originName      = form.originName.trim();
+        if (form.destinationName?.trim()) payload.destinationName = form.destinationName.trim();
+        payload.notes = form.notes?.trim() || "Self-service kiosk transaction";
+
+        console.log("📤 First-weight POST payload:", payload);
+        result = await postTransaction(payload);
+        message.success(
+          `Saved! Receipt: ${result?.data?.receiptNo ?? result?.receiptNo ?? result?.ticketID ?? "Generated"}`,
+          4,
+        );
+      }
+
+      onWeighingComplete?.({ ...form, ...result, weight: effectiveWeight, weightMode });
     } catch (e) {
       const msg = e.message || "Failed to save transaction";
-      setApiError(msg); message.error(msg);
+      setApiError(msg);
+      message.error(msg);
     } finally {
       setSubmitting(false);
     }
@@ -331,19 +365,31 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
         style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: "linear-gradient(135deg,#d97706,#f59e0b)" }}>
+            style={{ background: isSecondWeigh ? "linear-gradient(135deg,#d97706,#ea580c)" : "linear-gradient(135deg,#d97706,#f59e0b)" }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5">
               <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
             </svg>
           </div>
           <div>
-            <h1 className="text-base font-bold" style={{ color: "#111827" }}>Weighing</h1>
-            <p className="text-xs" style={{ color: "#6b7280" }}>RFID verified · NFC authenticated · Kiosk mode</p>
+            <h1 className="text-base font-bold" style={{ color: "#111827" }}>
+              {isSecondWeigh ? "Second (Tare) Weight" : "Weighing"}
+            </h1>
+            <p className="text-xs" style={{ color: "#6b7280" }}>
+              {isSecondWeigh
+                ? `Completing transaction · First weight: ${existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg`
+                : "RFID verified · NFC authenticated · Kiosk mode"
+              }
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {form.noPlate    && <Pill bg="#f0fdf4" border="#bbf7d0" color="#16a34a">✓ {form.noPlate}</Pill>}
           {form.driverName && <Pill bg="#eff6ff" border="#bfdbfe" color="#1d4ed8">✓ {form.driverName}</Pill>}
+          {isSecondWeigh && (
+            <Pill bg="#fef2f2" border="#fca5a5" color="#dc2626">
+              ⚠️ 2nd Weight · 1st: {existingTransaction?.firstWeight ?? "—"} kg
+            </Pill>
+          )}
           <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">🔒 {form.weighBridgeName}</Pill>
           <Pill bg="#dcfce7" border="#bbf7d0" color="#16a34a">● LIVE</Pill>
           <button
@@ -354,32 +400,47 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
         </div>
       </header>
 
+      {/* ── SECOND WEIGHT BANNER ────────────────────────────────────────────── */}
+      {isSecondWeigh && (
+        <div className="shrink-0 px-6 py-3 flex items-center gap-4"
+          style={{ background: "linear-gradient(135deg,#fef2f2,#fff7ed)", borderBottom: "2px solid #fca5a5" }}>
+          <span className="text-2xl">⚖️</span>
+          <div>
+            <p className="text-sm font-black" style={{ color: "#dc2626" }}>
+              SECOND WEIGHING MODE — Completing Existing Transaction
+            </p>
+            <p className="text-xs" style={{ color: "#7f1d1d" }}>
+              Ticket: <strong>{existingTransaction?.ticketID ?? existingTransaction?.id ?? "—"}</strong>
+              {" · "}
+              First weight (gross): <strong>{existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg</strong>
+              {" · "}
+              Captured: <strong>{existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}</strong>
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ── DATA INSPECTOR ─────────────────────────────────────────────────── */}
       {showInspector && (
         <div style={{ background: "#0f172a", borderBottom: "2px solid #1e293b", padding: "12px 24px", fontFamily: "monospace", fontSize: "11px", color: "#94a3b8", maxHeight: "220px", overflowY: "auto" }}>
-          <p style={{ color: "#f59e0b", fontWeight: "bold", marginBottom: "6px" }}>
-            🔍 Raw vehicleData vs resolved form fields
-          </p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+          <p style={{ color: "#f59e0b", fontWeight: "bold", marginBottom: "6px" }}>🔍 Data Inspector</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
             <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>vehicleData.vehicle (from API + enrichment):</p>
+              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>vehicleData.vehicle:</p>
               <pre style={{ color: "#86efac", fontSize: "10px", whiteSpace: "pre-wrap", wordBreak: "break-all", margin: 0 }}>
                 {JSON.stringify(vehicleData?.vehicle ?? vehicleData, null, 2)}
               </pre>
             </div>
             <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>Resolved form values:</p>
+              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>Resolved form:</p>
               <pre style={{ color: "#93c5fd", fontSize: "10px", margin: 0 }}>
-{JSON.stringify({
-  noPlate:         form.noPlate,
-  ownerId:       form.ownerId,
-  transporterName: form.transporterName,
-  transporterID:   form.transporterID,
-  supplierName:    form.supplierName,
-  supplierID:      form.supplierID,
-  saccoName:       form.saccoName,
-  driverName:      form.driverName,
-}, null, 2)}
+                {JSON.stringify({ noPlate: form.noPlate, ownerId: form.ownerId, transporterName: form.transporterName, supplierName: form.supplierName, driverName: form.driverName }, null, 2)}
+              </pre>
+            </div>
+            <div>
+              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>existingTransaction:</p>
+              <pre style={{ color: "#fda4af", fontSize: "10px", whiteSpace: "pre-wrap", wordBreak: "break-all", margin: 0 }}>
+                {JSON.stringify(existingTransaction, null, 2)}
               </pre>
             </div>
           </div>
@@ -397,16 +458,13 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
               <Pill bg="#f0fdf4" border="#bbf7d0" color="#16a34a">✓ RFID Verified</Pill>
             </div>
             <div className="p-4 space-y-3">
-
-              {/* Plate number */}
               <div className="rounded-xl py-3 text-center"
-                style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", border: "2px solid #fcd34d" }}>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-0.5" style={{ color: "#92400e" }}>Registration</p>
+                style={{ background: isSecondWeigh ? "linear-gradient(135deg,#fef2f2,#fff1f2)" : "linear-gradient(135deg,#fffbeb,#fff7ed)", border: `2px solid ${isSecondWeigh ? "#fca5a5" : "#fcd34d"}` }}>
+                <p className="text-xs font-semibold uppercase tracking-wider mb-0.5" style={{ color: isSecondWeigh ? "#991b1b" : "#92400e" }}>Registration</p>
                 <p className="text-3xl font-black tracking-widest" style={{ color: "#111827" }}>{form.noPlate || "—"}</p>
                 {form.rfidTag && <p className="font-mono text-xs mt-1" style={{ color: "#9ca3af" }}>{form.rfidTag}</p>}
               </div>
 
-              {/* Vehicle attributes */}
               <div className="grid grid-cols-2 gap-2">
                 {[
                   { label: "Type",     value: form.vehicleType  },
@@ -416,13 +474,10 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
                 ].filter(f => f.value).map(f => <InfoChip key={f.label} label={f.label} value={f.value} />)}
               </div>
 
-              {/* Relational fields — auto-filled from RFID + enrichment */}
-              <ReadOnlyField label="Owner"       value={form.ownerId}       icon="👤" fromRfid />
+              <ReadOnlyField label="Owner"       value={form.ownerId}         icon="👤" fromRfid />
               <ReadOnlyField label="Transporter" value={form.transporterName} icon="🚛" fromRfid required />
               <ReadOnlyField label="Supplier"    value={form.supplierName}    icon="🏭" fromRfid />
-              {form.saccoName && (
-                <ReadOnlyField label="SACCO" value={form.saccoName} icon="🤝" fromRfid />
-              )}
+              {form.saccoName && <ReadOnlyField label="SACCO" value={form.saccoName} icon="🤝" fromRfid />}
             </div>
           </div>
 
@@ -442,9 +497,7 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
                     </div>
                     <div>
                       <p className="font-bold text-sm" style={{ color: "#111827" }}>{form.driverName}</p>
-                      {form.employeeId && (
-                        <p className="text-xs font-mono" style={{ color: "#6b7280" }}>ID: {form.employeeId}</p>
-                      )}
+                      {form.employeeId && <p className="text-xs font-mono" style={{ color: "#6b7280" }}>ID: {form.employeeId}</p>}
                     </div>
                   </div>
                   <div className="rounded-lg px-3 py-2 flex items-center gap-2"
@@ -465,13 +518,29 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
                   <p className="text-xs" style={{ color: "#9ca3af" }}>No driver authenticated</p>
                 </div>
               )}
+
+              {/* Show first weight card in second-weigh mode */}
+              {isSecondWeigh && (
+                <div className="rounded-xl p-3 mt-2"
+                  style={{ background: "linear-gradient(135deg,#fef2f2,#fff1f2)", border: "1.5px solid #fca5a5" }}>
+                  <p className="text-xs font-bold uppercase mb-1" style={{ color: "#dc2626" }}>First Weight (Gross)</p>
+                  <p className="text-2xl font-black font-mono" style={{ color: "#111827" }}>
+                    {existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} <span className="text-sm font-normal text-gray-400">kg</span>
+                  </p>
+                  <p className="text-xs mt-1" style={{ color: "#7f1d1d" }}>
+                    Captured: {existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
 
           {/* ── Weight Card ──────────────────────────────────────────────── */}
           <div className="col-span-5 flex flex-col" style={card}>
             <div style={cardHdr}>
-              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Weight Reading</p>
+              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>
+                {isSecondWeigh ? "Second (Tare) Weight" : "Weight Reading"}
+              </p>
               <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #e5e7eb" }}>
                 {["captured", "manual"].map(m => (
                   <button key={m} onClick={() => setWeightMode(m)}
@@ -485,8 +554,7 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
             <div className="flex-1 flex flex-col items-center justify-center py-6 gap-2">
               {weightMode === "captured" ? (
                 <>
-                  <p className="text-6xl font-mono font-bold"
-                    style={{ color: isStable ? "#16a34a" : "#d97706" }}>
+                  <p className="text-6xl font-mono font-bold" style={{ color: isStable ? "#16a34a" : "#d97706" }}>
                     {capturedWeight.toLocaleString()}
                   </p>
                   <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG</p>
@@ -497,6 +565,18 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
                   }}>
                     {isStable ? "● Stable" : "● Stabilising…"}
                   </span>
+
+                  {/* Net weight preview in second-weigh mode */}
+                  {isSecondWeigh && capturedWeight > 0 && (existingTransaction?.firstWeight ?? 0) > 0 && (
+                    <div className="mt-3 px-4 py-2 rounded-xl"
+                      style={{ background: "#f0fdf4", border: "1.5px solid #bbf7d0" }}>
+                      <p className="text-xs font-bold uppercase" style={{ color: "#166534" }}>Net Weight Preview</p>
+                      <p className="text-xl font-black font-mono" style={{ color: "#16a34a" }}>
+                        {Math.abs((existingTransaction?.firstWeight ?? 0) - capturedWeight).toLocaleString()} kg
+                      </p>
+                    </div>
+                  )}
+
                   <div className="mt-2 flex gap-2 flex-wrap justify-center">
                     <span className="text-xs px-2 py-1 rounded-lg font-semibold"
                       style={{ background: "#fffbeb", color: "#92400e", border: "1px solid #fcd34d" }}>
@@ -510,15 +590,10 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
                 </>
               ) : (
                 <>
-                  <input
-                    type="number"
-                    placeholder="0"
-                    value={manualWeight}
+                  <input type="number" placeholder="0" value={manualWeight}
                     onChange={e => setManualWeight(e.target.value)}
                     style={{ ...inputStyle, width: "180px", fontSize: "32px", textAlign: "center" }}
-                    onFocus={onFoc}
-                    onBlur={onBlr}
-                  />
+                    onFocus={onFoc} onBlur={onBlr} />
                   <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG (manual)</p>
                 </>
               )}
@@ -531,25 +606,30 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
           <div style={cardHdr}>
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 rounded-full" style={{ background: "linear-gradient(180deg,#d97706,#f59e0b)" }} />
-              <p className="text-sm font-bold" style={{ color: "#111827" }}>Transaction Details</p>
+              <p className="text-sm font-bold" style={{ color: "#111827" }}>
+                {isSecondWeigh ? "Transaction Details (from first weighing)" : "Transaction Details"}
+              </p>
             </div>
-            <p className="text-xs" style={{ color: "#9ca3af" }}>🔒 = auto-filled from RFID · remaining fields are optional</p>
+            <p className="text-xs" style={{ color: "#9ca3af" }}>
+              {isSecondWeigh
+                ? "Pre-filled from original transaction — update if needed"
+                : "🔒 = auto-filled from RFID · remaining fields are optional"
+              }
+            </p>
           </div>
           <div className="p-5">
             <div className="grid grid-cols-4 gap-4 mb-4">
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Commodity</label>
                 <Select
-                  showSearch
-                  placeholder="Search commodity…"
+                  showSearch placeholder="Search commodity…"
                   onSearch={debouncedP}
                   onChange={id => {
                     const item = products.find(i => i.id === id);
                     setForm(p => ({ ...p, commodityID: id, commodityName: item?.name ?? "" }));
                   }}
                   value={form.commodityID || undefined}
-                  style={{ width: "100%" }}
-                  allowClear>
+                  style={{ width: "100%" }} allowClear>
                   {products.map(i => <Option key={i.id} value={i.id}>{i.name}</Option>)}
                 </Select>
               </div>
@@ -575,27 +655,29 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
 
             <div className="grid grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-amber-600 mb-1">
-                  Weighbridge <span style={{ color: "#ef4444" }}>*</span>{" "}
-                  <span className="font-normal text-amber-400">(default: Factory A)</span>
+                <label className="block text-xs font-semibold mb-1"
+                  style={{ color: isSecondWeigh ? "#7f1d1d" : "#d97706" }}>
+                  Weighbridge {isSecondWeigh ? "(locked to original)" : <span style={{ color: "#ef4444" }}>*</span>}
                 </label>
-                <Select
-                  value={form.weighBridgeName || undefined}
-                  onChange={v => {
-                    const wb = weighbridges.find(w => (w.location ?? w.name) === v);
-                    setForm(p => ({ ...p, weighBridgeID: wb?.id || null, weighBridgeName: v, scaleName: v }));
-                  }}
-                  style={{ width: "100%" }}
-                  placeholder="Select weighbridge…">
-                  {weighbridges.map(wb => (
-                    <Option key={wb.id} value={wb.location ?? wb.name}>{wb.location ?? wb.name}</Option>
-                  ))}
-                </Select>
+                {isSecondWeigh ? (
+                  <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
+                    style={{ background: "#fef2f2", border: "1.5px solid #fca5a5" }}>
+                    <span className="text-xs">🔒</span>
+                    <span className="text-sm font-semibold" style={{ color: "#111827" }}>{form.weighBridgeName}</span>
+                  </div>
+                ) : (
+                  <Select value={form.weighBridgeName || undefined}
+                    onChange={v => {
+                      const wb = weighbridges.find(w => (w.location ?? w.name) === v);
+                      setForm(p => ({ ...p, weighBridgeID: wb?.id || null, weighBridgeName: v, scaleName: v }));
+                    }}
+                    style={{ width: "100%" }} placeholder="Select weighbridge…">
+                    {weighbridges.map(wb => <Option key={wb.id} value={wb.location ?? wb.name}>{wb.location ?? wb.name}</Option>)}
+                  </Select>
+                )}
               </div>
               <div>
-                <label className="block text-xs font-semibold text-amber-600 mb-1">
-                  Weigh Mode <span className="font-normal text-amber-400">(locked)</span>
-                </label>
+                <label className="block text-xs font-semibold text-amber-600 mb-1">Weigh Mode (locked)</label>
                 <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
                   style={{ background: "#fffbeb", border: "1.5px solid #fcd34d" }}>
                   <span className="text-xs">🔒</span>
@@ -604,11 +686,18 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Operation</label>
-                <Select value={form.operation} onChange={v => setField("operation", v)} style={{ width: "100%" }}>
-                  <Option value="weighing">Weighing</Option>
-                  <Option value="Inbound Product Receipt">Inbound Receipt</Option>
-                  <Option value="Outbound Product Dispatch">Outbound Dispatch</Option>
-                </Select>
+                {isSecondWeigh ? (
+                  <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
+                    style={{ background: "#f9fafb", border: "1.5px solid #e5e7eb" }}>
+                    <span className="text-sm font-semibold" style={{ color: "#374151" }}>{form.operation}</span>
+                  </div>
+                ) : (
+                  <Select value={form.operation} onChange={v => setField("operation", v)} style={{ width: "100%" }}>
+                    <Option value="weighing">Weighing</Option>
+                    <Option value="Inbound Product Receipt">Inbound Receipt</Option>
+                    <Option value="Outbound Product Dispatch">Outbound Dispatch</Option>
+                  </Select>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">Notes</label>
@@ -639,9 +728,13 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
             ← Back
           </button>
           <div className="text-sm" style={{ color: "#6b7280" }}>
-            Weight:{" "}
+            {isSecondWeigh ? "Tare weight: " : "Weight: "}
             <span className="font-bold" style={{ color: "#111827" }}>{effectiveWeight.toLocaleString()} kg</span>
-            <span className="ml-2 text-xs" style={{ color: "#9ca3af" }}>({weightMode})</span>
+            {isSecondWeigh && (existingTransaction?.firstWeight ?? 0) > 0 && effectiveWeight > 0 && (
+              <span className="ml-2 text-xs text-green-600 font-semibold">
+                Net: {Math.abs((existingTransaction?.firstWeight ?? 0) - effectiveWeight).toLocaleString()} kg
+              </span>
+            )}
           </div>
         </div>
         <button
@@ -651,11 +744,18 @@ export default function WeighingScreen({ vehicleData = {}, driverData = {}, onWe
           style={{
             background: submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0
               ? "#9ca3af"
+              : isSecondWeigh
+              ? "linear-gradient(135deg,#dc2626,#ef4444)"
               : "linear-gradient(135deg,#d97706,#f59e0b)",
-            boxShadow: submitting ? "none" : "0 3px 10px rgba(217,119,6,0.35)",
-            cursor:    submitting ? "not-allowed" : "pointer",
+            boxShadow: submitting ? "none" : `0 3px 10px ${isSecondWeigh ? "rgba(220,38,38,0.35)" : "rgba(217,119,6,0.35)"}`,
+            cursor: submitting ? "not-allowed" : "pointer",
           }}>
-          {submitting ? "Saving…" : "⚡ Capture Weight"}
+          {submitting
+            ? "Saving…"
+            : isSecondWeigh
+            ? "⚡ Capture Tare Weight"
+            : "⚡ Capture Weight"
+          }
         </button>
       </footer>
     </div>
@@ -712,9 +812,7 @@ function DRow({ label, value, mono }) {
   return (
     <div className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: "#f9fafb" }}>
       <span className="text-xs" style={{ color: "#9ca3af" }}>{label}</span>
-      <span className={`text-xs font-semibold ${mono ? "font-mono" : ""}`} style={{ color: "#374151" }}>
-        {value}
-      </span>
+      <span className={`text-xs font-semibold ${mono ? "font-mono" : ""}`} style={{ color: "#374151" }}>{value}</span>
     </div>
   );
 }
