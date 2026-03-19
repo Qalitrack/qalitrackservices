@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qalitrack Configuration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p  { opacity: 0.9; font-size: 14px; }
+
+        .content { padding: 30px; }
+
+        .section {
+            margin-bottom: 30px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-disabled { opacity: 0.6; }
+
+        .form-group { margin-bottom: 15px; }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.1);
+        }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .toggle-row label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle input { opacity: 0; width: 0; height: 0; }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #ccc;
+            border-radius: 26px;
+            transition: 0.3s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 3px; bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        .toggle input:checked + .toggle-slider { background: #667eea; }
+        .toggle input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        button {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-save    { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-save:hover    { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.4); }
+        .btn-restart { background: #f59e0b; color: white; }
+        .btn-restart:hover { background: #d97706; transform: translateY(-2px); }
+        .btn-reload  { background: #10b981; color: white; }
+        .btn-reload:hover  { background: #059669; transform: translateY(-2px); }
+
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert-success { background: #d1fae5; border-left: 4px solid #10b981; color: #065f46; }
+        .alert-error   { background: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; }
+        .alert-info    { background: #dbeafe; border-left: 4px solid #3b82f6; color: #1e40af; }
+
+        .config-path {
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 20px;
+            word-break: break-all;
+        }
+
+        .loading { display: none; text-align: center; padding: 40px; }
+
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0%   { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>⚙️ Qalitrack Configuration</h1>
+        <p>Configure weighbridge, camera, RFID, and NFC settings</p>
+    </div>
+
+    <div class="content">
+        <div id="alert" class="alert"></div>
+
+        <div class="config-path">
+            📁 Config File: <span id="configPath">Loading...</span>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top:15px;color:#666;">Loading configuration...</p>
+        </div>
+
+        <form id="configForm" style="display:none;">
+
+            <!-- ── Weighbridge ─────────────────────────────────────────── -->
+            <div class="section">
+                <h2>🔌 Weighbridge Scale</h2>
+
+                <div class="form-group">
+                    <label>Connection Type</label>
+                    <select id="wbConnectionType" onchange="toggleWbMode()">
+                        <option value="TCP">TCP / Network</option>
+                        <option value="Serial">Serial / RS-232</option>
+                    </select>
+                </div>
+
+                <!-- TCP fields -->
+                <div id="wbTcpFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tcpIp">IP Address</label>
+                            <input type="text" id="tcpIp" placeholder="172.16.1.243">
+                        </div>
+                        <div class="form-group">
+                            <label for="tcpPort">Port</label>
+                            <input type="number" id="tcpPort" placeholder="3002">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tcpTimeout">Read Timeout (ms)</label>
+                            <input type="number" id="tcpTimeout" placeholder="1000">
+                        </div>
+                        <div class="form-group">
+                            <label for="tcpReconnect">Reconnect Delay (ms)</label>
+                            <input type="number" id="tcpReconnect" placeholder="5000">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Serial fields -->
+                <div id="wbSerialFields" style="display:none;">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="wbSerialPort">Serial Port</label>
+                            <input type="text" id="wbSerialPort" placeholder="COM1">
+                        </div>
+                        <div class="form-group">
+                            <label for="wbBaudRate">Baud Rate</label>
+                            <input type="number" id="wbBaudRate" placeholder="9600">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="wbDataBits">Data Bits</label>
+                            <select id="wbDataBits">
+                                <option>8</option><option>7</option><option>6</option><option>5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="wbParity">Parity</label>
+                            <select id="wbParity">
+                                <option>None</option><option>Even</option><option>Odd</option>
+                                <option>Mark</option><option>Space</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="wbStopBits">Stop Bits</label>
+                            <select id="wbStopBits">
+                                <option>One</option><option>Two</option><option>OnePointFive</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="wbReconnectSerial">Reconnect Delay (ms)</label>
+                            <input type="number" id="wbReconnectSerial" placeholder="5000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Camera ─────────────────────────────────────────────── -->
+            <div class="section">
+                <h2>📷 Camera (RTSP)</h2>
+                <div class="form-group">
+                    <label for="cameraUrl">RTSP URL</label>
+                    <input type="text" id="cameraUrl" placeholder="rtsp://172.16.1.227:8557/">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cameraUser">Username</label>
+                        <input type="text" id="cameraUser" placeholder="admin">
+                    </div>
+                    <div class="form-group">
+                        <label for="cameraPass">Password</label>
+                        <input type="password" id="cameraPass" placeholder="admin">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cameraReconnect">Reconnect Delay (ms)</label>
+                        <input type="number" id="cameraReconnect" placeholder="5000">
+                    </div>
+                    <div class="form-group">
+                        <label for="cameraBuffer">Frame Buffer Size</label>
+                        <input type="number" id="cameraBuffer" placeholder="100">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── NPR ────────────────────────────────────────────────── -->
+            <div class="section">
+                <h2>🚗 Plate Recognition (NPR)</h2>
+                <div class="form-group">
+                    <label for="plateQueryUrl">HTTP Query URL</label>
+                    <input type="text" id="plateQueryUrl" placeholder="http://172.16.1.227:80/api/recognition/latest">
+                </div>
+                <div class="form-group">
+                    <label for="plateWsUrl">WebSocket URL</label>
+                    <input type="text" id="plateWsUrl" placeholder="ws://172.16.1.227:9080/recognition">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="plateUser">Username</label>
+                        <input type="text" id="plateUser" placeholder="admin">
+                    </div>
+                    <div class="form-group">
+                        <label for="platePass">Password</label>
+                        <input type="password" id="platePass" placeholder="admin">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="platePolling">Polling Interval (ms)</label>
+                        <input type="number" id="platePolling" placeholder="1000">
+                    </div>
+                    <div class="form-group">
+                        <label for="plateWebSocket">Use WebSocket</label>
+                        <select id="plateWebSocket">
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── RFID ───────────────────────────────────────────────── -->
+            <div class="section" id="rfidSection">
+                <h2>📡 RFID Reader</h2>
+                <div class="toggle-row">
+                    <label class="toggle">
+                        <input type="checkbox" id="rfidEnabled" onchange="toggleSection('rfidFields', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label for="rfidEnabled">RFID Reader Enabled</label>
+                </div>
+                <div id="rfidFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rfidHost">Host / IP Address</label>
+                            <input type="text" id="rfidHost" placeholder="192.168.1.100">
+                        </div>
+                        <div class="form-group">
+                            <label for="rfidPort">Port</label>
+                            <input type="number" id="rfidPort" placeholder="2022">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="rfidScanInterval">Scan Interval (ms)</label>
+                            <input type="number" id="rfidScanInterval" placeholder="1500">
+                        </div>
+                        <div class="form-group">
+                            <label for="rfidReconnect">Reconnect Delay (ms)</label>
+                            <input type="number" id="rfidReconnect" placeholder="5000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── NFC ────────────────────────────────────────────────── -->
+            <div class="section" id="nfcSection">
+                <h2>🔖 NFC Reader</h2>
+                <div class="toggle-row">
+                    <label class="toggle">
+                        <input type="checkbox" id="nfcEnabled" onchange="toggleSection('nfcFields', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <label for="nfcEnabled">NFC Reader Enabled</label>
+                </div>
+                <div id="nfcFields">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nfcPort">Serial Port</label>
+                            <input type="text" id="nfcPort" placeholder="COM8">
+                        </div>
+                        <div class="form-group">
+                            <label for="nfcBaudRate">Baud Rate</label>
+                            <input type="number" id="nfcBaudRate" placeholder="38400">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="btn-reload" onclick="loadConfiguration()">🔄 Reload</button>
+                <button type="submit" class="btn-save">💾 Save Configuration</button>
+                <button type="button" class="btn-restart" onclick="restartService()">♻️ Save &amp; Restart</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const API_BASE = window.location.origin;
+    let currentConfig = null;
+
+    function showAlert(message, type = 'info') {
+        const el = document.getElementById('alert');
+        el.className = `alert alert-${type}`;
+        el.textContent = message;
+        el.style.display = 'block';
+        setTimeout(() => el.style.display = 'none', 5000);
+    }
+
+    function toggleWbMode() {
+        const isTcp = document.getElementById('wbConnectionType').value === 'TCP';
+        document.getElementById('wbTcpFields').style.display    = isTcp ? '' : 'none';
+        document.getElementById('wbSerialFields').style.display = isTcp ? 'none' : '';
+    }
+
+    function toggleSection(fieldsId, enabled) {
+        document.getElementById(fieldsId).style.opacity      = enabled ? '1' : '0.4';
+        document.getElementById(fieldsId).style.pointerEvents = enabled ? '' : 'none';
+    }
+
+    async function loadConfiguration() {
+        document.getElementById('loading').style.display    = 'block';
+        document.getElementById('configForm').style.display = 'none';
+
+        try {
+            const response = await fetch(`${API_BASE}/api/configuration`);
+            const data = await response.json();
+
+            document.getElementById('configPath').textContent = data.configFilePath;
+            currentConfig = data.configuration;
+
+            // ── Weighbridge ───────────────────────────────────────────────
+            const wb = currentConfig.tcpListener || {};
+            const connType = wb.connectionType || 'TCP';
+            document.getElementById('wbConnectionType').value = connType;
+            toggleWbMode();
+
+            document.getElementById('tcpIp').value        = wb.ipAddress        || '';
+            document.getElementById('tcpPort').value      = wb.port             || '';
+            document.getElementById('tcpTimeout').value   = wb.readTimeoutMs    || 1000;
+            document.getElementById('tcpReconnect').value = wb.reconnectDelayMs || 5000;
+
+            document.getElementById('wbSerialPort').value     = wb.serialPort       || '';
+            document.getElementById('wbBaudRate').value       = wb.baudRate         || 9600;
+            document.getElementById('wbDataBits').value       = (wb.dataBits || 8).toString();
+            document.getElementById('wbParity').value         = wb.parity           || 'None';
+            document.getElementById('wbStopBits').value       = wb.stopBits         || 'One';
+            document.getElementById('wbReconnectSerial').value = wb.reconnectDelayMs || 5000;
+
+            // ── Camera ────────────────────────────────────────────────────
+            const camera = currentConfig.cameraSettings?.cameras?.[0] || {};
+            const rtspUrl = camera.ipAddress
+                ? `rtsp://${camera.ipAddress}:${camera.port || 554}${camera.rtspPath || '/'}`
+                : '';
+
+            document.getElementById('cameraUrl').value      = rtspUrl;
+            document.getElementById('cameraUser').value     = camera.username || 'admin';
+            document.getElementById('cameraPass').value     = '';
+            document.getElementById('cameraReconnect').value = currentConfig.cameraSettings?.reconnectDelayMs || 5000;
+            document.getElementById('cameraBuffer').value   = currentConfig.cameraSettings?.frameBufferSize  || 100;
+
+            // ── NPR ───────────────────────────────────────────────────────
+            const npr = camera.nprSettings || {};
+            document.getElementById('plateQueryUrl').value  = npr.cameraQueryUrl    || '';
+            document.getElementById('plateWsUrl').value     = npr.webSocketUrl      || '';
+            document.getElementById('plateUser').value      = npr.username          || 'admin';
+            document.getElementById('platePass').value      = '';
+            document.getElementById('platePolling').value   = npr.pollingIntervalMs || 1000;
+            document.getElementById('plateWebSocket').value = (npr.useWebSocket ?? true).toString();
+
+            // ── RFID ──────────────────────────────────────────────────────
+            const rfid = currentConfig.rfidSettings || {};
+            document.getElementById('rfidEnabled').checked    = rfid.enabled    || false;
+            document.getElementById('rfidHost').value         = rfid.host       || '';
+            document.getElementById('rfidPort').value         = rfid.port       || '';
+            document.getElementById('rfidScanInterval').value = rfid.scanIntervalMs   || 1500;
+            document.getElementById('rfidReconnect').value    = rfid.reconnectDelayMs || 5000;
+            toggleSection('rfidFields', rfid.enabled || false);
+
+            // ── NFC ───────────────────────────────────────────────────────
+            const nfc = currentConfig.nfcSettings || {};
+            document.getElementById('nfcEnabled').checked  = nfc.enabled  || false;
+            document.getElementById('nfcPort').value       = nfc.port     || 'COM8';
+            document.getElementById('nfcBaudRate').value   = nfc.baudRate || 38400;
+            toggleSection('nfcFields', nfc.enabled || false);
+
+            document.getElementById('configForm').style.display = 'block';
+            showAlert('Configuration loaded successfully', 'success');
+        } catch (error) {
+            showAlert(`Failed to load configuration: ${error.message}`, 'error');
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    document.getElementById('configForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (!currentConfig) {
+            showAlert('No configuration loaded — please reload the page.', 'error');
+            return;
+        }
+
+        const updated = JSON.parse(JSON.stringify(currentConfig));
+
+        // ── Weighbridge ───────────────────────────────────────────────────
+        updated.tcpListener = updated.tcpListener || {};
+        const connType = document.getElementById('wbConnectionType').value;
+        updated.tcpListener.connectionType   = connType;
+        updated.tcpListener.ipAddress        = document.getElementById('tcpIp').value        || '';
+        updated.tcpListener.port             = parseInt(document.getElementById('tcpPort').value)      || 0;
+        updated.tcpListener.readTimeoutMs    = parseInt(document.getElementById('tcpTimeout').value)   || 1000;
+        updated.tcpListener.reconnectDelayMs = parseInt(document.getElementById('tcpReconnect').value) || 5000;
+        updated.tcpListener.serialPort       = document.getElementById('wbSerialPort').value || '';
+        updated.tcpListener.baudRate         = parseInt(document.getElementById('wbBaudRate').value)   || 9600;
+        updated.tcpListener.dataBits         = parseInt(document.getElementById('wbDataBits').value)   || 8;
+        updated.tcpListener.parity           = document.getElementById('wbParity').value    || 'None';
+        updated.tcpListener.stopBits         = document.getElementById('wbStopBits').value  || 'One';
+
+        if (connType === 'Serial')
+            updated.tcpListener.reconnectDelayMs = parseInt(document.getElementById('wbReconnectSerial').value) || 5000;
+
+        // ── Camera ────────────────────────────────────────────────────────
+        updated.cameraSettings = updated.cameraSettings || {};
+        updated.cameraSettings.cameras = updated.cameraSettings.cameras || [{}];
+        const camera  = updated.cameraSettings.cameras[0];
+        const rtspUrl = document.getElementById('cameraUrl').value;
+        const rtspMatch = rtspUrl.match(/^rtsp:\/\/([^:]+)(?::(\d+))?(\/.*)?$/);
+
+        if (rtspMatch) {
+            camera.ipAddress = rtspMatch[1];
+            camera.port      = rtspMatch[2] ? parseInt(rtspMatch[2]) : 554;
+            camera.rtspPath  = rtspMatch[3] || '/';
+        }
+
+        camera.username = document.getElementById('cameraUser').value || 'admin';
+        if (document.getElementById('cameraPass').value)
+            camera.password = document.getElementById('cameraPass').value;
+
+        updated.cameraSettings.reconnectDelayMs = parseInt(document.getElementById('cameraReconnect').value) || 5000;
+        updated.cameraSettings.frameBufferSize  = parseInt(document.getElementById('cameraBuffer').value)    || 100;
+
+        // ── NPR ───────────────────────────────────────────────────────────
+        camera.nprSettings = camera.nprSettings || {};
+        camera.nprSettings.cameraQueryUrl    = document.getElementById('plateQueryUrl').value;
+        camera.nprSettings.webSocketUrl      = document.getElementById('plateWsUrl').value;
+        camera.nprSettings.username          = document.getElementById('plateUser').value || 'admin';
+        if (document.getElementById('platePass').value)
+            camera.nprSettings.password      = document.getElementById('platePass').value;
+        camera.nprSettings.pollingIntervalMs = parseInt(document.getElementById('platePolling').value) || 1000;
+        camera.nprSettings.useWebSocket      = document.getElementById('plateWebSocket').value === 'true';
+
+        // ── RFID ──────────────────────────────────────────────────────────
+        updated.rfidSettings = updated.rfidSettings || {};
+        updated.rfidSettings.enabled          = document.getElementById('rfidEnabled').checked;
+        updated.rfidSettings.host             = document.getElementById('rfidHost').value         || '';
+        updated.rfidSettings.port             = parseInt(document.getElementById('rfidPort').value)            || 0;
+        updated.rfidSettings.scanIntervalMs   = parseInt(document.getElementById('rfidScanInterval').value)    || 1500;
+        updated.rfidSettings.reconnectDelayMs = parseInt(document.getElementById('rfidReconnect').value)       || 5000;
+
+        // ── NFC ───────────────────────────────────────────────────────────
+        updated.nfcSettings = updated.nfcSettings || {};
+        updated.nfcSettings.enabled  = document.getElementById('nfcEnabled').checked;
+        updated.nfcSettings.port     = document.getElementById('nfcPort').value    || 'COM8';
+        updated.nfcSettings.baudRate = parseInt(document.getElementById('nfcBaudRate').value) || 38400;
+
+        try {
+            const response = await fetch(`${API_BASE}/api/configuration`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updated)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showAlert('Configuration saved! Changes will hot-reload automatically.', 'success');
+            } else {
+                showAlert(`Failed to save: ${result.error || 'Unknown error'}`, 'error');
+            }
+        } catch (error) {
+            showAlert(`Error saving configuration: ${error.message}`, 'error');
+        }
+    });
+
+    async function restartService() {
+        if (!confirm('This will restart the service. Are you sure?')) return;
+        document.getElementById('configForm').dispatchEvent(new Event('submit'));
+        setTimeout(async () => {
+            try {
+                await fetch(`${API_BASE}/api/configuration/restart`, { method: 'POST' });
+                showAlert('Service restart initiated. Reloading in 5 seconds...', 'info');
+                setTimeout(() => location.reload(), 5000);
+            } catch {
+                showAlert('Service restarting... Page will reload.', 'info');
+                setTimeout(() => location.reload(), 5000);
+            }
+        }, 1000);
+    }
+
+    loadConfiguration();
+</script>
+</body>
+</html>
