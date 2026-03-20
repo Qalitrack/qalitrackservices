@@ -184,12 +184,15 @@ public class TransactionService : ITransactionService
         transaction.UpdatedAt = utcNow;
 
         // Calculate net weight
-        if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) && 
+        if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) &&
             decimal.TryParse(transaction.SecondWeight, out var secondWeight))
         {
             var netWeight = Math.Abs(firstWeight - secondWeight);
             transaction.NetWeight = netWeight.ToString("F2");
         }
+
+        // Calculate turnaround time
+        transaction.TurnaroundTime = utcNow - transaction.FirstWeightDate;
 
         // Update status to completed if both weights are present
         if (!string.IsNullOrEmpty(transaction.FirstWeight) && !string.IsNullOrEmpty(transaction.SecondWeight))
@@ -220,12 +223,18 @@ public class TransactionService : ITransactionService
         // Calculate net weight if not already calculated
         if (string.IsNullOrEmpty(transaction.NetWeight))
         {
-            if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) && 
+            if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) &&
                 decimal.TryParse(transaction.SecondWeight, out var secondWeight))
             {
                 var netWeight = Math.Abs(firstWeight - secondWeight);
                 transaction.NetWeight = netWeight.ToString("F2");
             }
+        }
+
+        // Calculate turnaround time if not already calculated
+        if (transaction.TurnaroundTime == null)
+        {
+            transaction.TurnaroundTime = transaction.SecondWeightDate - transaction.FirstWeightDate;
         }
 
         transaction.Status = "Completed";
