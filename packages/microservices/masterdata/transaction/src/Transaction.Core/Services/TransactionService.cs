@@ -5,24 +5,17 @@ using Transaction.Core.Interfaces;
 
 namespace Transaction.Core.Services;
 
-public class TransactionService : ITransactionService
+public class TransactionService(
+    ITransactionRepository transactionRepository,
+    IMapper mapper,
+    ITimeService timeService,
+    IReceiptNumberService receiptNumberService)
+    : ITransactionService
 {
-    private readonly ITransactionRepository _transactionRepository;
-    private readonly IMapper _mapper;
-    private readonly ITimeService _timeService;
-    private readonly IReceiptNumberService _receiptNumberService;
-
-    public TransactionService(
-        ITransactionRepository transactionRepository, 
-        IMapper mapper, 
-        ITimeService timeService,
-        IReceiptNumberService receiptNumberService)
-    {
-        _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _timeService = timeService ?? throw new ArgumentNullException(nameof(timeService));
-        _receiptNumberService = receiptNumberService ?? throw new ArgumentNullException(nameof(receiptNumberService));
-    }
+    private readonly ITransactionRepository _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
+    private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    private readonly ITimeService _timeService = timeService ?? throw new ArgumentNullException(nameof(timeService));
+    private readonly IReceiptNumberService _receiptNumberService = receiptNumberService ?? throw new ArgumentNullException(nameof(receiptNumberService));
 
     public async Task<PagedResult<TransactionReadDto>> GetAllAsync(WeighbridgeTransactionFilter filter)
     {
@@ -57,12 +50,28 @@ public class TransactionService : ITransactionService
     /// </summary>
     public async Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto)
     {
+        // Validate first weight
+        if (string.IsNullOrWhiteSpace(dto.FirstWeight))
+        {
+            throw new ArgumentException("First weight is required.", nameof(dto.FirstWeight));
+        }
+
+        if (!decimal.TryParse(dto.FirstWeight, out var firstWeightValue))
+        {
+            throw new ArgumentException("First weight must be a valid number.", nameof(dto.FirstWeight));
+        }
+
+        if (firstWeightValue < 0)
+        {
+            throw new ArgumentException("First weight cannot be negative.", nameof(dto.FirstWeight));
+        }
+
         var utcNow = _timeService.UtcNow;
-        
+
         // Auto-generate receipt number in format: QSL-YYYYMMDD-XXXXXX
         // Example: QSL-20240202-000001
         var receiptNo = await _receiptNumberService.GenerateReceiptNumberAsync();
-        
+
         // Map DTO to entity
         var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
         
@@ -79,8 +88,7 @@ public class TransactionService : ITransactionService
         transaction.CreatedAt = utcNow;
         transaction.UpdatedAt = utcNow;
         transaction.FirstWeightDate = utcNow;
-        transaction.SecondWeightDate = utcNow;
-        
+
         // Set initial status
         transaction.Status = "Active";
         
@@ -99,8 +107,20 @@ public class TransactionService : ITransactionService
             return null;
         }
 
+        // Prevent updating completed transactions
+        if (existingTransaction.Status == "Completed")
+        {
+            throw new InvalidOperationException("Cannot update a completed transaction. Use reweigh workflow if changes are needed.");
+        }
+
+        // Prevent overwriting second weight if it already exists
+        if (dto.SecondWeight != null && !string.IsNullOrEmpty(existingTransaction.SecondWeight))
+        {
+            throw new InvalidOperationException("Second weight has already been recorded. Use AddSecondWeight endpoint to record the second weight.");
+        }
+
         var utcNow = _timeService.UtcNow;
-        
+
         // Only update non-null fields from the DTO
         if (dto.NoPlate != null) existingTransaction.NoPlate = dto.NoPlate;
         if (dto.DriverName != null) existingTransaction.DriverName = dto.DriverName;
@@ -144,10 +164,10 @@ public class TransactionService : ITransactionService
             return false;
         }
 
-        // Check if transaction is completed
-        if (transaction.Status == "Completed")
+        // Check if transaction is completed or has reweigh requested
+        if (transaction.Status == "Completed" || transaction.Status == "ReweighRequested")
         {
-            throw new InvalidOperationException("Cannot delete a completed transaction.");
+            throw new InvalidOperationException("Cannot delete a completed transaction or a transaction with pending reweigh request.");
         }
 
         return await _transactionRepository.DeleteAsync(ticketId);
@@ -166,10 +186,32 @@ public class TransactionService : ITransactionService
             return null;
         }
 
+        // Check if transaction is already completed
+        if (transaction.Status == "Completed")
+        {
+            throw new InvalidOperationException("Cannot add second weight to a completed transaction.");
+        }
+
         // Check if second weight already exists
         if (!string.IsNullOrEmpty(transaction.SecondWeight))
         {
             throw new InvalidOperationException("Second weight has already been recorded for this transaction.");
+        }
+
+        // Validate second weight value
+        if (string.IsNullOrWhiteSpace(dto.SecondWeight))
+        {
+            throw new ArgumentException("Second weight cannot be empty.", nameof(dto.SecondWeight));
+        }
+
+        if (!decimal.TryParse(dto.SecondWeight, out var secondWeightValue))
+        {
+            throw new ArgumentException("Second weight must be a valid number.", nameof(dto.SecondWeight));
+        }
+
+        if (secondWeightValue < 0)
+        {
+            throw new ArgumentException("Second weight cannot be negative.", nameof(dto.SecondWeight));
         }
 
         var utcNow = _timeService.UtcNow;
@@ -184,12 +226,18 @@ public class TransactionService : ITransactionService
         transaction.UpdatedAt = utcNow;
 
         // Calculate net weight
-        if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) &&
-            decimal.TryParse(transaction.SecondWeight, out var secondWeight))
+        if (!decimal.TryParse(transaction.FirstWeight, out var firstWeight))
         {
-            var netWeight = Math.Abs(firstWeight - secondWeight);
-            transaction.NetWeight = netWeight.ToString("F2");
+            throw new InvalidOperationException("First weight is not a valid number.");
         }
+
+        if (!decimal.TryParse(transaction.SecondWeight, out var secondWeight))
+        {
+            throw new InvalidOperationException("Second weight is not a valid number.");
+        }
+
+        var netWeight = Math.Abs(firstWeight - secondWeight);
+        transaction.NetWeight = netWeight.ToString("F2");
 
         // Calculate turnaround time
         transaction.TurnaroundTime = utcNow - transaction.FirstWeightDate;
@@ -212,6 +260,12 @@ public class TransactionService : ITransactionService
             throw new ArgumentException("Transaction not found", nameof(dto.TicketID));
         }
 
+        // Check if transaction is already completed
+        if (transaction.Status == "Completed")
+        {
+            throw new InvalidOperationException("Transaction is already completed.");
+        }
+
         // Verify both weights are present
         if (string.IsNullOrEmpty(transaction.FirstWeight) || string.IsNullOrEmpty(transaction.SecondWeight))
         {
@@ -219,22 +273,35 @@ public class TransactionService : ITransactionService
         }
 
         var utcNow = _timeService.UtcNow;
-        
+
         // Calculate net weight if not already calculated
         if (string.IsNullOrEmpty(transaction.NetWeight))
         {
-            if (decimal.TryParse(transaction.FirstWeight, out var firstWeight) &&
-                decimal.TryParse(transaction.SecondWeight, out var secondWeight))
+            if (!decimal.TryParse(transaction.FirstWeight, out var firstWeight))
             {
-                var netWeight = Math.Abs(firstWeight - secondWeight);
-                transaction.NetWeight = netWeight.ToString("F2");
+                throw new InvalidOperationException("First weight is not a valid number.");
             }
+
+            if (!decimal.TryParse(transaction.SecondWeight, out var secondWeight))
+            {
+                throw new InvalidOperationException("Second weight is not a valid number.");
+            }
+
+            var netWeight = Math.Abs(firstWeight - secondWeight);
+            transaction.NetWeight = netWeight.ToString("F2");
         }
 
         // Calculate turnaround time if not already calculated
         if (transaction.TurnaroundTime == null)
         {
-            transaction.TurnaroundTime = transaction.SecondWeightDate - transaction.FirstWeightDate;
+            if (transaction.SecondWeightDate.HasValue)
+            {
+                transaction.TurnaroundTime = transaction.SecondWeightDate.Value - transaction.FirstWeightDate;
+            }
+            else
+            {
+                throw new InvalidOperationException("Cannot calculate turnaround time: SecondWeightDate is not set.");
+            }
         }
 
         transaction.Status = "Completed";
@@ -270,12 +337,46 @@ public class TransactionService : ITransactionService
             throw new ArgumentException("Transaction not found", nameof(dto.TicketID));
         }
 
+        if (string.IsNullOrWhiteSpace(dto.Reason))
+        {
+            throw new ArgumentException("Reweigh reason is required.", nameof(dto.Reason));
+        }
+
+        if (transaction.Status == "ReweighRequested")
+        {
+            throw new InvalidOperationException("Reweigh has already been requested for this transaction.");
+        }
+
         if (transaction.Status != "Completed")
         {
             throw new InvalidOperationException("Can only request reweigh for completed transactions.");
         }
 
         var utcNow = _timeService.UtcNow;
+
+        // Get existing reweigh records to determine attempt number
+        var existingRecords = await _transactionRepository.GetReweighRecordsAsync(dto.TicketID);
+        var attemptNumber = existingRecords.Count + 1;
+
+        // Create reweigh record for the request
+        var reweighRecord = new ReweighRecord
+        {
+            WeighbridgeTransactionId = dto.TicketID,
+            AttemptNumber = attemptNumber,
+            StartedAt = utcNow,
+            Status = "Pending",
+            Reason = dto.Reason,
+            Notes = "Reweigh requested, awaiting approval",
+            Weight1 = decimal.TryParse(transaction.FirstWeight, out var fw) ? fw : null,
+            Weight2 = decimal.TryParse(transaction.SecondWeight, out var sw) ? sw : null,
+            NetWeight = decimal.TryParse(transaction.NetWeight, out var nw) ? nw : null,
+            Weight1Timestamp = transaction.FirstWeightDate,
+            Weight2Timestamp = transaction.SecondWeightDate,
+            Operator1 = transaction.OperatorName,
+            Operator2 = transaction.OperatorName2nd
+        };
+
+        await _transactionRepository.CreateReweighRecordAsync(reweighRecord);
 
         // Update reweigh permission
         transaction.ReweighPermission = dto.Reason;
@@ -299,5 +400,121 @@ public class TransactionService : ITransactionService
         // Since ReweighRecords are stored separately, query them
         var reweighRecords = await _transactionRepository.GetReweighRecordsAsync(ticketId);
         return _mapper.Map<IEnumerable<ReweighRecordDto>>(reweighRecords ?? new List<ReweighRecord>());
+    }
+
+    public async Task<TransactionReadDto?> ApproveReweighAsync(ApproveReweighDto dto)
+    {
+        var transaction = await _transactionRepository.GetByIdAsync(dto.TicketID);
+        if (transaction == null)
+        {
+            throw new ArgumentException("Transaction not found", nameof(dto.TicketID));
+        }
+
+        if (transaction.Status != "ReweighRequested")
+        {
+            throw new InvalidOperationException("Can only approve reweigh for transactions with ReweighRequested status.");
+        }
+
+        var utcNow = _timeService.UtcNow;
+
+        // Get existing reweigh records to determine attempt number
+        var existingRecords = await _transactionRepository.GetReweighRecordsAsync(dto.TicketID);
+        var attemptNumber = existingRecords.Count + 1;
+
+        // Create reweigh record for approval
+        var reweighRecord = new ReweighRecord
+        {
+            WeighbridgeTransactionId = dto.TicketID,
+            AttemptNumber = attemptNumber,
+            StartedAt = utcNow,
+            Status = "Approved",
+            Reason = transaction.ReweighPermission,
+            Notes = dto.Notes,
+            PerformedBy = dto.ApprovedBy,
+            Weight1 = decimal.TryParse(transaction.FirstWeight, out var fw) ? fw : null,
+            Weight2 = decimal.TryParse(transaction.SecondWeight, out var sw) ? sw : null,
+            NetWeight = decimal.TryParse(transaction.NetWeight, out var nw) ? nw : null,
+            Weight1Timestamp = transaction.FirstWeightDate,
+            Weight2Timestamp = transaction.SecondWeightDate,
+            Operator1 = transaction.OperatorName,
+            Operator2 = transaction.OperatorName2nd
+        };
+
+        await _transactionRepository.CreateReweighRecordAsync(reweighRecord);
+
+        // Clear second weighing data to allow re-weighing
+        transaction.SecondWeight = null;
+        transaction.SecondWeightDate = null;
+        transaction.NetWeight = null;
+        transaction.TurnaroundTime = null;
+        transaction.WeighBridgeName2nd = null;
+        transaction.ScaleName2nd = null;
+        transaction.OperatorID2nd = null;
+        transaction.OperatorName2nd = null;
+
+        // Reset status to Active
+        transaction.Status = "Active";
+        transaction.UpdatedAt = utcNow;
+        transaction.ChangeDate = utcNow;
+        transaction.ChangeDesc = $"Reweigh approved by {dto.ApprovedBy ?? "system"}. Previous weights cleared for re-weighing.";
+
+        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
+        return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
+    }
+
+    public async Task<TransactionReadDto?> RejectReweighAsync(RejectReweighDto dto)
+    {
+        var transaction = await _transactionRepository.GetByIdAsync(dto.TicketID);
+        if (transaction == null)
+        {
+            throw new ArgumentException("Transaction not found", nameof(dto.TicketID));
+        }
+
+        if (string.IsNullOrWhiteSpace(dto.RejectionReason))
+        {
+            throw new ArgumentException("Rejection reason is required.", nameof(dto.RejectionReason));
+        }
+
+        if (transaction.Status != "ReweighRequested")
+        {
+            throw new InvalidOperationException("Can only reject reweigh for transactions with ReweighRequested status.");
+        }
+
+        var utcNow = _timeService.UtcNow;
+
+        // Get existing reweigh records to determine attempt number
+        var existingRecords = await _transactionRepository.GetReweighRecordsAsync(dto.TicketID);
+        var attemptNumber = existingRecords.Count + 1;
+
+        // Create reweigh record for rejection
+        var reweighRecord = new ReweighRecord
+        {
+            WeighbridgeTransactionId = dto.TicketID,
+            AttemptNumber = attemptNumber,
+            StartedAt = utcNow,
+            CompletedAt = utcNow,
+            Status = "Rejected",
+            Reason = transaction.ReweighPermission,
+            Notes = $"Rejection reason: {dto.RejectionReason}. {dto.Notes}",
+            PerformedBy = dto.RejectedBy,
+            Weight1 = decimal.TryParse(transaction.FirstWeight, out var fw) ? fw : null,
+            Weight2 = decimal.TryParse(transaction.SecondWeight, out var sw) ? sw : null,
+            NetWeight = decimal.TryParse(transaction.NetWeight, out var nw) ? nw : null,
+            Weight1Timestamp = transaction.FirstWeightDate,
+            Weight2Timestamp = transaction.SecondWeightDate,
+            Operator1 = transaction.OperatorName,
+            Operator2 = transaction.OperatorName2nd
+        };
+
+        await _transactionRepository.CreateReweighRecordAsync(reweighRecord);
+
+        // Keep original weights and restore to Completed status
+        transaction.Status = "Completed";
+        transaction.UpdatedAt = utcNow;
+        transaction.ChangeDate = utcNow;
+        transaction.ChangeDesc = $"Reweigh rejected by {dto.RejectedBy ?? "system"}. Reason: {dto.RejectionReason}";
+
+        var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
+        return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 }

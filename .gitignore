@@ -265,4 +265,9 @@ todo/
 # Temporary AI automation scripts
 _*apps/qalitrack_frontend/release/
 apps/qalitrack_frontend/dist-electron/
+
+# Hardware release binaries (large files)
+Qalitrack-Hardware/Qalitrack/release/
+**/release/windows/
+**/release/**/*.exe
 _*

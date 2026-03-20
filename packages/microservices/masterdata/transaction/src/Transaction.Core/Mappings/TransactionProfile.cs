@@ -17,7 +17,7 @@ public class TransactionProfile : Profile
             .ForMember(dest => dest.TicketID, opt => opt.Ignore())
             .ForMember(dest => dest.Status, opt => opt.MapFrom(_ => "Active"))
             .ForMember(dest => dest.FirstWeightDate, opt => opt.MapFrom(_ => DateTime.Now))
-            .ForMember(dest => dest.SecondWeightDate, opt => opt.MapFrom(_ => DateTime.Now))
+            .ForMember(dest => dest.SecondWeightDate, opt => opt.Ignore())
             .ForMember(dest => dest.SecondWeight, opt => opt.Ignore())
             .ForMember(dest => dest.NetWeight, opt => opt.Ignore())
             .ForMember(dest => dest.TurnaroundTime, opt => opt.Ignore())

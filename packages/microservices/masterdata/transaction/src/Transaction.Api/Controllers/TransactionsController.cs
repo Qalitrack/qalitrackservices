@@ -158,6 +158,11 @@ public class TransactionsController : BaseController
             var transaction = await _transactionService.CreateAsync(request.Request);
             return CreatedAtAction(nameof(GetById), new { ticketId = transaction.TicketID }, transaction);
         }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Validation error when creating transaction");
+            return BadRequest(ex.Message);
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating transaction");
@@ -264,6 +269,62 @@ public class TransactionsController : BaseController
         {
             _logger.LogError(ex, "Error getting reweigh records for transaction {TicketID}", ticketId);
             return InternalServerError("An error occurred while retrieving reweigh records");
+        }
+    }
+
+    /// <summary>
+    /// Approve reweigh request - clears weights and resets transaction to Active
+    /// </summary>
+    [HttpPost("approve-reweigh")]
+    public async Task<IActionResult> ApproveReweigh([FromBody] ApproveReweighDto request)
+    {
+        try
+        {
+            var transaction = await _transactionService.ApproveReweighAsync(request);
+            if (transaction == null)
+            {
+                return NotFound("Transaction not found");
+            }
+
+            return Ok(transaction, "Reweigh approved successfully. Transaction reset to Active status for re-weighing.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Invalid operation when approving reweigh for transaction {TicketID}", request.TicketID);
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error approving reweigh for transaction {TicketID}", request.TicketID);
+            return InternalServerError("An error occurred while approving reweigh");
+        }
+    }
+
+    /// <summary>
+    /// Reject reweigh request - keeps original weights and restores to Completed
+    /// </summary>
+    [HttpPost("reject-reweigh")]
+    public async Task<IActionResult> RejectReweigh([FromBody] RejectReweighDto request)
+    {
+        try
+        {
+            var transaction = await _transactionService.RejectReweighAsync(request);
+            if (transaction == null)
+            {
+                return NotFound("Transaction not found");
+            }
+
+            return Ok(transaction, "Reweigh rejected successfully. Transaction restored to Completed status.");
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Invalid operation when rejecting reweigh for transaction {TicketID}", request.TicketID);
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error rejecting reweigh for transaction {TicketID}", request.TicketID);
+            return InternalServerError("An error occurred while rejecting reweigh");
         }
     }
 
