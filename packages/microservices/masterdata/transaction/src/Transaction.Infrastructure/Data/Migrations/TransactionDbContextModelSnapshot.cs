@@ -263,7 +263,7 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("SecondWeight");
 
-                    b.Property<DateTime>("SecondWeightDate")
+                    b.Property<DateTime?>("SecondWeightDate")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("SecondWeightDate")
@@ -298,6 +298,9 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("TransporterName");
+
+                    b.Property<TimeSpan?>("TurnaroundTime")
+                        .HasColumnType("interval");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
