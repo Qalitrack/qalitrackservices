@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Qalitrack-4afaf0f6-fcb2-451f-8e03-d590dc1d93ff</UserSecretsId>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PlatformTarget>x64</PlatformTarget>
+    <DefineConstants>WINDOWS</DefineConstants>
+    <ApplicationIcon></ApplicationIcon>  <!-- Set path if you have an .ico -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <OutputType>Exe</OutputType>
+
+    <!-- Optional but recommended: make publish output cleaner -->
+    <PublishDir>$(ProjectDir)release\windows\$(Configuration)</PublishDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FFMpegCore" Version="5.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+    <PackageReference Include="RtspClientSharp" Version="1.3.3" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="Xabe.FFmpeg" Version="6.0.2" />
+    <PackageReference Include="Xabe.FFmpeg.Downloader" Version="6.0.2" />
+  </ItemGroup>
+
+  <!-- ──────────────────────────────────────────────────────────────── -->
+  <!-- IMPORTANT: This makes rfid_clean.py appear next to the .exe       -->
+  <!-- even when using PublishSingleFile=true                            -->
+  <!-- ──────────────────────────────────────────────────────────────── -->
+  <ItemGroup>
+    <Content Include="Services\rfid_clean.py">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+</Project>

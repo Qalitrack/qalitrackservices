@@ -1,6 +1,8 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qalitrack", "Qalitrack\Qalitrack.csproj", "{C4DC8051-7282-4D4F-9D43-5A52AD329EFE}"
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Qalitrack", "Qalitrack.csproj", "{70788D46-8056-D4B0-54CF-55EA4EB8C96D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -8,9 +10,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C4DC8051-7282-4D4F-9D43-5A52AD329EFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4DC8051-7282-4D4F-9D43-5A52AD329EFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4DC8051-7282-4D4F-9D43-5A52AD329EFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4DC8051-7282-4D4F-9D43-5A52AD329EFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70788D46-8056-D4B0-54CF-55EA4EB8C96D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70788D46-8056-D4B0-54CF-55EA4EB8C96D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70788D46-8056-D4B0-54CF-55EA4EB8C96D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70788D46-8056-D4B0-54CF-55EA4EB8C96D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA50458C-F696-4A72-A79B-D9B6336732ED}
 	EndGlobalSection
 EndGlobal

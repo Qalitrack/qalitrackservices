@@ -20,16 +20,9 @@ public class PlatformDataService : BackgroundService
     private readonly object _connectionLock = new();
     private bool _disposed;
     private readonly StringBuilder _dataBuffer = new();
-    
-    // Track which connection type is active
+
+    private enum ConnectionType { None, Tcp, Serial }
     private ConnectionType _activeConnectionType = ConnectionType.None;
-    
-    private enum ConnectionType
-    {
-        None,
-        Tcp,
-        Serial
-    }
 
     public PlatformDataService(
         ILogger<PlatformDataService> logger,
@@ -40,13 +33,8 @@ public class PlatformDataService : BackgroundService
         _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
         _dataStreamService = dataStreamService ?? throw new ArgumentNullException(nameof(dataStreamService));
 
-        _logger.LogInformation("PlatformDataService initializing with settings: {@Settings}", new
-        {
-            _settings.IpAddress,
-            _settings.Port,
-            _settings.SerialPort,
-            _settings.BaudRate
-        });
+        _logger.LogInformation("PlatformDataService initializing — ConnectionType: {type}, {desc}",
+            _settings.ConnectionType, _settings.GetConnectionDescription());
     }
 
     public bool IsConnected() => _tcpClient?.Connected == true || _serialPort?.IsOpen == true;
@@ -65,11 +53,8 @@ public class PlatformDataService : BackgroundService
             _settings.IpAddress = ip;
             _settings.Port = port;
             _logger.LogInformation("Forced TCP settings to {ip}:{port}", ip, port);
-
             if (IsConnected())
-            {
                 _ = ReconnectAsync(CancellationToken.None);
-            }
         }
     }
 
@@ -82,21 +67,34 @@ public class PlatformDataService : BackgroundService
                 CleanupTcp();
                 CleanupSerial();
                 _activeConnectionType = ConnectionType.None;
-                _logger.LogInformation("Attempting to reconnect to {ip}:{port}",
-                    _settings.IpAddress, _settings.Port);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during cleanup before reconnect");
             }
         }
-
         await TryConnectTcpAsync(token);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Starting PlatformDataService background task");
+        _logger.LogInformation("Starting PlatformDataService — mode: {type}", _settings.ConnectionType);
+
+        // Resolve configured mode once — honour it exclusively, never fall back
+        var configuredType = _settings.ConnectionType?.ToUpperInvariant() switch
+        {
+            "TCP"    => ConnectionType.Tcp,
+            "SERIAL" => ConnectionType.Serial,
+            _        => ConnectionType.Tcp   // unknown value → default to TCP and warn
+        };
+
+        if (configuredType == ConnectionType.Tcp &&
+            !string.Equals(_settings.ConnectionType, "TCP", StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning(
+                "Unrecognised ConnectionType '{type}' — defaulting to TCP. " +
+                "Valid values are 'TCP' or 'Serial'.", _settings.ConnectionType);
+        }
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -104,59 +102,40 @@ public class PlatformDataService : BackgroundService
             {
                 bool connected = false;
 
-                // Try TCP first if configured and no active connection
-                if (_activeConnectionType == ConnectionType.None && 
-                    !string.IsNullOrWhiteSpace(_settings.IpAddress))
+                if (configuredType == ConnectionType.Tcp)
                 {
-                    _logger.LogInformation("Attempting TCP connection to {ip}:{port}",
+                    _logger.LogInformation("Connecting via TCP to {ip}:{port}",
                         _settings.IpAddress, _settings.Port);
                     connected = await TryConnectTcpAsync(stoppingToken);
-                    
-                    if (connected)
-                    {
-                        _activeConnectionType = ConnectionType.Tcp;
-                        _logger.LogInformation("✓ TCP connection established and active");
-                    }
+                    if (connected) _activeConnectionType = ConnectionType.Tcp;
                 }
-
-                // Try Serial only if TCP failed and no active connection
-                if (_activeConnectionType == ConnectionType.None && 
-                    !connected && 
-                    !string.IsNullOrWhiteSpace(_settings.SerialPort))
+                else // Serial
                 {
-                    _logger.LogInformation("TCP unavailable, attempting serial connection to {port}",
-                        _settings.SerialPort);
+                    _logger.LogInformation("Connecting via Serial to {port}", _settings.SerialPort);
                     connected = await TryConnectSerialAsync(stoppingToken);
-                    
-                    if (connected)
-                    {
-                        _activeConnectionType = ConnectionType.Serial;
-                        _logger.LogInformation("✓ Serial connection established and active");
-                    }
+                    if (connected) _activeConnectionType = ConnectionType.Serial;
                 }
 
                 if (connected)
                 {
-                    // Process data while connected
+                    _logger.LogInformation("✓ {type} connection established and active",
+                        _activeConnectionType);
+
                     await ProcessDataAsync(stoppingToken);
-                    
-                    // Connection lost - log which one
-                    var lostConnection = _activeConnectionType == ConnectionType.Tcp ? "TCP" : "Serial";
-                    _logger.LogWarning("{connection} connection lost, will attempt to reconnect", lostConnection);
-                    
-                    // Reset active connection type
+
+                    _logger.LogWarning("{type} connection lost — reconnecting in {delay}ms",
+                        _activeConnectionType, _settings.ReconnectDelayMs);
+
                     lock (_connectionLock)
-                    {
                         _activeConnectionType = ConnectionType.None;
-                    }
-                    
-                    // Wait before reconnecting
+
                     await Task.Delay(_settings.ReconnectDelayMs, stoppingToken);
                 }
                 else
                 {
-                    _logger.LogWarning("No connection established. Retrying in {delay}ms...",
-                        _settings.ReconnectDelayMs);
+                    _logger.LogWarning(
+                        "{type} connection failed — retrying in {delay}ms",
+                        configuredType, _settings.ReconnectDelayMs);
                     await Task.Delay(_settings.ReconnectDelayMs, stoppingToken);
                 }
             }
@@ -169,47 +148,38 @@ public class PlatformDataService : BackgroundService
             {
                 _logger.LogError(ex, "Error in PlatformDataService background task");
                 lock (_connectionLock)
-                {
                     _activeConnectionType = ConnectionType.None;
-                }
                 await Task.Delay(_settings.ReconnectDelayMs, stoppingToken);
             }
         }
 
         CleanupTcp();
         CleanupSerial();
-        _logger.LogInformation("PlatformDataService background task stopped");
+        _logger.LogInformation("PlatformDataService stopped");
     }
 
     private async Task ProcessDataAsync(CancellationToken token)
     {
         if (_activeConnectionType == ConnectionType.Tcp && _tcpClient?.Connected == true)
-        {
             await ProcessTcpStreamAsync(token);
-        }
         else if (_activeConnectionType == ConnectionType.Serial && _serialPort?.IsOpen == true)
-        {
             await ProcessSerialStreamAsync(token);
-        }
     }
 
     private async Task<bool> TryConnectTcpAsync(CancellationToken token)
     {
         if (string.IsNullOrEmpty(_settings.IpAddress))
         {
-            _logger.LogDebug("TCP IP address is not configured, skipping TCP connection");
+            _logger.LogError("TCP connection configured but IpAddress is empty — check config");
             return false;
         }
 
         try
         {
-            _logger.LogDebug("Connecting to TCP {ip}:{port}...",
-                _settings.IpAddress, _settings.Port);
-
             var tcpClient = new TcpClient
             {
                 ReceiveTimeout = _settings.ReadTimeoutMs,
-                SendTimeout = _settings.ReadTimeoutMs
+                SendTimeout    = _settings.ReadTimeoutMs
             };
 
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -221,25 +191,25 @@ public class PlatformDataService : BackgroundService
 
                 lock (_connectionLock)
                 {
-                    _tcpClient = tcpClient;
+                    _tcpClient     = tcpClient;
                     _networkStream = _tcpClient.GetStream();
                     _networkStream.ReadTimeout = _settings.ReadTimeoutMs;
                 }
 
-                _logger.LogInformation("✓ TCP connection established to {ip}:{port}",
+                _logger.LogInformation("✓ TCP connected to {ip}:{port}",
                     _settings.IpAddress, _settings.Port);
                 return true;
             }
             catch (OperationCanceledException) when (cts.IsCancellationRequested && !token.IsCancellationRequested)
             {
-                _logger.LogWarning("TCP connection attempt to {ip}:{port} timed out after 10 seconds",
+                _logger.LogWarning("TCP connection to {ip}:{port} timed out after 10s",
                     _settings.IpAddress, _settings.Port);
                 tcpClient.Dispose();
                 return false;
             }
             catch (Exception ex)
             {
-                _logger.LogDebug(ex, "TCP connection failed to {ip}:{port}: {message}",
+                _logger.LogWarning("TCP connection failed to {ip}:{port} — {message}",
                     _settings.IpAddress, _settings.Port, ex.Message);
                 tcpClient.Dispose();
                 return false;
@@ -258,59 +228,60 @@ public class PlatformDataService : BackgroundService
         try
         {
             var portName = _settings.SerialPort;
-            
+
+            if (string.IsNullOrWhiteSpace(portName))
+            {
+                _logger.LogError("Serial connection configured but SerialPort is empty — check config");
+                return false;
+            }
+
             // Handle AUTO detection
             if (string.Equals(portName, "AUTO", StringComparison.OrdinalIgnoreCase))
             {
                 portName = DetectSerialPort();
                 if (portName == null)
                 {
-                    _logger.LogDebug("No serial ports detected");
+                    _logger.LogWarning("Serial AUTO detection found no available ports");
                     return false;
                 }
             }
-            // Normalize Windows COM port format
-            else if (portName.StartsWith("COM", StringComparison.OrdinalIgnoreCase) && 
+            // Normalise Windows COM port format for COM10+
+            else if (portName.StartsWith("COM", StringComparison.OrdinalIgnoreCase) &&
                      !portName.StartsWith("\\\\.\\", StringComparison.OrdinalIgnoreCase))
             {
-                // For COM ports >= 10, use the \\.\COMx format
                 if (int.TryParse(portName.Substring(3), out int comNumber) && comNumber >= 10)
-                {
                     portName = $"\\\\.\\{portName.ToUpper()}";
-                    _logger.LogDebug("Using extended COM port format: {port}", portName);
-                }
                 else
-                {
                     portName = portName.ToUpper();
-                }
             }
 
-            _logger.LogDebug("Connecting to Serial {port} at {baud} baud...",
-                portName, _settings.BaudRate);
+            _logger.LogDebug("Opening serial port {port} at {baud} baud", portName, _settings.BaudRate);
 
-            _serialPort = new SerialPort(portName, _settings.BaudRate, _settings.Parity, _settings.DataBits, _settings.StopBits)
+            _serialPort = new SerialPort(
+                portName, _settings.BaudRate, _settings.Parity, _settings.DataBits, _settings.StopBits)
             {
-                ReadTimeout = _settings.ReadTimeoutMs,
+                ReadTimeout  = _settings.ReadTimeoutMs,
                 WriteTimeout = _settings.ReadTimeoutMs,
-                Encoding = Encoding.ASCII,
-                NewLine = "\n"
+                Encoding     = Encoding.ASCII,
+                NewLine      = "\n"
             };
 
             _serialPort.Open();
-            _logger.LogInformation("✓ Serial port connected successfully to {port}", portName);
+            _logger.LogInformation("✓ Serial port connected to {port}", portName);
             return true;
         }
         catch (UnauthorizedAccessException)
         {
             var isLinux = Environment.OSVersion.Platform == PlatformID.Unix;
-            var suggestion = isLinux
-                ? "Service should be running as root or user should be in 'dialout' group. Check systemd service configuration."
-                : "Service should be running as LocalSystem/Administrator or COM port is already in use.";
-            _logger.LogWarning("Access denied to {port}. {suggestion}", _settings.SerialPort, suggestion);
+            var hint = isLinux
+                ? "Run as root or add user to 'dialout' group."
+                : "Port may be in use or service lacks Administrator rights.";
+            _logger.LogWarning("Access denied to serial port {port}. {hint}", _settings.SerialPort, hint);
         }
         catch (IOException ex)
         {
-            _logger.LogDebug("Serial port not found or unavailable: {message}", ex.Message);
+            _logger.LogWarning("Serial port {port} not found or unavailable: {message}",
+                _settings.SerialPort, ex.Message);
         }
         catch (OperationCanceledException)
         {
@@ -344,26 +315,26 @@ public class PlatformDataService : BackgroundService
             _logger.LogDebug("Available serial ports: {ports}", string.Join(", ", ports));
 
             var isWindows = Environment.OSVersion.Platform == PlatformID.Win32NT;
-            
-            string? preferredPort;
+            string? preferred;
+
             if (isWindows)
             {
-                // On Windows, prefer COM9 if available, otherwise first COM port
-                preferredPort = ports.FirstOrDefault(p => 
-                    p.Equals("COM9", StringComparison.OrdinalIgnoreCase)) 
-                    ?? ports.FirstOrDefault(p => p.StartsWith("COM", StringComparison.OrdinalIgnoreCase)) 
+                preferred = ports.FirstOrDefault(p =>
+                    p.Equals("COM9", StringComparison.OrdinalIgnoreCase))
+                    ?? ports.FirstOrDefault(p =>
+                    p.StartsWith("COM", StringComparison.OrdinalIgnoreCase))
                     ?? ports[0];
             }
             else
             {
-                // On Linux, prefer ttyUSB or ttyACM
-                preferredPort = ports.FirstOrDefault(p =>
+                preferred = ports.FirstOrDefault(p =>
                     p.Contains("ttyUSB", StringComparison.OrdinalIgnoreCase) ||
-                    p.Contains("ttyACM", StringComparison.OrdinalIgnoreCase)) ?? ports[0];
+                    p.Contains("ttyACM", StringComparison.OrdinalIgnoreCase))
+                    ?? ports[0];
             }
 
-            _logger.LogDebug("Auto-selected serial port: {port}", preferredPort);
-            return preferredPort;
+            _logger.LogDebug("Auto-selected serial port: {port}", preferred);
+            return preferred;
         }
         catch (Exception ex)
         {
@@ -386,9 +357,7 @@ public class PlatformDataService : BackgroundService
                     _logger.LogWarning("TCP connection closed by remote host");
                     break;
                 }
-
-                var rawData = Encoding.ASCII.GetString(buffer, 0, bytesRead);
-                ProcessIncomingData(rawData, "TCP");
+                ProcessIncomingData(Encoding.ASCII.GetString(buffer, 0, bytesRead), "TCP");
             }
             catch (OperationCanceledException) { break; }
             catch (IOException ex)
@@ -411,14 +380,9 @@ public class PlatformDataService : BackgroundService
             try
             {
                 if (_serialPort.BytesToRead > 0)
-                {
-                    var data = _serialPort.ReadExisting();
-                    ProcessIncomingData(data, "Serial");
-                }
+                    ProcessIncomingData(_serialPort.ReadExisting(), "Serial");
                 else
-                {
                     await Task.Delay(10, token);
-                }
             }
             catch (TimeoutException) { continue; }
             catch (OperationCanceledException) { break; }
@@ -437,40 +401,27 @@ public class PlatformDataService : BackgroundService
 
     private void ProcessIncomingData(string rawData, string source)
     {
-        // Add incoming data to buffer
         _dataBuffer.Append(rawData);
-
-        // Process complete lines (split by newline)
         var bufferContent = _dataBuffer.ToString();
         var lines = bufferContent.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-        // Check if buffer ends with newline (complete line)
         bool endsWithNewline = bufferContent.EndsWith('\n') || bufferContent.EndsWith('\r');
-
-        // Process all complete lines
         int linesToProcess = endsWithNewline ? lines.Length : lines.Length - 1;
-        
+
         for (int i = 0; i < linesToProcess; i++)
         {
             var line = lines[i].Trim();
             if (!string.IsNullOrWhiteSpace(line))
-            {
                 ProcessPlatformLine(line, source);
-            }
         }
 
-        // Keep incomplete line in buffer
         if (endsWithNewline)
-        {
             _dataBuffer.Clear();
-        }
         else if (lines.Length > 0)
         {
             _dataBuffer.Clear();
             _dataBuffer.Append(lines[^1]);
         }
 
-        // Prevent buffer from growing too large
         if (_dataBuffer.Length > 4096)
         {
             _logger.LogWarning("Buffer overflow, clearing buffer");
@@ -480,59 +431,51 @@ public class PlatformDataService : BackgroundService
 
     private void ProcessPlatformLine(string line, string source)
     {
-        // Parse platform readings: "Platform 1 :    -20 kg" or "Total      :     00 kg"
         var platformMatch = Regex.Match(line, @"Platform\s+(\d+)\s*:\s*(.+)", RegexOptions.IgnoreCase);
-        var totalMatch = Regex.Match(line, @"Total\s*:\s*(.+)", RegexOptions.IgnoreCase);
+        var totalMatch    = Regex.Match(line, @"Total\s*:\s*(.+)",            RegexOptions.IgnoreCase);
 
-        string type = "";
-        string platformNumber = "";
-        string weight = "";
+        string type = "", platformNumber = "", weight = "";
 
         if (platformMatch.Success)
         {
-            type = "platform";
+            type           = "platform";
             platformNumber = platformMatch.Groups[1].Value;
-            weight = platformMatch.Groups[2].Value.Trim();
+            weight         = platformMatch.Groups[2].Value.Trim();
         }
         else if (totalMatch.Success)
         {
-            type = "total";
+            type   = "total";
             weight = totalMatch.Groups[1].Value.Trim();
         }
         else
         {
-            // Unknown format, stream as-is
             _logger.LogInformation("[{source}] {line}", source, line);
             _ = PublishData(line, source, "unknown", "", line);
             return;
         }
 
-        // Log formatted
-        var displayLine = type == "platform" 
-            ? $"Platform {platformNumber}: {weight}" 
+        var displayLine = type == "platform"
+            ? $"Platform {platformNumber}: {weight}"
             : $"Total: {weight}";
-        
-        _logger.LogInformation("[{source}] {displayLine}", source, displayLine);
 
-        // Publish immediately
+        _logger.LogInformation("[{source}] {displayLine}", source, displayLine);
         _ = PublishData(line, source, type, platformNumber, weight);
     }
 
-    private async Task PublishData(string rawLine, string source, string type, string platformNumber, string weight)
+    private async Task PublishData(string rawLine, string source, string type,
+        string platformNumber, string weight)
     {
         try
         {
-            var payload = new
+            await _dataStreamService.PublishAsync(new
             {
-                raw = rawLine,
-                type = type,
+                raw            = rawLine,
+                type           = type,
                 platformNumber = platformNumber,
-                weight = weight,
-                source = source,
-                timestamp = DateTime.UtcNow
-            };
-
-            await _dataStreamService.PublishAsync(payload, CancellationToken.None);
+                weight         = weight,
+                source         = source,
+                timestamp      = DateTime.UtcNow
+            }, CancellationToken.None);
         }
         catch (Exception ex)
         {
@@ -547,14 +490,11 @@ public class PlatformDataService : BackgroundService
             _networkStream?.Dispose();
             _tcpClient?.Dispose();
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error cleaning up TCP resources");
-        }
+        catch (Exception ex) { _logger.LogError(ex, "Error cleaning up TCP resources"); }
         finally
         {
             _networkStream = null;
-            _tcpClient = null;
+            _tcpClient     = null;
         }
     }
 
@@ -562,25 +502,17 @@ public class PlatformDataService : BackgroundService
     {
         try
         {
-            if (_serialPort?.IsOpen == true)
-                _serialPort.Close();
+            if (_serialPort?.IsOpen == true) _serialPort.Close();
             _serialPort?.Dispose();
         }
-        catch (Exception ex)
-        {
-            _logger.LogWarning(ex, "Error during Serial cleanup");
-        }
-        finally
-        {
-            _serialPort = null;
-        }
+        catch (Exception ex) { _logger.LogWarning(ex, "Error during Serial cleanup"); }
+        finally { _serialPort = null; }
     }
 
     public override void Dispose()
     {
         if (_disposed) return;
         _disposed = true;
-
         CleanupTcp();
         CleanupSerial();
         base.Dispose();
