@@ -20,6 +20,7 @@ public class TransactionProfile : Profile
             .ForMember(dest => dest.SecondWeightDate, opt => opt.MapFrom(_ => DateTime.Now))
             .ForMember(dest => dest.SecondWeight, opt => opt.Ignore())
             .ForMember(dest => dest.NetWeight, opt => opt.Ignore())
+            .ForMember(dest => dest.TurnaroundTime, opt => opt.Ignore())
             .ForMember(dest => dest.ChangeDate, opt => opt.Ignore())
             .ForMember(dest => dest.ChangeDesc, opt => opt.Ignore())
             .ForMember(dest => dest.ReweighPermission, opt => opt.Ignore())
@@ -40,6 +41,7 @@ public class TransactionProfile : Profile
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
             .ForMember(dest => dest.ApiId, opt => opt.Ignore())
             .ForMember(dest => dest.NetWeight, opt => opt.Ignore())
+            .ForMember(dest => dest.TurnaroundTime, opt => opt.Ignore())
             .ForMember(dest => dest.ChangeDate, opt => opt.Ignore())
             .ForMember(dest => dest.ReweighPermission, opt => opt.Ignore())
             .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));

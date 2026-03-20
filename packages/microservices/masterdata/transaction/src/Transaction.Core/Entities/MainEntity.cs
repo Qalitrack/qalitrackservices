@@ -71,7 +71,10 @@ public class WeighbridgeTransaction : BaseEntity
     public DateTime FirstWeightDate { get; set; } = DateTime.Now;
     [NotFutureDate]
     public DateTime SecondWeightDate { get; set; } = DateTime.Now;
-    
+
+    // Turnaround Time (calculated when transaction is completed)
+    public TimeSpan? TurnaroundTime { get; set; }
+
     // Transaction Status and Modifications
     public string Status { get; set; } = "Active";
     public string? ReweighPermission { get; set; }
