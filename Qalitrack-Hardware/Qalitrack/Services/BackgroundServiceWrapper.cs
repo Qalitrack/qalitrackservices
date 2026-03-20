@@ -10,9 +10,9 @@ namespace Qalitrack.Services;
 public class BackgroundServiceWrapper<T> : BackgroundService where T : IDisposable
 {
     private readonly T _service;
-    private readonly ILogger<BackgroundServiceWrapper<T>> _logger;
+    private readonly ILogger<BackgroundServiceWrapper<T>>? _logger;
 
-    public BackgroundServiceWrapper(T service, ILogger<BackgroundServiceWrapper<T>> logger = null)
+    public BackgroundServiceWrapper(T service, ILogger<BackgroundServiceWrapper<T>>? logger = null)
     {
         _service = service ?? throw new ArgumentNullException(nameof(service));
         _logger = logger;

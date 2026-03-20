@@ -28,5 +28,7 @@ public interface ITransactionService
     
     // Reweigh operations
     Task<bool> RequestReweighAsync(RequestReweighDto dto);
+    Task<TransactionReadDto?> ApproveReweighAsync(ApproveReweighDto dto);
+    Task<TransactionReadDto?> RejectReweighAsync(RejectReweighDto dto);
     Task<IEnumerable<ReweighRecordDto>> GetReweighRecordsAsync(string ticketId);
 }

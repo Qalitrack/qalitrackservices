@@ -183,6 +183,17 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             .ToListAsync();
     }
 
+    public async Task<ReweighRecord> CreateReweighRecordAsync(ReweighRecord record)
+    {
+        record.CreatedAt = DateTime.UtcNow;
+        record.UpdatedAt = DateTime.UtcNow;
+
+        await _context.ReweighRecords.AddAsync(record);
+        await _context.SaveChangesAsync();
+
+        return record;
+    }
+
     public async Task<string?> GetLatestReceiptNumberAsync(string datePrefix)
     {
         return await _dbSet

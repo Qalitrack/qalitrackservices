@@ -312,13 +312,15 @@ public class CameraStreamService : BackgroundService
 
     private async Task ConnectAndStreamAsync(Camera camera, CameraStream stream, CancellationToken token)
     {
-        var rtspUrl = camera.GetRtspUrl();
-
-        if (!string.IsNullOrWhiteSpace(camera.Username) && !string.IsNullOrWhiteSpace(camera.Password))
-        {
-            var uri = new Uri(rtspUrl);
-            rtspUrl = $"{uri.Scheme}://{camera.Username}:{camera.Password}@{uri.Host}:{uri.Port}{uri.PathAndQuery}";
-        }
+     var rtspUrl = camera.GetRtspUrl();
+    
+    if (!string.IsNullOrWhiteSpace(camera.Username) && !string.IsNullOrWhiteSpace(camera.Password))
+    {
+        var encodedUsername = Uri.EscapeDataString(camera.Username);
+        var encodedPassword = Uri.EscapeDataString(camera.Password);
+        // Build manually instead of using Uri class
+        rtspUrl = $"rtsp://{encodedUsername}:{encodedPassword}@{camera.IpAddress}:{camera.Port}{camera.RtspPath}";
+    }
 
         _logger.LogInformation("Camera {id}: Connecting to RTSP stream: {url}", 
             camera.Id, camera.GetRtspUrl());
@@ -326,16 +328,13 @@ public class CameraStreamService : BackgroundService
         stream.StreamCts = new CancellationTokenSource();
         var combinedCts = CancellationTokenSource.CreateLinkedTokenSource(token, stream.StreamCts.Token);
 
-        var ffmpegArgs = $"-rtsp_transport tcp " +
-                        $"-stimeout 5000000 " +
-                        $"-max_delay 500000 " +
-                        $"-fflags +genpts+discardcorrupt " +
-                        $"-i \"{rtspUrl}\" " +
-                        $"-f mjpeg " +
-                        $"-q:v 5 " +
-                        $"-r 15 " +
-                        $"-nostdin " +
-                        $"-";
+       var ffmpegArgs = $"-rtsp_transport tcp " +
+                 $"-i \"{rtspUrl}\" " +
+                 $"-f mjpeg " +
+                 $"-q:v 5 " +
+                 $"-r 15 " +
+                 $"-nostdin " +
+                 $"-";
 
         var startInfo = new ProcessStartInfo
         {

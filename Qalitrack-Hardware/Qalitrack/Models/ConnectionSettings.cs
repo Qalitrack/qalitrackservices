@@ -6,17 +6,17 @@ namespace Qalitrack.Models;
 public class ConnectionSettings
 {
     public string ConnectionType { get; set; } = "TCP"; // "Serial" or "TCP"
-    
+
     // Serial settings
     public string SerialPort { get; set; } = "AUTO"; // "AUTO", "/dev/ttyUSB0", or "COM9"
     public int BaudRate { get; set; } = 9600;
     public int DataBits { get; set; } = 8;
     public Parity Parity { get; set; } = Parity.None;
     public StopBits StopBits { get; set; } = StopBits.One;
-    
-    // TCP settings
-    public string IpAddress { get; set; } = "172.16.1.243";
-    public int Port { get; set; } = 3002;
+
+    // TCP settings — no site-specific defaults; must be set via config file or installer
+    public string IpAddress { get; set; } = "";
+    public int Port { get; set; } = 0;
     public int ReadTimeoutMs { get; set; } = 1000;
     public int ReconnectDelayMs { get; set; } = 5000;
 
@@ -31,13 +31,13 @@ public class ConnectionSettings
         {
             if (!string.IsNullOrEmpty(TcpListener.IpAddress))
                 IpAddress = TcpListener.IpAddress;
-                
+
             if (TcpListener.Port > 0)
                 Port = TcpListener.Port;
-                
+
             if (TcpListener.ReadTimeoutMs > 0)
                 ReadTimeoutMs = TcpListener.ReadTimeoutMs;
-                
+
             if (TcpListener.ReconnectDelayMs > 0)
                 ReconnectDelayMs = TcpListener.ReconnectDelayMs;
         }
@@ -53,8 +53,8 @@ public class ConnectionSettings
         }
 
         var type = ConnectionType.ToUpperInvariant();
-        
-        if (type == "SERIAL" || type == "AUTO")
+
+        if (type == "SERIAL")
         {
             if (string.IsNullOrWhiteSpace(SerialPort))
             {
@@ -74,10 +74,10 @@ public class ConnectionSettings
                 return false;
             }
         }
-        
-        if (type == "TCP" || type == "AUTO")
+
+        if (type == "TCP")
         {
-            if (string.IsNullOrWhiteSpace(IpAddress) && type == "TCP")
+            if (string.IsNullOrWhiteSpace(IpAddress))
             {
                 errorMessage = "IpAddress cannot be empty for TCP connections";
                 return false;
@@ -88,6 +88,12 @@ public class ConnectionSettings
                 errorMessage = "Port must be between 1 and 65535";
                 return false;
             }
+        }
+
+        if (type != "TCP" && type != "SERIAL")
+        {
+            errorMessage = $"ConnectionType '{ConnectionType}' is not valid. Use 'TCP' or 'Serial'.";
+            return false;
         }
 
         if (ReadTimeoutMs < 0)
@@ -109,15 +115,11 @@ public class ConnectionSettings
     // Get display-friendly connection info
     public string GetConnectionDescription()
     {
-        var type = ConnectionType.ToUpperInvariant();
-        
-        return type switch
+        return ConnectionType.ToUpperInvariant() switch
         {
             "SERIAL" => $"Serial: {SerialPort} @ {BaudRate} baud",
-            "TCP" => $"TCP: {IpAddress}:{Port}",
-            "AUTO" => $"Auto (TCP: {IpAddress}:{Port}, Serial: {SerialPort} @ {BaudRate} baud)",
-            _ => $"Unknown: {ConnectionType}"
+            "TCP"    => $"TCP: {IpAddress}:{Port}",
+            _        => $"Unknown ConnectionType: '{ConnectionType}'"
         };
     }
-    
 }

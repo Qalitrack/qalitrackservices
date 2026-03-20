@@ -58,8 +58,11 @@ public class TransactionReadDto
     
     // Date Information
     public DateTime FirstWeightDate { get; set; }
-    public DateTime SecondWeightDate { get; set; }
-    
+    public DateTime? SecondWeightDate { get; set; }
+
+    // Turnaround Time
+    public TimeSpan? TurnaroundTime { get; set; }
+
     // Transaction Status and Modifications
     public string Status { get; set; } = "Active";
     public string? ReweighPermission { get; set; }
