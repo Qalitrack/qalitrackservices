@@ -22,7 +22,10 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
     
     // Get reweigh records for a transaction
     Task<List<ReweighRecord>> GetReweighRecordsAsync(string ticketId);
-    
+
+    // Create reweigh record
+    Task<ReweighRecord> CreateReweighRecordAsync(ReweighRecord record);
+
     // Delete by ticket ID
     Task<bool> DeleteAsync(string ticketId);
 }

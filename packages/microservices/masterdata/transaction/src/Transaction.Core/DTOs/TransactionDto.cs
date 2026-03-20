@@ -58,7 +58,7 @@ public class TransactionReadDto
     
     // Date Information
     public DateTime FirstWeightDate { get; set; }
-    public DateTime SecondWeightDate { get; set; }
+    public DateTime? SecondWeightDate { get; set; }
 
     // Turnaround Time
     public TimeSpan? TurnaroundTime { get; set; }
