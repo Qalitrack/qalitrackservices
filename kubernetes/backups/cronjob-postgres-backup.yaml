@@ -81,7 +81,7 @@ spec:
                 -h $TECHNICIAN_DB_HOST \
                 -p 5432 \
                 -U postgres \
-                -d qalitrack_technician \
+                -d qalitrack_techniciandb \
                 -F c \
                 -f $BACKUP_DIR/technician-service.backup
 

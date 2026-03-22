@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/qalitrack/qalitrackservices/technician-service
+  repository: ghcr.io/qalitrack/qalitrackservices/technician-api
   pullPolicy: Always
   tag: "latest"
 
@@ -82,7 +82,7 @@ env:
   - name: UsePostgreSQL
     value: "true"
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=technician-service-postgresql;Port=5432;Database=qalitrack_technician;Username=postgres;Password=$(POSTGRES_PASSWORD);Pooling=true;MinPoolSize=5;MaxPoolSize=100"
+    value: "Host=technician-service-postgresql;Port=5432;Database=qalitrack_techniciandb;Username=postgres;Password=$(POSTGRES_PASSWORD);Pooling=true;MinPoolSize=5;MaxPoolSize=100"
   - name: JWT_SECRET_KEY
     valueFrom:
       secretKeyRef:
@@ -109,7 +109,7 @@ postgresql:
   enabled: true
   auth:
     postgresPassword: "changeme"
-    database: "qalitrack_technician"
+    database: "qalitrack_techniciandb"
 
   primary:
     resources:
