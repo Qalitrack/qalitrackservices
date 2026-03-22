@@ -15,7 +15,7 @@ global:
     expirationMinutes: 60
 
   # Image Registry
-  imageRegistry: ghcr.io/qalitrack/qalitrackservices
+  imageRegistry: ghcr.io/joshuaisikah/qalitrackservices
 
 # ============================================================================
 # GATEWAY SERVICE - API Gateway with JWT Authentication

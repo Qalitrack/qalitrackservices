@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/qalitrack/qalitrackservices/transaction-service
+  repository: ghcr.io/joshuaisikah/qalitrackservices/transaction-service
   pullPolicy: Always
   tag: "latest"
 
