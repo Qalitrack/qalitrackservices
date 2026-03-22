@@ -23,6 +23,7 @@ global:
 gateway:
   enabled: true
   replicaCount: 2
+  fullnameOverride: "gateway-service"
 
   image:
     repository: gateway-service
@@ -40,7 +41,7 @@ gateway:
   service:
     type: LoadBalancer
     port: 7000
-    targetPort: 7000
+    targetPort: 80
 
   env:
     ASPNETCORE_ENVIRONMENT: "Production"
@@ -52,6 +53,7 @@ gateway:
 userService:
   enabled: true
   replicaCount: 2
+  fullnameOverride: "user-service"
 
   image:
     repository: user-service
@@ -79,6 +81,7 @@ userService:
 
   postgresql:
     enabled: true
+    fullnameOverride: "user-service-postgresql"
     primary:
       resources:
         requests:
@@ -96,6 +99,7 @@ userService:
 masterdata:
   enabled: true
   replicaCount: 2
+  fullnameOverride: "masterdata-service"
 
   image:
     repository: masterdata-service
@@ -117,6 +121,7 @@ masterdata:
 
   postgresql:
     enabled: true
+    fullnameOverride: "masterdata-service-postgresql"
     primary:
       resources:
         requests:
@@ -134,6 +139,7 @@ masterdata:
 transaction:
   enabled: true
   replicaCount: 2
+  fullnameOverride: "transaction-service"
 
   image:
     repository: transaction-service
@@ -155,6 +161,7 @@ transaction:
 
   postgresql:
     enabled: true
+    fullnameOverride: "transaction-service-postgresql"
     primary:
       resources:
         requests:
@@ -172,6 +179,7 @@ transaction:
 backup:
   enabled: true
   replicaCount: 1
+  fullnameOverride: "backup-service"
 
   image:
     repository: backup-service
@@ -200,6 +208,7 @@ backup:
 technicianService:
   enabled: true
   replicaCount: 2
+  fullnameOverride: "technician-service"
 
   image:
     repository: technician-api
@@ -226,6 +235,7 @@ technicianService:
 
   postgresql:
     enabled: true
+    fullnameOverride: "technician-service-postgresql"
     primary:
       resources:
         requests:
@@ -242,10 +252,12 @@ technicianService:
 # ============================================================================
 qtruckService:
   enabled: true
+  fullnameOverride: "qtruck-service"
 
   api:
     enabled: true
     replicaCount: 2
+    fullnameOverride: "qtruck-api"
     image:
       repository: qtruck-api
       tag: main
@@ -262,6 +274,7 @@ qtruckService:
   frontend:
     enabled: true
     replicaCount: 2
+    fullnameOverride: "qtruck-frontend"
     image:
       repository: qtruck-frontend
       tag: main
@@ -277,6 +290,7 @@ qtruckService:
 
   postgresql:
     enabled: true
+    fullnameOverride: "qtruck-service-postgresql"
     primary:
       resources:
         requests:
@@ -400,7 +414,6 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/rate-limit: "100"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
 
   hosts:
     - host: qalibrated.co.ke
@@ -409,14 +422,6 @@ ingress:
           pathType: Prefix
           service: gateway-service
           port: 7000
-        - path: /grafana(/|$)(.*)
-          pathType: Prefix
-          service: grafana
-          port: 80
-        - path: /prometheus(/|$)(.*)
-          pathType: Prefix
-          service: prometheus-server
-          port: 80
 
   tls:
     - secretName: qalitrack-tls
@@ -431,7 +436,9 @@ monitoring:
 
   prometheus:
     enabled: true
+    fullnameOverride: "prometheus"
     server:
+      fullnameOverride: "prometheus-server"
       retention: "15d"
       persistentVolume:
         enabled: true
@@ -449,6 +456,7 @@ monitoring:
 
   grafana:
     enabled: true
+    fullnameOverride: "grafana"
     adminPassword: "changeme"  # CHANGE THIS IN PRODUCTION!
     persistence:
       enabled: true
@@ -506,6 +514,7 @@ monitoring:
 
   loki:
     enabled: true
+    fullnameOverride: "loki"
     persistence:
       enabled: true
       size: 30Gi

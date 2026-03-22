@@ -1,0 +1,43 @@
+# Separate ingress for monitoring dashboards with proper rewrites
+# This prevents rewrite rules from breaking the main API
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qalitrack-monitoring-ingress
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: qalitrack-monitoring
+    app.kubernetes.io/part-of: qalitrack
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - qalibrated.co.ke
+      secretName: qalitrack-tls
+  rules:
+    - host: qalibrated.co.ke
+      http:
+        paths:
+          # Grafana Dashboard
+          - path: /grafana
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
+
+          # Prometheus Dashboard
+          - path: /prometheus
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-server
+                port:
+                  number: 80

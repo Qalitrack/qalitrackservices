@@ -1,5 +1,9 @@
 # ServiceMonitors for Qalitrack microservices
 # Tells Prometheus which services to scrape for metrics
+#
+# NOTE: These are standalone Kubernetes resources (not Helm templates)
+# If deploying to a different namespace, update all "namespace: qalitrack-prod" lines below
+# Or use: kubectl apply -f servicemonitors.yaml -n <your-namespace>
 
 ---
 apiVersion: v1
