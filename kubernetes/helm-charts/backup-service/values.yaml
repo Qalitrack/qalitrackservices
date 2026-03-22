@@ -124,16 +124,25 @@ env:
   - name: BACKUP_RETENTION_DAYS
     value: "30"
   - name: RABBITMQ_HOST
-    value: "rabbitmq"
+    value: "backup-service-rabbitmq"
   - name: RABBITMQ_PORT
     value: "5672"
   - name: RABBITMQ_USERNAME
-    value: "user"
+    value: "admin"
   - name: RABBITMQ_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: qalitrack-secrets
-        key: RABBITMQ_PASSWORD
+    value: "securepassword"
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=backup-service-postgresql;Port=5432;Database=backupservicedb;Username=backupservice;Password=backupservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;Pooling=true;"
+  - name: ConnectionStrings__Redis
+    value: "backup-service-redis-master:6379,password=backupservice123"
+  - name: UsePostgreSQL
+    value: "true"
+  - name: UseRedis
+    value: "true"
+  - name: Backup__Path
+    value: "/backups"
+  - name: Backup__MetadataPath
+    value: "/backups/metadata"
 
 volumeMounts:
   - name: backup-storage
@@ -158,3 +167,84 @@ persistence:
   accessMode: ReadWriteOnce
   size: 50Gi
   annotations: {}
+
+# ============================================================================
+# PostgreSQL for Backup Service metadata
+# ============================================================================
+postgresql:
+  enabled: true
+  auth:
+    username: backupservice
+    password: backupservice123
+    database: backupservicedb
+    postgresPassword: backupservice123
+
+  primary:
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
+
+    persistence:
+      enabled: true
+      size: 10Gi
+
+    extendedConfiguration: |
+      shared_buffers = 512MB
+      max_connections = 600
+      work_mem = 2MB
+      effective_cache_size = 1GB
+
+# ============================================================================
+# Redis for Backup Service caching
+# ============================================================================
+redis:
+  enabled: true
+  auth:
+    password: backupservice123
+
+  master:
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "250m"
+
+    persistence:
+      enabled: true
+      size: 2Gi
+
+  replica:
+    replicaCount: 0  # No replicas for 64GB VPS optimization
+
+  commonConfiguration: |
+    maxmemory 256mb
+    maxmemory-policy allkeys-lru
+
+# ============================================================================
+# RabbitMQ for Backup Service messaging
+# ============================================================================
+rabbitmq:
+  enabled: true
+  auth:
+    username: admin
+    password: securepassword
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+
+  persistence:
+    enabled: true
+    size: 5Gi
+
+  replicaCount: 1  # Single instance for 64GB VPS

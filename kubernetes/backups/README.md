@@ -1,6 +1,8 @@
-# Automated PostgreSQL Backups
+# Automated PostgreSQL Backups (CronJob)
 
 Automated daily backups of all Qalitrack PostgreSQL databases with retention and compression.
+
+> **Note:** This is a simple CronJob-based backup system. For API-driven backups with on-demand restore capabilities, see the [BackupService](../helm-charts/backup-service/README.md). Both systems can run together for redundancy.
 
 ## What's Backed Up
 
