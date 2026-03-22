@@ -625,6 +625,71 @@
       "UpstreamPathTemplate": "/services/archive/health",
       "UpstreamHttpMethod": [ "GET" ],
       "Key": "archive-service-health"
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "technician-service-user-service",
+          "Port": 7001
+        }
+      ],
+      "UpstreamPathTemplate": "/tech/user/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS" ],
+      "RouteClaimsRequirement": {},
+      "Metadata": {
+        "Description": "Technician User Service - Authentication & User Management",
+        "ServiceName": "TechnicianUserService"
+      },
+      "Key": "technician-user-service"
+    },
+    {
+      "DownstreamPathTemplate": "/health",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "technician-service-user-service",
+          "Port": 7001
+        }
+      ],
+      "UpstreamPathTemplate": "/tech/user/health",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "technician-user-service-health"
+    },
+    {
+      "DownstreamPathTemplate": "/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "technician-service",
+          "Port": 7006
+        }
+      ],
+      "UpstreamPathTemplate": "/tech/technician/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "Metadata": {
+        "RequiredRoles": ["Technician", "Admin"],
+        "Description": "Technician Service - Technician management and operations",
+        "ServiceName": "TechnicianService"
+      },
+      "Key": "technician-service"
+    },
+    {
+      "DownstreamPathTemplate": "/health",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "technician-service",
+          "Port": 7006
+        }
+      ],
+      "UpstreamPathTemplate": "/tech/technician/health",
+      "UpstreamHttpMethod": [ "GET" ],
+      "Key": "technician-service-health"
     }
   ],
   "GlobalConfiguration": {
