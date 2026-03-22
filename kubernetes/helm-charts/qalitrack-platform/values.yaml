@@ -393,13 +393,14 @@ rabbitmq:
 # By default, Gateway Service is exposed as LoadBalancer
 # ============================================================================
 ingress:
-  enabled: false
+  enabled: true
   className: "nginx"
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-body-size: "50m"
     nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 
   hosts:
     - host: qalibrated.co.ke
@@ -408,6 +409,14 @@ ingress:
           pathType: Prefix
           service: gateway-service
           port: 7000
+        - path: /grafana(/|$)(.*)
+          pathType: Prefix
+          service: grafana
+          port: 80
+        - path: /prometheus(/|$)(.*)
+          pathType: Prefix
+          service: prometheus-server
+          port: 80
 
   tls:
     - secretName: qalitrack-tls
@@ -418,13 +427,95 @@ ingress:
 # MONITORING & OBSERVABILITY
 # ============================================================================
 monitoring:
-  enabled: false  # Enable when ready
+  enabled: true
+
   prometheus:
-    enabled: false
+    enabled: true
+    server:
+      retention: "15d"
+      persistentVolume:
+        enabled: true
+        size: 50Gi
+      resources:
+        requests:
+          memory: "2Gi"
+          cpu: "500m"
+        limits:
+          memory: "4Gi"
+          cpu: "2000m"
+      service:
+        type: ClusterIP
+        port: 80
+
   grafana:
-    enabled: false
+    enabled: true
+    adminPassword: "changeme"  # CHANGE THIS IN PRODUCTION!
+    persistence:
+      enabled: true
+      size: 10Gi
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    service:
+      type: ClusterIP
+      port: 80
+
+    # Grafana configuration
+    grafana.ini:
+      server:
+        root_url: "https://qalibrated.co.ke/grafana"
+        serve_from_sub_path: true
+      auth.anonymous:
+        enabled: false
+      security:
+        admin_user: admin
+        admin_password: changeme
+
+    # Datasources
+    datasources:
+      datasources.yaml:
+        apiVersion: 1
+        datasources:
+          - name: Prometheus
+            type: prometheus
+            url: http://prometheus-server:80
+            access: proxy
+            isDefault: true
+          - name: Loki
+            type: loki
+            url: http://loki:3100
+            access: proxy
+
+    # Pre-installed dashboards
+    dashboardProviders:
+      dashboardproviders.yaml:
+        apiVersion: 1
+        providers:
+          - name: 'default'
+            orgId: 1
+            folder: ''
+            type: file
+            disableDeletion: false
+            editable: true
+            options:
+              path: /var/lib/grafana/dashboards/default
+
   loki:
-    enabled: false
+    enabled: true
+    persistence:
+      enabled: true
+      size: 30Gi
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
 
 # ============================================================================
 # AUTOSCALING
