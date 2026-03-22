@@ -1,0 +1,95 @@
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: gateway-service
+  namespace: qalitrack-prod
+spec:
+  # Target deployment
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gateway-service
+
+  # HPA reference (optional)
+  autoscalerRef:
+    apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    name: gateway-service
+
+  # Service configuration
+  service:
+    port: 7000
+    targetPort: 7000
+    portDiscovery: true
+
+  # Progressive traffic shift
+  analysis:
+    # Schedule interval (how often to check metrics)
+    interval: 1m
+
+    # Max number of failed metric checks before rollback
+    threshold: 5
+
+    # Max traffic weight routed to canary
+    maxWeight: 50
+
+    # Canary increment step (increase traffic by 10% each iteration)
+    stepWeight: 10
+
+    # Metrics to check
+    metrics:
+      # HTTP request success rate (must be > 99%)
+      - name: request-success-rate
+        thresholdRange:
+          min: 99
+        interval: 1m
+
+      # HTTP request duration p99 (must be < 500ms)
+      - name: request-duration
+        thresholdRange:
+          max: 500
+        interval: 1m
+
+    # Webhooks for pre/post deployment
+    webhooks:
+      # Pre-rollout hook (runs before canary deployment)
+      - name: pre-rollout
+        type: pre-rollout
+        url: http://flagger-loadtester.flagger-system/
+        timeout: 5s
+        metadata:
+          type: bash
+          cmd: "echo 'Starting canary deployment for gateway-service'"
+
+      # Load testing during canary
+      - name: load-test
+        type: rollout
+        url: http://flagger-loadtester.flagger-system/
+        timeout: 5s
+        metadata:
+          type: cmd
+          cmd: "hey -z 1m -q 10 -c 2 http://gateway-service-canary.qalitrack-prod:7000/health"
+
+      # Post-rollout hook (runs after successful deployment)
+      - name: post-rollout
+        type: post-rollout
+        url: http://flagger-loadtester.flagger-system/
+        timeout: 5s
+        metadata:
+          type: bash
+          cmd: "echo 'Canary deployment successful for gateway-service'"
+
+---
+# Alert Provider (Slack notification on rollback)
+apiVersion: flagger.app/v1beta1
+kind: AlertProvider
+metadata:
+  name: slack
+  namespace: qalitrack-prod
+spec:
+  type: slack
+  channel: deployments
+  username: flagger
+  # Set webhook URL as secret
+  secretRef:
+    name: slack-webhook
