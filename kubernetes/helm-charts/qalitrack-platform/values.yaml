@@ -195,6 +195,100 @@ backup:
   retention: 30  # Keep backups for 30 days
 
 # ============================================================================
+# TECHNICIAN SERVICE - Technician Management
+# ============================================================================
+technicianService:
+  enabled: true
+  replicaCount: 2
+
+  image:
+    repository: technician-api
+    tag: latest
+    pullPolicy: Always
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+  service:
+    type: ClusterIP
+    port: 7006
+    targetPort: 80
+
+  env:
+    ASPNETCORE_ENVIRONMENT: "Production"
+    ASPNETCORE_URLS: "http://+:80"
+    UsePostgreSQL: "true"
+
+  postgresql:
+    enabled: true
+    primary:
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "250m"
+        limits:
+          memory: "3Gi"
+          cpu: "1000m"
+      persistence:
+        size: 20Gi
+
+# ============================================================================
+# QTRUCK SERVICE - Drivers & Fleet Management
+# ============================================================================
+qtruckService:
+  enabled: true
+
+  api:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: qtruck-api
+      tag: main
+    service:
+      port: 7007
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "250m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m"
+
+  frontend:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: qtruck-frontend
+      tag: main
+    service:
+      port: 7008
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+
+  postgresql:
+    enabled: true
+    primary:
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "250m"
+        limits:
+          memory: "3Gi"
+          cpu: "1000m"
+      persistence:
+        size: 20Gi
+
+# ============================================================================
 # POSTGRESQL - Shared Configuration
 # ============================================================================
 postgresql:

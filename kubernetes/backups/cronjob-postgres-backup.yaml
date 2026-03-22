@@ -75,6 +75,26 @@ spec:
                 -F c \
                 -f $BACKUP_DIR/transaction-service.backup
 
+              # Backup Technician Service DB
+              echo "Backing up technician-service database..."
+              PGPASSWORD=$TECHNICIAN_DB_PASSWORD pg_dump \
+                -h $TECHNICIAN_DB_HOST \
+                -p 5432 \
+                -U postgres \
+                -d qalitrack_techniciandb \
+                -F c \
+                -f $BACKUP_DIR/technician-service.backup
+
+              # Backup QTruck Service DB
+              echo "Backing up qtruck-service database..."
+              PGPASSWORD=$QTRUCK_DB_PASSWORD pg_dump \
+                -h $QTRUCK_DB_HOST \
+                -p 5432 \
+                -U postgres \
+                -d qtruck \
+                -F c \
+                -f $BACKUP_DIR/qtruck-service.backup
+
               # Create checksums
               echo "Creating checksums..."
               cd $BACKUP_DIR
@@ -122,6 +142,22 @@ spec:
                 secretKeyRef:
                   name: qalitrack-secrets
                   key: TRANSACTION_DB_PASSWORD
+
+            - name: TECHNICIAN_DB_HOST
+              value: "technician-service-postgresql"
+            - name: TECHNICIAN_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qalitrack-secrets
+                  key: TECHNICIAN_DB_PASSWORD
+
+            - name: QTRUCK_DB_HOST
+              value: "qtruck-service-postgresql"
+            - name: QTRUCK_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qalitrack-secrets
+                  key: QTRUCK_DB_PASSWORD
 
             volumeMounts:
             - name: backup-storage

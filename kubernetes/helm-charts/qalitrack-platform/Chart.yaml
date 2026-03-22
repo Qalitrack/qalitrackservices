@@ -38,6 +38,14 @@ dependencies:
     version: "1.0.0"
     repository: "file://../backup-service"
     condition: backup.enabled
+  - name: technician-service
+    version: "1.0.0"
+    repository: "file://../technician-service"
+    condition: technicianService.enabled
+  - name: qtruck-service
+    version: "1.0.0"
+    repository: "file://../qtruck-service"
+    condition: qtruckService.enabled
   - name: postgresql
     version: "13.2.24"
     repository: "https://charts.bitnami.com/bitnami"
