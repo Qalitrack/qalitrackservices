@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qalitrack-dev
+  labels:
+    name: qalitrack-dev
+    environment: development
+    managed-by: qalitrack
+    app.kubernetes.io/part-of: qalitrack
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: qalitrack-dev-quota
+  namespace: qalitrack-dev
+spec:
+  hard:
+    requests.cpu: "5"
+    requests.memory: 10Gi
+    limits.cpu: "10"
+    limits.memory: 20Gi
+    persistentvolumeclaims: "10"
+    services: "20"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: qalitrack-dev-limits
+  namespace: qalitrack-dev
+spec:
+  limits:
+  - max:
+      cpu: "1"
+      memory: 2Gi
+    min:
+      cpu: 50m
+      memory: 64Mi
+    default:
+      cpu: 200m
+      memory: 256Mi
+    defaultRequest:
+      cpu: 100m
+      memory: 128Mi
+    type: Container

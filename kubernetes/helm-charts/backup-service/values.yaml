@@ -1,0 +1,160 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/qalitrack/qalitrackservices/backup-service
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 7004
+  targetPort: 7004
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 7004
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 7004
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Production"
+  - name: ASPNETCORE_URLS
+    value: "http://+:7004"
+  - name: JWT_SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: JWT_SECRET_KEY
+  - name: USER_SERVICE_DB_HOST
+    value: "user-service-postgresql"
+  - name: USER_SERVICE_DB_PORT
+    value: "5432"
+  - name: USER_SERVICE_DB_NAME
+    value: "qalitrack_user_service"
+  - name: USER_SERVICE_DB_USERNAME
+    value: "postgres"
+  - name: USER_SERVICE_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: USER_SERVICE_DB_PASSWORD
+  - name: MASTER_DATA_DB_HOST
+    value: "masterdata-service-postgresql"
+  - name: MASTER_DATA_DB_PORT
+    value: "5432"
+  - name: MASTER_DATA_DB_NAME
+    value: "qalitrack_master_data"
+  - name: MASTER_DATA_DB_USERNAME
+    value: "postgres"
+  - name: MASTER_DATA_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: MASTER_DATA_DB_PASSWORD
+  - name: TRANSACTION_DB_HOST
+    value: "transaction-service-postgresql"
+  - name: TRANSACTION_DB_PORT
+    value: "5432"
+  - name: TRANSACTION_DB_NAME
+    value: "qalitrack_transaction"
+  - name: TRANSACTION_DB_USERNAME
+    value: "postgres"
+  - name: TRANSACTION_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: TRANSACTION_DB_PASSWORD
+  - name: BACKUP_SCHEDULE
+    value: "0 2 * * *"
+  - name: BACKUP_RETENTION_DAYS
+    value: "30"
+  - name: RABBITMQ_HOST
+    value: "rabbitmq"
+  - name: RABBITMQ_PORT
+    value: "5672"
+  - name: RABBITMQ_USERNAME
+    value: "user"
+  - name: RABBITMQ_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: RABBITMQ_PASSWORD
+
+volumeMounts:
+  - name: backup-storage
+    mountPath: /backups
+  - name: tmp
+    mountPath: /tmp
+  - name: logs
+    mountPath: /app/logs
+
+volumes:
+  - name: backup-storage
+    persistentVolumeClaim:
+      claimName: backup-storage-pvc
+  - name: tmp
+    emptyDir: {}
+  - name: logs
+    emptyDir: {}
+
+persistence:
+  enabled: true
+  storageClass: ""
+  accessMode: ReadWriteOnce
+  size: 50Gi
+  annotations: {}

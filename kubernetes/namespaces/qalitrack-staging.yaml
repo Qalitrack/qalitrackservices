@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qalitrack-staging
+  labels:
+    name: qalitrack-staging
+    environment: staging
+    managed-by: qalitrack
+    app.kubernetes.io/part-of: qalitrack
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: qalitrack-staging-quota
+  namespace: qalitrack-staging
+spec:
+  hard:
+    requests.cpu: "10"
+    requests.memory: 20Gi
+    limits.cpu: "20"
+    limits.memory: 40Gi
+    persistentvolumeclaims: "15"
+    services: "30"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: qalitrack-staging-limits
+  namespace: qalitrack-staging
+spec:
+  limits:
+  - max:
+      cpu: "2"
+      memory: 4Gi
+    min:
+      cpu: 50m
+      memory: 64Mi
+    default:
+      cpu: 250m
+      memory: 256Mi
+    defaultRequest:
+      cpu: 100m
+      memory: 128Mi
+    type: Container

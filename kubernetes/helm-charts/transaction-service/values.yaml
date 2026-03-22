@@ -1,0 +1,133 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/qalitrack/qalitrackservices/transaction-service
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+  allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 7003
+  targetPort: 7003
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 8
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 7003
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: 7003
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app.kubernetes.io/name
+            operator: In
+            values:
+            - transaction-service
+        topologyKey: kubernetes.io/hostname
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Production"
+  - name: ASPNETCORE_URLS
+    value: "http://+:7003"
+  - name: JWT_SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: JWT_SECRET_KEY
+  - name: TRANSACTION_DB_HOST
+    value: "transaction-service-postgresql"
+  - name: TRANSACTION_DB_PORT
+    value: "5432"
+  - name: TRANSACTION_DB_NAME
+    value: "qalitrack_transaction"
+  - name: TRANSACTION_DB_USERNAME
+    value: "postgres"
+  - name: TRANSACTION_DB_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: TRANSACTION_DB_PASSWORD
+  - name: RABBITMQ_HOST
+    value: "rabbitmq"
+  - name: RABBITMQ_PORT
+    value: "5672"
+  - name: RABBITMQ_USERNAME
+    value: "user"
+  - name: RABBITMQ_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: RABBITMQ_PASSWORD
+
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+  - name: logs
+    mountPath: /app/logs
+
+volumes:
+  - name: tmp
+    emptyDir: {}
+  - name: logs
+    emptyDir: {}
