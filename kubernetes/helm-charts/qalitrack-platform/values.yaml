@@ -1,0 +1,361 @@
+# ============================================================================
+# Qalitrack Platform - Main Configuration (64GB VPS Optimized)
+# ============================================================================
+
+global:
+  environment: production
+  namespace: qalitrack-prod
+  imagePullPolicy: Always
+  storageClass: "local-path"
+
+  # JWT Configuration
+  jwt:
+    issuer: "qalitrack"
+    audience: "qalitrack"
+    expirationMinutes: 60
+
+  # Image Registry
+  imageRegistry: ghcr.io/qalitrack/qalitrackservices
+
+# ============================================================================
+# GATEWAY SERVICE - API Gateway with JWT Authentication
+# ============================================================================
+gateway:
+  enabled: true
+  replicaCount: 2
+
+  image:
+    repository: gateway-service
+    tag: latest
+    pullPolicy: Always
+
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "256Mi"
+      cpu: "250m"
+
+  service:
+    type: LoadBalancer
+    port: 7000
+    targetPort: 7000
+
+  env:
+    ASPNETCORE_ENVIRONMENT: "Production"
+    ASPNETCORE_URLS: "http://+:7000"
+
+# ============================================================================
+# USER SERVICE - Authentication & User Management
+# ============================================================================
+userService:
+  enabled: true
+  replicaCount: 2
+
+  image:
+    repository: user-service
+    tag: latest
+    pullPolicy: Always
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+  service:
+    type: ClusterIP
+    port: 7001
+    targetPort: 80
+
+  env:
+    ASPNETCORE_ENVIRONMENT: "Production"
+    ASPNETCORE_URLS: "http://+:80"
+    UsePostgreSQL: "true"
+    UseRedis: "true"
+
+  postgresql:
+    enabled: true
+    primary:
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "250m"
+        limits:
+          memory: "3Gi"
+          cpu: "1000m"
+      persistence:
+        size: 20Gi
+
+# ============================================================================
+# MASTERDATA SERVICE - Vehicles, Products, Suppliers
+# ============================================================================
+masterdata:
+  enabled: true
+  replicaCount: 2
+
+  image:
+    repository: masterdata-service
+    tag: latest
+    pullPolicy: Always
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+  service:
+    type: ClusterIP
+    port: 7002
+    targetPort: 80
+
+  postgresql:
+    enabled: true
+    primary:
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "250m"
+        limits:
+          memory: "3Gi"
+          cpu: "1000m"
+      persistence:
+        size: 30Gi
+
+# ============================================================================
+# TRANSACTION SERVICE - Weighbridge Transactions
+# ============================================================================
+transaction:
+  enabled: true
+  replicaCount: 2
+
+  image:
+    repository: transaction-service
+    tag: latest
+    pullPolicy: Always
+
+  resources:
+    requests:
+      memory: "768Mi"
+      cpu: "250m"
+    limits:
+      memory: "2.5Gi"
+      cpu: "1500m"
+
+  service:
+    type: ClusterIP
+    port: 7003
+    targetPort: 80
+
+  postgresql:
+    enabled: true
+    primary:
+      resources:
+        requests:
+          memory: "1Gi"
+          cpu: "250m"
+        limits:
+          memory: "3Gi"
+          cpu: "1000m"
+      persistence:
+        size: 50Gi
+
+# ============================================================================
+# BACKUP SERVICE - Scheduled Database Backups
+# ============================================================================
+backup:
+  enabled: true
+  replicaCount: 1
+
+  image:
+    repository: backup-service
+    tag: latest
+    pullPolicy: Always
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+
+  service:
+    type: ClusterIP
+    port: 7004
+    targetPort: 80
+
+  schedule: "0 2 * * *"  # Daily at 2 AM
+  retention: 30  # Keep backups for 30 days
+
+# ============================================================================
+# POSTGRESQL - Shared Configuration
+# ============================================================================
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "changeme"
+    database: "qalitrack"
+
+  primary:
+    persistence:
+      enabled: true
+      storageClass: "local-path"
+
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "250m"
+      limits:
+        memory: "3Gi"
+        cpu: "1000m"
+
+    # PostgreSQL Performance Tuning for 64GB VPS
+    extendedConfiguration: |
+      shared_buffers = 1GB
+      effective_cache_size = 3GB
+      maintenance_work_mem = 256MB
+      checkpoint_completion_target = 0.9
+      wal_buffers = 16MB
+      default_statistics_target = 100
+      random_page_cost = 1.1
+      effective_io_concurrency = 200
+      work_mem = 10MB
+      min_wal_size = 1GB
+      max_wal_size = 4GB
+      max_connections = 200
+
+# ============================================================================
+# REDIS - Caching Layer
+# ============================================================================
+redis:
+  enabled: true
+  architecture: standalone
+
+  auth:
+    enabled: true
+    password: "changeme"
+
+  master:
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "100m"
+      limits:
+        memory: "2Gi"
+        cpu: "500m"
+
+    persistence:
+      enabled: true
+      size: 10Gi
+      storageClass: "local-path"
+
+  # Redis Configuration for performance
+  commonConfiguration: |-
+    maxmemory 2gb
+    maxmemory-policy allkeys-lru
+    save ""
+    appendonly yes
+    appendfsync everysec
+
+# ============================================================================
+# RABBITMQ - Message Queue
+# ============================================================================
+rabbitmq:
+  enabled: true
+  replicaCount: 1
+
+  auth:
+    username: "qalitrack"
+    password: "changeme"
+    erlangCookie: "secretcookie"
+
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: "local-path"
+
+  # RabbitMQ Configuration
+  extraConfiguration: |-
+    vm_memory_high_watermark.relative = 0.6
+    disk_free_limit.relative = 1.0
+
+# ============================================================================
+# INGRESS - External Access (Optional - Enable if you want SSL/domain routing)
+# By default, Gateway Service is exposed as LoadBalancer
+# ============================================================================
+ingress:
+  enabled: false
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+
+  hosts:
+    - host: qalibrated.co.ke
+      paths:
+        - path: /qalitrack/api
+          pathType: Prefix
+          service: gateway-service
+          port: 7000
+
+  tls:
+    - secretName: qalitrack-tls
+      hosts:
+        - qalibrated.co.ke
+
+# ============================================================================
+# MONITORING & OBSERVABILITY
+# ============================================================================
+monitoring:
+  enabled: false  # Enable when ready
+  prometheus:
+    enabled: false
+  grafana:
+    enabled: false
+  loki:
+    enabled: false
+
+# ============================================================================
+# AUTOSCALING
+# ============================================================================
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# ============================================================================
+# RESOURCE SUMMARY for 64GB VPS
+# ============================================================================
+# Service                Requests    Limits
+# ----------------      ---------   --------
+# Gateway (x2)           256Mi       512Mi
+# User Service (x2)      1Gi         4Gi
+# MasterData (x2)        1Gi         4Gi
+# Transaction (x2)       1.5Gi       5Gi
+# Backup (x1)            256Mi       512Mi
+# PostgreSQL (x3)        3Gi         9Gi
+# Redis (x1)             512Mi       2Gi
+# RabbitMQ (x1)          512Mi       2Gi
+# =====================================
+# TOTAL Requests:        ~8.5Gi
+# TOTAL Limits:          ~27Gi
+# Leaves room for OS/system: ~37GB

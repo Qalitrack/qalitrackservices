@@ -1,0 +1,130 @@
+# ============================================================================
+# Qalitrack Platform - Development Environment (64GB VPS)
+# ============================================================================
+
+global:
+  environment: development
+  namespace: qalitrack-dev
+
+gateway:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "50m"
+    limits:
+      memory: "128Mi"
+      cpu: "100m"
+
+userService:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+
+  postgresql:
+    primary:
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "50m"
+        limits:
+          memory: "1Gi"
+          cpu: "250m"
+      persistence:
+        size: 5Gi
+
+masterdata:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+
+  postgresql:
+    primary:
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "50m"
+        limits:
+          memory: "1Gi"
+          cpu: "250m"
+      persistence:
+        size: 5Gi
+
+transaction:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "192Mi"
+      cpu: "50m"
+    limits:
+      memory: "768Mi"
+      cpu: "500m"
+
+  postgresql:
+    primary:
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "50m"
+        limits:
+          memory: "1Gi"
+          cpu: "250m"
+      persistence:
+        size: 10Gi
+
+backup:
+  enabled: false  # Disabled in dev
+
+redis:
+  master:
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "50m"
+      limits:
+        memory: "512Mi"
+        cpu: "100m"
+    persistence:
+      size: 2Gi
+
+rabbitmq:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "512Mi"
+      cpu: "250m"
+  persistence:
+    size: 2Gi
+
+autoscaling:
+  enabled: false
+
+ingress:
+  hosts:
+    - host: dev.qalibrated.co.ke
+      paths:
+        - path: /qalitrack/api
+          pathType: Prefix
+  tls:
+    - secretName: qalitrack-dev-tls
+      hosts:
+        - dev.qalibrated.co.ke
+
+# ============================================================================
+# RESOURCE SUMMARY - Development (64GB VPS)
+# ============================================================================
+# TOTAL Requests:  ~1.5Gi
+# TOTAL Limits:    ~7Gi

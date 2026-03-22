@@ -1,0 +1,109 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: qalitrack-platform
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: qalitrack
+    app.kubernetes.io/part-of: qalitrack
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  # Source repository
+  source:
+    repoURL: https://github.com/Qalitrack/qalitrackservices.git
+    targetRevision: main
+    path: kubernetes/helm-charts/qalitrack-platform
+
+    helm:
+      valueFiles:
+        - values.yaml
+
+      # Override values (customize as needed)
+      # values: |
+      #   gateway:
+      #     replicaCount: 3
+
+  # Destination cluster and namespace
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: qalitrack-prod
+
+  # Sync policy
+  syncPolicy:
+    # Automatic sync
+    automated:
+      prune: true        # Delete resources that are no longer in Git
+      selfHeal: true     # Auto-sync if cluster state drifts from Git
+      allowEmpty: false
+
+    # Sync options
+    syncOptions:
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
+
+    # Retry strategy
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+
+  # Ignore differences for these fields
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas  # Ignore HPA-managed replicas
+
+  # Health assessment
+  health:
+    timeout: 10m
+
+---
+# ArgoCD Project for Qalitrack
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: qalitrack
+  namespace: argocd
+spec:
+  description: Qalitrack Microservices Platform
+
+  # Source repositories
+  sourceRepos:
+    - https://github.com/Qalitrack/qalitrackservices.git
+    - https://charts.bitnami.com/bitnami  # For PostgreSQL, Redis, RabbitMQ
+
+  # Destination clusters and namespaces
+  destinations:
+    - namespace: qalitrack-prod
+      server: https://kubernetes.default.svc
+    - namespace: qalitrack-staging
+      server: https://kubernetes.default.svc
+    - namespace: qalitrack-dev
+      server: https://kubernetes.default.svc
+
+  # Cluster resource whitelist
+  clusterResourceWhitelist:
+    - group: ''
+      kind: Namespace
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRole
+    - group: 'rbac.authorization.k8s.io'
+      kind: ClusterRoleBinding
+
+  # Namespace resource whitelist (allow all)
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+
+  # Sync windows (optional - restrict when syncs can happen)
+  # syncWindows:
+  #   - kind: allow
+  #     schedule: '0 9-17 * * MON-FRI'  # Only during business hours
+  #     duration: 8h
+  #     applications:
+  #       - '*'

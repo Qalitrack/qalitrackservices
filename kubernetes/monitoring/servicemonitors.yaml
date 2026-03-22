@@ -1,0 +1,116 @@
+# ServiceMonitors for Qalitrack microservices
+# Tells Prometheus which services to scrape for metrics
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service-metrics
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: gateway-service
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics
+      port: 7000
+      targetPort: 7000
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: gateway-service
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: gateway-service
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: gateway-service
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gateway-service
+  endpoints:
+  - port: metrics
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: user-service
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: user-service
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: user-service
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: masterdata-service
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: masterdata-service
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: masterdata-service
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: transaction-service
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: transaction-service
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: transaction-service
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 30s
+    scrapeTimeout: 10s
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: backup-service
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: backup-service
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backup-service
+  endpoints:
+  - port: http
+    path: /metrics
+    interval: 60s
+    scrapeTimeout: 10s

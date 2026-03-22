@@ -1,0 +1,126 @@
+# Canary configurations for all Qalitrack services
+# Apply with: kubectl apply -f all-services-canary.yaml
+
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: gateway-service
+  namespace: qalitrack-prod
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gateway-service
+  service:
+    port: 7000
+  analysis:
+    interval: 1m
+    threshold: 5
+    maxWeight: 50
+    stepWeight: 10
+    metrics:
+      - name: request-success-rate
+        thresholdRange:
+          min: 99
+        interval: 1m
+
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: user-service
+  namespace: qalitrack-prod
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: user-service
+  service:
+    port: 7001
+  analysis:
+    interval: 1m
+    threshold: 5
+    maxWeight: 50
+    stepWeight: 10
+    metrics:
+      - name: request-success-rate
+        thresholdRange:
+          min: 99
+        interval: 1m
+
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: masterdata-service
+  namespace: qalitrack-prod
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: masterdata-service
+  service:
+    port: 7002
+  analysis:
+    interval: 1m
+    threshold: 5
+    maxWeight: 50
+    stepWeight: 10
+    metrics:
+      - name: request-success-rate
+        thresholdRange:
+          min: 99
+        interval: 1m
+
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: transaction-service
+  namespace: qalitrack-prod
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: transaction-service
+  service:
+    port: 7003
+  analysis:
+    interval: 1m
+    threshold: 5
+    maxWeight: 50
+    stepWeight: 10
+    metrics:
+      - name: request-success-rate
+        thresholdRange:
+          min: 99
+        interval: 1m
+      - name: request-duration
+        thresholdRange:
+          max: 1000  # Transaction service may be slower
+        interval: 1m
+
+---
+apiVersion: flagger.app/v1beta1
+kind: Canary
+metadata:
+  name: backup-service
+  namespace: qalitrack-prod
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: backup-service
+  service:
+    port: 7004
+  analysis:
+    interval: 2m  # Slower checks for backup service
+    threshold: 3
+    maxWeight: 100  # Can go to 100% faster for backup
+    stepWeight: 50
+    metrics:
+      - name: request-success-rate
+        thresholdRange:
+          min: 95  # More lenient for backup service
+        interval: 2m

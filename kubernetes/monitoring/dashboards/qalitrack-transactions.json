@@ -1,0 +1,191 @@
+{
+  "dashboard": {
+    "title": "Qalitrack Transactions Dashboard",
+    "tags": ["qalitrack", "transactions", "business"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Transactions per Minute",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "rate(http_requests_total{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\", endpoint=\"/api/transactions\", method=\"POST\"}[1m]) * 60",
+            "legendFormat": "New Transactions"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "tpm"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "title": "Transaction Success Rate",
+        "type": "gauge",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [
+          {
+            "expr": "sum(rate(http_requests_total{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\", status=~\"2..\"}[5m])) / sum(rate(http_requests_total{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\"}[5m])) * 100",
+            "legendFormat": "Success Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"value": 0, "color": "red"},
+                {"value": 95, "color": "yellow"},
+                {"value": 99, "color": "green"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 3,
+        "title": "Transaction Latency (p50, p95, p99)",
+        "type": "graph",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.50, rate(http_request_duration_seconds_bucket{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\"}[5m]))",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\"}[5m]))",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\"}[5m]))",
+            "legendFormat": "p99"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        }
+      },
+      {
+        "id": 4,
+        "title": "Failed Transactions",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "sum(increase(http_requests_total{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\", status=~\"5..\"}[1h]))",
+            "legendFormat": "Failed (Last Hour)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "color": {"mode": "thresholds"},
+            "thresholds": {
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 10, "color": "yellow"},
+                {"value": 50, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "title": "Active Database Connections",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 16},
+        "targets": [
+          {
+            "expr": "pg_stat_activity_count{namespace=\"qalitrack-prod\", datname=\"qalitrack_transaction\"}",
+            "legendFormat": "Active Connections"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Transaction Service CPU",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 16},
+        "targets": [
+          {
+            "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"qalitrack-prod\", pod=~\"transaction-service-.*\"}[5m])) * 100",
+            "legendFormat": "CPU %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 70, "color": "yellow"},
+                {"value": 90, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 7,
+        "title": "Transaction Service Memory",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 16},
+        "targets": [
+          {
+            "expr": "sum(container_memory_usage_bytes{namespace=\"qalitrack-prod\", pod=~\"transaction-service-.*\"}) / 1024 / 1024",
+            "legendFormat": "Memory MB"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "decmbytes",
+            "thresholds": {
+              "steps": [
+                {"value": 0, "color": "green"},
+                {"value": 1500, "color": "yellow"},
+                {"value": 1800, "color": "red"}
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "title": "Transaction Errors by Type",
+        "type": "piechart",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+        "targets": [
+          {
+            "expr": "sum by (status) (increase(http_requests_total{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\", status=~\"[4-5]..\"}[1h]))",
+            "legendFormat": "HTTP {{status}}"
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Slow Transactions (>1s)",
+        "type": "table",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+        "targets": [
+          {
+            "expr": "sum by (endpoint) (rate(http_request_duration_seconds_count{namespace=\"qalitrack-prod\", app_kubernetes_io_name=\"transaction-service\"}[5m]) > 1)",
+            "format": "table"
+          }
+        ]
+      }
+    ],
+    "refresh": "30s",
+    "schemaVersion": 36,
+    "style": "dark",
+    "time": {"from": "now-6h", "to": "now"},
+    "timepicker": {},
+    "version": 1
+  }
+}

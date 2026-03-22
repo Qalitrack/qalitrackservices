@@ -1,0 +1,105 @@
+# GitHub Actions Workflow Template for Auto-Deployment
+# Copy this to .github/workflows/ in the MAIN repository (not fork)
+#
+# This workflow automatically deploys to Kubernetes after building Docker images
+
+name: Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: [
+      "Build Gateway Service",
+      "Build User Service",
+      "Build MasterData Service",
+      "Build Transaction Service",
+      "Build Backup Service"
+    ]
+    types:
+      - completed
+    branches:
+      - main
+
+env:
+  KUBECTL_VERSION: "1.28.0"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+
+      - name: Determine which service was built
+        id: service
+        run: |
+          WORKFLOW_NAME="${{ github.event.workflow_run.name }}"
+
+          case "$WORKFLOW_NAME" in
+            "Build Gateway Service")
+              echo "service=gateway-service" >> $GITHUB_OUTPUT
+              ;;
+            "Build User Service")
+              echo "service=user-service" >> $GITHUB_OUTPUT
+              ;;
+            "Build MasterData Service")
+              echo "service=masterdata-service" >> $GITHUB_OUTPUT
+              ;;
+            "Build Transaction Service")
+              echo "service=transaction-service" >> $GITHUB_OUTPUT
+              ;;
+            "Build Backup Service")
+              echo "service=backup-service" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Unknown service"
+              exit 1
+              ;;
+          esac
+
+      - name: Restart deployment
+        run: |
+          SERVICE_NAME="${{ steps.service.outputs.service }}"
+
+          echo "Restarting $SERVICE_NAME deployment..."
+          kubectl rollout restart deployment/$SERVICE_NAME -n qalitrack-prod
+
+          echo "Waiting for rollout to complete..."
+          kubectl rollout status deployment/$SERVICE_NAME -n qalitrack-prod --timeout=5m
+
+          echo "Deployment successful!"
+
+      - name: Verify deployment
+        run: |
+          SERVICE_NAME="${{ steps.service.outputs.service }}"
+
+          echo "Checking pod status..."
+          kubectl get pods -n qalitrack-prod -l app.kubernetes.io/name=$SERVICE_NAME
+
+          echo "Checking deployment status..."
+          kubectl get deployment $SERVICE_NAME -n qalitrack-prod
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Deployment failed for ${{ steps.service.outputs.service }}"
+          # Add notification logic here (Slack, email, etc.)
+
+# Required GitHub Secrets:
+# KUBE_CONFIG - Base64 encoded kubeconfig file
+#
+# To create the secret:
+# kubectl config view --raw --minify | base64 | pbcopy
+# Then add as GitHub Secret named KUBE_CONFIG

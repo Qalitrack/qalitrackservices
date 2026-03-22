@@ -1,0 +1,52 @@
+apiVersion: v2
+name: qalitrack-platform
+description: Qalitrack Microservices Platform - Complete weighbridge management system
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+keywords:
+  - qalitrack
+  - weighbridge
+  - microservices
+  - gateway
+  - transaction
+home: https://github.com/Qalitrack/qalitrackservices
+sources:
+  - https://github.com/Qalitrack/qalitrackservices
+maintainers:
+  - name: Qalitrack Team
+    email: support@qalitrack.com
+icon: https://qalitrack.com/logo.png
+dependencies:
+  - name: gateway-service
+    version: "1.0.0"
+    repository: "file://../gateway-service"
+    condition: gateway.enabled
+  - name: user-service
+    version: "1.0.0"
+    repository: "file://../user-service"
+    condition: userService.enabled
+  - name: masterdata-service
+    version: "1.0.0"
+    repository: "file://../masterdata-service"
+    condition: masterdata.enabled
+  - name: transaction-service
+    version: "1.0.0"
+    repository: "file://../transaction-service"
+    condition: transaction.enabled
+  - name: backup-service
+    version: "1.0.0"
+    repository: "file://../backup-service"
+    condition: backup.enabled
+  - name: postgresql
+    version: "13.2.24"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "18.6.1"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
+  - name: rabbitmq
+    version: "12.10.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: rabbitmq.enabled

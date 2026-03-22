@@ -1,0 +1,125 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: manual-postgres-backup
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: postgres-backup
+    app.kubernetes.io/part-of: qalitrack
+    backup-type: manual
+spec:
+  ttlSecondsAfterFinished: 3600
+
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postgres-backup
+        app.kubernetes.io/part-of: qalitrack
+    spec:
+      restartPolicy: OnFailure
+
+      containers:
+      - name: backup
+        image: postgres:15-alpine
+        imagePullPolicy: IfNotPresent
+
+        command:
+        - /bin/sh
+        - -c
+        - |
+          set -e
+          echo "Starting MANUAL PostgreSQL backup at $(date)"
+
+          BACKUP_DIR="/backups/manual-$(date +%Y-%m-%d-%H%M%S)"
+          mkdir -p $BACKUP_DIR
+
+          # Backup User Service DB
+          echo "Backing up user-service database..."
+          PGPASSWORD=$USER_DB_PASSWORD pg_dump \
+            -h $USER_DB_HOST \
+            -p 5432 \
+            -U postgres \
+            -d qalitrack_user_service \
+            -F c \
+            -f $BACKUP_DIR/user-service.backup
+
+          # Backup MasterData Service DB
+          echo "Backing up masterdata-service database..."
+          PGPASSWORD=$MASTERDATA_DB_PASSWORD pg_dump \
+            -h $MASTERDATA_DB_HOST \
+            -p 5432 \
+            -U postgres \
+            -d qalitrack_master_data \
+            -F c \
+            -f $BACKUP_DIR/masterdata-service.backup
+
+          # Backup Transaction Service DB
+          echo "Backing up transaction-service database..."
+          PGPASSWORD=$TRANSACTION_DB_PASSWORD pg_dump \
+            -h $TRANSACTION_DB_HOST \
+            -p 5432 \
+            -U postgres \
+            -d qalitrack_transaction \
+            -F c \
+            -f $BACKUP_DIR/transaction-service.backup
+
+          # Create checksums
+          echo "Creating checksums..."
+          cd $BACKUP_DIR
+          sha256sum *.backup > checksums.txt
+
+          # Compress backup directory
+          echo "Compressing backups..."
+          tar -czf /backups/qalitrack-manual-backup-$(date +%Y-%m-%d-%H%M%S).tar.gz \
+            -C /backups $(basename $BACKUP_DIR)
+
+          # Remove uncompressed directory
+          rm -rf $BACKUP_DIR
+
+          echo "MANUAL backup completed successfully at $(date)"
+
+          # List current backups
+          echo "Current backups:"
+          ls -lh /backups/*.tar.gz | tail -10
+
+        env:
+        - name: USER_DB_HOST
+          value: "user-service-postgresql"
+        - name: USER_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: qalitrack-secrets
+              key: USER_SERVICE_DB_PASSWORD
+
+        - name: MASTERDATA_DB_HOST
+          value: "masterdata-service-postgresql"
+        - name: MASTERDATA_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: qalitrack-secrets
+              key: MASTER_DATA_DB_PASSWORD
+
+        - name: TRANSACTION_DB_HOST
+          value: "transaction-service-postgresql"
+        - name: TRANSACTION_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: qalitrack-secrets
+              key: TRANSACTION_DB_PASSWORD
+
+        volumeMounts:
+        - name: backup-storage
+          mountPath: /backups
+
+        resources:
+          requests:
+            cpu: 100m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 1Gi
+
+      volumes:
+      - name: backup-storage
+        persistentVolumeClaim:
+          claimName: backup-storage-pvc

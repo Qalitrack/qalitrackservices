@@ -1,0 +1,226 @@
+# kube-prometheus-stack configuration for 64GB VPS
+# Includes Prometheus, Grafana, and AlertManager
+
+# Prometheus configuration
+prometheus:
+  prometheusSpec:
+    # Resource limits
+    resources:
+      requests:
+        cpu: 250m
+        memory: 512Mi
+      limits:
+        cpu: 1000m
+        memory: 2Gi
+
+    # Storage configuration
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 20Gi
+
+    # Retention policy (keep metrics for 15 days)
+    retention: 15d
+    retentionSize: "18GB"
+
+    # Service monitors - discover services to monitor
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+
+    # Enable monitoring of all namespaces
+    serviceMonitorNamespaceSelector: {}
+    podMonitorNamespaceSelector: {}
+
+# Grafana configuration
+grafana:
+  enabled: true
+
+  # Admin credentials (change these!)
+  adminPassword: "admin"  # CHANGE THIS IN PRODUCTION
+
+  # Resource limits
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Persistent storage for dashboards
+  persistence:
+    enabled: true
+    size: 5Gi
+
+  # Service type
+  service:
+    type: ClusterIP
+    port: 80
+
+  # Ingress configuration (optional)
+  ingress:
+    enabled: false
+    # Enable this if you want to access Grafana via domain
+    # ingressClassName: nginx
+    # hosts:
+    #   - grafana.qalibrated.co.ke
+    # tls:
+    #   - secretName: grafana-tls
+    #     hosts:
+    #       - grafana.qalibrated.co.ke
+
+  # Pre-configured dashboards
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+  # Load default dashboards
+  dashboards:
+    default:
+      # Kubernetes cluster monitoring
+      kubernetes-cluster:
+        gnetId: 7249
+        revision: 1
+        datasource: Prometheus
+
+      # Node exporter
+      node-exporter:
+        gnetId: 1860
+        revision: 27
+        datasource: Prometheus
+
+      # Pods monitoring
+      kubernetes-pods:
+        gnetId: 6417
+        revision: 1
+        datasource: Prometheus
+
+# AlertManager configuration
+alertmanager:
+  enabled: true
+
+  alertmanagerSpec:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 200m
+        memory: 256Mi
+
+    storage:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+
+  # Alert configuration
+  config:
+    global:
+      resolve_timeout: 5m
+
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 12h
+      receiver: 'default'
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: 'null'
+      - match:
+          severity: critical
+        receiver: 'critical'
+
+    receivers:
+    - name: 'null'
+    - name: 'default'
+      # Add your notification channels here
+      # webhook_configs:
+      # - url: 'http://your-webhook-url'
+    - name: 'critical'
+      # Add critical alert notification here
+      # email_configs:
+      # - to: 'admin@qalibrated.co.ke'
+
+# Node Exporter (metrics from nodes)
+nodeExporter:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 128Mi
+
+# Kube State Metrics (Kubernetes object metrics)
+kubeStateMetrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# Prometheus Operator
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+# Default rules (alerts)
+defaultRules:
+  create: true
+  rules:
+    alertmanager: true
+    etcd: false  # Disable if not using etcd
+    general: true
+    k8s: true
+    kubeApiserver: true
+    kubeApiserverAvailability: true
+    kubeApiserverSlos: true
+    kubelet: true
+    kubePrometheusGeneral: true
+    kubePrometheusNodeRecording: true
+    kubernetesApps: true
+    kubernetesResources: true
+    kubernetesStorage: true
+    kubernetesSystem: true
+    kubeScheduler: false  # Disable if not monitoring scheduler
+    kubeStateMetrics: true
+    network: true
+    node: true
+    prometheus: true
+    prometheusOperator: true
+
+# Resource summary for 64GB VPS:
+# Prometheus:     512Mi - 2Gi
+# Grafana:        256Mi - 512Mi
+# AlertManager:   128Mi - 256Mi
+# Node Exporter:  64Mi  - 128Mi (per node)
+# Kube State:     128Mi - 256Mi
+# Operator:       128Mi - 256Mi
+# ----------------------------------
+# TOTAL:          ~1.2Gi - 3.4Gi

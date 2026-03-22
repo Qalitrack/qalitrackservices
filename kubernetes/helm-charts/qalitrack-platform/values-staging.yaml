@@ -1,0 +1,137 @@
+# ============================================================================
+# Qalitrack Platform - Staging Environment (64GB VPS)
+# ============================================================================
+
+global:
+  environment: staging
+  namespace: qalitrack-staging
+
+gateway:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+userService:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+  postgresql:
+    primary:
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "100m"
+        limits:
+          memory: "2Gi"
+          cpu: "500m"
+      persistence:
+        size: 10Gi
+
+masterdata:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+  postgresql:
+    primary:
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "100m"
+        limits:
+          memory: "2Gi"
+          cpu: "500m"
+      persistence:
+        size: 15Gi
+
+transaction:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "384Mi"
+      cpu: "100m"
+    limits:
+      memory: "1.5Gi"
+      cpu: "750m"
+
+  postgresql:
+    primary:
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "100m"
+        limits:
+          memory: "2Gi"
+          cpu: "500m"
+      persistence:
+        size: 20Gi
+
+backup:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "100m"
+
+redis:
+  master:
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "50m"
+      limits:
+        memory: "1Gi"
+        cpu: "250m"
+    persistence:
+      size: 5Gi
+
+rabbitmq:
+  replicaCount: 1
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+  persistence:
+    size: 5Gi
+
+autoscaling:
+  enabled: false
+
+ingress:
+  hosts:
+    - host: staging.qalibrated.co.ke
+      paths:
+        - path: /qalitrack/api
+          pathType: Prefix
+  tls:
+    - secretName: qalitrack-staging-tls
+      hosts:
+        - staging.qalibrated.co.ke
+
+# ============================================================================
+# RESOURCE SUMMARY - Staging (64GB VPS)
+# ============================================================================
+# TOTAL Requests:  ~3.5Gi
+# TOTAL Limits:    ~13Gi
