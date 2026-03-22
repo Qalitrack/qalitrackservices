@@ -1,0 +1,139 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/qalitrack/qalitrackservices/technician-service
+  pullPolicy: Always
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+  allowPrivilegeEscalation: false
+
+service:
+  type: ClusterIP
+  port: 7006
+  targetPort: 80
+
+resources:
+  requests:
+    memory: "512Mi"
+    cpu: "250m"
+  limits:
+    memory: "2Gi"
+    cpu: "1000m"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  successThreshold: 1
+  failureThreshold: 3
+
+readinessProbe:
+  httpGet:
+    path: /health/ready
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Production"
+  - name: ASPNETCORE_URLS
+    value: "http://+:80"
+  - name: UsePostgreSQL
+    value: "true"
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=technician-service-postgresql;Port=5432;Database=qalitrack_technician;Username=postgres;Password=$(POSTGRES_PASSWORD);Pooling=true;MinPoolSize=5;MaxPoolSize=100"
+  - name: JWT_SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: JWT_SECRET_KEY
+  - name: JWT_ISSUER
+    value: "qalitrack"
+  - name: JWT_AUDIENCE
+    value: "qalitrack"
+
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+  - name: logs
+    mountPath: /app/logs
+
+volumes:
+  - name: tmp
+    emptyDir: {}
+  - name: logs
+    emptyDir: {}
+
+postgresql:
+  enabled: true
+  auth:
+    postgresPassword: "changeme"
+    database: "qalitrack_technician"
+
+  primary:
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "250m"
+      limits:
+        memory: "3Gi"
+        cpu: "1000m"
+
+    persistence:
+      enabled: true
+      size: 20Gi
+
+    extendedConfiguration: |
+      shared_buffers = 512MB
+      max_connections = 600
+      work_mem = 2MB
+      effective_cache_size = 1GB
+      maintenance_work_mem = 128MB
+      checkpoint_completion_target = 0.9
+      wal_buffers = 16MB
+      default_statistics_target = 100
+      random_page_cost = 1.1
+      effective_io_concurrency = 200
+      min_wal_size = 1GB
+      max_wal_size = 4GB

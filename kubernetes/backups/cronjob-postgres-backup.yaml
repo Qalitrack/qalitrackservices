@@ -75,6 +75,16 @@ spec:
                 -F c \
                 -f $BACKUP_DIR/transaction-service.backup
 
+              # Backup Technician Service DB
+              echo "Backing up technician-service database..."
+              PGPASSWORD=$TECHNICIAN_DB_PASSWORD pg_dump \
+                -h $TECHNICIAN_DB_HOST \
+                -p 5432 \
+                -U postgres \
+                -d qalitrack_technician \
+                -F c \
+                -f $BACKUP_DIR/technician-service.backup
+
               # Create checksums
               echo "Creating checksums..."
               cd $BACKUP_DIR
@@ -122,6 +132,14 @@ spec:
                 secretKeyRef:
                   name: qalitrack-secrets
                   key: TRANSACTION_DB_PASSWORD
+
+            - name: TECHNICIAN_DB_HOST
+              value: "technician-service-postgresql"
+            - name: TECHNICIAN_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: qalitrack-secrets
+                  key: TECHNICIAN_DB_PASSWORD
 
             volumeMounts:
             - name: backup-storage
