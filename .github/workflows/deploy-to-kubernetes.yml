@@ -1,0 +1,99 @@
+# Reusable workflow for Kubernetes deployment
+# Called by service-specific workflows after building images
+
+name: Deploy to Kubernetes
+
+on:
+  workflow_call:
+    inputs:
+      service-name:
+        description: 'Name of the service to deploy (e.g., gateway-service)'
+        required: true
+        type: string
+      namespace:
+        description: 'Kubernetes namespace'
+        required: false
+        type: string
+        default: 'qalitrack-prod'
+      timeout:
+        description: 'Rollout timeout'
+        required: false
+        type: string
+        default: '5m'
+    secrets:
+      kubeconfig:
+        description: 'Base64-encoded kubeconfig'
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.28.0'
+
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.kubeconfig }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Verify cluster connection
+        run: |
+          echo "Connecting to Kubernetes cluster..."
+          kubectl cluster-info
+          kubectl get nodes
+
+      - name: Check current deployment status
+        run: |
+          echo "Current deployment status:"
+          kubectl get deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} || echo "Deployment not found"
+
+      - name: Restart deployment (pull latest image)
+        run: |
+          echo "Restarting ${{ inputs.service-name }} in namespace ${{ inputs.namespace }}..."
+          kubectl rollout restart deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }}
+
+          echo "Waiting for rollout to complete..."
+          kubectl rollout status deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} --timeout=${{ inputs.timeout }}
+
+      - name: Verify deployment
+        run: |
+          echo "=== Pod Status ==="
+          kubectl get pods -n ${{ inputs.namespace }} -l app.kubernetes.io/name=${{ inputs.service-name }}
+
+          echo ""
+          echo "=== Recent Logs ==="
+          kubectl logs -n ${{ inputs.namespace }} -l app.kubernetes.io/name=${{ inputs.service-name }} --tail=50 || echo "No logs available yet"
+
+          echo ""
+          echo "=== Deployment Details ==="
+          kubectl describe deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} | grep -A 5 "Replicas:"
+
+      - name: Check rollout success
+        run: |
+          # Verify at least one pod is running
+          RUNNING_PODS=$(kubectl get pods -n ${{ inputs.namespace }} -l app.kubernetes.io/name=${{ inputs.service-name }} --field-selector=status.phase=Running --no-headers | wc -l)
+
+          if [ "$RUNNING_PODS" -lt 1 ]; then
+            echo "ERROR: No running pods found for ${{ inputs.service-name }}"
+            exit 1
+          fi
+
+          echo "SUCCESS: $RUNNING_PODS pod(s) running for ${{ inputs.service-name }}"
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          echo "========================================="
+          echo "Deployment Summary: ${{ inputs.service-name }}"
+          echo "========================================="
+          echo "Namespace: ${{ inputs.namespace }}"
+          echo "Status: $(kubectl rollout status deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} 2>&1 || echo 'FAILED')"
+          echo "========================================="
