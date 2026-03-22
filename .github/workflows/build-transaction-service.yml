@@ -72,6 +72,18 @@ jobs:
             sleep 2
           done
 
+      - name: Clean build artifacts and old migrations
+        run: |
+          cd ${{ env.SERVICE_PATH }}
+          echo "Cleaning build artifacts..."
+          dotnet clean src/Transaction.Api/Transaction.Api.csproj || true
+          find . -name "bin" -type d -exec rm -rf {} + 2>/dev/null || true
+          find . -name "obj" -type d -exec rm -rf {} + 2>/dev/null || true
+          echo "Removing any git-untracked migration files..."
+          git clean -fdx src/Transaction.Infrastructure/Data/Migrations/ || true
+          echo "Current migration files:"
+          ls -la src/Transaction.Infrastructure/Data/Migrations/
+
       - name: Restore dependencies
         run: |
           cd ${{ env.SERVICE_PATH }}
