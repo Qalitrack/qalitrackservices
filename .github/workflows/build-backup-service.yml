@@ -272,3 +272,17 @@ jobs:
         run: |
           cd deployment
           docker compose config
+
+  deploy-kubernetes:
+    needs: build-and-push
+    if: |
+      github.ref == 'refs/heads/main' &&
+      github.event_name == 'push' &&
+      vars.ENABLE_K8S_DEPLOY == 'true'
+    uses: ./.github/workflows/deploy-to-kubernetes.yml
+    with:
+      service-name: backup-service
+      namespace: qalitrack-prod
+      timeout: 5m
+    secrets:
+      kubeconfig: ${{ secrets.KUBECONFIG }}
