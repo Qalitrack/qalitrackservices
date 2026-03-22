@@ -1,0 +1,27 @@
+apiVersion: v2
+name: qtruck-service
+description: QTruck Drivers Application - Fleet management and driver tracking
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - qtruck
+  - drivers
+  - fleet
+  - tracking
+
+maintainers:
+  - name: Qalitrack Team
+    email: dev@qalitrack.com
+
+home: https://github.com/Qalitrack/qalitrackservices
+sources:
+  - https://github.com/Qalitrack/qalitrackservices
+
+dependencies:
+  # PostgreSQL with PostGIS for QTruck
+  - name: postgresql
+    version: "13.2.24"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
