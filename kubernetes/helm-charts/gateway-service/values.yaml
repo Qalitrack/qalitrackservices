@@ -32,7 +32,7 @@ securityContext:
 service:
   type: ClusterIP
   port: 7000
-  targetPort: 7000
+  targetPort: 80
 
 resources:
   limits:
@@ -68,7 +68,7 @@ affinity:
 
 env:
   ASPNETCORE_ENVIRONMENT: "Production"
-  ASPNETCORE_URLS: "http://+:7000"
+  ASPNETCORE_URLS: "http://+:80"
   JWT_ISSUER: "qalitrack"
   JWT_AUDIENCE: "qalitrack"
 
@@ -79,7 +79,7 @@ envFrom:
 livenessProbe:
   httpGet:
     path: /health
-    port: 7000
+    port: 80
   initialDelaySeconds: 30
   periodSeconds: 10
   timeoutSeconds: 5
@@ -87,8 +87,8 @@ livenessProbe:
 
 readinessProbe:
   httpGet:
-    path: /health/ready
-    port: 7000
+    path: /health
+    port: 80
   initialDelaySeconds: 10
   periodSeconds: 5
   timeoutSeconds: 3
