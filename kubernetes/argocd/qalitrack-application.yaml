@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: qalitrack-platform
+  name: qalitrack
   namespace: argocd
   labels:
     app.kubernetes.io/name: qalitrack
@@ -44,6 +44,7 @@ spec:
       - CreateNamespace=true
       - PrunePropagationPolicy=foreground
       - PruneLast=true
+      - ServerSideApply=true
 
     # Retry strategy
     retry:
@@ -86,12 +87,8 @@ spec:
 
   # Cluster resource whitelist
   clusterResourceWhitelist:
-    - group: ''
-      kind: Namespace
-    - group: 'rbac.authorization.k8s.io'
-      kind: ClusterRole
-    - group: 'rbac.authorization.k8s.io'
-      kind: ClusterRoleBinding
+    - group: '*'
+      kind: '*'
 
   # Namespace resource whitelist (allow all)
   namespaceResourceWhitelist:

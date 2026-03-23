@@ -23,6 +23,12 @@ data:
       - CiliumIdentity
       clusters:
       - "*"
+    - apiGroups:
+      - monitoring.grafana.com
+      kinds:
+      - "*"
+      clusters:
+      - "*"
 
   # Resource customizations
   resource.customizations: |
