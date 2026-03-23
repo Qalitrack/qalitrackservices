@@ -160,7 +160,7 @@ backup:
   fullnameOverride: "backup-service"
   image:
     repository: backup-service
-    tag: latest
+    tag: main-7bcf9dd
     pullPolicy: Always
   resources:
     requests:
