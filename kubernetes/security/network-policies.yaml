@@ -1,0 +1,265 @@
+# Network Policies for Qalitrack Platform
+# Implements microsegmentation and defense-in-depth
+
+---
+# Default deny all ingress traffic
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+
+---
+# Allow ingress controller to gateway service
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-gateway
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: gateway-service
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 80
+
+---
+# Allow gateway to access backend services
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-gateway-to-services
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: qalitrack
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: gateway-service
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 7001
+    - protocol: TCP
+      port: 7002
+    - protocol: TCP
+      port: 7003
+    - protocol: TCP
+      port: 7004
+    - protocol: TCP
+      port: 7006
+    - protocol: TCP
+      port: 7007
+    - protocol: TCP
+      port: 7008
+
+---
+# Allow services to access PostgreSQL
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-services-to-postgres
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: postgresql
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: qalitrack
+    ports:
+    - protocol: TCP
+      port: 5432
+
+---
+# Allow services to access Redis
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-services-to-redis
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: redis
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: qalitrack
+    ports:
+    - protocol: TCP
+      port: 6379
+
+---
+# Allow services to access RabbitMQ
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-services-to-rabbitmq
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/part-of: qalitrack
+    ports:
+    - protocol: TCP
+      port: 5672
+    - protocol: TCP
+      port: 15672
+
+---
+# Allow Prometheus to scrape metrics
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scraping
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/part-of: qalitrack
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app.kubernetes.io/name: prometheus
+    ports:
+    - protocol: TCP
+      port: 80
+    - protocol: TCP
+      port: 7000
+    - protocol: TCP
+      port: 7001
+    - protocol: TCP
+      port: 7002
+    - protocol: TCP
+      port: 7003
+    - protocol: TCP
+      port: 7004
+    - protocol: TCP
+      port: 7006
+    - protocol: TCP
+      port: 7007
+    - protocol: TCP
+      port: 7008
+
+---
+# Allow ingress to monitoring dashboards
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-to-monitoring
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector:
+    matchExpressions:
+    - key: app.kubernetes.io/name
+      operator: In
+      values:
+      - grafana
+      - prometheus
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 80
+
+---
+# Allow DNS resolution for all pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: kube-system
+    ports:
+    - protocol: UDP
+      port: 53
+
+---
+# Allow egress to external services (internet)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-external-egress
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/part-of: qalitrack
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+        except:
+        - 169.254.169.254/32  # AWS metadata
+        - 10.0.0.0/8          # Private networks
+        - 172.16.0.0/12
+        - 192.168.0.0/16

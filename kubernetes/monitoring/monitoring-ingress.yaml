@@ -1,0 +1,48 @@
+# Separate ingress for monitoring dashboards using subdomains
+# Grafana: grafana.qalibrated.co.ke
+# Prometheus: prometheus.qalibrated.co.ke
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qalitrack-monitoring-ingress
+  namespace: qalitrack-prod
+  labels:
+    app.kubernetes.io/name: qalitrack-monitoring
+    app.kubernetes.io/part-of: qalitrack
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - grafana.qalibrated.co.ke
+        - prometheus.qalibrated.co.ke
+      secretName: qalitrack-monitoring-tls
+  rules:
+    # Grafana Dashboard
+    - host: grafana.qalibrated.co.ke
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  number: 80
+
+    # Prometheus Dashboard
+    - host: prometheus.qalibrated.co.ke
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-server
+                port:
+                  number: 80
