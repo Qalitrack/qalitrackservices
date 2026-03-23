@@ -18,6 +18,8 @@ env:
   POSTGRES_USER: backupservice
   POSTGRES_PASSWORD: backupservice123
   POSTGRES_DB: backupservicedb
+  EMAIL_SMTP_PASSWORD: ${{ secrets.EMAIL_SMTP_PASSWORD }}
+  RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
 
 jobs:
   test:
@@ -209,7 +211,7 @@ jobs:
               restart: unless-stopped
               environment:
                 - ASPNETCORE_ENVIRONMENT=Production
-                - ConnectionStrings__DefaultConnection=Host=postgres-db;Database=backupservicedb;Username=backupservice;Password=backupservice123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60
+                - ConnectionStrings__DefaultConnection=Host=postgres-db;Database=$POSTGRES_DB;Username=$POSTGRES_USER;Password=$POSTGRES_PASSWORD;Pooling=true;MinPoolSize=5;MaxPoolSize=100;Include Error Detail=true;Command Timeout=60
                 - UsePostgreSQL=true
                 - UseRedis=false
                 - Email__FromEmail=noreply@qalitrack.com
@@ -217,12 +219,12 @@ jobs:
                 - Email__SmtpHost=smtp.gmail.com
                 - Email__SmtpPort=587
                 - Email__SmtpUsername=joshuaiska@gmail.com
-                - Email__SmtpPassword=dgln ffbs ixvg pxuj
+                - Email__SmtpPassword=$EMAIL_SMTP_PASSWORD
                 - Email__EnableSsl=true
                 - RabbitMQ__Host=rabbitmq
                 - RabbitMQ__Port=5672
                 - RabbitMQ__Username=admin
-                - RabbitMQ__Password=securepassword
+                - RabbitMQ__Password=$RABBITMQ_PASSWORD
                 - RabbitMQ__VirtualHost=/
               ports:
                 - "3000:80"
@@ -242,7 +244,7 @@ jobs:
               restart: unless-stopped
               environment:
                 - POSTGRES_USER=backupservice
-                - POSTGRES_PASSWORD=backupservice123
+                - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
                 - POSTGRES_DB=backupservicedb
               ports:
                 - "5532:5432"

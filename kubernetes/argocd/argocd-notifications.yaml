@@ -8,7 +8,9 @@ metadata:
     app.kubernetes.io/part-of: argocd
 stringData:
   email-username: joshuaiska@gmail.com
-  email-password: dgln ffbs ixvg pxuj
+  # email-password: managed outside git — apply manually:
+  # kubectl create secret generic argocd-notifications-secret -n argocd \
+  #   --from-literal=email-password="YOUR_APP_PASSWORD" --dry-run=client -o yaml | kubectl apply -f -
 
 ---
 apiVersion: v1

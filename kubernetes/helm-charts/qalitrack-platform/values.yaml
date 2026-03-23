@@ -505,7 +505,6 @@ monitoring:
         enabled: false
       security:
         admin_user: admin
-        admin_password: changeme
 
     # Datasources
     datasources:

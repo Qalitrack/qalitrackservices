@@ -45,6 +45,10 @@ TRANSACTION_DB_PASSWORD=$TRANSACTION_DB_PASSWORD
 # Redis Password
 USER_SERVICE_REDIS_PASSWORD=$REDIS_PASSWORD
 
+# Connection Strings (assembled from components above)
+USER_SERVICE_REDIS_CONNECTION_STRING=user-service-redis-master:6379,password=$REDIS_PASSWORD,abortConnect=false
+USER_SERVICE_DB_CONNECTION_STRING=Host=user-service-postgresql;Port=5432;Database=qalitrack_user_service;Username=postgres;Password=$USER_DB_PASSWORD;Pooling=true
+
 # RabbitMQ
 RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD
 RABBITMQ_ERLANG_COOKIE=$RABBITMQ_ERLANG_COOKIE
