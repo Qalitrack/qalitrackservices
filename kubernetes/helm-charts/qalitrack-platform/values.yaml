@@ -254,7 +254,7 @@ technicianService:
 # QTRUCK SERVICE - Drivers & Fleet Management
 # ============================================================================
 qtruckService:
-  enabled: true
+  enabled: false  # Images not yet built — enable after running CI workflows
   fullnameOverride: "qtruck-service"
 
   api:

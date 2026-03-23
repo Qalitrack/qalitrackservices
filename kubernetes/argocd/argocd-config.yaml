@@ -16,6 +16,7 @@ data:
       url: https://charts.bitnami.com/bitnami
 
   # Resource exclusions (don't manage these)
+  # Note: monitoring.grafana.com removed — ServerSideApply=true handles large CRDs
   resource.exclusions: |
     - apiGroups:
       - cilium.io

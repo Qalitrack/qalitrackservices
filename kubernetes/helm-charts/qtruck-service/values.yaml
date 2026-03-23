@@ -1,5 +1,8 @@
 # QTruck Service Configuration
 
+imagePullSecrets:
+  - name: ghcr-secret
+
 # QTruck API (Django/Python Backend)
 api:
   enabled: true
