@@ -60,7 +60,7 @@ livenessProbe:
 
 readinessProbe:
   httpGet:
-    path: /health/ready
+    path: /health
     port: 7003
   initialDelaySeconds: 10
   periodSeconds: 5
@@ -113,12 +113,14 @@ env:
   - name: RABBITMQ_PORT
     value: "5672"
   - name: RABBITMQ_USERNAME
-    value: "user"
+    value: "qalitrack"
   - name: RABBITMQ_PASSWORD
     valueFrom:
       secretKeyRef:
         name: qalitrack-secrets
         key: RABBITMQ_PASSWORD
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=transaction-service-postgresql;Port=5432;Database=qalitrack_transaction;Username=postgres;Password=changeme"
 
 volumeMounts:
   - name: tmp

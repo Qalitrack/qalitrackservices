@@ -60,7 +60,7 @@ livenessProbe:
 
 readinessProbe:
   httpGet:
-    path: /health/ready
+    path: /health
     port: 7002
   initialDelaySeconds: 10
   periodSeconds: 5
@@ -108,12 +108,25 @@ env:
       secretKeyRef:
         name: qalitrack-secrets
         key: MASTER_DATA_DB_PASSWORD
+  - name: POSTGRES_HOST
+    value: "masterdata-service-postgresql"
+  - name: POSTGRES_PORT
+    value: "5432"
+  - name: POSTGRES_DATABASE
+    value: "qalitrack_master_data"
+  - name: POSTGRES_USERNAME
+    value: "postgres"
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: MASTER_DATA_DB_PASSWORD
   - name: RABBITMQ_HOST
     value: "rabbitmq"
   - name: RABBITMQ_PORT
     value: "5672"
   - name: RABBITMQ_USERNAME
-    value: "user"
+    value: "qalitrack"
   - name: RABBITMQ_PASSWORD
     valueFrom:
       secretKeyRef:

@@ -14,8 +14,11 @@ global:
     audience: "qalitrack"
     expirationMinutes: 60
 
-  # Image Registry
-  imageRegistry: ghcr.io/qalitrack/qalitrackservices
+  # Image Registry (empty so Bitnami sub-charts use their own registries)
+  imageRegistry: ""
+
+  security:
+    allowInsecureImages: true
 
 # ============================================================================
 # GATEWAY SERVICE - API Gateway with JWT Authentication
@@ -379,6 +382,11 @@ rabbitmq:
   enabled: true
   replicaCount: 1
 
+  image:
+    registry: docker.io
+    repository: bitnamilegacy/rabbitmq
+    tag: 4.1.3-debian-12-r1
+
   auth:
     username: "qalitrack"
     password: "changeme"
@@ -408,26 +416,41 @@ rabbitmq:
 # ============================================================================
 ingress:
   enabled: true
-  className: "nginx"
+  className: "traefik"
   annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-    nginx.ingress.kubernetes.io/rate-limit: "100"
 
   hosts:
-    # API subdomain for all API endpoints
     - host: api.qalibrated.co.ke
       paths:
         - path: /
           pathType: Prefix
-          service: gateway-service
+          service: qalitrack-gateway-service
           port: 7000
+    - host: grafana.qalibrated.co.ke
+      paths:
+        - path: /
+          pathType: Prefix
+          service: qalitrack-grafana
+          port: 80
+    - host: prometheus.qalibrated.co.ke
+      paths:
+        - path: /
+          pathType: Prefix
+          service: qalitrack-prometheus-server
+          port: 80
 
   tls:
-    - secretName: qalitrack-api-tls
+    - secretName: api-qalibrated-tls
       hosts:
         - api.qalibrated.co.ke
+    - secretName: grafana-qalibrated-tls
+      hosts:
+        - grafana.qalibrated.co.ke
+    - secretName: prometheus-qalibrated-tls
+      hosts:
+        - prometheus.qalibrated.co.ke
 
 # ============================================================================
 # MONITORING & OBSERVABILITY
@@ -458,7 +481,7 @@ monitoring:
   grafana:
     enabled: true
     fullnameOverride: "grafana"
-    adminPassword: "changeme"  # CHANGE THIS IN PRODUCTION!
+    adminPassword: "Qalitrack@2024!"
     persistence:
       enabled: true
       size: 10Gi
@@ -496,7 +519,7 @@ monitoring:
             isDefault: true
           - name: Loki
             type: loki
-            url: http://loki:3100
+            url: http://loki-gateway:80
             access: proxy
 
     # Pre-installed dashboards
@@ -554,3 +577,38 @@ autoscaling:
 # TOTAL Requests:        ~8.5Gi
 # TOTAL Limits:          ~27Gi
 # Leaves room for OS/system: ~37GB
+
+# Sub-chart overrides (must be at top level, keyed by chart name)
+loki:
+  deploymentMode: SingleBinary
+  loki:
+    auth_enabled: false
+    commonConfig:
+      replication_factor: 1
+    storage:
+      type: filesystem
+    schemaConfig:
+      configs:
+        - from: "2024-01-01"
+          store: tsdb
+          object_store: filesystem
+          schema: v13
+          index:
+            prefix: loki_index_
+            period: 24h
+  singleBinary:
+    replicas: 1
+    affinity: {}
+    persistence:
+      enabled: true
+      size: 30Gi
+      storageClass: local-path
+  write:
+    replicas: 0
+  read:
+    replicas: 0
+  backend:
+    replicas: 0
+  gateway:
+    replicas: 1
+    affinity: {}

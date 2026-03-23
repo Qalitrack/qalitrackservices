@@ -71,6 +71,26 @@ env:
   ASPNETCORE_URLS: "http://+:80"
   JWT_ISSUER: "qalitrack"
   JWT_AUDIENCE: "qalitrack"
+  # YARP cluster addresses (override appsettings.json which has dev hostnames)
+  ReverseProxy__Clusters__user-service-cluster__Destinations__user-service__Address: "http://qalitrack-user-service:7001"
+  ReverseProxy__Clusters__masterdata-service-cluster__Destinations__masterdata-service__Address: "http://qalitrack-masterdata-service:7002"
+  ReverseProxy__Clusters__transaction-service-cluster__Destinations__transaction-service__Address: "http://qalitrack-transaction-service:7003"
+  ReverseProxy__Clusters__backup-service-cluster__Destinations__backup-service__Address: "http://qalitrack-backup-service:7004"
+  ReverseProxy__Clusters__tech-user-service-cluster__Destinations__tech-user-service__Address: "http://qalitrack-technician-service-user-service:7001"
+  ReverseProxy__Clusters__tech-technician-service-cluster__Destinations__tech-technician-service__Address: "http://qalitrack-technician-service:7006"
+  # Fix route ordering — specific routes must have lower order than user-service-api catch-all (Order 50)
+  ReverseProxy__Routes__masterdata-service-swagger__Order: "5"
+  ReverseProxy__Routes__masterdata-service-health__Order: "6"
+  ReverseProxy__Routes__masterdata-service-api__Order: "10"
+  ReverseProxy__Routes__transaction-service-swagger__Order: "15"
+  ReverseProxy__Routes__transaction-service-health__Order: "16"
+  ReverseProxy__Routes__transaction-service-api__Order: "20"
+  ReverseProxy__Routes__tech-user-service-swagger__Order: "25"
+  ReverseProxy__Routes__tech-user-service-health__Order: "26"
+  ReverseProxy__Routes__tech-user-service-api__Order: "30"
+  ReverseProxy__Routes__tech-technician-service-swagger__Order: "35"
+  ReverseProxy__Routes__tech-technician-service-health__Order: "36"
+  ReverseProxy__Routes__tech-technician-service-api__Order: "40"
 
 envFrom:
   - secretRef:

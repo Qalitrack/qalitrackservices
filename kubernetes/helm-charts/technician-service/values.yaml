@@ -16,15 +16,9 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  fsGroup: 1000
+podSecurityContext: {}
 
 securityContext:
-  capabilities:
-    drop:
-    - ALL
   readOnlyRootFilesystem: false
   allowPrivilegeEscalation: false
 
@@ -60,7 +54,7 @@ livenessProbe:
 
 readinessProbe:
   httpGet:
-    path: /health/ready
+    path: /health
     port: http
   initialDelaySeconds: 10
   periodSeconds: 5
@@ -82,7 +76,7 @@ env:
   - name: UsePostgreSQL
     value: "true"
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=technician-service-postgresql;Port=5432;Database=qalitrack_techniciandb;Username=postgres;Password=$(POSTGRES_PASSWORD);Pooling=true;MinPoolSize=5;MaxPoolSize=100"
+    value: "Host=technician-service-postgresql;Port=5432;Database=qalitrack_techniciandb;Username=postgres;Password=changeme;Pooling=true;MinPoolSize=5;MaxPoolSize=100"
   - name: JWT_SECRET_KEY
     valueFrom:
       secretKeyRef:
@@ -98,11 +92,15 @@ volumeMounts:
     mountPath: /tmp
   - name: logs
     mountPath: /app/logs
+  - name: wwwroot
+    mountPath: /app/wwwroot
 
 volumes:
   - name: tmp
     emptyDir: {}
   - name: logs
+    emptyDir: {}
+  - name: wwwroot
     emptyDir: {}
 
 # Dedicated User Service for Technician deployment
@@ -145,9 +143,9 @@ userService:
     - name: UseRedis
       value: "true"
     - name: ConnectionStrings__DefaultConnection
-      value: "Host=technician-user-service-postgresql;Port=5432;Database=userservicedb;Username=postgres;Password=$(POSTGRES_PASSWORD);MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=100;ConnectionPruningInterval=10;Pooling=true"
+      value: "Host=technician-user-service-postgresql;Port=5432;Database=userservicedb;Username=postgres;Password=changeme;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=100;ConnectionPruningInterval=10;Pooling=true"
     - name: ConnectionStrings__Redis
-      value: "technician-redis:6379,password=$(REDIS_PASSWORD)"
+      value: "technician-redis:6379,password=BAv68GxtSnLpEkR0scuhHA1kQN3vGCVR,abortConnect=false"
     - name: JWT_SECRET_KEY
       valueFrom:
         secretKeyRef:
@@ -170,7 +168,7 @@ userService:
           key: RABBITMQ_PASSWORD
 
 postgresql:
-  enabled: true
+  enabled: false
   auth:
     postgresPassword: "changeme"
     database: "qalitrack_techniciandb"
@@ -204,7 +202,7 @@ postgresql:
 
 # PostgreSQL for User Service
 userServicePostgresql:
-  enabled: true
+  enabled: false
   auth:
     postgresPassword: "changeme"
     database: "userservicedb"
@@ -238,7 +236,7 @@ userServicePostgresql:
 
 # Redis for caching (shared between user service and technician service)
 redis:
-  enabled: true
+  enabled: false
   auth:
     enabled: true
     password: "changeme"
@@ -258,7 +256,7 @@ redis:
 
 # RabbitMQ for messaging (shared between user service and technician service)
 rabbitmq:
-  enabled: true
+  enabled: false
   auth:
     username: "admin"
     password: "changeme"

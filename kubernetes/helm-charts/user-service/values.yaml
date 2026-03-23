@@ -60,7 +60,7 @@ livenessProbe:
 
 readinessProbe:
   httpGet:
-    path: /health/ready
+    path: /health
     port: 7001
   initialDelaySeconds: 10
   periodSeconds: 5
@@ -118,12 +118,16 @@ env:
         name: qalitrack-secrets
         key: USER_SERVICE_REDIS_PASSWORD
         optional: true
+  - name: ConnectionStrings__Redis
+    value: "user-service-redis-master:6379,password=BAv68GxtSnLpEkR0scuhHA1kQN3vGCVR,abortConnect=false"
+  - name: ConnectionStrings__DefaultConnection
+    value: "Host=user-service-postgresql;Port=5432;Database=qalitrack_user_service;Username=postgres;Password=changeme;Pooling=true"
   - name: RABBITMQ_HOST
     value: "rabbitmq"
   - name: RABBITMQ_PORT
     value: "5672"
   - name: RABBITMQ_USERNAME
-    value: "user"
+    value: "qalitrack"
   - name: RABBITMQ_PASSWORD
     valueFrom:
       secretKeyRef:

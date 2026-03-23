@@ -45,8 +45,7 @@ autoscaling:
   enabled: false
 
 livenessProbe:
-  httpGet:
-    path: /health
+  tcpSocket:
     port: 7004
   initialDelaySeconds: 30
   periodSeconds: 10
@@ -55,8 +54,7 @@ livenessProbe:
   failureThreshold: 3
 
 readinessProbe:
-  httpGet:
-    path: /health/ready
+  tcpSocket:
     port: 7004
   initialDelaySeconds: 10
   periodSeconds: 5
@@ -128,13 +126,16 @@ env:
   - name: RABBITMQ_PORT
     value: "5672"
   - name: RABBITMQ_USERNAME
-    value: "admin"
+    value: "qalitrack"
   - name: RABBITMQ_PASSWORD
-    value: "securepassword"
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: RABBITMQ_PASSWORD
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=backup-service-postgresql;Port=5432;Database=backupservicedb;Username=backupservice;Password=backupservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;Pooling=true;"
+    value: "Host=backup-service-postgresql;Port=5432;Database=qalitrack_backup;Username=postgres;Password=changeme;MinPoolSize=5;MaxPoolSize=100;Timeout=30;CommandTimeout=60;Pooling=true;"
   - name: ConnectionStrings__Redis
-    value: "backup-service-redis-master:6379,password=backupservice123"
+    value: "backup-service-redis-master:6379,password=BAv68GxtSnLpEkR0scuhHA1kQN3vGCVR,abortConnect=false"
   - name: UsePostgreSQL
     value: "true"
   - name: UseRedis
@@ -172,7 +173,7 @@ persistence:
 # PostgreSQL for Backup Service metadata
 # ============================================================================
 postgresql:
-  enabled: true
+  enabled: false
   auth:
     username: backupservice
     password: backupservice123
@@ -202,7 +203,7 @@ postgresql:
 # Redis for Backup Service caching
 # ============================================================================
 redis:
-  enabled: true
+  enabled: false
   auth:
     password: backupservice123
 
@@ -230,7 +231,7 @@ redis:
 # RabbitMQ for Backup Service messaging
 # ============================================================================
 rabbitmq:
-  enabled: true
+  enabled: false
   auth:
     username: admin
     password: securepassword

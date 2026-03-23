@@ -259,6 +259,10 @@ Thumbs.db
 .parcel-cache/
 .turbo/
 
+# Helm dependency charts (generated, not committed)
+kubernetes/helm-charts/*/charts/
+kubernetes/helm-charts/qalitrack-platform/charts/
+
 # AI Development Planning
 todo/
 
