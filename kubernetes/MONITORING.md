@@ -4,13 +4,13 @@ This guide explains how to access Grafana, Prometheus, and other monitoring dash
 
 ## 🚀 Quick Access
 
-### Dashboard URLs (via Domain)
+### Dashboard URLs (via Subdomains)
 
 Once the platform is deployed with monitoring enabled:
 
-- **Grafana**: https://qalibrated.co.ke/grafana
-- **Prometheus**: https://qalibrated.co.ke/prometheus
-- **Main API**: https://qalibrated.co.ke/qalitrack/api
+- **Grafana**: https://grafana.qalibrated.co.ke
+- **Prometheus**: https://prometheus.qalibrated.co.ke
+- **Main API**: https://api.qalibrated.co.ke
 
 ### Default Credentials
 

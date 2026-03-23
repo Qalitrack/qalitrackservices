@@ -1,5 +1,6 @@
-# Separate ingress for monitoring dashboards with proper rewrites
-# This prevents rewrite rules from breaking the main API
+# Separate ingress for monitoring dashboards using subdomains
+# Grafana: grafana.qalibrated.co.ke
+# Prometheus: prometheus.qalibrated.co.ke
 
 ---
 apiVersion: networking.k8s.io/v1
@@ -18,14 +19,15 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - qalibrated.co.ke
-      secretName: qalitrack-tls
+        - grafana.qalibrated.co.ke
+        - prometheus.qalibrated.co.ke
+      secretName: qalitrack-monitoring-tls
   rules:
-    - host: qalibrated.co.ke
+    # Grafana Dashboard
+    - host: grafana.qalibrated.co.ke
       http:
         paths:
-          # Grafana Dashboard
-          - path: /grafana
+          - path: /
             pathType: Prefix
             backend:
               service:
@@ -33,8 +35,11 @@ spec:
                 port:
                   number: 80
 
-          # Prometheus Dashboard
-          - path: /prometheus
+    # Prometheus Dashboard
+    - host: prometheus.qalibrated.co.ke
+      http:
+        paths:
+          - path: /
             pathType: Prefix
             backend:
               service:

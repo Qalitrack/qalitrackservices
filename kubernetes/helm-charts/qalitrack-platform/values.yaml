@@ -416,17 +416,18 @@ ingress:
     nginx.ingress.kubernetes.io/rate-limit: "100"
 
   hosts:
-    - host: qalibrated.co.ke
+    # API subdomain for all API endpoints
+    - host: api.qalibrated.co.ke
       paths:
-        - path: /qalitrack/api
+        - path: /
           pathType: Prefix
           service: gateway-service
           port: 7000
 
   tls:
-    - secretName: qalitrack-tls
+    - secretName: qalitrack-api-tls
       hosts:
-        - qalibrated.co.ke
+        - api.qalibrated.co.ke
 
 # ============================================================================
 # MONITORING & OBSERVABILITY
@@ -475,8 +476,8 @@ monitoring:
     # Grafana configuration
     grafana.ini:
       server:
-        root_url: "https://qalibrated.co.ke/grafana"
-        serve_from_sub_path: true
+        root_url: "https://grafana.qalibrated.co.ke"
+        serve_from_sub_path: false
       auth.anonymous:
         enabled: false
       security:
