@@ -90,7 +90,7 @@ masterdata:
   fullnameOverride: "masterdata-service"
   image:
     repository: masterdata-service
-    tag: latest
+    tag: main-7bcf9dd
     pullPolicy: Always
   resources:
     requests:
