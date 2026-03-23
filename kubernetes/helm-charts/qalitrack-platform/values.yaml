@@ -50,7 +50,7 @@ userService:
   fullnameOverride: "user-service"
   image:
     repository: user-service
-    tag: latest
+    tag: main-7bcf9dd
     pullPolicy: Always
   resources:
     requests:
