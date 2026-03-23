@@ -955,21 +955,49 @@ pnpm init
 
 ## Deployment
 
-### Docker Support
-Each service includes Dockerfile for containerization:
+### Production — Kubernetes + ArgoCD (GitOps)
 
+Production runs on Kubernetes with ArgoCD managing all deployments automatically.
+
+**One-command install (fresh server):**
 ```bash
-# Build service container
-docker build -t qalitrack/userservice ./apps/userservice
-
-# Run with docker-compose
-docker-compose up -d
+cd kubernetes/argocd
+bash install.sh --github-token $(gh auth token)
 ```
+
+This installs ArgoCD, applies all config, sets up email notifications, and deploys the full platform in one shot.
+
+**ArgoCD UI:** https://argocd.qalibrated.co.ke
+- Username: `admin`
+- Password: `Qalitrack@2024!`
+
+**How auto-deploy works:**
+1. You push code → GitHub Actions builds Docker image and pushes to `ghcr.io`
+2. CI commits the new image tag to `kubernetes/helm-charts/qalitrack-platform/values.yaml`
+3. ArgoCD detects the git change and syncs the cluster automatically
+4. Self-heal is enabled — any manual cluster changes are reverted to match Git
+
+**Email alerts** (deploy success / health degraded / sync failed) → `joshuaiska@gmail.com`
+
+**Key files:**
+| File | Purpose |
+|------|---------|
+| `kubernetes/argocd/install.sh` | Full one-command setup |
+| `kubernetes/argocd/argocd-config.yaml` | ArgoCD settings, RBAC, admin password |
+| `kubernetes/argocd/argocd-notifications.yaml` | Email notification config |
+| `kubernetes/argocd/argocd-ingress.yaml` | HTTPS ingress via Traefik |
+| `kubernetes/argocd/qalitrack-application.yaml` | ArgoCD Application + AppProject |
+| `kubernetes/helm-charts/qalitrack-platform/` | Umbrella Helm chart (all services) |
+| `.github/workflows/deploy-to-kubernetes.yml` | Reusable deploy workflow (updates image tags) |
+
+**Contributing / deploying changes:**
+- Always open a PR to `Qalitrack/qalitrackservices` — never push directly to `main`
+- Merging to `main` triggers CI which auto-deploys to the cluster via ArgoCD
 
 ### Environment Configuration
 - Development: `.env.local`
 - Staging: `.env.staging`
-- Production: `.env.production`
+- Production: Kubernetes secrets (`qalitrack-secrets`) in the cluster
 
 [↑ Back to Top](#table-of-contents)
 
