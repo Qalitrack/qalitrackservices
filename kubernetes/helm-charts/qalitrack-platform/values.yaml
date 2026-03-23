@@ -184,7 +184,7 @@ technicianService:
   fullnameOverride: "technician-service"
   image:
     repository: technician-api
-    tag: latest
+    tag: main-7bcf9dd
     pullPolicy: Always
   resources:
     requests:
