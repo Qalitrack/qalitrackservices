@@ -21,6 +21,8 @@ env:
   POSTGRES_PASSWORD: userservice123
   POSTGRES_DB: userservicedb
   REDIS_PASSWORD: userservice123
+  EMAIL_SMTP_PASSWORD: ${{ secrets.EMAIL_SMTP_PASSWORD }}
+  RABBITMQ_PASSWORD: ${{ secrets.RABBITMQ_PASSWORD }}
 
 jobs:
   test:
@@ -278,8 +280,8 @@ jobs:
               restart: unless-stopped
               environment:
                 - ASPNETCORE_ENVIRONMENT=Production
-                - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=userservicedb;Username=userservice;Password=userservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
-                - ConnectionStrings__Redis=redis:6379,password=userservice123
+                - ConnectionStrings__DefaultConnection=Host=postgres-db;Port=5432;Database=$POSTGRES_DB;Username=$POSTGRES_USER;Password=$POSTGRES_PASSWORD;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+                - ConnectionStrings__Redis=redis:6379,password=$REDIS_PASSWORD
                 - UsePostgreSQL=true
                 - UseRedis=true
                 - Email__FromEmail=noreply@qalitrack.com
@@ -287,12 +289,12 @@ jobs:
                 - Email__SmtpHost=smtp.gmail.com
                 - Email__SmtpPort=587
                 - Email__SmtpUsername=joshuaiska@gmail.com
-                - Email__SmtpPassword=dgln ffbs ixvg pxuj
+                - Email__SmtpPassword=$EMAIL_SMTP_PASSWORD
                 - Email__EnableSsl=true
                 - RabbitMQ__Host=rabbitmq
                 - RabbitMQ__Port=5672
                 - RabbitMQ__Username=admin
-                - RabbitMQ__Password=securepassword
+                - RabbitMQ__Password=$RABBITMQ_PASSWORD
                 - RabbitMQ__VirtualHost=/
               ports:
                 - "8080:80"
@@ -312,7 +314,7 @@ jobs:
               restart: unless-stopped
               environment:
                 - POSTGRES_USER=userservice
-                - POSTGRES_PASSWORD=userservice123
+                - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
                 - POSTGRES_DB=userservicedb
               ports:
                 - "5434:5432"

@@ -133,9 +133,25 @@ env:
         name: qalitrack-secrets
         key: RABBITMQ_PASSWORD
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=backup-service-postgresql;Port=5432;Database=qalitrack_backup;Username=postgres;Password=changeme;MinPoolSize=5;MaxPoolSize=100;Timeout=30;CommandTimeout=60;Pooling=true;"
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: BACKUP_SERVICE_DB_CONNECTION_STRING
   - name: ConnectionStrings__Redis
-    value: "backup-service-redis-master:6379,password=BAv68GxtSnLpEkR0scuhHA1kQN3vGCVR,abortConnect=false"
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: BACKUP_SERVICE_REDIS_CONNECTION_STRING
+  - name: EMAIL_SMTP_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_PASSWORD
+  - name: RABBITMQ_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: RABBITMQ_PASSWORD
   - name: UsePostgreSQL
     value: "true"
   - name: UseRedis

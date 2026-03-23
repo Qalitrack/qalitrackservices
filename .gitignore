@@ -275,3 +275,7 @@ Qalitrack-Hardware/Qalitrack/release/
 **/release/**/*.exe
 _*
 !kubernetes/helm-charts/**/templates/_helpers.tpl
+
+# Secrets - never commit
+secrets.env
+kubernetes/secrets/secrets.env
