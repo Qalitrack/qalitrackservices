@@ -1,0 +1,42 @@
+dependencies:
+- name: gateway-service
+  repository: file://../gateway-service
+  version: 1.0.0
+- name: user-service
+  repository: file://../user-service
+  version: 1.0.0
+- name: masterdata-service
+  repository: file://../masterdata-service
+  version: 1.0.0
+- name: transaction-service
+  repository: file://../transaction-service
+  version: 1.0.0
+- name: backup-service
+  repository: file://../backup-service
+  version: 1.0.0
+- name: technician-service
+  repository: file://../technician-service
+  version: 1.0.0
+- name: qtruck-service
+  repository: file://../qtruck-service
+  version: 1.0.0
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.5.11
+- name: redis
+  repository: https://charts.bitnami.com/bitnami
+  version: 25.3.7
+- name: rabbitmq
+  repository: https://charts.bitnami.com/bitnami
+  version: 16.0.14
+- name: prometheus
+  repository: https://prometheus-community.github.io/helm-charts
+  version: 25.8.0
+- name: grafana
+  repository: https://grafana.github.io/helm-charts
+  version: 7.0.8
+- name: loki
+  repository: https://grafana.github.io/helm-charts
+  version: 5.41.4
+digest: sha256:9806571c8e197f44becc6e326673f9e966c6e23de0ed69815d0794338de2a9d0
+generated: "2026-03-23T11:35:03.593655476+01:00"

@@ -198,9 +198,10 @@ appendonly.aof
 *.rdb
 *.aof
 
-# MongoDB files  
+# MongoDB files
 *.wt
 *.lock
+!kubernetes/helm-charts/**/Chart.lock
 WiredTiger*
 mongod.lock
 journal/
@@ -273,3 +274,4 @@ Qalitrack-Hardware/Qalitrack/release/
 **/release/windows/
 **/release/**/*.exe
 _*
+!kubernetes/helm-charts/**/templates/_helpers.tpl
