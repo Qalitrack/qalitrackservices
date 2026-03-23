@@ -1,5 +1,5 @@
-# Reusable workflow for Kubernetes deployment
-# Called by service-specific workflows after building images
+# GitOps deployment — updates image tag in Helm values and commits to git.
+# ArgoCD detects the change and auto-syncs to the cluster.
 
 name: Deploy to Kubernetes
 
@@ -7,93 +7,74 @@ on:
   workflow_call:
     inputs:
       service-name:
-        description: 'Name of the service to deploy (e.g., gateway-service)'
+        description: 'Service name matching the values.yaml key (e.g., gateway-service)'
         required: true
         type: string
       namespace:
-        description: 'Kubernetes namespace'
         required: false
         type: string
         default: 'qalitrack-prod'
       timeout:
-        description: 'Rollout timeout'
         required: false
         type: string
         default: '5m'
-    secrets:
-      kubeconfig:
-        description: 'Base64-encoded kubeconfig'
-        required: true
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Set up kubectl
-        uses: azure/setup-kubectl@v3
         with:
-          version: 'v1.28.0'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: main
 
-      - name: Configure kubectl
+      - name: Compute short SHA image tag
+        id: tag
+        run: echo "value=main-$(echo "${{ github.sha }}" | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Install yq
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.kubeconfig }}" | base64 -d > ~/.kube/config
-          chmod 600 ~/.kube/config
+          wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          chmod +x /usr/local/bin/yq
 
-      - name: Verify cluster connection
+      - name: Update image tag in platform values.yaml
         run: |
-          echo "Connecting to Kubernetes cluster..."
-          kubectl cluster-info
-          kubectl get nodes
+          SERVICE="${{ inputs.service-name }}"
+          TAG="${{ steps.tag.outputs.value }}"
+          VALUES="kubernetes/helm-charts/qalitrack-platform/values.yaml"
 
-      - name: Check current deployment status
+          case "$SERVICE" in
+            gateway-service)    yq e ".gateway.image.tag = \"$TAG\""             -i "$VALUES" ;;
+            user-service)       yq e ".userService.image.tag = \"$TAG\""         -i "$VALUES" ;;
+            masterdata-service) yq e ".masterdata.image.tag = \"$TAG\""          -i "$VALUES" ;;
+            transaction-service) yq e ".transaction.image.tag = \"$TAG\""        -i "$VALUES" ;;
+            backup-service)     yq e ".backup.image.tag = \"$TAG\""              -i "$VALUES" ;;
+            technician-api|technician-service) yq e ".technicianService.image.tag = \"$TAG\"" -i "$VALUES" ;;
+            qtruck-api)         yq e ".qtruckService.api.image.tag = \"$TAG\""   -i "$VALUES" ;;
+            qtruck-frontend)    yq e ".qtruckService.frontend.image.tag = \"$TAG\"" -i "$VALUES" ;;
+            *)
+              echo "No Helm chart entry for $SERVICE — nothing to update"
+              exit 0
+              ;;
+          esac
+
+          echo "Set $SERVICE image tag → $TAG"
+
+      - name: Commit and push (ArgoCD will auto-sync)
         run: |
-          echo "Current deployment status:"
-          kubectl get deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} || echo "Deployment not found"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Restart deployment (pull latest image)
-        run: |
-          echo "Restarting ${{ inputs.service-name }} in namespace ${{ inputs.namespace }}..."
-          kubectl rollout restart deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }}
-
-          echo "Waiting for rollout to complete..."
-          kubectl rollout status deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} --timeout=${{ inputs.timeout }}
-
-      - name: Verify deployment
-        run: |
-          echo "=== Pod Status ==="
-          kubectl get pods -n ${{ inputs.namespace }} -l app.kubernetes.io/name=${{ inputs.service-name }}
-
-          echo ""
-          echo "=== Recent Logs ==="
-          kubectl logs -n ${{ inputs.namespace }} -l app.kubernetes.io/name=${{ inputs.service-name }} --tail=50 || echo "No logs available yet"
-
-          echo ""
-          echo "=== Deployment Details ==="
-          kubectl describe deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} | grep -A 5 "Replicas:"
-
-      - name: Check rollout success
-        run: |
-          # Verify at least one pod is running
-          RUNNING_PODS=$(kubectl get pods -n ${{ inputs.namespace }} -l app.kubernetes.io/name=${{ inputs.service-name }} --field-selector=status.phase=Running --no-headers | wc -l)
-
-          if [ "$RUNNING_PODS" -lt 1 ]; then
-            echo "ERROR: No running pods found for ${{ inputs.service-name }}"
-            exit 1
+          if git diff --quiet; then
+            echo "No changes — image tag already up to date"
+            exit 0
           fi
 
-          echo "SUCCESS: $RUNNING_PODS pod(s) running for ${{ inputs.service-name }}"
-
-      - name: Deployment summary
-        if: always()
-        run: |
-          echo "========================================="
-          echo "Deployment Summary: ${{ inputs.service-name }}"
-          echo "========================================="
-          echo "Namespace: ${{ inputs.namespace }}"
-          echo "Status: $(kubectl rollout status deployment/${{ inputs.service-name }} -n ${{ inputs.namespace }} 2>&1 || echo 'FAILED')"
-          echo "========================================="
+          git add kubernetes/helm-charts/qalitrack-platform/values.yaml
+          git commit -m "deploy: ${{ inputs.service-name }} → ${{ steps.tag.outputs.value }} [skip ci]"
+          git push
+          echo "Pushed to git — ArgoCD will detect the change and redeploy"

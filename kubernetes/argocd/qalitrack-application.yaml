@@ -9,6 +9,8 @@ metadata:
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
+  project: qalitrack
+
   # Source repository
   source:
     repoURL: https://github.com/Qalitrack/qalitrackservices.git
@@ -57,10 +59,6 @@ spec:
       kind: Deployment
       jsonPointers:
         - /spec/replicas  # Ignore HPA-managed replicas
-
-  # Health assessment
-  health:
-    timeout: 10m
 
 ---
 # ArgoCD Project for Qalitrack
