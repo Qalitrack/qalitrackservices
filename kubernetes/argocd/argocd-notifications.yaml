@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-notifications-secret
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-notifications-secret
+    app.kubernetes.io/part-of: argocd
+stringData:
+  email-username: joshuaiska@gmail.com
+  email-password: dgln ffbs ixvg pxuj
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+  namespace: argocd
+  labels:
+    app.kubernetes.io/component: notifications-controller
+    app.kubernetes.io/name: argocd-notifications-controller
+    app.kubernetes.io/part-of: argocd
+data:
+  service.email.gmail: |
+    username: $email-username
+    password: $email-password
+    host: smtp.gmail.com
+    port: 587
+    from: $email-username
+
+  subscriptions: |
+    - recipients:
+      - email:joshuaiska@gmail.com
+      triggers:
+      - on-deployed
+      - on-health-degraded
+      - on-sync-failed
+
+  template.app-deployed: |
+    email:
+      subject: "[QaliTrack] ✅ {{.app.metadata.name}} deployed successfully"
+      body: |
+        Application: {{.app.metadata.name}}
+        Status: Synced & Healthy
+        Revision: {{.app.status.sync.revision}}
+        Time: {{.app.status.operationState.finishedAt}}
+        ArgoCD: https://argocd.qalibrated.co.ke
+
+  template.app-health-degraded: |
+    email:
+      subject: "[QaliTrack] ⚠️ {{.app.metadata.name}} is DEGRADED"
+      body: |
+        Application: {{.app.metadata.name}}
+        Health: DEGRADED
+        Message: {{.app.status.conditions}}
+        ArgoCD: https://argocd.qalibrated.co.ke
+
+  template.app-sync-failed: |
+    email:
+      subject: "[QaliTrack] ❌ {{.app.metadata.name}} sync FAILED"
+      body: |
+        Application: {{.app.metadata.name}}
+        Sync Status: Failed
+        Message: {{.app.status.operationState.message}}
+        ArgoCD: https://argocd.qalibrated.co.ke
+
+  trigger.on-deployed: |
+    - description: App synced and healthy
+      send:
+      - app-deployed
+      when: app.status.operationState.phase in ['Succeeded'] and app.health.status == 'Healthy'
+
+  trigger.on-health-degraded: |
+    - description: App health degraded
+      send:
+      - app-health-degraded
+      when: app.status.health.status == 'Degraded'
+
+  trigger.on-sync-failed: |
+    - description: Sync failed
+      send:
+      - app-sync-failed
+      when: app.status.operationState.phase in ['Error', 'Failed']
