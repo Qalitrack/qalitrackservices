@@ -66,6 +66,24 @@ spec:
       namespace: qalitrack-prod
       jsonPointers:
         - /data  # SMTP config applied manually — password must not go in git
+    - group: ""
+      kind: Secret
+      name: qalitrack-postgresql
+      namespace: qalitrack-prod
+      jsonPointers:
+        - /data  # DB running with existing password — rotate manually when ready
+    - group: ""
+      kind: Secret
+      name: qalitrack-rabbitmq
+      namespace: qalitrack-prod
+      jsonPointers:
+        - /data  # RabbitMQ running with existing password — rotate manually when ready
+    - group: ""
+      kind: Secret
+      name: qalitrack-redis
+      namespace: qalitrack-prod
+      jsonPointers:
+        - /data  # Redis running with existing password — rotate manually when ready
 
 ---
 # ArgoCD Project for Qalitrack
