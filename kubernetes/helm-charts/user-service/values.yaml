@@ -137,11 +137,66 @@ env:
       secretKeyRef:
         name: qalitrack-secrets
         key: USER_SERVICE_DB_CONNECTION_STRING
+  - name: Email__SmtpHost
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_HOST
+  - name: Email__SmtpPort
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_PORT
+  - name: Email__SmtpUsername
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_USERNAME
+  - name: Email__SmtpPassword
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_PASSWORD
+  - name: Email__FromEmail
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_FROM_EMAIL
+  - name: Email__EnableSsl
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_ENABLE_SSL
+  - name: EMAIL_SMTP_HOST
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_HOST
+  - name: EMAIL_SMTP_PORT
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_PORT
+  - name: EMAIL_SMTP_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_SMTP_USERNAME
   - name: EMAIL_SMTP_PASSWORD
     valueFrom:
       secretKeyRef:
         name: qalitrack-secrets
         key: EMAIL_SMTP_PASSWORD
+  - name: EMAIL_FROM_EMAIL
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_FROM_EMAIL
+  - name: EMAIL_ENABLE_SSL
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: EMAIL_ENABLE_SSL
   - name: RABBITMQ_HOST
     value: "rabbitmq"
   - name: RABBITMQ_PORT
