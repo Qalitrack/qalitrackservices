@@ -498,6 +498,9 @@ monitoring:
   loki:
     enabled: true
     fullnameOverride: "loki"
+    grafana-agent-operator:
+      crds:
+        install: false  # CRD too large for ArgoCD annotation limit — already installed
     persistence:
       enabled: true
       size: 30Gi
