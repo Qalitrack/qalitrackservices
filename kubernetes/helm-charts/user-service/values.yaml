@@ -5,7 +5,8 @@ image:
   pullPolicy: Always
   tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
 
@@ -47,6 +48,14 @@ autoscaling:
   maxReplicas: 5
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 80
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: 7001
+  failureThreshold: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
 
 livenessProbe:
   httpGet:

@@ -5,7 +5,8 @@ image:
   pullPolicy: Always
   tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
 
@@ -42,6 +43,14 @@ autoscaling:
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 
+startupProbe:
+  httpGet:
+    path: /health
+    port: http
+  failureThreshold: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+
 livenessProbe:
   httpGet:
     path: /health
@@ -76,7 +85,10 @@ env:
   - name: UsePostgreSQL
     value: "true"
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=technician-service-postgresql;Port=5432;Database=qalitrack_techniciandb;Username=postgres;Password=changeme;Pooling=true;MinPoolSize=5;MaxPoolSize=100"
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: TECHNICIAN_DB_CONNECTION_STRING
   - name: JWT_SECRET_KEY
     valueFrom:
       secretKeyRef:
@@ -143,9 +155,15 @@ userService:
     - name: UseRedis
       value: "true"
     - name: ConnectionStrings__DefaultConnection
-      value: "Host=technician-user-service-postgresql;Port=5432;Database=userservicedb;Username=postgres;Password=changeme;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=100;ConnectionPruningInterval=10;Pooling=true"
+      valueFrom:
+        secretKeyRef:
+          name: qalitrack-secrets
+          key: TECHNICIAN_USER_SERVICE_DB_CONNECTION_STRING
     - name: ConnectionStrings__Redis
-      value: "technician-redis:6379,password=BAv68GxtSnLpEkR0scuhHA1kQN3vGCVR,abortConnect=false"
+      valueFrom:
+        secretKeyRef:
+          name: qalitrack-secrets
+          key: TECHNICIAN_REDIS_CONNECTION_STRING
     - name: JWT_SECRET_KEY
       valueFrom:
         secretKeyRef:
@@ -170,7 +188,9 @@ userService:
 postgresql:
   enabled: false
   auth:
-    postgresPassword: "changeme"
+    existingSecret: "qalitrack-secrets"
+    secretKeys:
+      adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
     database: "qalitrack_techniciandb"
 
   primary:
@@ -204,7 +224,9 @@ postgresql:
 userServicePostgresql:
   enabled: false
   auth:
-    postgresPassword: "changeme"
+    existingSecret: "qalitrack-secrets"
+    secretKeys:
+      adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
     database: "userservicedb"
 
   primary:
@@ -239,7 +261,8 @@ redis:
   enabled: false
   auth:
     enabled: true
-    password: "changeme"
+    existingSecret: "qalitrack-secrets"
+    existingSecretPasswordKey: "TECHNICIAN_REDIS_CONNECTION_STRING"
 
   master:
     resources:
@@ -259,8 +282,10 @@ rabbitmq:
   enabled: false
   auth:
     username: "admin"
-    password: "changeme"
-    erlangCookie: "secretcookie"
+    existingPasswordSecret: "qalitrack-secrets"
+    existingSecretPasswordKey: "RABBITMQ_PASSWORD"
+    existingErlangCookieSecret: "qalitrack-secrets"
+    existingErlangCookieSecretKey: "RABBITMQ_ERLANG_COOKIE"
 
   resources:
     requests:

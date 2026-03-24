@@ -85,6 +85,10 @@ userService:
   postgresql:
     enabled: true
     fullnameOverride: "user-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "USER_SERVICE_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -125,6 +129,10 @@ masterdata:
   postgresql:
     enabled: true
     fullnameOverride: "masterdata-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "MASTER_DATA_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -165,6 +173,10 @@ transaction:
   postgresql:
     enabled: true
     fullnameOverride: "transaction-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "TRANSACTION_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -239,6 +251,10 @@ technicianService:
   postgresql:
     enabled: true
     fullnameOverride: "technician-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -311,7 +327,9 @@ qtruckService:
 postgresql:
   enabled: true
   auth:
-    postgresPassword: "changeme"
+    existingSecret: "qalitrack-secrets"
+    secretKeys:
+      adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
     database: "qalitrack"
 
   primary:
@@ -351,7 +369,8 @@ redis:
 
   auth:
     enabled: true
-    password: "changeme"
+    existingSecret: "qalitrack-secrets"
+    existingSecretPasswordKey: "USER_SERVICE_REDIS_PASSWORD"
 
   master:
     resources:
@@ -389,8 +408,10 @@ rabbitmq:
 
   auth:
     username: "qalitrack"
-    password: "changeme"
-    erlangCookie: "secretcookie"
+    existingPasswordSecret: "qalitrack-secrets"
+    existingSecretPasswordKey: "RABBITMQ_PASSWORD"
+    existingErlangCookieSecret: "qalitrack-secrets"
+    existingErlangCookieSecretKey: "RABBITMQ_ERLANG_COOKIE"
 
   resources:
     requests:
@@ -481,7 +502,10 @@ monitoring:
   grafana:
     enabled: true
     fullnameOverride: "grafana"
-    adminPassword: "Qalitrack@2024!"
+    admin:
+      existingSecret: "grafana-admin-secret"
+      userKey: admin-user
+      passwordKey: admin-password
     persistence:
       enabled: true
       size: 10Gi
@@ -578,6 +602,13 @@ autoscaling:
 # Leaves room for OS/system: ~37GB
 
 # Sub-chart overrides (must be at top level, keyed by chart name)
+prometheus:
+  alertmanager:
+    enabled: true
+    # Config loaded from secret so SMTP password stays out of git.
+    # Secret is applied manually — see kubernetes/secrets/README.md
+    configFromSecret: alertmanager-config-secret
+
 loki:
   deploymentMode: SingleBinary
   loki:
