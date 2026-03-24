@@ -614,6 +614,37 @@ grafana:
         gnetId: 20842
         revision: 2
         datasource: Prometheus
+      # Kubernetes
+      kubernetes-cluster:
+        gnetId: 7249
+        revision: 1
+        datasource: Prometheus
+      kubernetes-pods:
+        gnetId: 6336
+        revision: 1
+        datasource: Prometheus
+      kubernetes-nodes:
+        gnetId: 1860
+        revision: 37
+        datasource: Prometheus
+      # Infrastructure
+      postgresql:
+        gnetId: 9628
+        revision: 7
+        datasource: Prometheus
+      redis:
+        gnetId: 11835
+        revision: 1
+        datasource: Prometheus
+      rabbitmq:
+        gnetId: 10991
+        revision: 11
+        datasource: Prometheus
+      # Loki / Logs
+      loki-logs:
+        gnetId: 13639
+        revision: 2
+        datasource: Loki
 
 prometheus:
   serverFiles:
