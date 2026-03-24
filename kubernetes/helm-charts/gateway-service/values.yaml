@@ -6,7 +6,8 @@ image:
   pullPolicy: Always
   tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
 
@@ -95,6 +96,14 @@ env:
 envFrom:
   - secretRef:
       name: qalitrack-secrets
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: 80
+  failureThreshold: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
 
 livenessProbe:
   httpGet:
