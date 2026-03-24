@@ -71,6 +71,10 @@ userService:
   postgresql:
     enabled: true
     fullnameOverride: "user-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "USER_SERVICE_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -106,6 +110,10 @@ masterdata:
   postgresql:
     enabled: true
     fullnameOverride: "masterdata-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "MASTER_DATA_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -141,6 +149,10 @@ transaction:
   postgresql:
     enabled: true
     fullnameOverride: "transaction-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "TRANSACTION_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -204,6 +216,10 @@ technicianService:
   postgresql:
     enabled: true
     fullnameOverride: "technician-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
     primary:
       resources:
         requests:
@@ -271,7 +287,9 @@ qtruckService:
 postgresql:
   enabled: true
   auth:
-    postgresPassword: "changeme"
+    existingSecret: "qalitrack-secrets"
+    secretKeys:
+      adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
     database: "qalitrack"
   primary:
     persistence:
@@ -421,7 +439,10 @@ monitoring:
   grafana:
     enabled: true
     fullnameOverride: "grafana"
-    adminPassword: "Qalitrack@2024!"
+    admin:
+      existingSecret: "grafana-admin-secret"
+      userKey: admin-user
+      passwordKey: admin-password
     persistence:
       enabled: true
       size: 10Gi
@@ -512,6 +533,33 @@ autoscaling:
 # Leaves room for OS/system: ~37GB
 
 # Sub-chart overrides (must be at top level, keyed by chart name)
+prometheus:
+  alertmanager:
+    enabled: true
+    # Real config (with SMTP password) is applied manually to the cluster.
+    # ArgoCD is set to ignoreDifferences on this ConfigMap so it won't overwrite it.
+    # To reapply: kubectl replace -f kubernetes/monitoring/alertmanager-config-secret.yaml
+    config:
+      global:
+        resolve_timeout: 5m
+      route:
+        group_by: ['alertname', 'cluster', 'service']
+        group_wait: 10s
+        group_interval: 10s
+        repeat_interval: 12h
+        receiver: 'default'
+        routes:
+        - match:
+            alertname: Watchdog
+          receiver: 'null'
+        - match:
+            severity: critical
+          receiver: 'critical'
+      receivers:
+      - name: 'null'
+      - name: 'default'
+      - name: 'critical'
+
 loki:
   deploymentMode: SingleBinary
   loki:

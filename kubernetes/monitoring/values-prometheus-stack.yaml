@@ -38,8 +38,11 @@ prometheus:
 grafana:
   enabled: true
 
-  # Admin credentials (change these!)
-  adminPassword: "admin"  # CHANGE THIS IN PRODUCTION
+  # Admin credentials sourced from Kubernetes secret
+  admin:
+    existingSecret: "grafana-admin-secret"
+    userKey: admin-user
+    passwordKey: admin-password
 
   # Resource limits
   resources:
@@ -150,13 +153,22 @@ alertmanager:
     receivers:
     - name: 'null'
     - name: 'default'
-      # Add your notification channels here
-      # webhook_configs:
-      # - url: 'http://your-webhook-url'
+      email_configs:
+      - to: 'admin@qalibrated.co.ke'
+        from: 'alerts@qalibrated.co.ke'
+        smarthost: 'smtp.gmail.com:587'
+        auth_username: 'joshuaiska@gmail.com'
+        auth_password: 'REPLACE_WITH_GMAIL_APP_PASSWORD'
+        require_tls: true
     - name: 'critical'
-      # Add critical alert notification here
-      # email_configs:
-      # - to: 'admin@qalibrated.co.ke'
+      email_configs:
+      - to: 'admin@qalibrated.co.ke'
+        from: 'alerts@qalibrated.co.ke'
+        smarthost: 'smtp.gmail.com:587'
+        auth_username: 'joshuaiska@gmail.com'
+        auth_password: 'REPLACE_WITH_GMAIL_APP_PASSWORD'
+        require_tls: true
+        send_resolved: true
 
 # Node Exporter (metrics from nodes)
 nodeExporter:

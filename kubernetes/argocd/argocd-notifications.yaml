@@ -8,9 +8,12 @@ metadata:
     app.kubernetes.io/part-of: argocd
 stringData:
   email-username: joshuaiska@gmail.com
-  # email-password: managed outside git — apply manually:
-  # kubectl create secret generic argocd-notifications-secret -n argocd \
-  #   --from-literal=email-password="YOUR_APP_PASSWORD" --dry-run=client -o yaml | kubectl apply -f -
+  # email-password is NOT stored here — apply it separately after every reinstall:
+  #
+  #   kubectl patch secret argocd-notifications-secret -n argocd \
+  #     --type=merge -p '{"stringData":{"email-password":"YOUR_GMAIL_APP_PASSWORD"}}'
+  #
+  # Get a Gmail App Password at: Google Account → Security → 2FA → App Passwords
 
 ---
 apiVersion: v1

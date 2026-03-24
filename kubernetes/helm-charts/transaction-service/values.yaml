@@ -5,7 +5,8 @@ image:
   pullPolicy: Always
   tag: "latest"
 
-imagePullSecrets: []
+imagePullSecrets:
+  - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
 
@@ -47,6 +48,14 @@ autoscaling:
   maxReplicas: 8
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 80
+
+startupProbe:
+  httpGet:
+    path: /health
+    port: 7003
+  failureThreshold: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
 
 livenessProbe:
   httpGet:
@@ -120,7 +129,10 @@ env:
         name: qalitrack-secrets
         key: RABBITMQ_PASSWORD
   - name: ConnectionStrings__DefaultConnection
-    value: "Host=transaction-service-postgresql;Port=5432;Database=qalitrack_transaction;Username=postgres;Password=changeme"
+    valueFrom:
+      secretKeyRef:
+        name: qalitrack-secrets
+        key: TRANSACTION_DB_CONNECTION_STRING
 
 volumeMounts:
   - name: tmp
