@@ -50,7 +50,7 @@ userService:
   fullnameOverride: "user-service"
   image:
     repository: user-service
-    tag: main-7bcf9dd
+    tag: main-ff13374
     pullPolicy: Always
   resources:
     requests:
@@ -94,7 +94,7 @@ masterdata:
   fullnameOverride: "masterdata-service"
   image:
     repository: masterdata-service
-    tag: main-7bcf9dd
+    tag: main-ff13374
     pullPolicy: Always
   resources:
     requests:
@@ -133,7 +133,7 @@ transaction:
   fullnameOverride: "transaction-service"
   image:
     repository: transaction-service
-    tag: main-7bcf9dd
+    tag: main-ff13374
     pullPolicy: Always
   resources:
     requests:
@@ -172,7 +172,7 @@ backup:
   fullnameOverride: "backup-service"
   image:
     repository: backup-service
-    tag: main-7bcf9dd
+    tag: main-ff13374
     pullPolicy: Always
   resources:
     requests:
@@ -196,7 +196,7 @@ technicianService:
   fullnameOverride: "technician-service"
   image:
     repository: technician-api
-    tag: main-7bcf9dd
+    tag: main-ff13374
     pullPolicy: Always
   resources:
     requests:
@@ -324,9 +324,7 @@ redis:
   architecture: standalone
   auth:
     enabled: true
-    existingSecret: "qalitrack-secrets"
-    existingSecretPasswordKey: "USER_SERVICE_REDIS_PASSWORD"
-
+    password: "changeme"
   master:
     resources:
       requests:
@@ -358,11 +356,8 @@ rabbitmq:
     tag: 4.1.3-debian-12-r1
   auth:
     username: "qalitrack"
-    existingPasswordSecret: "qalitrack-secrets"
-    existingSecretPasswordKey: "RABBITMQ_PASSWORD"
-    existingErlangCookieSecret: "qalitrack-secrets"
-    existingErlangCookieSecretKey: "RABBITMQ_ERLANG_COOKIE"
-
+    password: "changeme"
+    erlangCookie: "secretcookie"
   resources:
     requests:
       memory: "512Mi"
