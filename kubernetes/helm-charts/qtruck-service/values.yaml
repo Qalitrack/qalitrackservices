@@ -102,7 +102,9 @@ frontend:
 postgresql:
   enabled: true
   auth:
-    postgresPassword: "changeme"
+    existingSecret: "qalitrack-secrets"
+    secretKeys:
+      adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
     database: "qtruck"
 
   image:
