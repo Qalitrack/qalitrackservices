@@ -482,6 +482,12 @@ monitoring:
             type: loki
             url: http://loki-gateway:80
             access: proxy
+          - name: Alertmanager
+            type: alertmanager
+            url: http://qalitrack-alertmanager:9093
+            access: proxy
+            jsonData:
+              implementation: prometheus
     # Pre-installed dashboards
     dashboardProviders:
       dashboardproviders.yaml:
@@ -495,6 +501,24 @@ monitoring:
             editable: true
             options:
               path: /var/lib/grafana/dashboards/default
+    dashboards:
+      default:
+        argocd:
+          gnetId: 19993
+          revision: 2
+          datasource: Prometheus
+        argocd-notifications:
+          gnetId: 14584
+          revision: 1
+          datasource: Prometheus
+        alertmanager:
+          gnetId: 9578
+          revision: 4
+          datasource: Alertmanager
+        cert-manager:
+          gnetId: 20842
+          revision: 2
+          datasource: Prometheus
   loki:
     enabled: true
     fullnameOverride: "loki"
