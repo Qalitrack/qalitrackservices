@@ -186,3 +186,13 @@ jobs:
         run: |
           cd deployment
           docker compose config
+  deploy-kubernetes:
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: write
+    uses: ./.github/workflows/deploy-to-kubernetes.yml
+    with:
+      service-name: gateway-service
+      namespace: qalitrack-prod
+      timeout: 5m

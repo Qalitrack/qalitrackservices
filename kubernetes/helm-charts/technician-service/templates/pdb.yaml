@@ -1,0 +1,13 @@
+{{- if gt (int (default 1 .Values.replicaCount)) 1 }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "technician-service.fullname" . }}
+  labels:
+    {{- include "technician-service.labels" . | nindent 4 }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      {{- include "technician-service.selectorLabels" . | nindent 6 }}
+{{- end }}
