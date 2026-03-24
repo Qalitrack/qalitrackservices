@@ -58,7 +58,7 @@ TRANSACTION_DB_CONNECTION_STRING=Host=transaction-service-postgresql;Port=5432;D
 TECHNICIAN_DB_CONNECTION_STRING=Host=technician-service-postgresql;Port=5432;Database=qalitrack_techniciandb;Username=postgres;Password=$TECHNICIAN_DB_PASSWORD;Pooling=true;MinPoolSize=5;MaxPoolSize=100
 TECHNICIAN_USER_SERVICE_DB_CONNECTION_STRING=Host=technician-user-service-postgresql;Port=5432;Database=userservicedb;Username=postgres;Password=$USER_DB_PASSWORD;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=100;ConnectionPruningInterval=10;Pooling=true
 TECHNICIAN_REDIS_CONNECTION_STRING=technician-redis:6379,password=$TECHNICIAN_REDIS_PASSWORD,abortConnect=false
-BACKUP_SERVICE_DB_CONNECTION_STRING=Host=user-service-postgresql;Port=5432;Database=qalitrack_user_service;Username=postgres;Password=$USER_DB_PASSWORD;Pooling=true
+BACKUP_SERVICE_DB_CONNECTION_STRING=Host=qalitrack-postgresql;Port=5432;Database=qalitrack_backup;Username=postgres;Password=$POSTGRES_ADMIN_PASSWORD;MinPoolSize=5;MaxPoolSize=100;Timeout=30;CommandTimeout=60;Pooling=true
 BACKUP_SERVICE_REDIS_CONNECTION_STRING=user-service-redis-master:6379,password=$REDIS_PASSWORD,abortConnect=false
 
 # RabbitMQ

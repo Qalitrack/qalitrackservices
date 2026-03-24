@@ -123,7 +123,7 @@ env:
   - name: BACKUP_RETENTION_DAYS
     value: "30"
   - name: RABBITMQ_HOST
-    value: "backup-service-rabbitmq"
+    value: "qalitrack-rabbitmq"
   - name: RABBITMQ_PORT
     value: "5672"
   - name: RABBITMQ_USERNAME
