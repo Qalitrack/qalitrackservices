@@ -88,6 +88,11 @@ spec:
       namespace: qalitrack-prod
       jsonPointers:
         - /data  # Redis running with existing password — rotate manually when ready
+    - group: apiextensions.k8s.io
+      kind: CustomResourceDefinition
+      name: grafanaagents.monitoring.grafana.com
+      jsonPointers:
+        - /metadata/annotations  # CRD annotations exceed 262144 byte limit
 
 ---
 # ArgoCD Project for Qalitrack
