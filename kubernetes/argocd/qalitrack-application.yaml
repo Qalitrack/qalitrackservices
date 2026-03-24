@@ -20,11 +20,7 @@ spec:
     helm:
       valueFiles:
         - values.yaml
-
-      # Override values (customize as needed)
-      # values: |
-      #   gateway:
-      #     replicaCount: 3
+      skipCrds: true  # CRD annotations exceed K8s 256KB limit — CRDs managed separately
 
   # Destination cluster and namespace
   destination:
