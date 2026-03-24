@@ -541,9 +541,29 @@ autoscaling:
 prometheus:
   alertmanager:
     enabled: true
-    # Config loaded from secret so SMTP password stays out of git.
-    # Secret is applied manually — see kubernetes/secrets/README.md
-    configFromSecret: alertmanager-config-secret
+    # Real config (with SMTP password) is applied manually to the cluster.
+    # ArgoCD is set to ignoreDifferences on this ConfigMap so it won't overwrite it.
+    # To reapply: kubectl replace -f kubernetes/monitoring/alertmanager-config-secret.yaml
+    config:
+      global:
+        resolve_timeout: 5m
+      route:
+        group_by: ['alertname', 'cluster', 'service']
+        group_wait: 10s
+        group_interval: 10s
+        repeat_interval: 12h
+        receiver: 'default'
+        routes:
+        - match:
+            alertname: Watchdog
+          receiver: 'null'
+        - match:
+            severity: critical
+          receiver: 'critical'
+      receivers:
+      - name: 'null'
+      - name: 'default'
+      - name: 'critical'
 
 loki:
   deploymentMode: SingleBinary
