@@ -536,6 +536,12 @@ autoscaling:
 # Leaves room for OS/system: ~37GB
 
 # Sub-chart overrides (must be at top level, keyed by chart name)
+grafana:
+  admin:
+    existingSecret: "grafana-admin-secret"
+    userKey: admin-user
+    passwordKey: admin-password
+
 prometheus:
   alertmanager:
     enabled: true
