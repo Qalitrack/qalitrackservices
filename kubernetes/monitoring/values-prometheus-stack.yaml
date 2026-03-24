@@ -110,6 +110,38 @@ grafana:
         revision: 1
         datasource: Prometheus
 
+      # ArgoCD
+      argocd:
+        gnetId: 19993
+        revision: 2
+        datasource: Prometheus
+
+      # ArgoCD Notifications
+      argocd-notifications:
+        gnetId: 14584
+        revision: 1
+        datasource: Prometheus
+
+      # Alertmanager
+      alertmanager:
+        gnetId: 9578
+        revision: 4
+        datasource: Alertmanager
+
+      # cert-manager
+      cert-manager:
+        gnetId: 20842
+        revision: 2
+        datasource: Prometheus
+
+  additionalDataSources:
+    - name: Alertmanager
+      type: alertmanager
+      url: http://kube-prometheus-stack-alertmanager.monitoring.svc.cluster.local:9093
+      access: proxy
+      jsonData:
+        implementation: prometheus
+
 # AlertManager configuration
 alertmanager:
   enabled: true
