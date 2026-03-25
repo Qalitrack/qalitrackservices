@@ -312,6 +312,10 @@ postgresql:
     enabled: true
     serviceMonitor:
       enabled: false
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "9187"
+      prometheus.io/path: "/metrics"
 # ============================================================================
 # REDIS - Caching Layer
 # ============================================================================
