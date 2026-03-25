@@ -41,6 +41,7 @@ gateway:
   env:
     ASPNETCORE_ENVIRONMENT: "Production"
     ASPNETCORE_URLS: "http://+:7000"
+    ASPNETCORE_AllowedHosts: "*"
 # ============================================================================
 # USER SERVICE - Authentication & User Management
 # ============================================================================
@@ -386,6 +387,9 @@ ingress:
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: "web,websecure"
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    traefik.ingress.kubernetes.io/headers.accesscontrolalloworiginlist: "*"
+    traefik.ingress.kubernetes.io/headers.accesscontrolallowmethods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
+    traefik.ingress.kubernetes.io/headers.accesscontrolallowheaders: "Content-Type,Authorization,X-Requested-With"
   hosts:
     - host: api.qalibrated.co.ke
       paths:

@@ -50,9 +50,9 @@ api:
           name: qalitrack-secrets
           key: QTRUCK_DB_PASSWORD
     - name: ALLOWED_HOSTS
-      value: "qalibrated.co.ke,www.qalibrated.co.ke,qtruck-service"
-    - name: CORS_ALLOWED_ORIGINS
-      value: "https://qalibrated.co.ke,https://www.qalibrated.co.ke"
+      value: "*"
+    - name: CORS_ALLOW_ALL_ORIGINS
+      value: "True"
 
 # QTruck Frontend (Next.js)
 frontend:
