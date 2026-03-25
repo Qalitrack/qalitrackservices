@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Prometheus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -197,6 +198,7 @@ try
     app.UseSerilogRequestLogging();
     app.UseHttpsRedirection();
     app.UseRouting();
+    app.UseHttpMetrics();
 
     // CORS
     app.UseCors("AllowAll");
@@ -231,6 +233,7 @@ try
 
     app.MapControllers();
     app.MapHealthChecks("/health");
+    app.MapMetrics();
 
     // Database Migration (with proper logging)
     using (var scope = app.Services.CreateScope())

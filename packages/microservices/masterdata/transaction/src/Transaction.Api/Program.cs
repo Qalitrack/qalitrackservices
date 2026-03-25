@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Prometheus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -252,12 +253,15 @@ if (!app.Environment.IsEnvironment("Test"))
     app.UseSerilogRequestLogging();
 }
 
+app.UseHttpMetrics();
+
 // Use authentication and authorization if needed
 // app.UseAuthentication();
 // app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+app.MapMetrics();
 
 // Run database migrations automatically on startup in non-Development environments
 // Run database migrations automatically on startup

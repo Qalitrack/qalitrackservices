@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Prometheus;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
 using FluentValidation;
@@ -258,12 +259,14 @@ app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 
 app.UseRouting();
+app.UseHttpMetrics();
 
 // CORS must be after UseRouting() but before UseAuthentication() and UseAuthorization()
 app.UseCors("AllowAll");
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+app.MapMetrics();
 
 // Initialize database with proper error handling (skip in test environment)
 if (!app.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase))

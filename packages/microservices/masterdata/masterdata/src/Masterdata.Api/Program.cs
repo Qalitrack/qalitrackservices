@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Prometheus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -292,6 +293,7 @@ app.UseHttpsRedirection();
 app.UseSerilogRequestLogging();
 
 app.UseRouting();
+app.UseHttpMetrics();
 
 // CORS must be after UseRouting() but before UseAuthentication() and UseAuthorization()
 app.UseCors("AllowAll");
@@ -305,6 +307,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHealthChecks("/health");
+app.MapMetrics();
 
 // Initialize database
 // Initialize database with proper error handling

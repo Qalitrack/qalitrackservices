@@ -1,4 +1,5 @@
 using BackupService.Infrastructure.Services;
+using Prometheus;
 using BackupService.Infrastructure.Services.Notifications;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
@@ -207,10 +208,12 @@ app.UseCors("AllowAll");
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseHttpMetrics();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapMetrics();
 
 // Ensure database is created/migrated and seeded
 using (var scope = app.Services.CreateScope())
