@@ -1,39 +1,31 @@
 replicaCount: 1
-
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/backup-service
   pullPolicy: Always
-  tag: "main-ff13374"
-
+  tag: "main-03acbfa"
 imagePullSecrets:
   - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   create: true
   annotations: {}
   name: ""
-
 podAnnotations: {}
-
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 1000
-
 securityContext:
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: false
   allowPrivilegeEscalation: false
-
 service:
   type: ClusterIP
   port: 7004
   targetPort: 7004
-
 resources:
   limits:
     cpu: 500m
@@ -41,10 +33,8 @@ resources:
   requests:
     cpu: 100m
     memory: 256Mi
-
 autoscaling:
   enabled: false
-
 livenessProbe:
   tcpSocket:
     port: 7004
@@ -53,7 +43,6 @@ livenessProbe:
   timeoutSeconds: 5
   successThreshold: 1
   failureThreshold: 3
-
 readinessProbe:
   tcpSocket:
     port: 7004
@@ -62,13 +51,9 @@ readinessProbe:
   timeoutSeconds: 3
   successThreshold: 1
   failureThreshold: 3
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
-
 env:
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
@@ -161,7 +146,6 @@ env:
     value: "/backups"
   - name: Backup__MetadataPath
     value: "/backups/metadata"
-
 volumeMounts:
   - name: backup-storage
     mountPath: /backups
@@ -169,7 +153,6 @@ volumeMounts:
     mountPath: /tmp
   - name: logs
     mountPath: /app/logs
-
 volumes:
   - name: backup-storage
     persistentVolumeClaim:
@@ -178,14 +161,12 @@ volumes:
     emptyDir: {}
   - name: logs
     emptyDir: {}
-
 persistence:
   enabled: true
   storageClass: ""
   accessMode: ReadWriteOnce
   size: 50Gi
   annotations: {}
-
 # ============================================================================
 # PostgreSQL for Backup Service metadata
 # ============================================================================
@@ -196,7 +177,6 @@ postgresql:
     password: backupservice123
     database: backupservicedb
     postgresPassword: backupservice123
-
   primary:
     resources:
       requests:
@@ -205,17 +185,14 @@ postgresql:
       limits:
         memory: "2Gi"
         cpu: "1000m"
-
     persistence:
       enabled: true
       size: 10Gi
-
     extendedConfiguration: |
       shared_buffers = 512MB
       max_connections = 600
       work_mem = 2MB
       effective_cache_size = 1GB
-
 # ============================================================================
 # Redis for Backup Service caching
 # ============================================================================
@@ -223,7 +200,6 @@ redis:
   enabled: false
   auth:
     password: backupservice123
-
   master:
     resources:
       requests:
@@ -232,18 +208,14 @@ redis:
       limits:
         memory: "256Mi"
         cpu: "250m"
-
     persistence:
       enabled: true
       size: 2Gi
-
   replica:
-    replicaCount: 0  # No replicas for 64GB VPS optimization
-
+    replicaCount: 0 # No replicas for 64GB VPS optimization
   commonConfiguration: |
     maxmemory 256mb
     maxmemory-policy allkeys-lru
-
 # ============================================================================
 # RabbitMQ for Backup Service messaging
 # ============================================================================
@@ -252,7 +224,6 @@ rabbitmq:
   auth:
     username: admin
     password: securepassword
-
   resources:
     requests:
       memory: "256Mi"
@@ -260,9 +231,7 @@ rabbitmq:
     limits:
       memory: "512Mi"
       cpu: "250m"
-
   persistence:
     enabled: true
     size: 5Gi
-
-  replicaCount: 1  # Single instance for 64GB VPS
+  replicaCount: 1 # Single instance for 64GB VPS
