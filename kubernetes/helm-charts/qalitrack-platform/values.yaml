@@ -678,6 +678,28 @@ prometheus:
             - targets:
                 - qalitrack-loki.qalitrack-prod.svc:3100
           metrics_path: /metrics
+        - job_name: node-exporter
+          kubernetes_sd_configs:
+            - role: node
+          relabel_configs:
+            - source_labels: [__address__]
+              regex: (.+):(.+)
+              replacement: $1:9100
+              target_label: __address__
+            - source_labels: [__meta_kubernetes_node_name]
+              target_label: node
+          metrics_path: /metrics
+        - job_name: cadvisor
+          kubernetes_sd_configs:
+            - role: node
+          scheme: https
+          tls_config:
+            insecure_skip_verify: true
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_node_name]
+              target_label: node
+          metrics_path: /metrics/cadvisor
         - job_name: alertmanager
           static_configs:
             - targets:
