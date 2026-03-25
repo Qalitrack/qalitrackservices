@@ -662,6 +662,8 @@ grafana:
         datasource:
           - name: DS_PROMETHEUS
             value: Prometheus
+          - name: DS_PROMETHEUS-MEDIUM
+            value: Prometheus
       # Loki / Logs
       loki-logs:
         gnetId: 13639
