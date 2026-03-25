@@ -106,7 +106,7 @@ userService:
   image:
     repository: ghcr.io/qalitrack/qalitrackservices/user-service
     pullPolicy: Always
-    tag: "main-03acbfa"
+    tag: "main-19e0bd7"
   service:
     type: ClusterIP
     port: 7001
