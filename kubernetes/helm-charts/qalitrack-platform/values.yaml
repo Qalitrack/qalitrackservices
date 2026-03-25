@@ -649,6 +649,15 @@ grafana:
         gnetId: 10991
         revision: 11
         datasource: Prometheus
+      # Backend Services (.NET)
+      aspnetcore-endpoints:
+        gnetId: 17706
+        revision: 1
+        datasource: Prometheus
+      aspnetcore-http:
+        gnetId: 10915
+        revision: 1
+        datasource: Prometheus
       # Loki / Logs
       loki-logs:
         gnetId: 13639
