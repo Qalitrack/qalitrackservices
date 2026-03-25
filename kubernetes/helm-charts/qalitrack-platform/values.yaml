@@ -19,7 +19,7 @@ global:
 # ============================================================================
 # GATEWAY SERVICE - API Gateway with JWT Authentication
 # ============================================================================
-gateway-service:
+gateway:
   enabled: true
   replicaCount: 2
   fullnameOverride: "gateway-service"
@@ -45,7 +45,7 @@ gateway-service:
 # ============================================================================
 # USER SERVICE - Authentication & User Management
 # ============================================================================
-user-service:
+userService:
   enabled: true
   replicaCount: 2
   fullnameOverride: "user-service"
@@ -84,7 +84,7 @@ user-service:
 # ============================================================================
 # MASTERDATA SERVICE - Vehicles, Products, Suppliers
 # ============================================================================
-masterdata-service:
+masterdata:
   enabled: true
   replicaCount: 2
   fullnameOverride: "masterdata-service"
@@ -123,7 +123,7 @@ masterdata-service:
 # ============================================================================
 # TRANSACTION SERVICE - Weighbridge Transactions
 # ============================================================================
-transaction-service:
+transaction:
   enabled: true
   replicaCount: 2
   fullnameOverride: "transaction-service"
@@ -162,7 +162,7 @@ transaction-service:
 # ============================================================================
 # BACKUP SERVICE - Scheduled Database Backups
 # ============================================================================
-backup-service:
+backup:
   enabled: true
   replicaCount: 1
   fullnameOverride: "backup-service"
@@ -186,7 +186,7 @@ backup-service:
 # ============================================================================
 # TECHNICIAN SERVICE - Technician Management
 # ============================================================================
-technician-service:
+technicianService:
   enabled: true
   replicaCount: 2
   fullnameOverride: "technician-service"
@@ -205,10 +205,6 @@ technician-service:
     type: ClusterIP
     port: 7006
     targetPort: 80
-  userService:
-    image:
-      tag: main-ff13374
-      repository: ghcr.io/qalitrack/qalitrackservices/user-service
   postgresql:
     enabled: true
     fullnameOverride: "technician-service-postgresql"
@@ -229,7 +225,7 @@ technician-service:
 # ============================================================================
 # QTRUCK SERVICE - Drivers & Fleet Management
 # ============================================================================
-qtruck-service:
+qtruckService:
   enabled: false # Images not yet built — enable after running CI workflows
   fullnameOverride: "qtruck-service"
   api:

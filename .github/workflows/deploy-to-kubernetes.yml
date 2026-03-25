@@ -1,5 +1,10 @@
-# GitOps deployment — updates image tag in Helm values and commits to git.
-# ArgoCD detects the change and auto-syncs to the cluster.
+# GitOps deployment — updates image tag in the sub-chart's values.yaml,
+# repackages its tgz, and commits. ArgoCD detects the tgz change and
+# auto-syncs to the cluster.
+#
+# Why repackage? ArgoCD uses the pre-packaged .tgz files in charts/.
+# Editing source values.yaml alone has no effect — the tgz must be
+# rebuilt for the change to reach the cluster.
 
 name: Deploy to Kubernetes
 
@@ -7,7 +12,7 @@ on:
   workflow_call:
     inputs:
       service-name:
-        description: 'Service name matching the values.yaml key (e.g., gateway-service)'
+        description: 'Service name (e.g., gateway-service, user-service)'
         required: true
         type: string
       namespace:
@@ -41,32 +46,58 @@ jobs:
           wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           chmod +x /usr/local/bin/yq
 
-      - name: Update image tag in platform values.yaml
+      - name: Install Helm
+        run: curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Update image tag in sub-chart values and repackage
         run: |
           SERVICE="${{ inputs.service-name }}"
           TAG="${{ steps.tag.outputs.value }}"
-          VALUES="kubernetes/helm-charts/qalitrack-platform/values.yaml"
+          CHARTS_DIR="kubernetes/helm-charts/qalitrack-platform/charts"
 
           case "$SERVICE" in
-            gateway-service)    yq e '."gateway-service".image.tag = "'"$TAG"'"'    -i "$VALUES" ;;
-            user-service)
-              yq e '."user-service".image.tag = "'"$TAG"'"'                         -i "$VALUES"
-              # Also update the technician-service's embedded user-service (same image)
-              yq e '."technician-service".userService.image.tag = "'"$TAG"'"'       -i "$VALUES"
+            gateway-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/gateway-service/values.yaml"
+              helm package kubernetes/helm-charts/gateway-service --destination "$CHARTS_DIR"
               ;;
-            masterdata-service) yq e '."masterdata-service".image.tag = "'"$TAG"'"' -i "$VALUES" ;;
-            transaction-service) yq e '."transaction-service".image.tag = "'"$TAG"'"' -i "$VALUES" ;;
-            backup-service)     yq e '."backup-service".image.tag = "'"$TAG"'"'     -i "$VALUES" ;;
-            technician-api|technician-service) yq e '."technician-service".image.tag = "'"$TAG"'"' -i "$VALUES" ;;
-            qtruck-api)         yq e '."qtruck-service".api.image.tag = "'"$TAG"'"' -i "$VALUES" ;;
-            qtruck-frontend)    yq e '."qtruck-service".frontend.image.tag = "'"$TAG"'"' -i "$VALUES" ;;
+            user-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/user-service/values.yaml"
+              helm package kubernetes/helm-charts/user-service --destination "$CHARTS_DIR"
+              # Also update the technician-service's embedded user-service (same image)
+              yq e ".userService.image.tag = \"$TAG\"" -i "kubernetes/helm-charts/technician-service/values.yaml"
+              helm package kubernetes/helm-charts/technician-service --destination "$CHARTS_DIR"
+              ;;
+            masterdata-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/masterdata-service/values.yaml"
+              helm package kubernetes/helm-charts/masterdata-service --destination "$CHARTS_DIR"
+              ;;
+            transaction-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/transaction-service/values.yaml"
+              helm package kubernetes/helm-charts/transaction-service --destination "$CHARTS_DIR"
+              ;;
+            backup-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/backup-service/values.yaml"
+              helm package kubernetes/helm-charts/backup-service --destination "$CHARTS_DIR"
+              ;;
+            technician-api|technician-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/technician-service/values.yaml"
+              helm package kubernetes/helm-charts/technician-service --destination "$CHARTS_DIR"
+              ;;
+            qtruck-api)
+              yq e ".api.image.tag = \"$TAG\"" -i "kubernetes/helm-charts/qtruck-service/values.yaml"
+              helm package kubernetes/helm-charts/qtruck-service --destination "$CHARTS_DIR"
+              ;;
+            qtruck-frontend)
+              yq e ".frontend.image.tag = \"$TAG\"" -i "kubernetes/helm-charts/qtruck-service/values.yaml"
+              helm package kubernetes/helm-charts/qtruck-service --destination "$CHARTS_DIR"
+              ;;
             *)
-              echo "No Helm chart entry for $SERVICE — nothing to update"
+              echo "No sub-chart entry for $SERVICE — nothing to update"
               exit 0
               ;;
           esac
 
-          echo "Set $SERVICE image tag → $TAG"
+          echo "Updated $SERVICE image tag → $TAG and repackaged tgz"
 
       - name: Commit and push (ArgoCD will auto-sync)
         run: |
@@ -78,7 +109,7 @@ jobs:
             exit 0
           fi
 
-          git add kubernetes/helm-charts/qalitrack-platform/values.yaml
+          git add kubernetes/helm-charts/
           git commit -m "deploy: ${{ inputs.service-name }} → ${{ steps.tag.outputs.value }} [skip ci]"
           git push
-          echo "Pushed to git — ArgoCD will detect the change and redeploy"
+          echo "Pushed to git — ArgoCD will detect the tgz change and redeploy"
