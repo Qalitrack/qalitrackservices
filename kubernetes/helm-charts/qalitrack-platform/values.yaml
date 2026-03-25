@@ -616,9 +616,9 @@ grafana:
         revision: 1
         datasource: Prometheus
       alertmanager:
-        gnetId: 9578
-        revision: 4
-        datasource: Alertmanager
+        gnetId: 13637
+        revision: 2
+        datasource: Prometheus
       cert-manager:
         gnetId: 20842
         revision: 2
@@ -671,6 +671,11 @@ prometheus:
           static_configs:
             - targets:
                 - qalitrack-loki.qalitrack-prod.svc:3100
+          metrics_path: /metrics
+        - job_name: alertmanager
+          static_configs:
+            - targets:
+                - qalitrack-alertmanager.qalitrack-prod.svc:9093
           metrics_path: /metrics
         - job_name: kube-state-metrics
           static_configs:
