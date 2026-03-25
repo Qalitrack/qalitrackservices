@@ -629,7 +629,11 @@ grafana:
         revision: 3
         datasource: Prometheus
       kubernetes-pods:
-        gnetId: 6336
+        gnetId: 13770
+        revision: 1
+        datasource: Prometheus
+      kubernetes-deployments:
+        gnetId: 8588
         revision: 1
         datasource: Prometheus
       kubernetes-nodes:
