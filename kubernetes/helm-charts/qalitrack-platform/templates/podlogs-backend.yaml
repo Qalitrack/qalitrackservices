@@ -3,6 +3,9 @@ kind: PodLogs
 metadata:
   name: qalitrack-backend-services
   namespace: {{ .Release.Namespace }}
+  labels:
+    app.kubernetes.io/instance: qalitrack
+    app.kubernetes.io/name: loki
 spec:
   namespaceSelector:
     matchNames:
