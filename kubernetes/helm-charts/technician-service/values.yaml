@@ -1,33 +1,25 @@
 replicaCount: 2
-
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/technician-api
   pullPolicy: Always
-  tag: "main-ff13374"
-
+  tag: "main-03acbfa"
 imagePullSecrets:
   - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   create: true
   annotations: {}
   name: ""
-
 podAnnotations: {}
-
 podSecurityContext: {}
-
 securityContext:
   readOnlyRootFilesystem: false
   allowPrivilegeEscalation: false
-
 service:
   type: ClusterIP
   port: 7006
   targetPort: 80
-
 resources:
   requests:
     memory: "512Mi"
@@ -35,14 +27,12 @@ resources:
   limits:
     memory: "2Gi"
     cpu: "1000m"
-
 autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 5
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
-
 startupProbe:
   httpGet:
     path: /health
@@ -50,7 +40,6 @@ startupProbe:
   failureThreshold: 30
   periodSeconds: 10
   timeoutSeconds: 5
-
 livenessProbe:
   httpGet:
     path: /health
@@ -60,7 +49,6 @@ livenessProbe:
   timeoutSeconds: 5
   successThreshold: 1
   failureThreshold: 3
-
 readinessProbe:
   httpGet:
     path: /health
@@ -70,13 +58,9 @@ readinessProbe:
   timeoutSeconds: 3
   successThreshold: 1
   failureThreshold: 3
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
-
 env:
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
@@ -98,7 +82,6 @@ env:
     value: "qalitrack"
   - name: JWT_AUDIENCE
     value: "qalitrack"
-
 volumeMounts:
   - name: tmp
     mountPath: /tmp
@@ -106,7 +89,6 @@ volumeMounts:
     mountPath: /app/logs
   - name: wwwroot
     mountPath: /app/wwwroot
-
 volumes:
   - name: tmp
     emptyDir: {}
@@ -114,22 +96,18 @@ volumes:
     emptyDir: {}
   - name: wwwroot
     emptyDir: {}
-
 # Dedicated User Service for Technician deployment
 userService:
   enabled: true
   replicaCount: 2
-
   image:
     repository: ghcr.io/qalitrack/qalitrackservices/user-service
     pullPolicy: Always
     tag: "main-ff13374"
-
   service:
     type: ClusterIP
     port: 7001
     targetPort: 80
-
   resources:
     requests:
       memory: "512Mi"
@@ -137,14 +115,12 @@ userService:
     limits:
       memory: "2Gi"
       cpu: "1000m"
-
   autoscaling:
     enabled: true
     minReplicas: 2
     maxReplicas: 5
     targetCPUUtilizationPercentage: 80
     targetMemoryUtilizationPercentage: 80
-
   env:
     - name: ASPNETCORE_ENVIRONMENT
       value: "Production"
@@ -244,7 +220,6 @@ userService:
         secretKeyRef:
           name: qalitrack-secrets
           key: EMAIL_ENABLE_SSL
-
 postgresql:
   enabled: false
   auth:
@@ -252,7 +227,6 @@ postgresql:
     secretKeys:
       adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
     database: "qalitrack_techniciandb"
-
   primary:
     resources:
       requests:
@@ -261,11 +235,9 @@ postgresql:
       limits:
         memory: "3Gi"
         cpu: "1000m"
-
     persistence:
       enabled: true
       size: 20Gi
-
     extendedConfiguration: |
       shared_buffers = 512MB
       max_connections = 600
@@ -279,7 +251,6 @@ postgresql:
       effective_io_concurrency = 200
       min_wal_size = 1GB
       max_wal_size = 4GB
-
 # PostgreSQL for User Service
 userServicePostgresql:
   enabled: false
@@ -288,7 +259,6 @@ userServicePostgresql:
     secretKeys:
       adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
     database: "userservicedb"
-
   primary:
     resources:
       requests:
@@ -297,11 +267,9 @@ userServicePostgresql:
       limits:
         memory: "3Gi"
         cpu: "1000m"
-
     persistence:
       enabled: true
       size: 20Gi
-
     extendedConfiguration: |
       shared_buffers = 512MB
       max_connections = 600
@@ -315,7 +283,6 @@ userServicePostgresql:
       effective_io_concurrency = 200
       min_wal_size = 1GB
       max_wal_size = 4GB
-
 # Redis for caching (shared between user service and technician service)
 redis:
   enabled: false
@@ -323,7 +290,6 @@ redis:
     enabled: true
     existingSecret: "qalitrack-secrets"
     existingSecretPasswordKey: "TECHNICIAN_REDIS_CONNECTION_STRING"
-
   master:
     resources:
       requests:
@@ -332,11 +298,9 @@ redis:
       limits:
         memory: "1Gi"
         cpu: "500m"
-
     persistence:
       enabled: true
       size: 5Gi
-
 # RabbitMQ for messaging (shared between user service and technician service)
 rabbitmq:
   enabled: false
@@ -346,7 +310,6 @@ rabbitmq:
     existingSecretPasswordKey: "RABBITMQ_PASSWORD"
     existingErlangCookieSecret: "qalitrack-secrets"
     existingErlangCookieSecretKey: "RABBITMQ_ERLANG_COOKIE"
-
   resources:
     requests:
       memory: "256Mi"
@@ -354,7 +317,6 @@ rabbitmq:
     limits:
       memory: "1Gi"
       cpu: "500m"
-
   persistence:
     enabled: true
     size: 5Gi
