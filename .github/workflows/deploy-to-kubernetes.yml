@@ -41,10 +41,6 @@ jobs:
           wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
           chmod +x /usr/local/bin/yq
 
-      - name: Install Helm
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
       - name: Update image tag in platform values.yaml
         run: |
           SERVICE="${{ inputs.service-name }}"
@@ -53,7 +49,11 @@ jobs:
 
           case "$SERVICE" in
             gateway-service)    yq e ".gateway.image.tag = \"$TAG\""             -i "$VALUES" ;;
-            user-service)       yq e ".userService.image.tag = \"$TAG\""         -i "$VALUES" ;;
+            user-service)
+              yq e ".userService.image.tag = \"$TAG\""                            -i "$VALUES"
+              # Also update the technician-service's embedded user-service (same image)
+              yq e ".technicianService.userService.image.tag = \"$TAG\""          -i "$VALUES"
+              ;;
             masterdata-service) yq e ".masterdata.image.tag = \"$TAG\""          -i "$VALUES" ;;
             transaction-service) yq e ".transaction.image.tag = \"$TAG\""        -i "$VALUES" ;;
             backup-service)     yq e ".backup.image.tag = \"$TAG\""              -i "$VALUES" ;;
@@ -68,21 +68,6 @@ jobs:
 
           echo "Set $SERVICE image tag → $TAG"
 
-      - name: Update technician user-service tag and repackage (user-service builds only)
-        if: ${{ inputs.service-name == 'user-service' }}
-        run: |
-          TAG="${{ steps.tag.outputs.value }}"
-          TECH_VALUES="kubernetes/helm-charts/technician-service/values.yaml"
-          CHARTS_DIR="kubernetes/helm-charts/qalitrack-platform/charts"
-
-          # Update the user-service image tag inside the technician-service sub-chart
-          yq e ".userService.image.tag = \"$TAG\"" -i "$TECH_VALUES"
-          echo "Set technician user-service image tag → $TAG"
-
-          # Repackage so ArgoCD picks up the new defaults from the tgz
-          helm package kubernetes/helm-charts/technician-service --destination "$CHARTS_DIR"
-          echo "Repackaged technician-service tgz"
-
       - name: Commit and push (ArgoCD will auto-sync)
         run: |
           git config user.name "github-actions[bot]"
@@ -94,8 +79,6 @@ jobs:
           fi
 
           git add kubernetes/helm-charts/qalitrack-platform/values.yaml
-          git add kubernetes/helm-charts/technician-service/values.yaml
-          git add kubernetes/helm-charts/qalitrack-platform/charts/technician-service-1.0.0.tgz
           git commit -m "deploy: ${{ inputs.service-name }} → ${{ steps.tag.outputs.value }} [skip ci]"
           git push
           echo "Pushed to git — ArgoCD will detect the change and redeploy"

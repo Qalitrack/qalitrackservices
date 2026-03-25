@@ -64,11 +64,6 @@ userService:
     type: ClusterIP
     port: 7001
     targetPort: 80
-  env:
-    ASPNETCORE_ENVIRONMENT: "Production"
-    ASPNETCORE_URLS: "http://+:80"
-    UsePostgreSQL: "true"
-    UseRedis: "true"
   postgresql:
     enabled: true
     fullnameOverride: "user-service-postgresql"
@@ -210,10 +205,9 @@ technicianService:
     type: ClusterIP
     port: 7006
     targetPort: 80
-  env:
-    ASPNETCORE_ENVIRONMENT: "Production"
-    ASPNETCORE_URLS: "http://+:80"
-    UsePostgreSQL: "true"
+  userService:
+    image:
+      tag: main-ff13374
   postgresql:
     enabled: true
     fullnameOverride: "technician-service-postgresql"
@@ -231,68 +225,6 @@ technicianService:
           cpu: "1000m"
       persistence:
         size: 20Gi
-  userService:
-    env:
-      - name: Email__SmtpHost
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_HOST
-      - name: Email__SmtpPort
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_PORT
-      - name: Email__SmtpUsername
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_USERNAME
-      - name: Email__SmtpPassword
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_PASSWORD
-      - name: Email__FromEmail
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_FROM_EMAIL
-      - name: Email__EnableSsl
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_ENABLE_SSL
-      - name: EMAIL_SMTP_HOST
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_HOST
-      - name: EMAIL_SMTP_PORT
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_PORT
-      - name: EMAIL_SMTP_USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_USERNAME
-      - name: EMAIL_SMTP_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_SMTP_PASSWORD
-      - name: EMAIL_FROM_EMAIL
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_FROM_EMAIL
-      - name: EMAIL_ENABLE_SSL
-        valueFrom:
-          secretKeyRef:
-            name: qalitrack-secrets
-            key: EMAIL_ENABLE_SSL
 # ============================================================================
 # QTRUCK SERVICE - Drivers & Fleet Management
 # ============================================================================
