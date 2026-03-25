@@ -651,7 +651,7 @@ grafana:
         datasource: Prometheus
       # Backend Services (.NET)
       aspnetcore-endpoints:
-        gnetId: 17706
+        gnetId: 10427
         revision: 1
         datasource:
           - name: DS_PROMETHEUS
