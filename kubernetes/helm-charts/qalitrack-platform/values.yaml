@@ -308,6 +308,10 @@ postgresql:
       min_wal_size = 1GB
       max_wal_size = 4GB
       max_connections = 200
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
 # ============================================================================
 # REDIS - Caching Layer
 # ============================================================================
@@ -337,6 +341,10 @@ redis:
     save ""
     appendonly yes
     appendfsync everysec
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
 # ============================================================================
 # RABBITMQ - Message Queue
 # ============================================================================
@@ -368,6 +376,10 @@ rabbitmq:
   extraConfiguration: |-
     vm_memory_high_watermark.relative = 0.6
     disk_free_limit.relative = 1.0
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
 # ============================================================================
 # INGRESS - External Access (Optional - Enable if you want SSL/domain routing)
 # By default, Gateway Service is exposed as LoadBalancer
@@ -640,6 +652,13 @@ grafana:
         datasource: Loki
 prometheus:
   serverFiles:
+    prometheus.yml:
+      scrape_configs:
+        - job_name: loki
+          static_configs:
+            - targets:
+                - qalitrack-loki.qalitrack-prod.svc:3100
+          metrics_path: /metrics
     alerting_rules.yml:
       groups:
         - name: qalitrack.pods
