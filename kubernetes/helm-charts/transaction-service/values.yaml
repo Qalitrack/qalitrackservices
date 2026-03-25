@@ -1,39 +1,31 @@
 replicaCount: 2
-
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/transaction-service
   pullPolicy: Always
-  tag: "main-ff13374"
-
+  tag: "main-392b929"
 imagePullSecrets:
   - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   create: true
   annotations: {}
   name: ""
-
 podAnnotations: {}
-
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 1000
-
 securityContext:
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
-
 service:
   type: ClusterIP
   port: 7003
   targetPort: 7003
-
 resources:
   limits:
     cpu: 1000m
@@ -41,14 +33,12 @@ resources:
   requests:
     cpu: 250m
     memory: 512Mi
-
 autoscaling:
   enabled: true
   minReplicas: 2
   maxReplicas: 8
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 80
-
 startupProbe:
   httpGet:
     path: /health
@@ -56,7 +46,6 @@ startupProbe:
   failureThreshold: 30
   periodSeconds: 10
   timeoutSeconds: 5
-
 livenessProbe:
   httpGet:
     path: /health
@@ -66,7 +55,6 @@ livenessProbe:
   timeoutSeconds: 5
   successThreshold: 1
   failureThreshold: 3
-
 readinessProbe:
   httpGet:
     path: /health
@@ -76,24 +64,20 @@ readinessProbe:
   timeoutSeconds: 3
   successThreshold: 1
   failureThreshold: 3
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
-    - weight: 100
-      podAffinityTerm:
-        labelSelector:
-          matchExpressions:
-          - key: app.kubernetes.io/name
-            operator: In
-            values:
-            - transaction-service
-        topologyKey: kubernetes.io/hostname
-
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - transaction-service
+          topologyKey: kubernetes.io/hostname
 env:
   - name: ASPNETCORE_ENVIRONMENT
     value: "Production"
@@ -133,13 +117,11 @@ env:
       secretKeyRef:
         name: qalitrack-secrets
         key: TRANSACTION_DB_CONNECTION_STRING
-
 volumeMounts:
   - name: tmp
     mountPath: /tmp
   - name: logs
     mountPath: /app/logs
-
 volumes:
   - name: tmp
     emptyDir: {}
