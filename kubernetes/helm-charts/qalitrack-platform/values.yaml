@@ -653,11 +653,15 @@ grafana:
       aspnetcore-endpoints:
         gnetId: 17706
         revision: 1
-        datasource: Prometheus
+        datasource:
+          - name: DS_PROMETHEUS
+            value: Prometheus
       aspnetcore-http:
         gnetId: 10915
         revision: 1
-        datasource: Prometheus
+        datasource:
+          - name: DS_PROMETHEUS
+            value: Prometheus
       # Loki / Logs
       loki-logs:
         gnetId: 13639
