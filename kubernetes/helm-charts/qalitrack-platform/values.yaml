@@ -663,6 +663,13 @@ prometheus:
             - targets:
                 - qalitrack-loki.qalitrack-prod.svc:3100
           metrics_path: /metrics
+        - job_name: argocd
+          static_configs:
+            - targets:
+                - argocd-metrics.argocd.svc:8082
+                - argocd-server-metrics.argocd.svc:8083
+                - argocd-notifications-controller-metrics.argocd.svc:9001
+          metrics_path: /metrics
         - job_name: kubernetes-pods
           kubernetes_sd_configs:
             - role: pod
