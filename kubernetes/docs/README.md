@@ -1,414 +1,329 @@
-# Qalitrack Kubernetes Documentation
+# Qalitrack Kubernetes Documentation Index
 
-Complete documentation for deploying and managing Qalitrack on Kubernetes.
+Comprehensive technical documentation for the Qalitrack platform Kubernetes infrastructure.
 
-## Quick Links
+## Primary Documentation
 
-- **[Quick Start Guide](../QUICKSTART.md)** - Deploy Qalitrack in 30-45 minutes
-- **[Add New Microservice](./ADD_NEW_MICROSERVICE.md)** - Step-by-step guide to add new services
-- **[Update Services](./UPDATE_SERVICES.md)** - How to deploy code changes
+### Core Guides
 
-## Documentation Index
+**[README.md](../README.md)** - Main entry point
+- Platform overview
+- Architecture components
+- Directory structure
+- Quick deployment
+- Resource allocation
+- Troubleshooting guide
 
-### Getting Started
+**[DEPLOYMENT.md](../DEPLOYMENT.md)** - Deployment procedures
+- Prerequisites validation
+- Namespace and RBAC setup
+- Infrastructure components installation
+- Platform deployment
+- Post-deployment verification
+- Production hardening
+- Rollback procedures
 
-1. **[QUICKSTART.md](../QUICKSTART.md)**
-   - Complete deployment guide (30-45 minutes)
-   - Prerequisites and preparation
-   - Step-by-step installation
-   - Verification and troubleshooting
+**[MONITORING.md](../MONITORING.md)** - Observability and monitoring
+- Prometheus configuration
+- Grafana dashboards
+- Alertmanager setup
+- Loki log aggregation
+- Metrics collection
+- Alert rules
 
-### Operations
+### Extended Documentation
 
-2. **[UPDATE_SERVICES.md](./UPDATE_SERVICES.md)**
-   - Deploying code changes
-   - Updating Gateway and microservices
-   - Rolling updates and rollbacks
-   - CI/CD pipeline usage
-   - **Read this when:** You've made code changes and need to deploy
+**[ARCHITECTURE.md](ARCHITECTURE.md)** - System architecture
+- Logical architecture diagrams
+- Service layer design
+- Data layer architecture
+- Network architecture
+- Storage architecture
+- Security architecture
+- High availability design
+- Design decisions and rationale
 
-3. **[ADD_NEW_MICROSERVICE.md](./ADD_NEW_MICROSERVICE.md)**
-   - Adding new services to the platform
-   - Helm chart creation
-   - Gateway routing configuration
-   - Backup and monitoring setup
-   - **Read this when:** You're adding a new backend service
+**[WORKFLOWS.md](WORKFLOWS.md)** - Operational workflows
+- Development workflow
+- CI/CD pipeline
+- GitOps with ArgoCD
+- Backup and restore procedures
+- Monitoring and alerting workflow
+- Scaling workflows
+- Incident response procedures
+- Update and maintenance workflows
 
-### Components
+**[ADD_NEW_MICROSERVICE.md](ADD_NEW_MICROSERVICE.md)** - Adding services
+- Creating new microservices
+- Helm chart creation
+- Gateway integration
+- Monitoring configuration
+- Complete step-by-step guide
 
-4. **[ArgoCD](../argocd/README.md)**
-   - GitOps automation
-   - Auto-deployment from Git
-   - Application management
+**[UPDATE_SERVICES.md](UPDATE_SERVICES.md)** - Deploying changes
+- Code change deployment
+- Image version updates
+- Configuration updates
+- Rolling updates
+- Rollback procedures
 
-5. **[Flagger](../flagger/README.md)**
-   - Progressive delivery
-   - Canary deployments
-   - Automatic rollbacks
+## Component-Specific Documentation
 
-6. **[Monitoring](../monitoring/README.md)**
-   - Prometheus metrics collection
-   - Grafana dashboards
-   - AlertManager configuration
+### Infrastructure Components
 
-7. **[Backups](../backups/README.md)**
-   - Automated CronJob backups
-   - Backup restoration
-   - Retention policies
+- **[../argocd/README.md](../argocd/README.md)** - GitOps continuous deployment
+- **[../backups/README.md](../backups/README.md)** - Automated database backups
+- **[../cert-manager/README.md](../cert-manager/README.md)** - TLS certificate management
+- **[../ci-cd/README.md](../ci-cd/README.md)** - CI/CD pipeline integration
+- **[../flagger/README.md](../flagger/README.md)** - Progressive delivery (canary)
+- **[../ingress-nginx/README.md](../ingress-nginx/README.md)** - NGINX Ingress Controller
+- **[../monitoring/README.md](../monitoring/README.md)** - Prometheus/Grafana stack
+- **[../namespaces/README.md](../namespaces/README.md)** - Namespace configuration
+- **[../secrets/README.md](../secrets/README.md)** - Secret generation and management
 
-8. **[BackupService](../helm-charts/backup-service/README.md)**
-   - API-driven backups
-   - On-demand backup/restore
-   - Microservice management
+### Service Helm Charts
 
-9. **[Custom Dashboards](../monitoring/dashboards/README.md)**
-   - Platform overview dashboard
-   - Transaction monitoring
-   - Business metrics
+- **[../helm-charts/qalitrack-platform/README.md](../helm-charts/qalitrack-platform/README.md)** - Umbrella chart
+- **[../helm-charts/backup-service/README.md](../helm-charts/backup-service/README.md)** - Backup service
+- **[../helm-charts/gateway-service/README.md](../helm-charts/gateway-service/README.md)** - API Gateway
+- **[../helm-charts/user-service/README.md](../helm-charts/user-service/README.md)** - User service
+- **[../helm-charts/masterdata-service/README.md](../helm-charts/masterdata-service/README.md)** - MasterData service
+- **[../helm-charts/transaction-service/README.md](../helm-charts/transaction-service/README.md)** - Transaction service
+- **[../helm-charts/technician-service/README.md](../helm-charts/technician-service/README.md)** - Technician service
+- **[../helm-charts/qtruck-service/README.md](../helm-charts/qtruck-service/README.md)** - QTruck service
 
-## Common Tasks
+## Quick Reference
 
-### Daily Operations
+### Common Commands
 
-**Check System Health**
+**View cluster status:**
 ```bash
 kubectl get pods -n qalitrack-prod
 kubectl get svc -n qalitrack-prod
+kubectl top pods -n qalitrack-prod
+kubectl top nodes
 ```
 
-**View Logs**
+**View logs:**
 ```bash
-kubectl logs -n qalitrack-prod -l app.kubernetes.io/name=gateway-service -f
+kubectl logs -n qalitrack-prod -l app.kubernetes.io/name=gateway-service --tail=100
+kubectl logs -n qalitrack-prod deployment/transaction-service -f
 ```
 
-**Check ArgoCD Sync Status**
+**Port forwarding:**
 ```bash
-argocd app get qalitrack-platform
+kubectl port-forward -n qalitrack-prod svc/gateway-service 7000:7000
+kubectl port-forward -n qalitrack-monitoring svc/prometheus-grafana 3000:80
+kubectl port-forward -n qalitrack-monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
 ```
 
-### Deployment
-
-**Deploy Code Changes**
+**Deployment operations:**
 ```bash
-# 1. Push code to GitHub
-git push origin main
-
-# 2. Wait for GitHub Actions to build (2-5 min)
-
-# 3. Restart deployment
+kubectl scale deployment/transaction-service --replicas=5 -n qalitrack-prod
 kubectl rollout restart deployment/gateway-service -n qalitrack-prod
+kubectl rollout status deployment/gateway-service -n qalitrack-prod
+kubectl rollout undo deployment/gateway-service -n qalitrack-prod
 ```
 
-**Update Configuration**
+**Helm operations:**
 ```bash
-# Edit values
-vim kubernetes/helm-charts/qalitrack-platform/values.yaml
-
-# Apply changes
-helm upgrade qalitrack-platform . -n qalitrack-prod
+helm list -n qalitrack-prod
+helm status qalitrack -n qalitrack-prod
+helm upgrade qalitrack . -n qalitrack-prod
+helm rollback qalitrack -n qalitrack-prod
 ```
+
+### Architecture Diagrams
+
+**Network Flow:**
+```
+Internet
+  │
+  └─→ NGINX Ingress (SSL termination)
+       │
+       └─→ Gateway Service (YARP)
+            │
+            ├─→ User Service → PostgreSQL
+            ├─→ MasterData Service → PostgreSQL
+            ├─→ Transaction Service → PostgreSQL
+            ├─→ Backup Service → PostgreSQL
+            └─→ Technician Service → PostgreSQL
+```
+
+**Data Layer:**
+```
+Services
+  ├─→ PostgreSQL (database-per-service)
+  ├─→ Redis (distributed cache)
+  └─→ RabbitMQ (message queue)
+```
+
+**Observability:**
+```
+Services (/metrics endpoints)
+  └─→ ServiceMonitors
+       └─→ Prometheus
+            ├─→ Grafana (dashboards)
+            └─→ Alertmanager (notifications)
+```
+
+### Service Ports
+
+| Service | Port | Purpose |
+|---------|------|---------|
+| Gateway | 7000 | API Gateway |
+| User | 7001 | User management |
+| MasterData | 7002 | Master data |
+| Transaction | 7003 | Transactions |
+| Backup | 7004 | Backup API |
+| Technician | 7006 | Technicians |
+| QTruck API | 7007 | Fleet management |
+| PostgreSQL | 5432 | Database |
+| Redis | 6379 | Cache |
+| RabbitMQ | 5672, 15672 | Message queue |
+| Prometheus | 9090 | Metrics |
+| Grafana | 3000 | Dashboards |
+
+### DNS Names
+
+**Internal (within cluster):**
+```
+<service-name>.<namespace>.svc.cluster.local
+```
+
+Examples:
+- `gateway-service.qalitrack-prod.svc.cluster.local:7000`
+- `user-service-postgresql.qalitrack-prod.svc.cluster.local:5432`
+
+**External (via Ingress):**
+- `https://qalibrated.co.ke/qalitrack/api/*` - API Gateway
+- `https://qalibrated.co.ke/grafana` - Grafana
+- `https://qalibrated.co.ke/prometheus` - Prometheus
+
+### Resource Allocation Summary
+
+**Total Resources (default configuration):**
+- CPU Requests: ~2.5 cores
+- CPU Limits: ~10 cores
+- Memory Requests: ~10Gi
+- Memory Limits: ~32Gi
+- Storage: ~250Gi (PersistentVolumes)
+
+**Recommended Cluster:**
+- Minimum: 64GB RAM, 16 CPU cores, 200GB storage
+- Production: 128GB RAM, 32 CPU cores, 500GB storage
+
+## Documentation Standards
+
+### File Organization
+
+- **Root level** - High-level overviews and deployment guides
+- **docs/** - Extended architectural and workflow documentation
+- **Component directories** - Component-specific implementation details
+
+### Document Structure
+
+Each document follows this structure:
+1. Title and overview
+2. Architecture/design (where applicable)
+3. Configuration details
+4. Procedures and workflows
+5. Troubleshooting
+6. References
+
+### Code Examples
+
+All code examples use proper syntax highlighting and include:
+- Command description
+- Expected output (where relevant)
+- Error handling notes
+
+### Versioning
+
+- Version: 1.0.0
+- Last Updated: 2026-03
+- Kubernetes Version: 1.24+
+- Helm Version: 3.10+
+
+## Getting Help
 
 ### Troubleshooting
 
-**Pod Not Starting**
+**Check pod status:**
 ```bash
+kubectl get pods -n qalitrack-prod
 kubectl describe pod <pod-name> -n qalitrack-prod
 kubectl logs <pod-name> -n qalitrack-prod
 ```
 
-**Service Not Accessible**
-```bash
-kubectl get endpoints <service-name> -n qalitrack-prod
-kubectl port-forward svc/<service-name> 7000:7000
-```
-
-**Rollback Deployment**
-```bash
-kubectl rollout undo deployment/<service-name> -n qalitrack-prod
-```
-
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    Qalitrack Platform                        │
-│                     (Kubernetes)                             │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  External Traffic                                            │
-│       ↓                                                      │
-│  ┌──────────────┐                                           │
-│  │ NGINX Ingress│ ← SSL/TLS (cert-manager)                 │
-│  └──────┬───────┘                                           │
-│         │                                                    │
-│         ↓                                                    │
-│  ┌──────────────┐                                           │
-│  │   Gateway    │ ← JWT Authentication                      │
-│  │   Service    │   Rate Limiting                           │
-│  └──────┬───────┘   API Routing                            │
-│         │                                                    │
-│         ├──────────┬──────────┬──────────┬─────────┐       │
-│         │          │          │          │         │       │
-│         ↓          ↓          ↓          ↓         ↓       │
-│  ┌──────────┐┌──────────┐┌──────────┐┌────────┐┌────────┐│
-│  │   User   ││MasterData││Transactio││ Backup ││Reportin││
-│  │  Service ││ Service  ││n Service ││Service ││g (new) ││
-│  └────┬─────┘└────┬─────┘└────┬─────┘└───┬────┘└───┬────┘│
-│       │           │           │          │         │       │
-│       ↓           ↓           ↓          ↓         ↓       │
-│  ┌──────────┐┌──────────┐┌──────────┐┌──────────────────┐│
-│  │PostgreSQL││PostgreSQL││PostgreSQL││    PostgreSQL    ││
-│  └──────────┘└──────────┘└──────────┘└──────────────────┘│
-│                                                              │
-│  Shared Infrastructure:                                     │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐                      │
-│  │  Redis  │ │RabbitMQ │ │ Backups │                      │
-│  └─────────┘ └─────────┘ └─────────┘                      │
-│                                                              │
-│  Automation & Monitoring:                                   │
-│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐         │
-│  │ ArgoCD  │ │ Flagger │ │Prometheu│ │ Grafana │         │
-│  │ (GitOps)│ │(Canary) │ │  s      │ │         │         │
-│  └─────────┘ └─────────┘ └─────────┘ └─────────┘         │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-```
-
-## Service Ports
-
-| Service | Port | Purpose |
-|---------|------|---------|
-| Gateway | 7000 | API Gateway & JWT Auth |
-| User Service | 7001 | User management & auth |
-| MasterData Service | 7002 | Master data (vehicles, products, etc.) |
-| Transaction Service | 7003 | Weighbridge transactions |
-| Backup Service | 7004 | Backup management API |
-| *Your New Service* | 7005+ | Next available port |
-
-## Resource Allocation (64GB VPS)
-
-| Component | Memory Request | Memory Limit | CPU Request | CPU Limit |
-|-----------|---------------|--------------|-------------|-----------|
-| **Services** |
-| Gateway | 128Mi | 256Mi | 100m | 250m |
-| User Service | 512Mi | 2Gi | 250m | 1000m |
-| MasterData Service | 512Mi | 2Gi | 250m | 1000m |
-| Transaction Service | 512Mi | 2Gi | 250m | 1000m |
-| Backup Service | 256Mi | 1Gi | 100m | 500m |
-| **Databases (per service)** |
-| PostgreSQL | 1Gi | 3Gi | 250m | 1000m |
-| **Shared** |
-| Redis | 256Mi | 512Mi | 100m | 250m |
-| RabbitMQ | 256Mi | 512Mi | 100m | 250m |
-| **Monitoring** |
-| Prometheus | 512Mi | 2Gi | 250m | 1000m |
-| Grafana | 256Mi | 512Mi | 100m | 250m |
-| **Total** | ~10Gi | ~32Gi | ~2.5 CPUs | ~10 CPUs |
-
-**VPS Capacity:** 64GB RAM, leaves 32-54GB free for OS and buffers
-
-## Workflow Diagrams
-
-### Code Change to Deployment
-
-```
-Developer                GitHub              Kubernetes
-    |                       |                     |
-    | 1. git push          |                     |
-    |--------------------->|                     |
-    |                       |                     |
-    |                       | 2. GitHub Actions  |
-    |                       |    builds image    |
-    |                       |                     |
-    |                       | 3. Push to         |
-    |                       |    ghcr.io         |
-    |                       |                     |
-    |                       |                     |
-    |                       | 4. ArgoCD detects  |
-    |                       |    new image       |
-    |                       |-------------------->|
-    |                       |                     |
-    |                       |                     | 5. Rolling update
-    |                       |                     |    (zero downtime)
-    |                       |                     |
-    | 6. Verify deployment  |                     |
-    |-------------------------------------->|
-```
-
-### Canary Deployment with Flagger
-
-```
-New Version Deployed
-        ↓
-    Canary Pod Created
-        ↓
-    10% traffic → Canary
-        ↓
-    Check metrics (1 min)
-        ↓
-    ✓ Success rate > 99%?
-    ✓ Latency < 500ms?
-        ↓
-    YES → Increase to 20%
-        ↓
-    Repeat until 50%
-        ↓
-    All checks passed?
-        ↓
-    YES → Promote to 100%
-        ↓
-    Old version terminated
-```
-
-## Environment Structure
-
-```
-qalitrack-prod/          # Production namespace
-├── Services
-│   ├── gateway-service
-│   ├── user-service
-│   ├── masterdata-service
-│   ├── transaction-service
-│   └── backup-service
-│
-├── Databases
-│   ├── user-service-postgresql
-│   ├── masterdata-service-postgresql
-│   └── transaction-service-postgresql
-│
-├── Infrastructure
-│   ├── redis-master
-│   ├── rabbitmq
-│   └── backup-storage-pvc
-│
-└── Secrets
-    └── qalitrack-secrets
-
-qalitrack-monitoring/    # Monitoring namespace
-├── prometheus
-├── grafana
-├── alertmanager
-└── servicemonitors
-
-ingress-nginx/           # Ingress controller
-└── ingress-nginx-controller
-
-cert-manager/            # SSL certificates
-└── cert-manager
-
-flagger-system/          # Progressive delivery
-├── flagger
-└── flagger-loadtester
-
-argocd/                  # GitOps
-└── argocd-server
-```
-
-## Key Concepts
-
-### GitOps (ArgoCD)
-- Git is the single source of truth
-- All changes go through Git
-- Automatic deployment on git push
-- Declarative configuration
-
-### Progressive Delivery (Flagger)
-- Gradual rollout of new versions
-- Automatic monitoring during rollout
-- Auto-rollback on failure
-- Canary, blue-green, A/B testing
-
-### Rolling Updates
-- Zero-downtime deployments
-- New pods created before old ones terminated
-- Health checks ensure readiness
-- Automatic rollback on health check failure
-
-### Observability
-- **Prometheus** - Metrics collection
-- **Grafana** - Visualization
-- **Logs** - kubectl logs, aggregation
-- **Tracing** - (Optional: Jaeger/Zipkin)
-
-## Best Practices
-
-### Security
-- ✅ Secrets stored in Kubernetes Secrets
-- ✅ RBAC for access control
-- ✅ Network policies (optional)
-- ✅ Pod security policies
-- ✅ SSL/TLS with cert-manager
-
-### High Availability
-- ✅ Multiple replicas for services
-- ✅ Pod anti-affinity (optional)
-- ✅ Health checks (liveness/readiness)
-- ✅ Resource limits to prevent OOM
-
-### Monitoring
-- ✅ Prometheus metrics from all services
-- ✅ Custom Grafana dashboards
-- ✅ Alerts for critical issues
-- ✅ Log aggregation
-
-### Backups
-- ✅ Automated daily backups (CronJob)
-- ✅ API-driven backups (BackupService)
-- ✅ 30-day retention
-- ✅ Checksums for integrity
-
-### Updates
-- ✅ Rolling updates for zero downtime
-- ✅ Canary deployments with Flagger
-- ✅ Easy rollback capability
-- ✅ Image versioning
-
-## Getting Help
-
-### Check Logs
-```bash
-# Service logs
-kubectl logs -n qalitrack-prod -l app.kubernetes.io/name=<service-name>
-
-# ArgoCD logs
-kubectl logs -n argocd -l app.kubernetes.io/name=argocd-server
-
-# Flagger logs
-kubectl logs -n flagger-system deployment/flagger
-```
-
-### Check Events
+**Check events:**
 ```bash
 kubectl get events -n qalitrack-prod --sort-by='.lastTimestamp'
 ```
 
-### Describe Resources
+**Check resource usage:**
 ```bash
-kubectl describe pod <pod-name> -n qalitrack-prod
-kubectl describe deployment <deployment-name> -n qalitrack-prod
+kubectl top pods -n qalitrack-prod
+kubectl top nodes
 ```
 
-### Access Dashboards
-```bash
-# Grafana
-kubectl port-forward -n qalitrack-monitoring svc/prometheus-grafana 3000:80
+### Documentation Updates
 
-# ArgoCD
-kubectl port-forward -n argocd svc/argocd-server 8080:443
+When updating documentation:
+1. Update the relevant .md file
+2. Update version/date in footer
+3. Update this index if adding new documents
+4. Commit with descriptive message
 
-# Prometheus
-kubectl port-forward -n qalitrack-monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+### Contact
+
+For infrastructure issues:
+- Check component-specific README files
+- Review troubleshooting sections
+- Examine Kubernetes events and logs
+- Check Grafana dashboards for metrics
+
+## Document Map
+
+```
+kubernetes/
+│
+├── README.md (Start here - Platform overview)
+│
+├── DEPLOYMENT.md (Deployment procedures)
+├── MONITORING.md (Observability)
+│
+└── docs/
+    ├── README.md (This file - Documentation index)
+    ├── ARCHITECTURE.md (System design)
+    ├── WORKFLOWS.md (Operational workflows)
+    ├── ADD_NEW_MICROSERVICE.md (Add services)
+    └── UPDATE_SERVICES.md (Deploy changes)
 ```
 
-## Support & Contributing
+## External References
 
-- **Issues:** Report at [GitHub Issues](https://github.com/Qalitrack/qalitrackservices/issues)
-- **Docs:** Keep documentation updated with changes
-- **Feedback:** Share improvements via pull requests
+**Kubernetes:**
+- [Kubernetes Documentation](https://kubernetes.io/docs/)
+- [kubectl Reference](https://kubernetes.io/docs/reference/kubectl/)
 
----
+**Helm:**
+- [Helm Documentation](https://helm.sh/docs/)
+- [Chart Development](https://helm.sh/docs/chart_template_guide/)
 
-**Last Updated:** March 2026
+**Prometheus:**
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [PromQL Basics](https://prometheus.io/docs/prometheus/latest/querying/basics/)
+
+**Grafana:**
+- [Grafana Documentation](https://grafana.com/docs/grafana/latest/)
+- [Dashboard Best Practices](https://grafana.com/docs/grafana/latest/best-practices/)
+
+**ArgoCD:**
+- [ArgoCD Documentation](https://argo-cd.readthedocs.io/)
+
+**Flagger:**
+- [Flagger Documentation](https://docs.flagger.app/)
+
 **Version:** 1.0.0
-**Kubernetes Version:** 1.24+
-**Helm Version:** 3.x
+**Last Updated:** 2026-03
