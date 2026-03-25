@@ -109,8 +109,54 @@ jobs:
             exit 0
           fi
 
+          # Stash our changes, pull latest, reapply — avoids binary rebase conflicts
+          git stash
+          git fetch origin main
+          git reset --hard origin/main
+
+          # Re-run the tag update and repackage on top of latest main
+          SERVICE="${{ inputs.service-name }}"
+          TAG="${{ steps.tag.outputs.value }}"
+          CHARTS_DIR="kubernetes/helm-charts/qalitrack-platform/charts"
+
+          case "$SERVICE" in
+            gateway-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/gateway-service/values.yaml"
+              helm package kubernetes/helm-charts/gateway-service --destination "$CHARTS_DIR"
+              ;;
+            user-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/user-service/values.yaml"
+              helm package kubernetes/helm-charts/user-service --destination "$CHARTS_DIR"
+              yq e ".userService.image.tag = \"$TAG\"" -i "kubernetes/helm-charts/technician-service/values.yaml"
+              helm package kubernetes/helm-charts/technician-service --destination "$CHARTS_DIR"
+              ;;
+            masterdata-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/masterdata-service/values.yaml"
+              helm package kubernetes/helm-charts/masterdata-service --destination "$CHARTS_DIR"
+              ;;
+            transaction-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/transaction-service/values.yaml"
+              helm package kubernetes/helm-charts/transaction-service --destination "$CHARTS_DIR"
+              ;;
+            backup-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/backup-service/values.yaml"
+              helm package kubernetes/helm-charts/backup-service --destination "$CHARTS_DIR"
+              ;;
+            technician-api|technician-service)
+              yq e ".image.tag = \"$TAG\"" -i "kubernetes/helm-charts/technician-service/values.yaml"
+              helm package kubernetes/helm-charts/technician-service --destination "$CHARTS_DIR"
+              ;;
+            qtruck-api)
+              yq e ".api.image.tag = \"$TAG\"" -i "kubernetes/helm-charts/qtruck-service/values.yaml"
+              helm package kubernetes/helm-charts/qtruck-service --destination "$CHARTS_DIR"
+              ;;
+            qtruck-frontend)
+              yq e ".frontend.image.tag = \"$TAG\"" -i "kubernetes/helm-charts/qtruck-service/values.yaml"
+              helm package kubernetes/helm-charts/qtruck-service --destination "$CHARTS_DIR"
+              ;;
+          esac
+
           git add kubernetes/helm-charts/
           git commit -m "deploy: ${{ inputs.service-name }} → ${{ steps.tag.outputs.value }} [skip ci]"
-          git pull --rebase origin main
           git push
           echo "Pushed to git — ArgoCD will detect the tgz change and redeploy"
