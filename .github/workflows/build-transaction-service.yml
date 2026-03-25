@@ -235,7 +235,7 @@ jobs:
 
   deploy-kubernetes:
     needs: build-and-push
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
     uses: ./.github/workflows/deploy-to-kubernetes.yml
