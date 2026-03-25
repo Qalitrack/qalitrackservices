@@ -19,40 +19,33 @@ maintainers:
 icon: https://qalitrack.com/logo.png
 dependencies:
   - name: gateway-service
-    alias: gateway
     version: "1.0.0"
     repository: "file://../gateway-service"
-    condition: gateway.enabled
+    condition: gateway-service.enabled
   - name: user-service
-    alias: userService
     version: "1.0.0"
     repository: "file://../user-service"
-    condition: userService.enabled
+    condition: user-service.enabled
   - name: masterdata-service
-    alias: masterdata
     version: "1.0.0"
     repository: "file://../masterdata-service"
-    condition: masterdata.enabled
+    condition: masterdata-service.enabled
   - name: transaction-service
-    alias: transaction
     version: "1.0.0"
     repository: "file://../transaction-service"
-    condition: transaction.enabled
+    condition: transaction-service.enabled
   - name: backup-service
-    alias: backup
     version: "1.0.0"
     repository: "file://../backup-service"
-    condition: backup.enabled
+    condition: backup-service.enabled
   - name: technician-service
-    alias: technicianService
     version: "1.0.0"
     repository: "file://../technician-service"
-    condition: technicianService.enabled
+    condition: technician-service.enabled
   - name: qtruck-service
-    alias: qtruckService
     version: "1.0.0"
     repository: "file://../qtruck-service"
-    condition: qtruckService.enabled
+    condition: qtruck-service.enabled
   - name: postgresql
     version: "18.5.11"
     repository: "https://charts.bitnami.com/bitnami"
