@@ -663,6 +663,11 @@ prometheus:
             - targets:
                 - qalitrack-loki.qalitrack-prod.svc:3100
           metrics_path: /metrics
+        - job_name: kube-state-metrics
+          static_configs:
+            - targets:
+                - qalitrack-kube-state-metrics.qalitrack-prod.svc:8080
+          metrics_path: /metrics
         - job_name: argocd
           static_configs:
             - targets:
