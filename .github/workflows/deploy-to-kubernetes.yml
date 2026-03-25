@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: read
 
     steps:
       - name: Checkout
@@ -40,6 +41,19 @@ jobs:
       - name: Compute short SHA image tag
         id: tag
         run: echo "value=main-$(echo "${{ github.sha }}" | cut -c1-7)" >> $GITHUB_OUTPUT
+
+      - name: Verify image exists in GHCR
+        run: |
+          SERVICE="${{ inputs.service-name }}"
+          TAG="${{ steps.tag.outputs.value }}"
+          case "$SERVICE" in
+            technician-service) IMAGE_NAME="technician-api" ;;
+            *) IMAGE_NAME="$SERVICE" ;;
+          esac
+          IMAGE="ghcr.io/${{ github.repository }}/${IMAGE_NAME}:${TAG}"
+          echo "Verifying image exists: $IMAGE"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin --quiet
+          docker manifest inspect "$IMAGE" || { echo "❌ Image $IMAGE not found in GHCR — deploy aborted to prevent broken rollout"; exit 1; }
 
       - name: Install yq
         run: |
