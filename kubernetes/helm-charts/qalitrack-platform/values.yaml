@@ -25,7 +25,7 @@ gateway:
   fullnameOverride: "gateway-service"
   image:
     repository: gateway-service
-    tag: main-ff13374
+    tag: main-39cda0b
     pullPolicy: Always
   resources:
     requests:
@@ -649,7 +649,6 @@ grafana:
         gnetId: 13639
         revision: 2
         datasource: Loki
-
 prometheus:
   serverFiles:
     alerting_rules.yml:
@@ -672,7 +671,6 @@ prometheus:
               annotations:
                 summary: "Pod {{ $labels.pod }} not ready"
                 description: "Pod {{ $labels.pod }} has been non-ready for 5+ minutes."
-
         - name: qalitrack.resources
           rules:
             - alert: HighMemoryUsage
@@ -699,7 +697,6 @@ prometheus:
               annotations:
                 summary: "PVC {{ $labels.persistentvolumeclaim }} above 80%"
                 description: "PVC {{ $labels.persistentvolumeclaim }} is {{ $value | humanize }}% full."
-
         - name: qalitrack.postgresql
           rules:
             - alert: PostgreSQLConnectionPoolExhaustion
@@ -718,7 +715,6 @@ prometheus:
               annotations:
                 summary: "PostgreSQL is down"
                 description: "PostgreSQL instance {{ $labels.instance }} is not responding."
-
         - name: qalitrack.services
           rules:
             - alert: ServiceDown
@@ -729,7 +725,6 @@ prometheus:
               annotations:
                 summary: "Service {{ $labels.job }} is down"
                 description: "Service {{ $labels.job }} has been unreachable for 2+ minutes."
-
         - name: qalitrack.certificates
           rules:
             - alert: CertificateExpiringSoon
@@ -748,7 +743,6 @@ prometheus:
               annotations:
                 summary: "Certificate {{ $labels.name }} has expired"
                 description: "Certificate {{ $labels.name }} in {{ $labels.namespace }} has expired."
-
   alertmanager:
     enabled: true
     # Real config (with SMTP password) is applied manually to the cluster.
@@ -764,17 +758,16 @@ prometheus:
         repeat_interval: 12h
         receiver: 'default'
         routes:
-        - match:
-            alertname: Watchdog
-          receiver: 'null'
-        - match:
-            severity: critical
-          receiver: 'critical'
+          - match:
+              alertname: Watchdog
+            receiver: 'null'
+          - match:
+              severity: critical
+            receiver: 'critical'
       receivers:
-      - name: 'null'
-      - name: 'default'
-      - name: 'critical'
-
+        - name: 'null'
+        - name: 'default'
+        - name: 'critical'
 loki:
   deploymentMode: SingleBinary
   loki:
@@ -810,4 +803,4 @@ loki:
     affinity: {}
   grafana-agent-operator:
     crds:
-      install: false  # CRD annotations exceed 262KB K8s limit — CRD already installed
+      install: false # CRD annotations exceed 262KB K8s limit — CRD already installed
