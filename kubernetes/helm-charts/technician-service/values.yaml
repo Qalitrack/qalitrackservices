@@ -3,7 +3,7 @@ replicaCount: 2
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/technician-api
   pullPolicy: Always
-  tag: "latest"
+  tag: "main-ff13374"
 
 imagePullSecrets:
   - name: ghcr-credentials
@@ -123,7 +123,7 @@ userService:
   image:
     repository: ghcr.io/qalitrack/qalitrackservices/user-service
     pullPolicy: Always
-    tag: "latest"
+    tag: "main-ff13374"
 
   service:
     type: ClusterIP
