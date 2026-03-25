@@ -654,6 +654,10 @@ grafana:
         revision: 11
         datasource: Prometheus
       # Backend Services (.NET)
+      aspnetcore-service-overview:
+        gnetId: 13040
+        revision: 2
+        datasource: Prometheus
       aspnetcore-endpoints:
         gnetId: 10427
         revision: 1
@@ -746,6 +750,12 @@ prometheus:
             - source_labels: [__meta_kubernetes_namespace]
               action: replace
               target_label: namespace
+            - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+              action: replace
+              target_label: service
+            - source_labels: [__meta_kubernetes_pod_label_app]
+              action: replace
+              target_label: app
     alerting_rules.yml:
       groups:
         - name: qalitrack.pods
