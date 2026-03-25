@@ -2,7 +2,7 @@ replicaCount: 2
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/transaction-service
   pullPolicy: Always
-  tag: "main-27d3349"
+  tag: "main-19e0bd7"
 imagePullSecrets:
   - name: ghcr-credentials
 nameOverride: ""
