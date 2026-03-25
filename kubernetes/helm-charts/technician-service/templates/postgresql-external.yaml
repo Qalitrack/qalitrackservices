@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: technician-service-postgresql
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "technician-service.labels" . | nindent 4 }}
+spec:
+  type: ExternalName
+  externalName: qalitrack-postgresql.{{ .Release.Namespace }}.svc.cluster.local
