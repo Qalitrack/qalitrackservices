@@ -18,6 +18,7 @@
     <PackageReference Include="Quartz.Extensions.Hosting" Version="3.15.0" />
     <PackageReference Include="Quartz.Serialization.Json" Version="3.15.0" />
     <PackageReference Include="SharpCompress" Version="0.40.0" />
+    <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.3" />
   </ItemGroup>
 
