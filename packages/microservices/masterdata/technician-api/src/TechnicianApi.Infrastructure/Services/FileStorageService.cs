@@ -2,11 +2,9 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using TechnicianApi.Core.Entities;
 using TechnicianApi.Core.Interfaces;
-using TechnicianApi.Infrastructure.Data;
 
 namespace TechnicianApi.Infrastructure.Services;
 
@@ -14,17 +12,17 @@ public class FileStorageService : IFileStorageService
 {
     private readonly IWebHostEnvironment _env;
     private readonly IConfiguration _configuration;
-    private readonly TechnicianApiDbContext _context;
+    private readonly IRepository<Attachment> _attachmentRepository;
     private const string UploadsFolder = "Uploads";
 
     public FileStorageService(
-        IWebHostEnvironment env, 
+        IWebHostEnvironment env,
         IConfiguration configuration,
-        TechnicianApiDbContext context)
+        IRepository<Attachment> attachmentRepository)
     {
         _env = env;
         _configuration = configuration;
-        _context = context;
+        _attachmentRepository = attachmentRepository;
     }
 
     public async Task<Attachment> SaveFileAsync(
@@ -63,8 +61,7 @@ public class FileStorageService : IFileStorageService
             EntityId = entityId
         };
 
-        _context.Attachments.Add(attachment);
-        await _context.SaveChangesAsync();
+        await _attachmentRepository.CreateAsync(attachment);
 
         return attachment;
     }
@@ -82,35 +79,32 @@ public class FileStorageService : IFileStorageService
     
     public async Task<bool> DeleteAttachmentAsync(Guid attachmentId)
     {
-        var attachment = await _context.Attachments.FindAsync(attachmentId);
+        var attachment = await _attachmentRepository.GetByIdAsync(attachmentId.ToString());
         if (attachment == null)
             return false;
-            
+
         // Delete the physical file
         var deleted = await DeleteFileAsync(attachment.FilePath);
-        
+
         if (deleted)
         {
             // Remove the database record
-            _context.Attachments.Remove(attachment);
-            await _context.SaveChangesAsync();
+            await _attachmentRepository.DeleteAsync(attachmentId.ToString());
             return true;
         }
-        
+
         return false;
     }
     
     public async Task<IEnumerable<Attachment>> GetAttachmentsForEntityAsync(string entityType, string entityId)
     {
-        return await _context.Attachments
-            .Where(a => a.EntityType == entityType && a.EntityId == entityId)
-            .OrderByDescending(a => a.UploadedAt)
-            .ToListAsync();
+        var attachments = await _attachmentRepository.FindAsync(a => a.EntityType == entityType && a.EntityId == entityId);
+        return attachments.OrderByDescending(a => a.UploadedAt);
     }
     
     public async Task<Attachment?> GetAttachmentAsync(Guid attachmentId)
     {
-        return await _context.Attachments.FindAsync(attachmentId);
+        return await _attachmentRepository.GetByIdAsync(attachmentId.ToString());
     }
 
     public string GetFileUrl(string filePath)

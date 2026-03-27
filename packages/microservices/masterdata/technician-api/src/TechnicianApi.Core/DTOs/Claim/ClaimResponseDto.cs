@@ -5,7 +5,6 @@ namespace TechnicianApi.Core.DTOs.Claim;
 
 public class ClaimResponseDto : BaseResponseDto
 {
-    public string Id { get; set; } = string.Empty;
     public string AssignmentId { get; set; } = string.Empty;
     public string TechnicianId { get; set; } = string.Empty;
     public string TechnicianName { get; set; } = string.Empty;

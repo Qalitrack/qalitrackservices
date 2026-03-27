@@ -36,6 +36,33 @@ public class TechnicianApiDbContext : DbContext
     // File attachments
     public DbSet<Attachment> Attachments { get; set; }
 
+    // QTruck Entities - Driver Management
+    public DbSet<Driver> Drivers { get; set; }
+    public DbSet<DriverProfile> DriverProfiles { get; set; }
+    public DbSet<DriverActivity> DriverActivities { get; set; }
+    public DbSet<DriverProfileChange> DriverProfileChanges { get; set; }
+    public DbSet<LicenseClass> LicenseClasses { get; set; }
+
+    // QTruck Entities - Fleet Management
+    public DbSet<Truck> Trucks { get; set; }
+    public DbSet<Material> Materials { get; set; }
+    public DbSet<MaterialVariant> MaterialVariants { get; set; }
+    public DbSet<MaterialCost> MaterialCosts { get; set; }
+    public DbSet<MaterialPhoto> MaterialPhotos { get; set; }
+    public DbSet<MaterialVariantPhoto> MaterialVariantPhotos { get; set; }
+
+    // QTruck Entities - Trip Management
+    public DbSet<TripType> TripTypes { get; set; }
+    public DbSet<Trip> Trips { get; set; }
+    public DbSet<TripMaterial> TripMaterials { get; set; }
+    public DbSet<Expense> Expenses { get; set; }
+    public DbSet<Receipt> Receipts { get; set; }
+    public DbSet<VehicleMileage> VehicleMileages { get; set; }
+
+    // QTruck Entities - Feedback & Settings
+    public DbSet<Feedback> Feedbacks { get; set; }
+    public DbSet<SystemSettings> SystemSettingsTable { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -443,6 +470,307 @@ public class TechnicianApiDbContext : DbContext
             entity.HasIndex(e => e.PeriodEnd);
         });
 
+        // Configure QTruck Entities
+
+        // Driver entity
+        modelBuilder.Entity<Driver>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UserId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.HasIndex(e => e.UserId);
+        });
+
+        // DriverProfile entity
+        modelBuilder.Entity<DriverProfile>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DriverId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
+
+            entity.HasOne(e => e.Driver)
+                .WithMany(d => d.ProfileVersions)
+                .HasForeignKey(e => e.DriverId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.DriverId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => new { e.DriverId, e.IsCurrent });
+        });
+
+        // DriverActivity entity
+        modelBuilder.Entity<DriverActivity>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.DriverId).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(e => e.Driver)
+                .WithMany(d => d.Activities)
+                .HasForeignKey(e => e.DriverId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.DriverId);
+            entity.HasIndex(e => e.ActivityType);
+            entity.HasIndex(e => e.CreatedAt);
+        });
+
+        // DriverProfileChange entity
+        modelBuilder.Entity<DriverProfileChange>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.NewProfileId).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(e => e.OldProfile)
+                .WithMany()
+                .HasForeignKey(e => e.OldProfileId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.NewProfile)
+                .WithMany(p => p.Changes)
+                .HasForeignKey(e => e.NewProfileId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.NewProfileId);
+        });
+
+        // LicenseClass entity
+        modelBuilder.Entity<LicenseClass>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        // Truck entity
+        modelBuilder.Entity<Truck>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.LicensePlate).IsRequired().HasMaxLength(50);
+
+            entity.HasOne(e => e.Driver)
+                .WithMany()
+                .HasForeignKey(e => e.DriverId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(e => e.LicensePlate).IsUnique();
+            entity.HasIndex(e => e.DriverId);
+        });
+
+        // Material entity
+        modelBuilder.Entity<Material>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.HasIndex(e => e.Name).IsUnique();
+        });
+
+        // MaterialVariant entity
+        modelBuilder.Entity<MaterialVariant>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MaterialId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+
+            entity.HasOne(e => e.Material)
+                .WithMany(m => m.Variants)
+                .HasForeignKey(e => e.MaterialId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.MaterialId);
+            entity.HasIndex(e => new { e.MaterialId, e.Name }).IsUnique();
+        });
+
+        // MaterialCost entity
+        modelBuilder.Entity<MaterialCost>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MaterialId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Cost).HasPrecision(18, 2);
+
+            entity.HasOne(e => e.Material)
+                .WithMany(m => m.Costs)
+                .HasForeignKey(e => e.MaterialId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.MaterialId);
+        });
+
+        // MaterialPhoto entity
+        modelBuilder.Entity<MaterialPhoto>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MaterialId).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(e => e.Material)
+                .WithMany(m => m.Photos)
+                .HasForeignKey(e => e.MaterialId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.MaterialId);
+        });
+
+        // MaterialVariantPhoto entity
+        modelBuilder.Entity<MaterialVariantPhoto>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.MaterialVariantId).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(e => e.MaterialVariant)
+                .WithMany(mv => mv.Photos)
+                .HasForeignKey(e => e.MaterialVariantId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.MaterialVariantId);
+        });
+
+        // TripType entity
+        modelBuilder.Entity<TripType>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.HasIndex(e => e.Name).IsUnique();
+            entity.HasIndex(e => e.IsActive);
+        });
+
+        // Trip entity
+        modelBuilder.Entity<Trip>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TruckId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.DriverId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.TotalCost).HasPrecision(18, 2);
+            entity.Property(e => e.MaterialCost).HasPrecision(18, 2);
+
+            entity.HasOne(e => e.Truck)
+                .WithMany(t => t.Trips)
+                .HasForeignKey(e => e.TruckId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Driver)
+                .WithMany(d => d.Trips)
+                .HasForeignKey(e => e.DriverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.TripType)
+                .WithMany(tt => tt.Trips)
+                .HasForeignKey(e => e.TripTypeId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.Material)
+                .WithMany(m => m.Trips)
+                .HasForeignKey(e => e.MaterialId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasOne(e => e.MaterialVariant)
+                .WithMany(mv => mv.Trips)
+                .HasForeignKey(e => e.MaterialVariantId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(e => e.TruckId);
+            entity.HasIndex(e => e.DriverId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.Date);
+        });
+
+        // TripMaterial entity
+        modelBuilder.Entity<TripMaterial>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TripId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.MaterialId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.UnitCost).HasPrecision(18, 2);
+            entity.Property(e => e.TotalCost).HasPrecision(18, 2);
+            entity.Property(e => e.Quantity).HasPrecision(18, 2);
+
+            entity.HasOne(e => e.Trip)
+                .WithMany(t => t.TripMaterials)
+                .HasForeignKey(e => e.TripId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(e => e.Material)
+                .WithMany(m => m.TripMaterials)
+                .HasForeignKey(e => e.MaterialId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.MaterialVariant)
+                .WithMany(mv => mv.TripMaterials)
+                .HasForeignKey(e => e.MaterialVariantId)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            entity.HasIndex(e => e.TripId);
+            entity.HasIndex(e => new { e.TripId, e.MaterialId, e.MaterialVariantId }).IsUnique();
+        });
+
+        // Expense entity
+        modelBuilder.Entity<Expense>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TripId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Amount).HasPrecision(18, 2);
+
+            entity.HasOne(e => e.Trip)
+                .WithMany(t => t.Expenses)
+                .HasForeignKey(e => e.TripId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.TripId);
+        });
+
+        // Receipt entity
+        modelBuilder.Entity<Receipt>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ExpenseId).IsRequired().HasMaxLength(100);
+
+            entity.HasOne(e => e.Expense)
+                .WithMany(ex => ex.Receipts)
+                .HasForeignKey(e => e.ExpenseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(e => e.ExpenseId);
+        });
+
+        // VehicleMileage entity
+        modelBuilder.Entity<VehicleMileage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.TruckId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.DriverId).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.StartMileage).HasPrecision(18, 2);
+            entity.Property(e => e.EndMileage).HasPrecision(18, 2);
+            entity.Property(e => e.Mileage).HasPrecision(18, 2);
+
+            entity.HasOne(e => e.Truck)
+                .WithMany(t => t.VehicleMileages)
+                .HasForeignKey(e => e.TruckId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(e => e.Driver)
+                .WithMany(d => d.VehicleMileages)
+                .HasForeignKey(e => e.DriverId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(e => e.TruckId);
+            entity.HasIndex(e => e.DriverId);
+            entity.HasIndex(e => e.Date);
+        });
+
+        // Feedback entity
+        modelBuilder.Entity<Feedback>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.UserId).IsRequired().HasMaxLength(100);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.FeedbackType);
+        });
+
+        // SystemSettings entity
+        modelBuilder.Entity<SystemSettings>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+        });
+
         // Global query filters for soft deletes
         modelBuilder.Entity<Technician>().HasQueryFilter(e => e.IsDeleted == false);
         modelBuilder.Entity<Assignment>().HasQueryFilter(e => e.IsDeleted == false);
@@ -453,6 +781,27 @@ public class TechnicianApiDbContext : DbContext
         modelBuilder.Entity<Requisition>().HasQueryFilter(e => e.IsDeleted == false);
         modelBuilder.Entity<DailySummary>().HasQueryFilter(e => e.IsDeleted == false);
         modelBuilder.Entity<PerformanceMetrics>().HasQueryFilter(e => e.IsDeleted == false);
+
+        // QTruck entities soft delete filters
+        modelBuilder.Entity<Driver>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<DriverProfile>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<DriverActivity>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<DriverProfileChange>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<LicenseClass>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Truck>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Material>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<MaterialVariant>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<MaterialCost>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<MaterialPhoto>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<MaterialVariantPhoto>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<TripType>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Trip>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<TripMaterial>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Expense>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Receipt>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<VehicleMileage>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<Feedback>().HasQueryFilter(e => e.IsDeleted == false);
+        modelBuilder.Entity<SystemSettings>().HasQueryFilter(e => e.IsDeleted == false);
     }
 
     // Helper for ValueComparer equality

@@ -22,6 +22,21 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("DriverProfileLicenseClass", b =>
+                {
+                    b.Property<string>("DriverProfilesId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LicenseClassesId")
+                        .HasColumnType("text");
+
+                    b.HasKey("DriverProfilesId", "LicenseClassesId");
+
+                    b.HasIndex("LicenseClassesId");
+
+                    b.ToTable("DriverProfileLicenseClass");
+                });
+
             modelBuilder.Entity("TechnicianApi.Core.Entities.AdvanceReturnForm", b =>
                 {
                     b.Property<string>("Id")
@@ -729,6 +744,603 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                     b.ToTable("DailySummaries");
                 });
 
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Driver", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LicenseNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Drivers");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.DriverActivity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ActivityData")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ActivityType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActivityType");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("DriverId");
+
+                    b.ToTable("DriverActivities");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.DriverProfile", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ApprovalNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("IdBackImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdFrontImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("IdNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LicenseBackImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LicenseExpiryDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LicenseFrontImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LicenseNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("ProfilePhotoUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<DateTime?>("ReviewedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ReviewedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<int>("VersionNumber")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("DriverId", "IsCurrent");
+
+                    b.ToTable("DriverProfiles");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.DriverProfileChange", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("ChangeType")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FieldName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("NewProfileId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldProfileId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NewProfileId");
+
+                    b.HasIndex("OldProfileId");
+
+                    b.ToTable("DriverProfileChanges");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Expense", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ReceiptPhotoUrl")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Synced")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TripId");
+
+                    b.ToTable("Expenses");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Feedback", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("AdminResponse")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("FeedbackType")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("RespondedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ResponseDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FeedbackType");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Feedbacks");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.LicenseClass", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("LicenseClasses");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Material", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Materials");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialCost", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Cost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Location")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("MaterialId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("Synced")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("MaterialCosts");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialPhoto", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MaterialId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
+
+                    b.ToTable("MaterialPhotos");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialVariant", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MaterialId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("MaterialId", "Name")
+                        .IsUnique();
+
+                    b.ToTable("MaterialVariants");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialVariantPhoto", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Caption")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MaterialVariantId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("PhotoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialVariantId");
+
+                    b.ToTable("MaterialVariantPhotos");
+                });
+
             modelBuilder.Entity("TechnicianApi.Core.Entities.PerDiemReturnForm", b =>
                 {
                     b.Property<string>("Id")
@@ -1095,6 +1707,55 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                     b.HasIndex("Type");
 
                     b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Receipt", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ExpenseId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<string>("ReceiptDetailsJson")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("Synced")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpenseId");
+
+                    b.ToTable("Receipts");
                 });
 
             modelBuilder.Entity("TechnicianApi.Core.Entities.Refund", b =>
@@ -1467,6 +2128,55 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                     b.ToTable("ServiceReports");
                 });
 
+            modelBuilder.Entity("TechnicianApi.Core.Entities.SystemSettings", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("AutoApproveProfileUpdates")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("AutoApproveUserTypesJson")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("LicenseExpiryWarningDays")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("RequireIdImages")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequireLicenseImages")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequireProfilePhoto")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("TesterLoginEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("TesterRegistrationEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemSettingsTable");
+                });
+
             modelBuilder.Entity("TechnicianApi.Core.Entities.Technician", b =>
                 {
                     b.Property<string>("Id")
@@ -1501,6 +2211,382 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Technician");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Trip", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<double?>("CurrentLocationLatitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("CurrentLocationLongitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<string>("CustomTripType")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("EndLocation")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<double?>("EndLocationLatitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("EndLocationLongitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<decimal?>("EndMileage")
+                        .HasColumnType("numeric");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal?>("MaterialCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("MaterialId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MaterialLoadingPhotosJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("MaterialVariantId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProofEndImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProofImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("StartLocation")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<double?>("StartLocationLatitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("StartLocationLongitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<decimal?>("StartMileage")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("TotalMileage")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("TripTypeId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TruckId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<double?>("TruckLocationLatitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("TruckLocationLongitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Date");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("MaterialVariantId");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("TripTypeId");
+
+                    b.HasIndex("TruckId");
+
+                    b.ToTable("Trips");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.TripMaterial", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AddedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("MaterialId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("MaterialVariantId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<decimal?>("Quantity")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("TripId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<decimal>("UnitCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaterialId");
+
+                    b.HasIndex("MaterialVariantId");
+
+                    b.HasIndex("TripId");
+
+                    b.HasIndex("TripId", "MaterialId", "MaterialVariantId")
+                        .IsUnique();
+
+                    b.ToTable("TripMaterials");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.TripType", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CreatedByUserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<int>("EmptyTripOption")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaterialRequirement")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IsActive");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("TripTypes");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Truck", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DriverId")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("LicensePlate")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Model")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("LicensePlate")
+                        .IsUnique();
+
+                    b.ToTable("Trucks");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.VehicleMileage", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("DriverId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<decimal>("EndMileage")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("Mileage")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProofEndImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ProofImageUrl")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("StartMileage")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<bool>("Synced")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TruckId")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Date");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("TruckId");
+
+                    b.ToTable("VehicleMileages");
+                });
+
+            modelBuilder.Entity("DriverProfileLicenseClass", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.DriverProfile", null)
+                        .WithMany()
+                        .HasForeignKey("DriverProfilesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianApi.Core.Entities.LicenseClass", null)
+                        .WithMany()
+                        .HasForeignKey("LicenseClassesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TechnicianApi.Core.Entities.AdvanceReturnForm", b =>
@@ -1629,6 +2715,101 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                     b.Navigation("Attachment");
                 });
 
+            modelBuilder.Entity("TechnicianApi.Core.Entities.DriverActivity", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Driver", "Driver")
+                        .WithMany("Activities")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.DriverProfile", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Driver", "Driver")
+                        .WithMany("ProfileVersions")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.DriverProfileChange", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.DriverProfile", "NewProfile")
+                        .WithMany("Changes")
+                        .HasForeignKey("NewProfileId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianApi.Core.Entities.DriverProfile", "OldProfile")
+                        .WithMany()
+                        .HasForeignKey("OldProfileId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("NewProfile");
+
+                    b.Navigation("OldProfile");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Expense", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Trip", "Trip")
+                        .WithMany("Expenses")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialCost", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Material", "Material")
+                        .WithMany("Costs")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialPhoto", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Material", "Material")
+                        .WithMany("Photos")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialVariant", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Material", "Material")
+                        .WithMany("Variants")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialVariantPhoto", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.MaterialVariant", "MaterialVariant")
+                        .WithMany("Photos")
+                        .HasForeignKey("MaterialVariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MaterialVariant");
+                });
+
             modelBuilder.Entity("TechnicianApi.Core.Entities.PerDiemReturnForm", b =>
                 {
                     b.HasOne("TechnicianApi.Core.Entities.Assignment", "Assignment")
@@ -1681,6 +2862,17 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Assignment");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Receipt", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Expense", "Expense")
+                        .WithMany("Receipts")
+                        .HasForeignKey("ExpenseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Expense");
                 });
 
             modelBuilder.Entity("TechnicianApi.Core.Entities.Refund", b =>
@@ -1740,6 +2932,101 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                     b.Navigation("Assignment");
                 });
 
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Trip", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Driver", "Driver")
+                        .WithMany("Trips")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianApi.Core.Entities.Material", "Material")
+                        .WithMany("Trips")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TechnicianApi.Core.Entities.MaterialVariant", "MaterialVariant")
+                        .WithMany("Trips")
+                        .HasForeignKey("MaterialVariantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TechnicianApi.Core.Entities.TripType", "TripType")
+                        .WithMany("Trips")
+                        .HasForeignKey("TripTypeId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TechnicianApi.Core.Entities.Truck", "Truck")
+                        .WithMany("Trips")
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Material");
+
+                    b.Navigation("MaterialVariant");
+
+                    b.Navigation("TripType");
+
+                    b.Navigation("Truck");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.TripMaterial", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Material", "Material")
+                        .WithMany("TripMaterials")
+                        .HasForeignKey("MaterialId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianApi.Core.Entities.MaterialVariant", "MaterialVariant")
+                        .WithMany("TripMaterials")
+                        .HasForeignKey("MaterialVariantId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TechnicianApi.Core.Entities.Trip", "Trip")
+                        .WithMany("TripMaterials")
+                        .HasForeignKey("TripId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Material");
+
+                    b.Navigation("MaterialVariant");
+
+                    b.Navigation("Trip");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Truck", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Driver", "Driver")
+                        .WithMany()
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Driver");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.VehicleMileage", b =>
+                {
+                    b.HasOne("TechnicianApi.Core.Entities.Driver", "Driver")
+                        .WithMany("VehicleMileages")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TechnicianApi.Core.Entities.Truck", "Truck")
+                        .WithMany("VehicleMileages")
+                        .HasForeignKey("TruckId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
+
+                    b.Navigation("Truck");
+                });
+
             modelBuilder.Entity("TechnicianApi.Core.Entities.AdvanceReturnForm", b =>
                 {
                     b.Navigation("LineItems");
@@ -1768,11 +3055,73 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                     b.Navigation("ServiceReport");
                 });
 
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Driver", b =>
+                {
+                    b.Navigation("Activities");
+
+                    b.Navigation("ProfileVersions");
+
+                    b.Navigation("Trips");
+
+                    b.Navigation("VehicleMileages");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.DriverProfile", b =>
+                {
+                    b.Navigation("Changes");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Expense", b =>
+                {
+                    b.Navigation("Receipts");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Material", b =>
+                {
+                    b.Navigation("Costs");
+
+                    b.Navigation("Photos");
+
+                    b.Navigation("TripMaterials");
+
+                    b.Navigation("Trips");
+
+                    b.Navigation("Variants");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.MaterialVariant", b =>
+                {
+                    b.Navigation("Photos");
+
+                    b.Navigation("TripMaterials");
+
+                    b.Navigation("Trips");
+                });
+
             modelBuilder.Entity("TechnicianApi.Core.Entities.Technician", b =>
                 {
                     b.Navigation("AssignmentTechnicians");
 
                     b.Navigation("Assignments");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Trip", b =>
+                {
+                    b.Navigation("Expenses");
+
+                    b.Navigation("TripMaterials");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.TripType", b =>
+                {
+                    b.Navigation("Trips");
+                });
+
+            modelBuilder.Entity("TechnicianApi.Core.Entities.Truck", b =>
+                {
+                    b.Navigation("Trips");
+
+                    b.Navigation("VehicleMileages");
                 });
 #pragma warning restore 612, 618
         }

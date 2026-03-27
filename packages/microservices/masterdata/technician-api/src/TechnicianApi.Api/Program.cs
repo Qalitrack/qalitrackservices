@@ -55,19 +55,24 @@ builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 // Configure static files
 builder.Services.AddDirectoryBrowser();
 
-// Add AutoMapper with profiles
-builder.Services.AddAutoMapper(
-    typeof(Program).Assembly,
-    typeof(FinancialFormsProfile).Assembly,
-    typeof(TechnicianProfile).Assembly,
-    typeof(AssignmentProfile).Assembly,
-    typeof(CheckInProfile).Assembly,
-    typeof(PhotoProfile).Assembly,
-    typeof(ServiceReportProfile).Assembly,
-    typeof(RequisitionProfile).Assembly,
-    typeof(DailySummaryProfile).Assembly,
-    typeof(PerformanceMetricsProfile).Assembly,
-    typeof(AttachmentProfile).Assembly);
+// Add AutoMapper with profiles (AutoMapper 13+ API)
+builder.Services.AddAutoMapper(cfg => { },
+    typeof(Program),
+    typeof(FinancialFormsProfile),
+    typeof(TechnicianProfile),
+    typeof(AssignmentProfile),
+    typeof(CheckInProfile),
+    typeof(PhotoProfile),
+    typeof(ServiceReportProfile),
+    typeof(RequisitionProfile),
+    typeof(DailySummaryProfile),
+    typeof(PerformanceMetricsProfile),
+    typeof(AttachmentProfile),
+    typeof(DriverMappingProfile),
+    typeof(FleetProfile),
+    typeof(TripProfile),
+    typeof(FeedbackProfile),
+    typeof(SystemSettingsProfile));
 
 // Configure Entity Framework based on environment
 if (builder.Environment.EnvironmentName.Equals("Test", StringComparison.OrdinalIgnoreCase))
@@ -135,6 +140,26 @@ builder.Services.AddScoped<IAdvanceReturnFormService, AdvanceReturnFormService>(
 builder.Services.AddScoped<IPerDiemReturnFormService, PerDiemReturnFormService>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
 builder.Services.AddScoped<IAssignmentBalanceService, AssignmentBalanceService>();
+
+// Add QTruck services (merged from QTruck API)
+builder.Services.AddScoped<IDriverService, DriverService>();
+builder.Services.AddScoped<IDriverProfileService, DriverProfileService>();
+builder.Services.AddScoped<IDriverActivityService, DriverActivityService>();
+builder.Services.AddScoped<IMaterialService, MaterialService>();
+builder.Services.AddScoped<IMaterialVariantService, MaterialVariantService>();
+builder.Services.AddScoped<IMaterialCostService, MaterialCostService>();
+builder.Services.AddScoped<IMaterialPhotoService, MaterialPhotoService>();
+builder.Services.AddScoped<IMaterialVariantPhotoService, MaterialVariantPhotoService>();
+builder.Services.AddScoped<ITruckService, TruckService>();
+builder.Services.AddScoped<ITripService, TripService>();
+builder.Services.AddScoped<ITripTypeService, TripTypeService>();
+builder.Services.AddScoped<ITripMaterialService, TripMaterialService>();
+builder.Services.AddScoped<IVehicleMileageService, VehicleMileageService>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
+builder.Services.AddScoped<IReceiptService, ReceiptService>();
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
+builder.Services.AddScoped<ISystemSettingsService, SystemSettingsService>();
+builder.Services.AddScoped<ILicenseClassService, LicenseClassService>();
 
 // Add CORS with more permissive settings for development
 builder.Services.AddCors(options =>

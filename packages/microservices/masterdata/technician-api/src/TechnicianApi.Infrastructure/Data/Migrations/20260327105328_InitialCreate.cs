@@ -37,6 +37,110 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Drivers",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Phone = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    LicenseNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Drivers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Feedbacks",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    UserId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    FeedbackType = table.Column<int>(type: "integer", nullable: false),
+                    Subject = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Description = table.Column<string>(type: "text", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    AdminResponse = table.Column<string>(type: "text", nullable: true),
+                    RespondedByUserId = table.Column<string>(type: "text", nullable: true),
+                    ResponseDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Feedbacks", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LicenseClasses",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LicenseClasses", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Materials",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Materials", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SystemSettingsTable",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TesterRegistrationEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    TesterLoginEnabled = table.Column<bool>(type: "boolean", nullable: false),
+                    LicenseExpiryWarningDays = table.Column<int>(type: "integer", nullable: false),
+                    RequireProfilePhoto = table.Column<bool>(type: "boolean", nullable: false),
+                    RequireLicenseImages = table.Column<bool>(type: "boolean", nullable: false),
+                    RequireIdImages = table.Column<bool>(type: "boolean", nullable: false),
+                    AutoApproveProfileUpdates = table.Column<bool>(type: "boolean", nullable: false),
+                    AutoApproveUserTypesJson = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SystemSettingsTable", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Technician",
                 columns: table => new
                 {
@@ -53,6 +157,199 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Technician", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripTypes",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    Category = table.Column<int>(type: "integer", nullable: false),
+                    EmptyTripOption = table.Column<int>(type: "integer", nullable: false),
+                    MaterialRequirement = table.Column<int>(type: "integer", nullable: false),
+                    CreatedByUserId = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DriverActivities",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    DriverId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ActivityType = table.Column<int>(type: "integer", nullable: false),
+                    ActivityData = table.Column<string>(type: "text", nullable: true),
+                    IpAddress = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    UserAgent = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DriverActivities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DriverActivities_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DriverProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    DriverId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    FullName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    IdNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    LicenseNumber = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    LicenseExpiryDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ProfilePhotoUrl = table.Column<string>(type: "text", nullable: true),
+                    LicenseFrontImageUrl = table.Column<string>(type: "text", nullable: true),
+                    LicenseBackImageUrl = table.Column<string>(type: "text", nullable: true),
+                    IdFrontImageUrl = table.Column<string>(type: "text", nullable: true),
+                    IdBackImageUrl = table.Column<string>(type: "text", nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    IsCurrent = table.Column<bool>(type: "boolean", nullable: false),
+                    VersionNumber = table.Column<int>(type: "integer", nullable: false),
+                    SubmittedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReviewedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    ReviewedBy = table.Column<string>(type: "text", nullable: true),
+                    ApprovalNotes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    RejectionReason = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DriverProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DriverProfiles_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Trucks",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    LicensePlate = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
+                    Model = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
+                    DriverId = table.Column<string>(type: "text", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trucks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Trucks_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaterialCosts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    MaterialId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Cost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Location = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    Synced = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialCosts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialCosts_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaterialPhotos",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    MaterialId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    PhotoUrl = table.Column<string>(type: "text", nullable: false),
+                    Caption = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialPhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialPhotos_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaterialVariants",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    MaterialId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Description = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialVariants", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialVariants_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -175,6 +472,199 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                         name: "FK_PerformanceMetrics_Technician_TechnicianId",
                         column: x => x.TechnicianId,
                         principalTable: "Technician",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DriverProfileChanges",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    OldProfileId = table.Column<string>(type: "text", nullable: true),
+                    NewProfileId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    FieldName = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    OldValue = table.Column<string>(type: "text", nullable: true),
+                    NewValue = table.Column<string>(type: "text", nullable: true),
+                    ChangeType = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DriverProfileChanges", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DriverProfileChanges_DriverProfiles_NewProfileId",
+                        column: x => x.NewProfileId,
+                        principalTable: "DriverProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DriverProfileChanges_DriverProfiles_OldProfileId",
+                        column: x => x.OldProfileId,
+                        principalTable: "DriverProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DriverProfileLicenseClass",
+                columns: table => new
+                {
+                    DriverProfilesId = table.Column<string>(type: "text", nullable: false),
+                    LicenseClassesId = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DriverProfileLicenseClass", x => new { x.DriverProfilesId, x.LicenseClassesId });
+                    table.ForeignKey(
+                        name: "FK_DriverProfileLicenseClass_DriverProfiles_DriverProfilesId",
+                        column: x => x.DriverProfilesId,
+                        principalTable: "DriverProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DriverProfileLicenseClass_LicenseClasses_LicenseClassesId",
+                        column: x => x.LicenseClassesId,
+                        principalTable: "LicenseClasses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VehicleMileages",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TruckId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    DriverId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    StartMileage = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    EndMileage = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    Mileage = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    ProofImageUrl = table.Column<string>(type: "text", nullable: true),
+                    ProofEndImageUrl = table.Column<string>(type: "text", nullable: true),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    Synced = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VehicleMileages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VehicleMileages_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_VehicleMileages_Trucks_TruckId",
+                        column: x => x.TruckId,
+                        principalTable: "Trucks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaterialVariantPhotos",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    MaterialVariantId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    PhotoUrl = table.Column<string>(type: "text", nullable: false),
+                    Caption = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialVariantPhotos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MaterialVariantPhotos_MaterialVariants_MaterialVariantId",
+                        column: x => x.MaterialVariantId,
+                        principalTable: "MaterialVariants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Trips",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TruckId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    DriverId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    TripTypeId = table.Column<string>(type: "text", nullable: true),
+                    CustomTripType = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    StartLocation = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    EndLocation = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    StartLocationLatitude = table.Column<double>(type: "double precision", nullable: true),
+                    StartLocationLongitude = table.Column<double>(type: "double precision", nullable: true),
+                    EndLocationLatitude = table.Column<double>(type: "double precision", nullable: true),
+                    EndLocationLongitude = table.Column<double>(type: "double precision", nullable: true),
+                    TruckLocationLatitude = table.Column<double>(type: "double precision", nullable: true),
+                    TruckLocationLongitude = table.Column<double>(type: "double precision", nullable: true),
+                    CurrentLocationLatitude = table.Column<double>(type: "double precision", nullable: true),
+                    CurrentLocationLongitude = table.Column<double>(type: "double precision", nullable: true),
+                    StartMileage = table.Column<decimal>(type: "numeric", nullable: true),
+                    EndMileage = table.Column<decimal>(type: "numeric", nullable: true),
+                    TotalMileage = table.Column<decimal>(type: "numeric", nullable: true),
+                    ProofImageUrl = table.Column<string>(type: "text", nullable: true),
+                    ProofEndImageUrl = table.Column<string>(type: "text", nullable: true),
+                    MaterialLoadingPhotosJson = table.Column<string>(type: "text", nullable: true),
+                    MaterialId = table.Column<string>(type: "text", nullable: true),
+                    MaterialVariantId = table.Column<string>(type: "text", nullable: true),
+                    MaterialCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TotalCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Trips", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Trips_Drivers_DriverId",
+                        column: x => x.DriverId,
+                        principalTable: "Drivers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Trips_MaterialVariants_MaterialVariantId",
+                        column: x => x.MaterialVariantId,
+                        principalTable: "MaterialVariants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Trips_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Trips_TripTypes_TripTypeId",
+                        column: x => x.TripTypeId,
+                        principalTable: "TripTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_Trips_Trucks_TruckId",
+                        column: x => x.TruckId,
+                        principalTable: "Trucks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -674,6 +1164,77 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Expenses",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TripId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    ReceiptPhotoUrl = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    Synced = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Expenses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Expenses_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TripMaterials",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TripId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    MaterialId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    MaterialVariantId = table.Column<string>(type: "text", nullable: true),
+                    Quantity = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: true),
+                    UnitCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    TotalCost = table.Column<decimal>(type: "numeric(18,2)", precision: 18, scale: 2, nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AddedByUserId = table.Column<string>(type: "text", nullable: true),
+                    Notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TripMaterials", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TripMaterials_MaterialVariants_MaterialVariantId",
+                        column: x => x.MaterialVariantId,
+                        principalTable: "MaterialVariants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
+                    table.ForeignKey(
+                        name: "FK_TripMaterials_Materials_MaterialId",
+                        column: x => x.MaterialId,
+                        principalTable: "Materials",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_TripMaterials_Trips_TripId",
+                        column: x => x.TripId,
+                        principalTable: "Trips",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AdvanceReturnLineItems",
                 columns: table => new
                 {
@@ -694,6 +1255,34 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                         name: "FK_AdvanceReturnLineItems_AdvanceReturnForms_AdvanceReturnForm~",
                         column: x => x.AdvanceReturnFormId,
                         principalTable: "AdvanceReturnForms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Receipts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ExpenseId = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    Note = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                    ReceiptDetailsJson = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<string>(type: "text", nullable: true),
+                    Synced = table.Column<bool>(type: "boolean", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreatedBy = table.Column<string>(type: "text", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "text", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Receipts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Receipts_Expenses_ExpenseId",
+                        column: x => x.ExpenseId,
+                        principalTable: "Expenses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -832,6 +1421,114 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_DriverActivities_ActivityType",
+                table: "DriverActivities",
+                column: "ActivityType");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverActivities_CreatedAt",
+                table: "DriverActivities",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverActivities_DriverId",
+                table: "DriverActivities",
+                column: "DriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverProfileChanges_NewProfileId",
+                table: "DriverProfileChanges",
+                column: "NewProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverProfileChanges_OldProfileId",
+                table: "DriverProfileChanges",
+                column: "OldProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverProfileLicenseClass_LicenseClassesId",
+                table: "DriverProfileLicenseClass",
+                column: "LicenseClassesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverProfiles_DriverId",
+                table: "DriverProfiles",
+                column: "DriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverProfiles_DriverId_IsCurrent",
+                table: "DriverProfiles",
+                columns: new[] { "DriverId", "IsCurrent" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DriverProfiles_Status",
+                table: "DriverProfiles",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Drivers_UserId",
+                table: "Drivers",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Expenses_TripId",
+                table: "Expenses",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_FeedbackType",
+                table: "Feedbacks",
+                column: "FeedbackType");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_Status",
+                table: "Feedbacks",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Feedbacks_UserId",
+                table: "Feedbacks",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_LicenseClasses_Name",
+                table: "LicenseClasses",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialCosts_MaterialId",
+                table: "MaterialCosts",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialPhotos_MaterialId",
+                table: "MaterialPhotos",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Materials_Name",
+                table: "Materials",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialVariantPhotos_MaterialVariantId",
+                table: "MaterialVariantPhotos",
+                column: "MaterialVariantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialVariants_MaterialId",
+                table: "MaterialVariants",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MaterialVariants_MaterialId_Name",
+                table: "MaterialVariants",
+                columns: new[] { "MaterialId", "Name" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PerDiemReturnForms_AssignmentId",
                 table: "PerDiemReturnForms",
                 column: "AssignmentId");
@@ -895,6 +1592,11 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 name: "IX_Photos_Type",
                 table: "Photos",
                 column: "Type");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Receipts_ExpenseId",
+                table: "Receipts",
+                column: "ExpenseId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Refunds_AssignmentId",
@@ -961,6 +1663,99 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 name: "IX_ServiceReports_TechnicianId",
                 table: "ServiceReports",
                 column: "TechnicianId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripMaterials_MaterialId",
+                table: "TripMaterials",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripMaterials_MaterialVariantId",
+                table: "TripMaterials",
+                column: "MaterialVariantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripMaterials_TripId",
+                table: "TripMaterials",
+                column: "TripId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripMaterials_TripId_MaterialId_MaterialVariantId",
+                table: "TripMaterials",
+                columns: new[] { "TripId", "MaterialId", "MaterialVariantId" },
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_Date",
+                table: "Trips",
+                column: "Date");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_DriverId",
+                table: "Trips",
+                column: "DriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_MaterialId",
+                table: "Trips",
+                column: "MaterialId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_MaterialVariantId",
+                table: "Trips",
+                column: "MaterialVariantId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_Status",
+                table: "Trips",
+                column: "Status");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_TripTypeId",
+                table: "Trips",
+                column: "TripTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trips_TruckId",
+                table: "Trips",
+                column: "TruckId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripTypes_IsActive",
+                table: "TripTypes",
+                column: "IsActive");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TripTypes_Name",
+                table: "TripTypes",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trucks_DriverId",
+                table: "Trucks",
+                column: "DriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Trucks_LicensePlate",
+                table: "Trucks",
+                column: "LicensePlate",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehicleMileages_Date",
+                table: "VehicleMileages",
+                column: "Date");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehicleMileages_DriverId",
+                table: "VehicleMileages",
+                column: "DriverId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VehicleMileages_TruckId",
+                table: "VehicleMileages",
+                column: "TruckId");
         }
 
         /// <inheritdoc />
@@ -985,6 +1780,27 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 name: "DailySummaries");
 
             migrationBuilder.DropTable(
+                name: "DriverActivities");
+
+            migrationBuilder.DropTable(
+                name: "DriverProfileChanges");
+
+            migrationBuilder.DropTable(
+                name: "DriverProfileLicenseClass");
+
+            migrationBuilder.DropTable(
+                name: "Feedbacks");
+
+            migrationBuilder.DropTable(
+                name: "MaterialCosts");
+
+            migrationBuilder.DropTable(
+                name: "MaterialPhotos");
+
+            migrationBuilder.DropTable(
+                name: "MaterialVariantPhotos");
+
+            migrationBuilder.DropTable(
                 name: "PerDiemReturnForms");
 
             migrationBuilder.DropTable(
@@ -997,6 +1813,9 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 name: "Photos");
 
             migrationBuilder.DropTable(
+                name: "Receipts");
+
+            migrationBuilder.DropTable(
                 name: "Refunds");
 
             migrationBuilder.DropTable(
@@ -1006,7 +1825,25 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 name: "ServiceReports");
 
             migrationBuilder.DropTable(
+                name: "SystemSettingsTable");
+
+            migrationBuilder.DropTable(
+                name: "TripMaterials");
+
+            migrationBuilder.DropTable(
+                name: "VehicleMileages");
+
+            migrationBuilder.DropTable(
                 name: "AdvanceReturnForms");
+
+            migrationBuilder.DropTable(
+                name: "DriverProfiles");
+
+            migrationBuilder.DropTable(
+                name: "LicenseClasses");
+
+            migrationBuilder.DropTable(
+                name: "Expenses");
 
             migrationBuilder.DropTable(
                 name: "Assignments");
@@ -1015,7 +1852,25 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 name: "Attachments");
 
             migrationBuilder.DropTable(
+                name: "Trips");
+
+            migrationBuilder.DropTable(
                 name: "Technician");
+
+            migrationBuilder.DropTable(
+                name: "MaterialVariants");
+
+            migrationBuilder.DropTable(
+                name: "TripTypes");
+
+            migrationBuilder.DropTable(
+                name: "Trucks");
+
+            migrationBuilder.DropTable(
+                name: "Materials");
+
+            migrationBuilder.DropTable(
+                name: "Drivers");
         }
     }
 }

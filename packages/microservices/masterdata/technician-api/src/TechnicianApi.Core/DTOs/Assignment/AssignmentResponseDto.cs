@@ -1,7 +1,5 @@
 using TechnicianApi.Core.DTOs.Base;
 
-using TechnicianApi.Core.DTOs.Base;
-
 namespace TechnicianApi.Core.DTOs.Assignment;
 
 public class AssignmentResponseDto : BaseResponseDto

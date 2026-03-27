@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using TechnicianApi.Api.Controllers;
 using TechnicianApi.Core.DTOs.Assignment;
@@ -17,6 +18,7 @@ namespace TechnicianApi.Tests.Controllers
     {
         private readonly Mock<IAssignmentService> _mockAssignmentService;
         private readonly Mock<IFileStorageService> _mockFileStorage;
+        private readonly Mock<ILogger<AssignmentsController>> _mockLogger;
         private readonly AssignmentsController _controller;
         private readonly ITestOutputHelper _output;
 
@@ -25,10 +27,11 @@ namespace TechnicianApi.Tests.Controllers
             _output = output;
             _mockAssignmentService = new Mock<IAssignmentService>();
             _mockFileStorage = new Mock<IFileStorageService>();
+            _mockLogger = new Mock<ILogger<AssignmentsController>>();
             _controller = new AssignmentsController(
                 _mockAssignmentService.Object,
                 _mockFileStorage.Object,
-                null // logger - add mock if your controller requires it
+                _mockLogger.Object
             );
         }
 

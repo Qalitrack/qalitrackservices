@@ -1,24 +1,22 @@
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using TechnicianApi.Core.DTOs.Balance;
 using TechnicianApi.Core.Entities;
 using TechnicianApi.Core.Interfaces;
-using TechnicianApi.Infrastructure.Data;
 
 namespace TechnicianApi.Infrastructure.Services;
 
 public class AssignmentBalanceService : IAssignmentBalanceService
 {
-    private readonly TechnicianApiDbContext _context;
+    private readonly IRepository<Assignment> _assignmentRepository;
     private readonly IRepository<AssignmentBalanceSummary> _balanceSummaryRepository;
     private readonly IMapper _mapper;
 
     public AssignmentBalanceService(
-        TechnicianApiDbContext context,
+        IRepository<Assignment> assignmentRepository,
         IRepository<AssignmentBalanceSummary> balanceSummaryRepository,
         IMapper mapper)
     {
-        _context = context;
+        _assignmentRepository = assignmentRepository;
         _balanceSummaryRepository = balanceSummaryRepository;
         _mapper = mapper;
     }
@@ -37,16 +35,16 @@ public class AssignmentBalanceService : IAssignmentBalanceService
 
     public async Task<AssignmentBalanceSummaryResponseDto> CalculateAndUpdateBalanceAsync(string assignmentId)
     {
-        var assignment = await _context.Assignments
-            .Include(a => a.PettyCashAdvanceForms)
-            .Include(a => a.AdvanceReturnForms)
-                .ThenInclude(f => f.LineItems)
-            .Include(a => a.PerDiemReturnForms)
-            .Include(a => a.Requisitions)
-            .Include(a => a.Claims)
-            .Include(a => a.Refunds)
-            .Include(a => a.BalanceSummary)
-            .FirstOrDefaultAsync(a => a.Id == assignmentId);
+        var assignment = await _assignmentRepository.GetByIdWithIncludesAsync(
+            assignmentId,
+            a => a.PettyCashAdvanceForms,
+            a => a.AdvanceReturnForms,
+            a => a.PerDiemReturnForms,
+            a => a.Requisitions,
+            a => a.Claims,
+            a => a.Refunds,
+            a => a.BalanceSummary!
+        );
 
         if (assignment == null)
         {
@@ -114,7 +112,7 @@ public class AssignmentBalanceService : IAssignmentBalanceService
             _ => "Balance is settled. No action needed."
         };
         var technicianId = assignment.TechnicianIds.FirstOrDefault() ?? string.Empty;
-        
+
         // Update or Create Balance Summary
         var summary = assignment.BalanceSummary;
         if (summary == null)
@@ -126,7 +124,6 @@ public class AssignmentBalanceService : IAssignmentBalanceService
                 TechnicianId = technicianId,
                 CreatedAt = DateTime.UtcNow
             };
-            _context.AssignmentBalanceSummaries.Add(summary);
         }
 
         summary.TotalAdvancesGiven = totalAdvancesGiven;
@@ -144,7 +141,14 @@ public class AssignmentBalanceService : IAssignmentBalanceService
         summary.LastCalculatedAt = DateTime.UtcNow;
         summary.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        if (assignment.BalanceSummary == null)
+        {
+            await _balanceSummaryRepository.CreateAsync(summary);
+        }
+        else
+        {
+            await _balanceSummaryRepository.UpdateAsync(summary);
+        }
 
         return _mapper.Map<AssignmentBalanceSummaryResponseDto>(summary);
     }
