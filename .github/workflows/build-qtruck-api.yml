@@ -93,6 +93,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/deploy-to-kubernetes.yml
     with:
       service-name: qtruck-api

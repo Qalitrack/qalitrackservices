@@ -225,6 +225,7 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     permissions:
       contents: write
+      packages: read
     uses: ./.github/workflows/deploy-to-kubernetes.yml
     with:
       service-name: masterdata-service
