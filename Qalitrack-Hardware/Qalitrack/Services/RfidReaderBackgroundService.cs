@@ -31,6 +31,12 @@ public class RfidReaderBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        if (!_settings.Enabled)
+        {
+            _logger.LogWarning("RFID reader is DISABLED in settings — set Enabled=true to activate");
+            return;
+        }
+
         _logger.LogInformation("RfidReaderBackgroundService started (pure C# version)");
 
         while (!stoppingToken.IsCancellationRequested)
@@ -69,8 +75,30 @@ public class RfidReaderBackgroundService : BackgroundService
 
         _client = new TcpClient();
         await _client.ConnectAsync(host, port, ct);
+
+        // Enable TCP keepalive to prevent idle connection drops
+        _client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+        // Configure keepalive parameters (2 min idle, 30s interval, 5 retries = ~4.5 min total)
+        if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+        {
+            // Windows: time (ms), interval (ms)
+            var keepAliveValues = new byte[12];
+            BitConverter.GetBytes(1).CopyTo(keepAliveValues, 0);        // on/off
+            BitConverter.GetBytes(120000).CopyTo(keepAliveValues, 4);   // time: 2 minutes
+            BitConverter.GetBytes(30000).CopyTo(keepAliveValues, 8);    // interval: 30 seconds
+            _client.Client.IOControl(IOControlCode.KeepAliveValues, keepAliveValues, null);
+        }
+        else
+        {
+            // Linux: time (seconds), interval (seconds), count
+            _client.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 120);
+            _client.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 30);
+            _client.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 5);
+        }
+
         _stream = _client.GetStream();
-        _logger.LogInformation("✅ TCP connected");
+        _logger.LogInformation("✅ TCP connected with keepalive enabled");
 
         // Give the reader a moment to send the ack (important!)
         await Task.Delay(500, ct);

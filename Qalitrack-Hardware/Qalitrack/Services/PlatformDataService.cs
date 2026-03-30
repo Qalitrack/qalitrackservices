@@ -178,8 +178,8 @@ public class PlatformDataService : BackgroundService
         {
             var tcpClient = new TcpClient
             {
-                ReceiveTimeout = _settings.ReadTimeoutMs,
-                SendTimeout    = _settings.ReadTimeoutMs
+                ReceiveTimeout = 30000,  // 30 seconds for scale data
+                SendTimeout    = 30000
             };
 
             using var cts = CancellationTokenSource.CreateLinkedTokenSource(token);
@@ -189,14 +189,35 @@ public class PlatformDataService : BackgroundService
             {
                 await tcpClient.ConnectAsync(_settings.IpAddress, _settings.Port, cts.Token);
 
+                // Enable TCP keepalive to prevent idle connection drops
+                tcpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+                // Configure keepalive parameters (2 min idle, 30s interval, 5 retries = ~4.5 min total)
+                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                {
+                    // Windows: time (ms), interval (ms)
+                    var keepAliveValues = new byte[12];
+                    BitConverter.GetBytes(1).CopyTo(keepAliveValues, 0);        // on/off
+                    BitConverter.GetBytes(120000).CopyTo(keepAliveValues, 4);   // time: 2 minutes
+                    BitConverter.GetBytes(30000).CopyTo(keepAliveValues, 8);    // interval: 30 seconds
+                    tcpClient.Client.IOControl(IOControlCode.KeepAliveValues, keepAliveValues, null);
+                }
+                else
+                {
+                    // Linux: time (seconds), interval (seconds), count
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 120);
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 30);
+                    tcpClient.Client.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 5);
+                }
+
                 lock (_connectionLock)
                 {
                     _tcpClient     = tcpClient;
                     _networkStream = _tcpClient.GetStream();
-                    _networkStream.ReadTimeout = _settings.ReadTimeoutMs;
+                    _networkStream.ReadTimeout = 30000;  // 30 seconds
                 }
 
-                _logger.LogInformation("✓ TCP connected to {ip}:{port}",
+                _logger.LogInformation("✓ TCP connected to {ip}:{port} with keepalive enabled",
                     _settings.IpAddress, _settings.Port);
                 return true;
             }
@@ -260,8 +281,8 @@ public class PlatformDataService : BackgroundService
             _serialPort = new SerialPort(
                 portName, _settings.BaudRate, _settings.Parity, _settings.DataBits, _settings.StopBits)
             {
-                ReadTimeout  = _settings.ReadTimeoutMs,
-                WriteTimeout = _settings.ReadTimeoutMs,
+                ReadTimeout  = 30000,  // 30 seconds for scale data
+                WriteTimeout = 30000,
                 Encoding     = Encoding.ASCII,
                 NewLine      = "\n"
             };
