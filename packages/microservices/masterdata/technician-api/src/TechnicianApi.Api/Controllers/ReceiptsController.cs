@@ -20,7 +20,8 @@ public class ReceiptsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromForm] string expenseId, [FromForm] IFormFile image, [FromForm] string? note)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Create([FromForm] string expenseId, IFormFile image, [FromForm] string? note)
     {
         var userId = User.Identity?.Name ?? "system";
 
