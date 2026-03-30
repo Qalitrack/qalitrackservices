@@ -135,16 +135,16 @@ const generateThemedPDF = (record, ticketSettings, formatTurnaroundTimeSimple) =
         "FIRST WEIGHT",
         `${record.firstWeight || 0} Kg`,
         record.firstWeightOperator || record.operatorName || "N/A",
-        record.firstWeightTime
-          ? dayjs(record.firstWeightTime).format("DD-MM-YY HH:mm")
+        record.firstWeightDate
+          ? dayjs(record.firstWeightDate).format("DD-MM-YY HH:mm")
           : "N/A",
       ],
       [
         "SECOND WEIGHT",
         `${record.secondWeight || 0} Kg`,
         record.secondWeightOperator || record.operatorName || "N/A",
-        record.secondWeightTime
-          ? dayjs(record.secondWeightTime).format("DD-MM-YY HH:mm")
+        record.secondWeightDate
+          ? dayjs(record.secondWeightDate).format("DD-MM-YY HH:mm")
           : "N/A",
       ],
       [
@@ -165,7 +165,7 @@ const generateThemedPDF = (record, ticketSettings, formatTurnaroundTimeSimple) =
           styles: { fillColor: palette.accentBg, textColor: palette.bodyText },
         },
         {
-          content: formatTurnaroundTimeSimple(record.firstWeightTime, record.secondWeightTime),
+          content: formatTurnaroundTimeSimple(record.firstWeightDate, record.secondWeightDate, record.turnaroundTime),
           colSpan: 3,
           styles: { fillColor: palette.accentBg, textColor: palette.bodyText },
         },
@@ -458,11 +458,19 @@ export default function Transactions() {
     }
   };
 
-  const calculateTurnaroundTime = (firstWeightTime, secondWeightTime) => {
-    if (!firstWeightTime || !secondWeightTime) return { display: "N/A", minutes: 0 };
-    const first = dayjs(firstWeightTime);
-    const second = dayjs(secondWeightTime);
-    const diffMinutes = second.diff(first, "minute");
+  const calculateTurnaroundTime = (firstWeightDate, secondWeightDate, turnaroundTime) => {
+    if (turnaroundTime) {
+      const parts = turnaroundTime.split(":");
+      if (parts.length >= 2) {
+        const h = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const total = h * 60 + m;
+        if (total < 1) return { display: "< 1m", minutes: 0 };
+        return { display: h > 0 ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`, minutes: total };
+      }
+    }
+    if (!firstWeightDate || !secondWeightDate) return { display: "N/A", minutes: 0 };
+    const diffMinutes = dayjs(secondWeightDate).diff(dayjs(firstWeightDate), "minute");
     if (diffMinutes < 1) return { display: "< 1m", minutes: 0 };
     if (diffMinutes < 60) return { display: `${diffMinutes}m`, minutes: diffMinutes };
     const hours = Math.floor(diffMinutes / 60);
@@ -495,12 +503,21 @@ export default function Transactions() {
     }
   };
 
-  const formatTurnaroundTimeSimple = (first, second) => {
-    if (!first || !second) return "N/A";
-    const diffMin = dayjs(second).diff(dayjs(first), "minute");
-    return diffMin < 60
-      ? `${diffMin}m`
-      : `${Math.floor(diffMin / 60)}h ${diffMin % 60}m`;
+  const formatTurnaroundTimeSimple = (firstWeightDate, secondWeightDate, turnaroundTime) => {
+    if (turnaroundTime) {
+      const parts = turnaroundTime.split(":");
+      if (parts.length >= 2) {
+        const h = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const total = h * 60 + m;
+        if (total < 1) return "< 1m";
+        return h > 0 ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+      }
+    }
+    if (!firstWeightDate || !secondWeightDate) return "N/A";
+    const diffMin = dayjs(secondWeightDate).diff(dayjs(firstWeightDate), "minute");
+    if (diffMin < 1) return "< 1m";
+    return diffMin < 60 ? `${diffMin}m` : `${Math.floor(diffMin / 60)}h ${diffMin % 60}m`;
   };
 
   // ── Current theme for badge display ───────────────────────────────────────
@@ -665,7 +682,7 @@ export default function Transactions() {
         const isCompleted =
           hasSecondWeight || record.status === "Completed" || record.status === "completed";
         const timeData = isCompleted
-          ? calculateTurnaroundTime(record.firstWeightTime, record.secondWeightTime)
+          ? calculateTurnaroundTime(record.firstWeightDate, record.secondWeightDate, record.turnaroundTime)
           : calculateWaitTime(record.createdAt);
         const color = getTimeColor(timeData.minutes, isCompleted);
         const title = isCompleted
@@ -1189,7 +1206,7 @@ export default function Transactions() {
                   <div className="text-base font-extrabold text-orange-600">{selectedRecord.firstWeight || 0}</div>
                   <div className="text-[9px] text-amber-600 font-semibold">KILOGRAMS</div>
                   <div className="text-[9px] text-gray-500 mt-1">
-                    {selectedRecord.firstWeightTime ? dayjs(selectedRecord.firstWeightTime).format("DD-MM-YY HH:mm") : "N/A"}
+                    {selectedRecord.firstWeightDate ? dayjs(selectedRecord.firstWeightDate).format("DD-MM-YY HH:mm") : "N/A"}
                   </div>
                 </div>
                 <div className="bg-white rounded-lg p-2.5 border-2 border-amber-200 shadow-sm">
@@ -1197,7 +1214,7 @@ export default function Transactions() {
                   <div className="text-base font-extrabold text-green-600">{selectedRecord.secondWeight || 0}</div>
                   <div className="text-[9px] text-amber-600 font-semibold">KILOGRAMS</div>
                   <div className="text-[9px] text-gray-500 mt-1">
-                    {selectedRecord.secondWeightTime ? dayjs(selectedRecord.secondWeightTime).format("DD-MM-YY HH:mm") : "N/A"}
+                    {selectedRecord.secondWeightDate ? dayjs(selectedRecord.secondWeightDate).format("DD-MM-YY HH:mm") : "N/A"}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-amber-200 via-amber-300 to-orange-300 rounded-lg p-2.5 border-2 border-amber-500 shadow-lg">
@@ -1209,7 +1226,7 @@ export default function Transactions() {
               <div className="bg-white rounded-lg px-3 py-2.5 border-2 border-amber-300 flex items-center justify-between">
                 <span className="text-[11px] text-amber-800 font-bold">⏱️ TURNAROUND TIME:</span>
                 <span className="text-sm font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
-                  {formatTurnaroundTimeSimple(selectedRecord.firstWeightTime, selectedRecord.secondWeightTime)}
+                  {formatTurnaroundTimeSimple(selectedRecord.firstWeightDate, selectedRecord.secondWeightDate, selectedRecord.turnaroundTime)}
                 </span>
               </div>
             </div>
