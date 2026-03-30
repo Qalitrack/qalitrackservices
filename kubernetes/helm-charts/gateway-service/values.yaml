@@ -1,5 +1,5 @@
 # Default values for gateway-service
-replicaCount: 2
+replicaCount: 1
 
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/gateway-service
