@@ -240,7 +240,7 @@ public class TransactionService(
         transaction.NetWeight = netWeight.ToString("F2");
 
         // Calculate turnaround time
-        transaction.TurnaroundTime = utcNow - transaction.FirstWeightDate;
+        transaction.TurnaroundTime = transaction.SecondWeightDate.Value - transaction.FirstWeightDate;
 
         // Update status to completed if both weights are present
         if (!string.IsNullOrEmpty(transaction.FirstWeight) && !string.IsNullOrEmpty(transaction.SecondWeight))
