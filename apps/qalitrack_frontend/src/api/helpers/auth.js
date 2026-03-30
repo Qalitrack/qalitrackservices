@@ -5,9 +5,6 @@ import { useState, useEffect, useRef } from 'react';
 const useAuth = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const [sessionId, setSessionId] = useState('');
-    const [maskedEmail, setMaskedEmail] = useState('');
-    const [requires2FA, setRequires2FA] = useState(false);
     const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
     const [userId, setUserId] = useState('');
 
@@ -170,7 +167,6 @@ const useAuth = () => {
     const login = async (email, password) => {
         setLoading(true);
         setError('');
-        setRequires2FA(false);
         setRequiresPasswordChange(false);
 
         try {
@@ -180,34 +176,35 @@ const useAuth = () => {
             });
 
             const responseData = response.data?.data || response.data;
+            const loginData = responseData?.data || responseData;
 
-            if (responseData?.message === "First login detected") {
+            if (loginData?.message === "First login detected") {
                 setRequiresPasswordChange(true);
-                setUserId(responseData.userId);
+                setUserId(loginData.userId);
                 return {
                     success: true,
                     requiresPasswordChange: true,
-                    userId: responseData.userId,
-                    message: responseData.message
+                    userId: loginData.userId,
+                    message: loginData.message
                 };
             }
 
             // Normal login success - create session
-            if (responseData) {
-                if (!responseData.token) {
+            if (loginData) {
+                if (!loginData.token) {
                     throw new Error('Token not provided in response');
                 }
 
                 const userData = {
-                    id: responseData.id || '',
-                    email: responseData.email || email,
-                    firstName: responseData.firstName || '',
-                    lastName: responseData.lastName || '',
-                    userRoles: responseData.userRoles || []
+                    id: loginData.id || '',
+                    email: loginData.email || email,
+                    firstName: loginData.firstName || '',
+                    lastName: loginData.lastName || '',
+                    userRoles: loginData.userRoles || []
                 };
 
-                createSession(responseData.token, userData);
-                return { success: true, data: responseData };
+                createSession(loginData.token, userData);
+                return { success: true, data: loginData };
             }
 
             throw new Error('Invalid response data');
@@ -277,78 +274,6 @@ const useAuth = () => {
         }
     };
 
-    const verify2FA = async (code) => {
-        if (!sessionId) {
-            const temp2FAData = sessionStorage.getItem('temp2FASession');
-            if (temp2FAData) {
-                try {
-                    const { sessionId: tempSessionId, email: tempEmail, timestamp } = JSON.parse(temp2FAData);
-                    
-                    if (new Date().getTime() - timestamp < 10 * 60 * 1000) {
-                        setSessionId(tempSessionId);
-                        setMaskedEmail(tempEmail || '');
-                    } else {
-                        sessionStorage.removeItem('temp2FASession');
-                        const errorMessage = '2FA session expired. Please login again.';
-                        setError(errorMessage);
-                        return { success: false, error: errorMessage };
-                    }
-                } catch (e) {
-                    const errorMessage = 'Invalid 2FA session. Please login again.';
-                    setError(errorMessage);
-                    return { success: false, error: errorMessage };
-                }
-            } else {
-                const errorMessage = 'No active 2FA session. Please login again.';
-                setError(errorMessage);
-                return { success: false, error: errorMessage };
-            }
-        }
-
-        setLoading(true);
-        setError('');
-
-        try {
-            const response = await apiClient.post('/Auth/verify-2fa', {
-                sessionId,
-                code
-            });
-
-            const responseData = response.data?.data || response.data;
-            const userData = responseData?.data || responseData;
-
-            if (userData) {
-                if (!userData.token) {
-                    throw new Error('Token not provided in response');
-                }
-
-                const userInfo = {
-                    id: userData.id || '',
-                    email: userData.email || maskedEmail,
-                    firstName: userData.firstName || '',
-                    lastName: userData.lastName || '',
-                    userRoles: userData.userRoles || []
-                };
-
-                createSession(userData.token, userInfo);
-            }
-
-            setRequires2FA(false);
-            setSessionId('');
-            setMaskedEmail('');
-            sessionStorage.removeItem('temp2FASession');
-
-            return { success: true, data: responseData };
-
-        } catch (err) {
-            const errorMessage = extractErrorMessage(err);
-            setError(errorMessage);
-            return { success: false, error: errorMessage };
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const extractErrorMessage = (err) => {
         if (err.response) {
             const { data } = err.response;
@@ -374,13 +299,9 @@ const useAuth = () => {
 
     const logout = () => {
         sessionStorage.removeItem('authSession');
-        sessionStorage.removeItem('temp2FASession');
         stopSessionMonitoring();
         clearActivityTimeout();
-        setRequires2FA(false);
         setRequiresPasswordChange(false);
-        setSessionId('');
-        setMaskedEmail('');
         setUserId('');
         setError('');
     };
@@ -416,14 +337,6 @@ const useAuth = () => {
         setError('');
     };
 
-    const reset2FAState = () => {
-        setRequires2FA(false);
-        setSessionId('');
-        setMaskedEmail('');
-        sessionStorage.removeItem('temp2FASession');
-        setError('');
-    };
-
     const resetPasswordChangeState = () => {
         setRequiresPasswordChange(false);
         setUserId('');
@@ -432,7 +345,6 @@ const useAuth = () => {
 
     return {
         login,
-        verify2FA,
         updatePassword,
         logout,
         isAuthenticated,
@@ -440,13 +352,10 @@ const useAuth = () => {
         getAuthToken,
         getSessionInfo,
         clearError,
-        reset2FAState,
         resetPasswordChangeState,
         loading,
         error,
-        requires2FA,
         requiresPasswordChange,
-        maskedEmail,
         userId
     };
 };

@@ -1,38 +1,28 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import electron from 'vite-plugin-electron';
 
 /* -------------------------------------------------------------------------- */
-/*                           CONFIGURATION                                     */
+/*                           VITE CONFIGURATION                               */
 /* -------------------------------------------------------------------------- */
 
-// ⚠️ CRITICAL FIX: Remove /api from API_TARGET - it should be the base domain only
-const API_TARGET = process.env.VITE_API_TARGET || 'https://qalitrack.cseco.co.ke';
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+export default defineConfig(({ mode }) => {
+const env = loadEnv(mode, process.cwd(), '');
+const API_TARGET = env.VITE_API_TARGET || 'https://qalitrack.cseco.co.ke';
+const IS_PRODUCTION = mode === 'production';
 
 console.log('🎯 API Target:', API_TARGET);
 console.log('🏭 Environment:', IS_PRODUCTION ? 'PRODUCTION' : 'DEVELOPMENT');
 
-/* -------------------------------------------------------------------------- */
-/*                         PROXY HELPER FUNCTION                              */
-/* -------------------------------------------------------------------------- */
-
-/**
- * Creates a standardized proxy configuration
- * @param {string} routeName - Name for logging (e.g., "Transaction", "Auth")
- * @param {string} target - Target URL (defaults to API_TARGET)
- * @param {object} options - Additional options
- */
 const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
   target,
   changeOrigin: true,
   secure: false,
-  timeout: 60000, // Increased to 60 seconds
+  timeout: 60000,
   proxyTimeout: 60000,
   ...options,
   configure: (proxy, _options) => {
-    // Error handling
     proxy.on('error', (err, req, res) => {
       console.error(`❌ ${routeName} Proxy Error:`, {
         message: err.message,
@@ -40,7 +30,6 @@ const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
         url: req.url,
         target: target
       });
-      
       if (!res.headersSent) {
         res.writeHead(502, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
@@ -53,32 +42,17 @@ const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
       }
     });
 
-    // Timeout handling
     proxy.on('timeout', (req, res) => {
-      console.error(`⏱️ ${routeName} Timeout:`, {
-        url: req.url,
-        target: target,
-        method: req.method
-      });
-      
+      console.error(`⏱️ ${routeName} Timeout:`, { url: req.url, target: target, method: req.method });
       if (!res.headersSent) {
         res.writeHead(504, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          error: 'Gateway Timeout',
-          message: `Request to ${target}${req.url} timed out after 30 seconds`,
-          route: routeName
-        }));
+        res.end(JSON.stringify({ error: 'Gateway Timeout', message: `Request to ${target}${req.url} timed out after 30 seconds`, route: routeName }));
       }
     });
 
-    // Request logging
     proxy.on('proxyReq', (proxyReq, req, _res) => {
-      const fullUrl = `${target}${req.url}`;
-      console.log(`📤 ${routeName}: ${req.method} ${req.url} → ${fullUrl}`);
-      
+      console.log(`📤 ${routeName}: ${req.method} ${req.url} → ${target}${req.url}`);
       proxyReq.setHeader('Accept', 'application/json');
-      
-      // Log request body in development for debugging
       if (!IS_PRODUCTION && ['POST', 'PUT', 'PATCH'].includes(req.method)) {
         let body = '';
         req.on('data', chunk => { body += chunk.toString(); });
@@ -88,41 +62,27 @@ const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
               const parsed = JSON.parse(body);
               if (parsed.password) parsed.password = '***';
               console.log(`📦 ${routeName} Body:`, JSON.stringify(parsed, null, 2).substring(0, 500));
-            } catch {
-              console.log(`📦 ${routeName} Body:`, body.substring(0, 500));
-            }
+            } catch { console.log(`📦 ${routeName} Body:`, body.substring(0, 500)); }
           }
         });
       }
     });
 
-    // Response logging
     proxy.on('proxyRes', (proxyRes, req, _res) => {
       const statusEmoji = proxyRes.statusCode >= 400 ? '❌' : '✅';
       console.log(`${statusEmoji} ${routeName} Response: ${proxyRes.statusCode} for ${req.url}`);
-      
       if (!IS_PRODUCTION && proxyRes.statusCode >= 400) {
         let body = '';
         proxyRes.on('data', chunk => { body += chunk.toString(); });
-        proxyRes.on('end', () => {
-          if (body) {
-            console.error(`❌ ${routeName} Error Body:`, body.substring(0, 500));
-          }
-        });
+        proxyRes.on('end', () => { if (body) console.error(`❌ ${routeName} Error Body:`, body.substring(0, 500)); });
       }
     });
 
-    if (options.configure) {
-      options.configure(proxy, _options);
-    }
+    if (options.configure) options.configure(proxy, _options);
   },
 });
 
-/* -------------------------------------------------------------------------- */
-/*                           VITE CONFIGURATION                               */
-/* -------------------------------------------------------------------------- */
-
-export default defineConfig({
+return {
   plugins: [
     react(),
     VitePWA({
@@ -245,4 +205,5 @@ export default defineConfig({
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom', 'axios', 'antd'],
   },
+};
 });
