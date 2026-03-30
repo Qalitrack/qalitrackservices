@@ -83,6 +83,6 @@ RUN which pg_dump && which pg_isready && pg_dump --version
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:80/health || exit 1
+    CMD wget -qO /dev/null http://localhost:80/Backup/available || exit 1
 
 ENTRYPOINT ["dotnet", "BackupService.API.dll"]
