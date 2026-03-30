@@ -73,11 +73,19 @@ export default function Reports() {
   // =========================
   // Turnaround Calculation
   // =========================
-  const calculateTurnaroundTime = (firstWeightTime, secondWeightTime) => {
-    if (!firstWeightTime || !secondWeightTime) return "N/A";
-    const first = dayjs(firstWeightTime);
-    const second = dayjs(secondWeightTime);
-    const diffMinutes = second.diff(first, "minute");
+  const calculateTurnaroundTime = (firstWeightDate, secondWeightDate, turnaroundTime) => {
+    if (turnaroundTime) {
+      const parts = turnaroundTime.split(":");
+      if (parts.length >= 2) {
+        const h = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const total = h * 60 + m;
+        if (total < 1) return "< 1m";
+        return h > 0 ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+      }
+    }
+    if (!firstWeightDate || !secondWeightDate) return "N/A";
+    const diffMinutes = dayjs(secondWeightDate).diff(dayjs(firstWeightDate), "minute");
     if (diffMinutes < 1) return "< 1m";
     if (diffMinutes < 60) return `${diffMinutes}m`;
     const hours = Math.floor(diffMinutes / 60);
@@ -211,7 +219,7 @@ export default function Reports() {
           t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-",
           t.secondWeight ? parseFloat(t.secondWeight).toLocaleString() : "-",
           t.netWeight ? parseFloat(t.netWeight).toLocaleString() : "-",
-          calculateTurnaroundTime(t.firstWeightTime, t.secondWeightTime),
+          calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime),
           isCompleted ? "COMPLETED" : "IN PROGRESS",
         ];
       }),
@@ -263,15 +271,16 @@ export default function Reports() {
           "First Weight (kg)": t.firstWeight ? parseFloat(t.firstWeight) : 0,
           "Second Weight (kg)": t.secondWeight ? parseFloat(t.secondWeight) : 0,
           "Net Weight (kg)": t.netWeight ? parseFloat(t.netWeight) : 0,
-          "First Weight Time": t.firstWeightTime
-            ? dayjs(t.firstWeightTime).format("DD MMM YYYY HH:mm:ss")
+          "First Weight Time": t.firstWeightDate
+            ? dayjs(t.firstWeightDate).format("DD MMM YYYY HH:mm:ss")
             : "-",
-          "Second Weight Time": t.secondWeightTime
-            ? dayjs(t.secondWeightTime).format("DD MMM YYYY HH:mm:ss")
+          "Second Weight Time": t.secondWeightDate
+            ? dayjs(t.secondWeightDate).format("DD MMM YYYY HH:mm:ss")
             : "-",
           "Turnaround Time": calculateTurnaroundTime(
-            t.firstWeightTime,
-            t.secondWeightTime
+            t.firstWeightDate,
+            t.secondWeightDate,
+            t.turnaroundTime
           ),
           Status: isCompleted ? "COMPLETED" : "IN PROGRESS",
           Remarks: t.remarks || t.notes || "-",
@@ -731,7 +740,7 @@ export default function Reports() {
                             {t.netWeight ? parseFloat(t.netWeight).toLocaleString() : "-"}
                           </td>
                           <td className="p-2 font-semibold text-gray-700">
-                            {calculateTurnaroundTime(t.firstWeightTime, t.secondWeightTime)}
+                            {calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime)}
                           </td>
                           <td className="p-2">
                             <span
