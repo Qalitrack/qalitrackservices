@@ -3,7 +3,9 @@ services:
   # GATEWAY SERVICE (PROD) - Handles JWT Authentication
   # =================================================================
   gateway-service-prod:
-    image: ghcr.io/qalitrack/qalitrackservices/gateway-service:latest
+    build:
+      context: ../packages/microservices/QalitrackGateWay
+      dockerfile: Dockerfile
     container_name: qalitrack-gateway-service-prod
     restart: unless-stopped
     environment:
@@ -32,7 +34,9 @@ services:
   # USER SERVICE (PROD)
   # =================================================================
   user-service-prod:
-    image: ghcr.io/qalitrack/qalitrackservices/user-service:latest
+    build:
+      context: ../packages/microservices/masterdata/user-service
+      dockerfile: Dockerfile
     container_name: qalitrack-user-service-prod
     restart: unless-stopped
     environment:
@@ -151,7 +155,9 @@ services:
   # MASTERDATA SERVICE (PROD)
   # =================================================================
   masterdata-service-prod:
-    image: ghcr.io/qalitrack/qalitrackservices/masterdata-service:latest
+    build:
+      context: ../packages/microservices/masterdata/masterdata
+      dockerfile: Dockerfile
     container_name: qalitrack-masterdata-service-prod
     restart: unless-stopped
     environment:
@@ -214,7 +220,9 @@ services:
   # BACKUP SERVICE (PROD)
   # =================================================================
   backup-service-prod:
-    image: ghcr.io/qalitrack/qalitrackservices/backup-service:latest
+    build:
+      context: ../packages/microservices/masterdata/BackupService
+      dockerfile: Dockerfile
     container_name: qalitrack-backup-service-prod
     restart: unless-stopped
     environment:
@@ -323,7 +331,9 @@ services:
   # TRANSACTION SERVICE (PROD)
   # =================================================================
   transaction-service-prod:
-    image: ghcr.io/qalitrack/qalitrackservices/transaction-service:latest
+    build:
+      context: ../packages/microservices/masterdata/transaction
+      dockerfile: Dockerfile
     container_name: qalitrack-transaction-service-prod
     restart: unless-stopped
     environment:
