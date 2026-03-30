@@ -192,25 +192,6 @@ const useAuth = () => {
                 };
             }
 
-            // Check if 2FA is required
-            if (responseData?.requires2FA) {
-                setRequires2FA(true);
-                setSessionId(responseData.sessionId);
-                setMaskedEmail(responseData.email);
-                sessionStorage.setItem('temp2FASession', JSON.stringify({
-                    sessionId: responseData.sessionId,
-                    email: responseData.email,
-                    timestamp: new Date().getTime()
-                }));
-                return {
-                    success: true,
-                    requires2FA: true,
-                    sessionId: responseData.sessionId,
-                    maskedEmail: responseData.email,
-                    message: responseData.message
-                };
-            }
-
             // Normal login success - create session
             if (responseData) {
                 if (!responseData.token) {

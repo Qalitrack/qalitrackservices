@@ -8,8 +8,6 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [verificationCode, setVerificationCode] = useState('');
-
     // Password change form states
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -21,15 +19,11 @@ export default function Login() {
     const navigate = useNavigate();
     const {
         login,
-        verify2FA,
         updatePassword,
         loading,
         error,
-        requires2FA,
         requiresPasswordChange,
-        maskedEmail,
         clearError,
-        reset2FAState,
         resetPasswordChangeState,
         getCurrentUser,
     } = useAuth();
@@ -82,29 +76,11 @@ export default function Login() {
         const result = await login(email, password);
 
         if (result.success) {
-            if (result.requires2FA) {
-                console.log('2FA required, showing verification form');
-            } else if (result.requiresPasswordChange) {
+            if (result.requiresPasswordChange) {
                 console.log('Password change required, showing password change form');
             } else {
-                // Direct login success (no 2FA or password change required)
                 handleRedirect();
             }
-        }
-        // Errors are handled by the useAuth hook and displayed via the error state
-    };
-
-    const handle2FASubmit = async (e) => {
-        e.preventDefault();
-
-        if (!verificationCode) {
-            return; // Let the browser handle required field validation
-        }
-
-        const result = await verify2FA(verificationCode);
-
-        if (result.success) {
-            handleRedirect();
         }
         // Errors are handled by the useAuth hook and displayed via the error state
     };
@@ -129,11 +105,6 @@ export default function Login() {
         // Errors are handled by the useAuth hook and displayed via the error state
     };
 
-    const handleBackToLogin = () => {
-        reset2FAState();
-        setVerificationCode('');
-    };
-
     const handleBackToLoginFromPasswordChange = () => {
         resetPasswordChangeState();
         setCurrentPassword('');
@@ -146,13 +117,11 @@ export default function Login() {
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
     const getFormTitle = () => {
-        if (requires2FA) return 'Enter Verification Code';
         if (requiresPasswordChange) return 'Update Your Password';
         return 'Welcome Back';
     };
 
     const getFormSubtitle = () => {
-        if (requires2FA) return `We've sent a verification code to ${maskedEmail}`;
         if (requiresPasswordChange) return 'Please update your password to continue';
         return null;
     };
@@ -186,7 +155,7 @@ export default function Login() {
                             </div>
                         )}
 
-                        {!requires2FA && !requiresPasswordChange ? (
+                        {!requiresPasswordChange ? (
                             // Regular login form
                             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                                 <div>
@@ -236,44 +205,6 @@ export default function Login() {
                                     className="w-full py-2.5 px-4 rounded-lg font-medium bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     {loading ? 'Logging in...' : 'Login'}
-                                </button>
-                            </form>
-                        ) : requires2FA ? (
-                            // 2FA verification form
-                            <form onSubmit={handle2FASubmit} className="space-y-4 sm:space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Verification Code
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={verificationCode}
-                                        onChange={(e) => {
-                                            const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                                            setVerificationCode(value);
-                                            clearError();
-                                        }}
-                                        maxLength="6"
-                                        required
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-center text-2xl tracking-widest font-mono"
-                                        placeholder="000000"
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={loading || verificationCode.length !== 6}
-                                    className="w-full py-2.5 px-4 rounded-lg font-medium bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {loading ? 'Verifying...' : 'Verify Code'}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={handleBackToLogin}
-                                    className="w-full py-2 px-4 text-sm text-gray-600 hover:text-gray-800 transition-colors"
-                                >
-                                    ← Back to Login
                                 </button>
                             </form>
                         ) : (
