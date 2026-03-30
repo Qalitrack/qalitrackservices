@@ -39,7 +39,8 @@ public class MaterialPhotosController : ControllerBase
     }
 
     [HttpPost("upload")]
-    public async Task<IActionResult> Upload([FromForm] string materialId, [FromForm] IFormFile file, [FromForm] string? caption)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Upload([FromForm] string materialId, IFormFile file, [FromForm] string? caption)
     {
         var userId = User.Identity?.Name ?? "system";
         var attachment = await _fileStorage.SaveFileAsync(file, "Material", materialId, userId, caption ?? "Material Photo");

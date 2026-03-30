@@ -57,7 +57,8 @@ public class VehicleMileageController : ControllerBase
     }
 
     [HttpPost("{id}/upload-proof-image")]
-    public async Task<IActionResult> UploadProofImage(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProofImage(string id, IFormFile file)
     {
         var userId = User.Identity?.Name ?? "system";
         var attachment = await _fileStorage.SaveFileAsync(file, "VehicleMileage", id, userId, "Proof Image");
@@ -70,7 +71,8 @@ public class VehicleMileageController : ControllerBase
     }
 
     [HttpPost("{id}/upload-proof-end-image")]
-    public async Task<IActionResult> UploadProofEndImage(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProofEndImage(string id, IFormFile file)
     {
         var userId = User.Identity?.Name ?? "system";
         var attachment = await _fileStorage.SaveFileAsync(file, "VehicleMileage", id, userId, "Proof End Image");

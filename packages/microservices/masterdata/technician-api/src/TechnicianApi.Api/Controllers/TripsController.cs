@@ -79,7 +79,8 @@ public class TripsController : ControllerBase
     }
 
     [HttpPost("{id}/upload-proof-image")]
-    public async Task<IActionResult> UploadProofImage(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProofImage(string id, IFormFile file)
     {
         var userId = User.Identity?.Name ?? "system";
         var attachment = await _fileStorage.SaveFileAsync(file, "Trip", id, userId, "Proof Image");
@@ -93,7 +94,8 @@ public class TripsController : ControllerBase
     }
 
     [HttpPost("{id}/upload-end-proof-image")]
-    public async Task<IActionResult> UploadEndProofImage(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadEndProofImage(string id, IFormFile file)
     {
         var userId = User.Identity?.Name ?? "system";
         var attachment = await _fileStorage.SaveFileAsync(file, "Trip", id, userId, "End Proof Image");
@@ -107,7 +109,8 @@ public class TripsController : ControllerBase
     }
 
     [HttpPost("{id}/upload-material-loading-photo")]
-    public async Task<IActionResult> UploadMaterialLoadingPhoto(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadMaterialLoadingPhoto(string id, IFormFile file)
     {
         var userId = User.Identity?.Name ?? "system";
         var attachment = await _fileStorage.SaveFileAsync(file, "Trip", id, userId, "Material Loading Photo");
