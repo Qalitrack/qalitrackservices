@@ -9,7 +9,7 @@ import SupplierReport from "./reportFiles/SupplierReport";
 // NEW ADVANCED REPORT COMPONENTS
 import ReportAnalytics from "./ReportAnalytics";
 import CustomReportBuilder from "./CustomReportBuilder";
-import ReportScheduler from "./ReportScheduler";
+// import ReportScheduler from "./ReportScheduler"; // TODO: backend not implemented yet
 import CrossEntityComparison from "./CrossEntityComparison";
 
 import { fetchTransactions } from "../../store/weighingSlice";
@@ -36,7 +36,7 @@ export default function Reports() {
     { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} />, badge: "NEW" },
     { id: "comparison", label: "Comparison", icon: <GitCompare size={14} />, badge: "NEW" },
     { id: "custom", label: "Custom Builder", icon: <Settings size={14} />, badge: "NEW" },
-    { id: "scheduler", label: "Scheduler", icon: <Calendar size={14} />, badge: "NEW" },
+    // { id: "scheduler", label: "Scheduler", icon: <Calendar size={14} />, badge: "NEW" }, // TODO: backend not implemented yet
   ];
 
   const [activeTab, setActiveTab] = useState("transactions");
@@ -324,9 +324,9 @@ export default function Reports() {
       return <CustomReportBuilder transactions={filteredTransactions} />;
     }
     
-    if (activeTab === "scheduler") {
-      return <ReportScheduler transactions={filteredTransactions} />;
-    }
+    // if (activeTab === "scheduler") { // TODO: backend not implemented yet
+    //   return <ReportScheduler transactions={filteredTransactions} />;
+    // }
 
     // EXISTING REPORTS
     if (activeTab !== "transactions") {
