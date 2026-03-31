@@ -47,6 +47,7 @@ Selector labels
 {{- define "technician-service.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "technician-service.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/component: api
 {{- end }}
 
 {{/*
