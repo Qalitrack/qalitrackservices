@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/technician-api
   pullPolicy: Always
-  tag: "main-a05a143"
+  tag: "main-6d616a6"
 imagePullSecrets:
   - name: ghcr-credentials
 nameOverride: ""
