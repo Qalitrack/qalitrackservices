@@ -17,6 +17,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Qalitrack\**" />
+    <Content Remove="Qalitrack\**" />
+    <EmbeddedResource Remove="Qalitrack\**" />
+    <None Remove="Qalitrack\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FFMpegCore" Version="5.4.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />

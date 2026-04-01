@@ -25,7 +25,7 @@ public class PlateStreamController : ControllerBase
     }
 
     public PlateStreamController(
-        PlateDataStreamService plateDataStreamService,
+        [FromKeyedServices("lane1")] PlateDataStreamService plateDataStreamService,
         ILogger<PlateStreamController> logger)
     {
         _plateDataStreamService = plateDataStreamService;
