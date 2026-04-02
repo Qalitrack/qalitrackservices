@@ -7,7 +7,7 @@ services:
       context: ../packages/microservices/QalitrackGateWay
       dockerfile: Dockerfile
     container_name: qalitrack-gateway-service-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:7000
@@ -38,7 +38,7 @@ services:
       context: ../packages/microservices/masterdata/user-service
       dockerfile: Dockerfile
     container_name: qalitrack-user-service-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
@@ -85,7 +85,7 @@ services:
   postgres-userservice-prod:
     image: postgres:15-alpine
     container_name: qalitrack-postgres-userservice-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - POSTGRES_DB=userservicedb
       - POSTGRES_USER=userservice
@@ -116,7 +116,7 @@ services:
   redis-cache-prod:
     image: redis:7-alpine
     container_name: qalitrack-redis-prod
-    restart: unless-stopped
+    restart: always
     command: redis-server --appendonly yes --requirepass ${USER_SERVICE_REDIS_PASSWORD} --maxmemory 1gb --maxmemory-policy allkeys-lru --tcp-keepalive 60 --timeout 300
     volumes:
       - redis_prod_data:/data
@@ -138,7 +138,7 @@ services:
   rabbitmq-prod:
     image: rabbitmq:3-management-alpine
     container_name: qalitrack-rabbitmq-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
@@ -159,7 +159,7 @@ services:
       context: ../packages/microservices/masterdata/masterdata
       dockerfile: Dockerfile
     container_name: qalitrack-masterdata-service-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
@@ -187,7 +187,7 @@ services:
   postgres-masterdata-prod:
     image: postgres:16
     container_name: qalitrack-postgres-masterdata-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - POSTGRES_DB=qalitrack_masterdata
       - POSTGRES_USER=masterdata
@@ -224,7 +224,7 @@ services:
       context: ../packages/microservices/masterdata/BackupService
       dockerfile: Dockerfile
     container_name: qalitrack-backup-service-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
@@ -266,7 +266,7 @@ services:
   postgres-backupservice-prod:
     image: postgres:15-alpine
     container_name: qalitrack-postgres-backupservice-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - POSTGRES_DB=backupservicedb
       - POSTGRES_USER=backupservice
@@ -291,7 +291,7 @@ services:
   redis-backup-prod:
     image: redis:7-alpine
     container_name: qalitrack-redis-backup-prod
-    restart: unless-stopped
+    restart: always
     command: redis-server --requirepass ${BACKUP_SERVICE_REDIS_PASSWORD} --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_backup_prod_data:/data
@@ -308,7 +308,7 @@ services:
   rabbitmq-backup-prod:
     image: rabbitmq:3-management-alpine
     container_name: qalitrack-rabbitmq-backup-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
@@ -335,7 +335,7 @@ services:
       context: ../packages/microservices/masterdata/transaction
       dockerfile: Dockerfile
     container_name: qalitrack-transaction-service-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
@@ -375,7 +375,7 @@ services:
   postgres-transaction-prod:
     image: postgres:15-alpine
     container_name: qalitrack-postgres-transaction-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - POSTGRES_DB=transactiondb
       - POSTGRES_USER=transaction
@@ -400,7 +400,7 @@ services:
   redis-transaction-prod:
     image: redis:7-alpine
     container_name: qalitrack-redis-transaction-prod
-    restart: unless-stopped
+    restart: always
     command: redis-server --requirepass ${TRANSACTION_SERVICE_REDIS_PASSWORD} --maxmemory 256mb --maxmemory-policy allkeys-lru
     volumes:
       - redis_transaction_prod_data:/data
@@ -417,7 +417,7 @@ services:
   rabbitmq-transaction-prod:
     image: rabbitmq:3-management-alpine
     container_name: qalitrack-rabbitmq-transaction-prod
-    restart: unless-stopped
+    restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}

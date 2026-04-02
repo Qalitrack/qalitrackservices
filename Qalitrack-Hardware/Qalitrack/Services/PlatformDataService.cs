@@ -2,7 +2,6 @@ using System.IO.Ports;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Options;
 using Qalitrack.Models;
 
 namespace Qalitrack.Services;
@@ -26,11 +25,11 @@ public class PlatformDataService : BackgroundService
 
     public PlatformDataService(
         ILogger<PlatformDataService> logger,
-        IOptions<ConnectionSettings> settings,
+        ConnectionSettings settings,
         DataStreamService dataStreamService)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _settings = settings?.Value ?? throw new ArgumentNullException(nameof(settings));
+        _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _dataStreamService = dataStreamService ?? throw new ArgumentNullException(nameof(dataStreamService));
 
         _logger.LogInformation("PlatformDataService initializing — ConnectionType: {type}, {desc}",
@@ -401,7 +400,14 @@ public class PlatformDataService : BackgroundService
             try
             {
                 if (_serialPort.BytesToRead > 0)
-                    ProcessIncomingData(_serialPort.ReadExisting(), "Serial");
+                {
+                    var raw = _serialPort.ReadExisting();
+                    if (!string.IsNullOrEmpty(raw))
+                    {
+                        _logger.LogInformation("[Serial] {raw}", raw);
+                        _ = _dataStreamService.PublishRawAsync(raw, token);
+                    }
+                }
                 else
                     await Task.Delay(10, token);
             }

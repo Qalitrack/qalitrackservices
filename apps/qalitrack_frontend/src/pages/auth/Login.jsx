@@ -30,25 +30,25 @@ export default function Login() {
 
     const slides = [
         {
-            title: 'Unlock a world of Weighing and Construction opportunities',
+            title: 'Accurate Weighing, Every Time',
             subtitle:
-                'Access your dashboard to manage bids, track tender submissions, and connect with potential clients.',
+                'Capture first and second weights with precision and generate tickets instantly.',
             description:
-                'Upload your documents and bid for tenders that match your expertise to impress potential clients.',
+                'Real-time scale integration ensures every reading is recorded accurately and tamper-proof.',
         },
         {
-            title: 'Streamline Your Construction Projects',
+            title: 'Full Transaction Visibility',
             subtitle:
-                'Manage all your weighing and construction projects from one centralized platform.',
+                'Track every vehicle, commodity, transporter, and weight record from one dashboard.',
             description:
-                'Track progress, monitor deadlines, and collaborate with your team effectively.',
+                'Monitor incomplete transactions, review history, and export reports with ease.',
         },
         {
-            title: 'Connect with Industry Leaders',
+            title: 'Smart Number Plate Recognition',
             subtitle:
-                'Network with top construction professionals and expand your business reach.',
+                'Automatically capture vehicle plates with integrated camera support.',
             description:
-                'Build lasting relationships and discover new partnership opportunities.',
+                'Speed up weighbridge operations and reduce manual entry errors with NPR technology.',
         },
     ];
 
@@ -305,6 +305,14 @@ export default function Login() {
                                 </button>
                             </form>
                         )}
+                        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+                            <p className="text-xs text-gray-400">
+                                Powered by <span className="font-semibold text-gray-500">Qalibrated Systems</span>
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                                &copy; {new Date().getFullYear()} Qalibrated Systems. All rights reserved.
+                            </p>
+                        </div>
                     </div>
                 </div>
 

@@ -13,33 +13,46 @@ import {
 } from "../../store/weighingSlice";
 
 const INITIAL_FORM_DATA = {
-  receiptNo: "", 
-  expectedWeighings: 2, 
-  noPlate: "", 
+  // Transaction identity — must be explicitly null so isSecondWeighing = false after reset
+  id: null,
+  ticketID: null,
+  receiptNo: "",
+  expectedWeighings: 2,
+  noPlate: "",
   driverName: "",
-  vehicleId: null, 
-  driverId: null, 
-  commodityId: null, 
+  vehicleId: null,
+  vehicleID: null,
+  driverId: null,
+  driverID: null,
+  commodityId: null,
+  commodityID: null,
   commodityName: "",
-  transporterId: null, 
-  transporterName: "", 
-  supplierId: null, 
+  transporterId: null,
+  transporterID: null,
+  transporterName: "",
+  supplierId: null,
+  supplierID: null,
   supplierName: "",
-  customerId: null, 
-  customerName: "", 
-  originId: null, 
+  customerId: null,
+  customerID: null,
+  customerName: "",
+  originId: null,
+  originID: null,
   originName: "",
-  destinationId: null, 
-  destinationName: "", 
-  operation: "Inbound Product Receipt", 
+  destinationId: null,
+  destinationID: null,
+  destinationName: "",
+  operation: "Inbound Product Receipt",
   weighMode: "Gross/Tare",
-  firstWeight: "", 
-  secondWeight: "", 
-  scaleName: "", 
-  operatorName: "", 
+  firstWeight: "",
+  secondWeight: "",
+  scaleName: "Katani Simple",
+  operatorName: "",
   operatorId: null,
-  weighBridgeId: null, 
-  weighBridgeName: "",
+  operatorID: null,
+  weighBridgeId: null,
+  weighBridgeID: null,
+  weighBridgeName: "Katani Simple",
 };
 
 export default function WeighingDashboard() {
@@ -75,6 +88,11 @@ export default function WeighingDashboard() {
     if (!weight || weight <= 0) return message.error("Invalid weight");
     setCapturedWeight(weight);
     message.success(`Captured: ${weight} kg`);
+  };
+
+  const handlePlateConfirmed = (plate, source) => {
+    setFormData((prev) => ({ ...prev, noPlate: plate, nprSource: source }));
+    message.success(`Plate set: ${plate} (${source === "auto" ? "Auto NPR" : "Manual"})`);
   };
 
   const handleTransactionCreated = () => {
@@ -123,7 +141,7 @@ export default function WeighingDashboard() {
           </div>
           <div className="grid grid-cols-2 gap-2 h-1/2">
             <div className="bg-black rounded overflow-hidden"><CameraGrid type="snapshot" /></div>
-            <div className="bg-black rounded overflow-hidden"><CameraGrid type="plate" /></div>
+            <div className="bg-black rounded overflow-hidden"><CameraGrid type="plate" onPlateConfirmed={handlePlateConfirmed} /></div>
           </div>
         </div>
       </div>

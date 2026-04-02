@@ -175,8 +175,9 @@ const useAuth = () => {
                 password
             });
 
-            const responseData = response.data?.data || response.data;
-            const loginData = responseData?.data || responseData;
+            // Server wraps response as: { data: { data: { token, ... }, message }, success, ... }
+            const outer = response.data?.data ?? response.data;
+            const loginData = outer?.data ?? outer;
 
             if (loginData?.message === "First login detected") {
                 setRequiresPasswordChange(true);
@@ -191,19 +192,21 @@ const useAuth = () => {
 
             // Normal login success - create session
             if (loginData) {
-                if (!loginData.token) {
+                // Support both "token" and "accessToken" field names
+                const token = loginData.token || loginData.accessToken || loginData.Token || loginData.AccessToken;
+                if (!token) {
                     throw new Error('Token not provided in response');
                 }
 
                 const userData = {
-                    id: loginData.id || '',
-                    email: loginData.email || email,
-                    firstName: loginData.firstName || '',
-                    lastName: loginData.lastName || '',
-                    userRoles: loginData.userRoles || []
+                    id: loginData.id || loginData.Id || '',
+                    email: loginData.email || loginData.Email || email,
+                    firstName: loginData.firstName || loginData.FirstName || '',
+                    lastName: loginData.lastName || loginData.LastName || '',
+                    userRoles: loginData.userRoles || loginData.UserRoles || []
                 };
 
-                createSession(loginData.token, userData);
+                createSession(token, userData);
                 return { success: true, data: loginData };
             }
 

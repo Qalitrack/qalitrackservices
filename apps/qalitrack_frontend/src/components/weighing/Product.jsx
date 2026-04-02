@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, PackagePlus, Search, X } from "lucide-react";
+import { message } from "antd";
 import {
   getProducts,
   createProduct,
@@ -71,7 +72,7 @@ export default function ProductsPortal() {
       resetForm();
     } catch (err) {
       console.error("❌ Save failed:", err.message);
-      alert(`Error: ${err.message}`);
+      message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }

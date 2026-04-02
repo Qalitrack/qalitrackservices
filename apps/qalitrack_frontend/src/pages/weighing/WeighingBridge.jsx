@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X } from "lucide-react";
+import { message } from "antd";
 import {
   getWeighbridges,
   createWeighbridge,
@@ -29,7 +30,7 @@ export default function WeighbridgesPortal() {
       setLoading(true);
       setError(null);
       const data = await getWeighbridges(1, 200, "");
-      setWeighbridges(data?.items || []);
+      setWeighbridges(Array.isArray(data) ? data : (data?.items || []));
     } catch (err) {
       console.error("❌ Failed to load weighbridges:", err);
       setError(err.message || "Failed to fetch weighbridges");
@@ -67,7 +68,7 @@ export default function WeighbridgesPortal() {
     try {
       const available = await checkWeighbridgeLocation(form.location, editing?.id);
       if (!available) {
-        alert("This location is already taken!");
+        message.warning("This location is already taken!");
         setLoading(false);
         return;
       }
@@ -79,7 +80,7 @@ export default function WeighbridgesPortal() {
       fetchWeighbridges();
     } catch (err) {
       console.error("❌ Save failed:", err.message);
-      alert(`Error: ${err.message}`);
+      message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -89,7 +90,7 @@ export default function WeighbridgesPortal() {
     setForm({
       location: wb.location || "",
       description: wb.description || "",
-      status: wb.status || "Active",
+      status: wb.status ? (wb.status.charAt(0).toUpperCase() + wb.status.slice(1).toLowerCase()) : "Active",
     });
     setEditing(wb);
   };
@@ -102,9 +103,19 @@ export default function WeighbridgesPortal() {
       fetchWeighbridges();
     } catch (err) {
       console.error("❌ Delete failed:", err.message);
-      alert(`Error: ${err.message}`);
+      message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (wb) => {
+    const newStatus = wb.status?.toLowerCase() === "active" ? "Inactive" : "Active";
+    try {
+      await updateWeighbridge(wb.id, { ...wb, status: newStatus });
+      fetchWeighbridges();
+    } catch (err) {
+      message.error(`Failed to update status: ${err.message}`);
     }
   };
 
@@ -232,7 +243,7 @@ export default function WeighbridgesPortal() {
 
                   <tbody>
                     {paginated.map((wb, i) => {
-                      const isActive = wb.status === "Active";
+                      const isActive = wb.status?.toLowerCase() === "active";
                       return (
                         <tr key={wb.id} className={`border-b border-gray-100 transition-all ${
                           isActive 
@@ -256,6 +267,17 @@ export default function WeighbridgesPortal() {
                           </td>
                           <td className="px-4 py-2.5">
                             <div className="flex gap-2 justify-center">
+                              <button
+                                onClick={() => handleToggleStatus(wb)}
+                                className={`p-1.5 rounded-lg border text-[9px] font-bold transition-all ${
+                                  isActive
+                                    ? "text-green-700 border-green-300 hover:bg-green-50"
+                                    : "text-red-700 border-red-300 hover:bg-red-50"
+                                }`}
+                                title={isActive ? "Set Inactive" : "Set Active"}
+                              >
+                                {isActive ? "✓" : "✕"}
+                              </button>
                               <button onClick={() => handleEdit(wb)}
                                 className="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all" title="Edit">
                                 <Pencil className="w-3.5 h-3.5" />

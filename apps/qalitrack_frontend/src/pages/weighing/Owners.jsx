@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, UserPlus, Search, X, Car } from "lucide-react";
+import { message } from "antd";
 import {
   getOwners,
   createOwner,
@@ -67,11 +68,12 @@ export default function OwnersPortal() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (editingOwner) await updateOwner(editingOwner.id, form);
-      else await createOwner(form);
+      const payload = { ...form, type: parseInt(form.type, 10), email: form.email || undefined, phoneNumber: form.phoneNumber || undefined };
+      if (editingOwner) await updateOwner(editingOwner.id, payload);
+      else await createOwner(payload);
       resetForm();
       await fetchOwners();
-    } catch (err) { alert(err.message); }
+    } catch (err) { message.error(err.message); }
     finally { setLoading(false); }
   };
 

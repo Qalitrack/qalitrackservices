@@ -386,20 +386,18 @@ public class SaccoService : ISaccoService
     {
         if (string.IsNullOrWhiteSpace(name))
             return false;
-            
-        var result = await _saccoRepository.GetPagedAsync(
-            pageNumber: 1,
-            pageSize: 1,
-            searchTerm: name,
-            searchPredicate: excludeId.HasValue 
-                ? s => s.Id != excludeId.Value.ToString()
-                : null,
-            searchProperties: new[] { nameof(Sacco.Name) },
-            sortBy: null,
-            sortDescending: false
-        );
-        
-        return result?.TotalItems > 0;
+
+        var normalizedName = name.Trim().ToLower();
+
+        if (excludeId.HasValue)
+        {
+            var excludeIdStr = excludeId.Value.ToString();
+            return await _saccoRepository.ExistsByPredicateAsync(
+                s => s.Name.ToLower() == normalizedName && s.Id != excludeIdStr);
+        }
+
+        return await _saccoRepository.ExistsByPredicateAsync(
+            s => s.Name.ToLower() == normalizedName);
     }
 
     public async Task<int> ImportSaccosAsync(IEnumerable<CreateSaccoDto> saccoDtos)

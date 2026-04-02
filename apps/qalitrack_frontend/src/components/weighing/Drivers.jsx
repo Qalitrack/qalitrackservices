@@ -17,6 +17,7 @@
 
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2 } from "lucide-react";
+import { message } from "antd";
 import {
   getDrivers,
   createDriver,
@@ -43,7 +44,7 @@ export default function DriverPortal() {
     licenseNumber: "",
     licenseExpiryDate: "",
     nfCcode: "",  // ← NFC UID (API field name: nfCcode - note capital C)
-    status: "Active",
+    status: "active",
   });
 
   useEffect(() => {
@@ -109,7 +110,7 @@ export default function DriverPortal() {
       resetForm();
     } catch (error) {
       console.error("Error saving driver:", error.message);
-      alert(`Error: ${error.message}`);
+      message.error(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -123,7 +124,7 @@ export default function DriverPortal() {
       licenseNumber: driver.licenseNumber || "",
       licenseExpiryDate: driver.licenseExpiryDate?.split("T")[0] || "",
       nfCcode: driver.nfCcode || "",  // ← NFC UID
-      status: driver.status || "Active",
+      status: (driver.status || "active").toLowerCase(),
     });
     setEditingDriver(driver);
   };
@@ -136,7 +137,7 @@ export default function DriverPortal() {
       await fetchDrivers();
     } catch (error) {
       console.error("Delete failed:", error.message);
-      alert(`Delete failed: ${error.message}`);
+      message.error(`Delete failed: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -150,7 +151,7 @@ export default function DriverPortal() {
       licenseNumber: "",
       licenseExpiryDate: "",
       nfCcode: "",
-      status: "Active",
+      status: "active",
     });
     setEditingDriver(null);
   };
@@ -298,8 +299,8 @@ export default function DriverPortal() {
               onChange={handleChange}
               className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
 
@@ -453,12 +454,12 @@ export default function DriverPortal() {
                     <td className="px-3 py-2">
                       <span
                         className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
-                          driver.status === "Active"
+                          driver.status?.toLowerCase() === "active"
                             ? "bg-green-100 text-green-700 border border-green-300"
                             : "bg-red-100 text-red-700 border border-red-300"
                         }`}
                       >
-                        {driver.status === "Active" ? "✓ Active" : "✕ Inactive"}
+                        {driver.status?.toLowerCase() === "active" ? "✓ Active" : "✕ Inactive"}
                       </span>
                     </td>
                     <td className="px-3 py-2">

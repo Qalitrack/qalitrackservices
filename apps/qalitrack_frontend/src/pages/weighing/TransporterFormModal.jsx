@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X, Truck } from "lucide-react";
+import { message } from "antd";
 import {
   getTransporters,
   createTransporter,
@@ -95,7 +96,7 @@ export default function TransportersPortal() {
       resetForm();
       fetchTransporters();
     } catch (err) {
-      alert(err.message || "Failed to save transporter");
+      message.error(err.message || "Failed to save transporter");
     } finally {
       setLoading(false);
     }

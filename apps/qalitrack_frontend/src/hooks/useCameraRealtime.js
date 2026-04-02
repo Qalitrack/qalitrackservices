@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-const BASE_IP = "http://172.16.0.93:5000";
-const PLATE_STREAM_URL = `${BASE_IP}/api/PlatformData/plates/stream`;
+const BASE_IP = "http://localhost:5000";
+const PLATE_STREAM_URL = `${BASE_IP}/api/plates/stream`;
 
 export const useCameraRealtime = (cameraId = "npr1") => {
   const [plateData, setPlateData] = useState(null);

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Table, Tag, Button, Input, DatePicker, message, Radio, Drawer } from "antd";
+import { Table, Tag, Button, Input, DatePicker, message, Radio, Drawer, Modal } from "antd";
 import {
   ReloadOutlined,
   EditOutlined,
@@ -19,6 +19,7 @@ import {
 import { Printer, Eye, Search, Filter, X } from "lucide-react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import logoSrc from "../assets/logo.jpeg";
 
 // ─── Theme utilities ──────────────────────────────────────────────────────────
 import {
@@ -34,193 +35,323 @@ dayjs.extend(duration);
 const { RangePicker } = DatePicker;
 
 // ─── Theme-aware PDF generator ────────────────────────────────────────────────
-const generateThemedPDF = (record, ticketSettings, formatTurnaroundTimeSimple) => {
-  const doc = new jsPDF();
-  const palette = resolvePdfTheme(ticketSettings);
+const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSimple, previewOnly = false) => {
+  const doc      = new jsPDF({ unit: "mm", format: "a4" });
+  const W        = 210;
+  const L        = 14;          // left margin
+  const R        = 196;         // right edge  (W - 14)
+  const TW       = R - L;       // table / section width = 182
+  const palette  = resolvePdfTheme(ticketSettings);
   const fontSize = resolveFontSize(ticketSettings.ticketFontSize);
 
-  const companyName = ticketSettings.companyName || "QALIBRATED SYSTEMS LTD";
-  const companyAddress =
-    ticketSettings.companyAddress ||
-    "PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996";
+  const companyName    = ticketSettings.companyName    || "QALIBRATED SYSTEMS LTD";
+  const companyAddress = ticketSettings.companyAddress || "PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996";
 
-  // ── Header ────────────────────────────────────────────────────────────────
-  doc.setFillColor(...palette.headerBg);
-  doc.rect(0, 0, 210, 22, "F");
+  // ── Fixed accent / status colours ────────────────────────────────────────
+  const white     = [255, 255, 255];
+  const black     = [0,   0,   0];
+  const gray      = [107, 114, 128];
+  const lightGray = [243, 244, 246];
+  const borderCol = [209, 213, 219];
+  const cream     = [254, 252, 232];
+  const amberFill = [251, 191,  36];
+  const amberBdr  = [217, 119,   6];
+  const green     = [21,  128,  61];
+  const red       = [185,  28,  28];
 
+  // ── Status ───────────────────────────────────────────────────────────────
+  const rawStatus  = (record.overallStatus || record.legalStatus || record.status || "N/A").toUpperCase();
+  const isLegal    = rawStatus === "LEGAL" || rawStatus === "COMPLETED";
+  const isOverload = rawStatus.includes("OVER");
+  const statusText = isLegal ? "LEGAL" : isOverload ? "OVERLOAD" : rawStatus;
+  const statusBg   = isLegal ? green : isOverload ? red : palette.accentBg;
+
+  const ticketDate = dayjs(record.firstWeightDate || record.createdAt || new Date()).format("MMM D, YYYY HH:mm");
+  const timestamp  = dayjs(record.firstWeightDate || record.createdAt || new Date()).format("DD-MM-YY hh:mm A");
+
+  // ── Pre-load logo ─────────────────────────────────────────────────────────
+  let logoImg = null;
+  try {
+    logoImg = await new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = logoSrc;
+    });
+  } catch (_) { /* logo unavailable – skip */ }
+
+  // ── HEADER ───────────────────────────────────────────────────────────────
+  // Logo image (left)
+  if (logoImg) {
+    doc.addImage(logoImg, "JPEG", L, 7, 18, 18);
+  }
+
+  // Company name – centred
   doc.setFontSize(fontSize.title);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(...palette.headerText);
-  doc.text(companyName, 105, 10, { align: "center" });
+  doc.setTextColor(...palette.bodyText);
+  doc.text(companyName, W / 2, 13, { align: "center" });
 
-  doc.setFontSize(fontSize.sub);
+  // Address – centred
+  doc.setFontSize(fontSize.sub - 1);
   doc.setFont("helvetica", "normal");
-  doc.text(companyAddress, 105, 16, { align: "center" });
+  doc.setTextColor(...gray);
+  doc.text(companyAddress, W / 2, 19, { align: "center" });
 
-  // ── Title band ────────────────────────────────────────────────────────────
-  doc.setFillColor(...palette.accentBg);
-  doc.rect(14, 25, 182, 8, "F");
-  doc.setFontSize(fontSize.heading + 1);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...palette.bodyText);
-  doc.text("WEIGHING TICKET", 105, 31, { align: "center" });
-
-  // ── Section: Ticket Details ───────────────────────────────────────────────
-  let y = 36;
-  doc.setFillColor(...palette.headerBg);
-  doc.rect(14, y, 182, 7, "F");
-  doc.setTextColor(...palette.headerText);
+  // Date – top-right
   doc.setFontSize(fontSize.sub);
-  doc.text("TICKET DETAILS", 105, y + 5, { align: "center" });
-
-  y += 7;
   doc.setTextColor(...palette.bodyText);
+  doc.text(ticketDate, R, 10, { align: "right" });
 
+  // Status badge – top-right
+  const badgeW = 24;
+  doc.setFillColor(...statusBg);
+  doc.roundedRect(R - badgeW, 13, badgeW, 7, 1.5, 1.5, "F");
+  doc.setFontSize(fontSize.sub - 0.5);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...white);
+  doc.text(statusText, R - badgeW / 2, 17.5, { align: "center" });
+
+  // Divider
+  doc.setDrawColor(...borderCol);
+  doc.setLineWidth(0.3);
+  doc.line(L, 29, R, 29);
+
+  // "WEIGHING TICKET" badge – centred
+  const tBadgeW = 52;
+  doc.setFillColor(...amberFill);
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.5);
+  doc.roundedRect((W - tBadgeW) / 2, 32, tBadgeW, 8, 2, 2, "FD");
+  doc.setFontSize(fontSize.heading);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...black);
+  doc.text("WEIGHING TICKET", W / 2, 37.5, { align: "center" });
+
+  // ── TICKET DETAILS ───────────────────────────────────────────────────────
+  let y = 47;
+
+  doc.setFillColor(...palette.headerBg);
+  doc.roundedRect(L, y, TW, 7, 2, 2, "F");
+  doc.setFontSize(fontSize.sub);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...palette.headerText);
+  doc.text("TICKET DETAILS", W / 2, y + 5, { align: "center" });
+  y += 9; // header height + small gap
+
+  const detailsY = y;
   autoTable(doc, {
-    startY: y,
+    startY: detailsY,
+    margin: { left: L, right: L },
     theme: "plain",
     styles: {
       fontSize: fontSize.body,
-      cellPadding: 1.5,
+      cellPadding: { top: 1.8, right: 2, bottom: 1.8, left: 3 },
       textColor: palette.bodyText,
       lineColor: palette.border,
+      lineWidth: 0.2,
+      fillColor: cream,
     },
     columnStyles: {
-      0: { fontStyle: "bold", cellWidth: 32 },
-      1: { cellWidth: 58 },
-      2: { fontStyle: "bold", cellWidth: 32 },
-      3: { cellWidth: 58 },
+      0: { fontStyle: "bold", cellWidth: 26 },
+      1: { cellWidth: 62 },
+      2: { fontStyle: "bold", cellWidth: 28 },
+      3: { cellWidth: 66 },
     },
     body: [
-      ["TICKET NO",    `: ${record.receiptNo || "N/A"}`,        "REGISTRATION",  `: ${record.noPlate || "N/A"}`],
-      ["AXLE TYPE",    `: ${record.axleType || "N/A"}`,         "COMMODITY",     `: ${record.commodityName || "N/A"}`],
-      ["TRANSPORTER",  `: ${record.transporterName || "N/A"}`,  "DRIVER",        `: ${record.driverName || "N/A"}`],
-      ["SUPPLIER",     `: ${record.supplierName || "N/A"}`,     "CUSTOMER",      `: ${record.customerName || "N/A"}`],
-      ["SOURCE",       `: ${record.originName || "N/A"}`,       "DESTINATION",   `: ${record.destinationName || "N/A"}`],
-      ["CONTAINER",    `: ${record.containerNo || "N/A"}`,      "SEAL NO",       `: ${record.sealNo || "N/A"}`],
-      ["WEIGH MODE",   `: ${record.weighMode || "N/A"}`,        "OPERATION",     `: ${record.operation || "N/A"}`],
-      ["WEIGHBRIDGE",  `: ${record.weighBridgeName || "N/A"}`,  "STATUS",        `: ${record.status || "N/A"}`],
+      ["TICKET NO",   `: ${record.receiptNo        || "N/A"}`, "REGISTRATION", `: ${record.noPlate          || "N/A"}`],
+      ["AXLE TYPE",   `: ${record.axleType          || "N/A"}`, "COMMODITY",    `: ${record.commodityName    || "N/A"}`],
+      ["TRANSPORTER", `: ${record.transporterName   || "N/A"}`, "TIMESTAMP",    `: ${timestamp}`],
+      ["SOURCE",      `: ${record.originName        || "N/A"}`, "DESTINATION",  `: ${record.destinationName || "N/A"}`],
+      ["OPERATOR",    `: ${record.operatorName      || "N/A"}`, "DRIVER",       `: ${record.driverName      || "N/A"}`],
+      ["SUPPLIER",    `: ${record.supplierName      || "N/A"}`, "CUSTOMER",     `: ${record.customerName    || "N/A"}`],
+      ["CONTAINER",   `: ${record.containerNo       || "N/A"}`, "SEAL NO",      `: ${record.sealNo          || "N/A"}`],
+      ["WEIGHBRIDGE", `: ${record.weighBridgeName   || "N/A"}`, "WEIGH MODE",   `: ${record.weighMode       || "N/A"}`],
     ],
   });
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(L, detailsY, TW, doc.lastAutoTable.finalY - detailsY, 3, 3, "S");
 
-  // ── Section: Weight Summary ───────────────────────────────────────────────
-  y = doc.lastAutoTable.finalY + 5;
+  // ── AXLE WEIGHT ANALYSIS ─────────────────────────────────────────────────
+  y = doc.lastAutoTable.finalY + 4;
+
   doc.setFillColor(...palette.headerBg);
-  doc.rect(14, y, 182, 7, "F");
-  doc.setTextColor(...palette.headerText);
+  doc.roundedRect(L, y, TW, 8, 2, 2, "F");
   doc.setFontSize(fontSize.sub);
-  doc.text("WEIGHT SUMMARY", 105, y + 5, { align: "center" });
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...amberFill);
+  doc.text("AXLE WEIGHT ANALYSIS", W / 2, y + 5.5, { align: "center" });
+  const awW = doc.getTextWidth("AXLE WEIGHT ANALYSIS");
+  doc.setDrawColor(...amberFill);
+  doc.setLineWidth(0.3);
+  doc.line((W - awW) / 2, y + 6.8, (W + awW) / 2, y + 6.8);
+  y += 10; // header height + small gap
 
-  y += 7;
-  doc.setTextColor(...palette.bodyText);
-
+  const axleY = y;
   autoTable(doc, {
-    startY: y,
+    startY: axleY,
+    margin: { left: L, right: L },
     theme: "grid",
     headStyles: {
-      fillColor: palette.headerBg,
+      fillColor: lightGray,
+      textColor: palette.bodyText,
+      fontStyle: "bold",
+      fontSize: fontSize.body,
       halign: "center",
-      textColor: palette.headerText,
-      fontSize: fontSize.sub,
+      lineColor: borderCol,
     },
     styles: {
-      halign: "center",
       fontSize: fontSize.body,
+      halign: "center",
       textColor: palette.bodyText,
-      lineColor: palette.tableGridColor,
+      lineColor: borderCol,
+      cellPadding: 2,
     },
-    head: [["MEASUREMENT", "WEIGHT", "OPERATOR", "TIMESTAMP"]],
+    columnStyles: {
+      0: { fontStyle: "bold", halign: "left", cellWidth: 28 },
+    },
+    head: [["ITEMS", "GROUP 1", "GROUP 2", "GROUP 3", "GROUP 4", "GVW"]],
     body: [
+      ["ACTUAL WT",  "N/A", "N/A", "N/A", "N/A", `${record.firstWeight || 0} KG`],
+      ["PDF",        "N/A", "N/A", "N/A", "N/A", "N/A"],
+      ["ALLOWED",    "N/A", "N/A", "N/A", "N/A", "N/A"],
+      ["ALLOWED+5%", "N/A", "N/A", "N/A", "N/A", "N/A"],
+      ["EXCESS",     "N/A", "N/A", "N/A", "N/A", "N/A"],
       [
-        "FIRST WEIGHT",
-        `${record.firstWeight || 0} Kg`,
-        record.firstWeightOperator || record.operatorName || "N/A",
-        record.firstWeightDate
-          ? dayjs(record.firstWeightDate).format("DD-MM-YY HH:mm")
-          : "N/A",
-      ],
-      [
-        "SECOND WEIGHT",
-        `${record.secondWeight || 0} Kg`,
-        record.secondWeightOperator || record.operatorName || "N/A",
-        record.secondWeightDate
-          ? dayjs(record.secondWeightDate).format("DD-MM-YY HH:mm")
-          : "N/A",
-      ],
-      [
-        {
-          content: "NET WEIGHT",
-          styles: { fillColor: palette.netWeightBg, fontStyle: "bold", textColor: palette.bodyText },
-        },
-        {
-          content: `${record.netWeight || 0} Kg`,
-          styles: { fillColor: palette.netWeightBg, fontStyle: "bold", textColor: palette.bodyText },
-        },
-        "",
-        "",
-      ],
-      [
-        {
-          content: "TURNAROUND",
-          styles: { fillColor: palette.accentBg, textColor: palette.bodyText },
-        },
-        {
-          content: formatTurnaroundTimeSimple(record.firstWeightDate, record.secondWeightDate, record.turnaroundTime),
-          colSpan: 3,
-          styles: { fillColor: palette.accentBg, textColor: palette.bodyText },
-        },
+        { content: "RESULT", styles: { fontStyle: "bold" } },
+        "N/A", "N/A", "N/A", "N/A",
+        { content: statusText, styles: { fillColor: statusBg, textColor: white, fontStyle: "bold" } },
       ],
     ],
   });
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(L, axleY, TW, doc.lastAutoTable.finalY - axleY, 3, 3, "S");
 
-  // ── Section: Remarks ──────────────────────────────────────────────────────
+  // ── WEIGHT SUMMARY ───────────────────────────────────────────────────────
+  y = doc.lastAutoTable.finalY + 4;
+
+  const summaryY = y;
+  autoTable(doc, {
+    startY: summaryY,
+    margin: { left: L, right: L },
+    theme: "grid",
+    styles: {
+      lineColor: borderCol,
+      lineWidth: 0.4,
+      cellPadding: { top: 3, bottom: 3, left: 2, right: 2 },
+    },
+    headStyles: {
+      fillColor: lightGray,
+      textColor: palette.bodyText,
+      fontStyle: "bold",
+      fontSize: fontSize.sub,
+      halign: "center",
+    },
+    head: [["FIRST WEIGHT", "SECOND WEIGHT", "NET WEIGHT"]],
+    body: [[
+      { content: `${record.firstWeight  || 0} Kg`, styles: { fontSize: 13, fontStyle: "bold", halign: "center" } },
+      { content: `${record.secondWeight || 0} Kg`, styles: { fontSize: 13, fontStyle: "bold", halign: "center" } },
+      {
+        content: `${record.netWeight || 0} Kg`,
+        styles: { fontSize: 13, fontStyle: "bold", halign: "center", fillColor: palette.netWeightBg },
+      },
+    ]],
+  });
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(L, summaryY, TW, doc.lastAutoTable.finalY - summaryY, 3, 3, "S");
+
+  // ── VEHICLE SNAPSHOT ─────────────────────────────────────────────────────
+  y = doc.lastAutoTable.finalY + 4;
+
+  doc.setFillColor(...palette.headerBg);
+  doc.roundedRect(L, y, TW, 8, 2, 2, "F");
+  doc.setFontSize(fontSize.sub);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...amberFill);
+  doc.text("VEHICLE SNAPSHOT", W / 2, y + 5.5, { align: "center" });
+  y += 8;
+
+  const snapH = 45;
+  doc.setFillColor(30, 30, 35);
+  doc.roundedRect(L, y, TW, snapH, 3, 3, "F");
+  doc.setFontSize(fontSize.body);
+  doc.setFont("helvetica", "italic");
+  doc.setTextColor(160, 160, 160);
+  doc.text(`[ Vehicle Image: ${record.noPlate || "N/A"} ]`, W / 2, y + snapH / 2, { align: "center" });
+
+  doc.setFontSize(fontSize.body - 1);
+  doc.setFont("helvetica", "italic");
+  doc.setTextColor(...gray);
+  doc.text(
+    `Captured: ${dayjs(record.firstWeightDate || new Date()).format("DD/MM/YYYY HH:mm:ss")}`,
+    W / 2, y + snapH + 5, { align: "center" }
+  );
+
+  // Advance y past snapshot + caption
+  y += snapH + 10;
+
+  // ── REMARKS (optional) ───────────────────────────────────────────────────
   if (record.remarks || record.notes) {
-    y = doc.lastAutoTable.finalY + 5;
+    y += 2;
     doc.setFillColor(...palette.headerBg);
-    doc.rect(14, y, 182, 7, "F");
-    doc.setTextColor(...palette.headerText);
+    doc.roundedRect(L, y, TW, 7, 2, 2, "F");
     doc.setFontSize(fontSize.sub);
-    doc.text("REMARKS / NOTES", 105, y + 5, { align: "center" });
-
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...palette.headerText);
+    doc.text("REMARKS / NOTES", W / 2, y + 5, { align: "center" });
     y += 10;
     doc.setTextColor(...palette.bodyText);
     doc.setFontSize(fontSize.body);
     doc.setFont("helvetica", "normal");
-    const remarkText = record.remarks || record.notes || "";
-    const splitRemarks = doc.splitTextToSize(remarkText, 170);
-    doc.text(splitRemarks, 14, y);
+    const remarkLines = doc.splitTextToSize(record.remarks || record.notes, TW - 4);
+    doc.text(remarkLines, L + 2, y);
+    y += remarkLines.length * (fontSize.body * 0.35) + 4;
   }
 
-  // ── Footer ────────────────────────────────────────────────────────────────
-  const pageHeight = doc.internal.pageSize.height;
-  doc.setFillColor(...palette.accentBg);
-  doc.rect(0, pageHeight - 12, 210, 12, "F");
-  doc.setFontSize(fontSize.sub - 1);
+  // ── FOOTER ───────────────────────────────────────────────────────────────
+  y += 4;
+
+  doc.setFillColor(248, 249, 250);
+  doc.setDrawColor(...borderCol);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(L, y, TW, 15, 3, 3, "FD");
+
+  // Logo image (left inside footer)
+  if (logoImg) {
+    doc.addImage(logoImg, "JPEG", L + 2, y + 2, 11, 11);
+  }
+
+  // Tagline (centre)
+  doc.setFontSize(fontSize.sub);
+  doc.setFont("helvetica", "bold");
   doc.setTextColor(...palette.bodyText);
-  doc.text(
-    `Generated: ${dayjs().format("DD-MM-YYYY HH:mm")}  ·  Theme: ${
-      TICKET_THEMES[ticketSettings.ticketTheme]?.name || "Modern"
-    }`,
-    105,
-    pageHeight - 5,
-    { align: "center" }
-  );
+  doc.text("Powered by Qalibrated Systems", W / 2, y + 7, { align: "center" });
+  doc.setFontSize(fontSize.body - 1);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(...gray);
+  doc.text("www.qalibrated.co.ke", W / 2, y + 11, { align: "center" });
 
-  // ── Theme watermark strip (left edge) ─────────────────────────────────────
-  doc.setFillColor(...palette.headerBg);
-  doc.rect(0, 0, 3, pageHeight, "F");
+  // "Inventing and Making Happen" badge (right, inside footer)
+  const tagW = 46;
+  const tagX = R - tagW - 2;
+  doc.setFillColor(...amberFill);
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(tagX, y + 4, tagW, 7, 2, 2, "FD");
+  doc.setFontSize(6.5);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...black);
+  doc.text("Inventing and Making Happen", tagX + tagW / 2, y + 8.5, { align: "center" });
 
-  doc.save(
-    `Ticket_${record.receiptNo}_${
-      TICKET_THEMES[ticketSettings.ticketTheme]?.name || "PDF"
-    }.pdf`
-  );
+  if (previewOnly) {
+    return URL.createObjectURL(doc.output("blob"));
+  }
 
-  message.success(
-    `PDF exported with "${
-      TICKET_THEMES[ticketSettings.ticketTheme]?.name || "Modern"
-    }" theme!`
-  );
+  doc.save(`Ticket_${record.receiptNo || "unknown"}_${TICKET_THEMES[ticketSettings.ticketTheme]?.name || "PDF"}.pdf`);
+  message.success(`Weighing ticket exported (${TICKET_THEMES[ticketSettings.ticketTheme]?.name || "Default"} theme)!`);
 };
 
 // ─── COMPONENT ────────────────────────────────────────────────────────────────
@@ -235,6 +366,16 @@ export default function Transactions() {
   const [editedRecord, setEditedRecord] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [pdfTheme, setPdfTheme] = useState(() => getTicketSettings().ticketTheme || "modern");
+  const [isExportPreviewOpen, setIsExportPreviewOpen] = useState(false);
+  const [previewBlobUrl, setPreviewBlobUrl] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const isCompletedRecord = selectedRecord
+    ? (selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) ||
+      selectedRecord.status === "Completed" ||
+      selectedRecord.status === "completed"
+    : false;
 
   // ── Live ticket settings (synced from SystemSettings) ─────────────────────
   const [ticketSettings, setTicketSettings] = useState(getTicketSettings);
@@ -523,6 +664,9 @@ export default function Transactions() {
   // ── Current theme for badge display ───────────────────────────────────────
   const currentThemeMeta = TICKET_THEMES[ticketSettings.ticketTheme] || TICKET_THEMES.modern;
   const themePreviewColor = currentThemeMeta.preview.header;
+  // Selected PDF theme (controls drawer title pill + Export PDF button)
+  const selectedThemeMeta = TICKET_THEMES[pdfTheme] || TICKET_THEMES.modern;
+  const selectedThemeColor = selectedThemeMeta.preview.header;
 
   const columns = [
     {
@@ -1002,16 +1146,16 @@ export default function Transactions() {
             <span className="text-sm font-bold text-gray-900">
               Ticket: {selectedRecord?.receiptNo}
             </span>
-            {/* Theme pill in drawer header */}
+            {/* PDF theme pill in drawer header — reflects current selection */}
             <span
               className="ml-auto text-[9px] font-bold px-2 py-0.5 rounded-full border"
               style={{
-                color: themePreviewColor,
-                borderColor: themePreviewColor,
-                backgroundColor: `${themePreviewColor}18`,
+                color: selectedThemeColor,
+                borderColor: selectedThemeColor,
+                backgroundColor: `${selectedThemeColor}18`,
               }}
             >
-              {currentThemeMeta.name}
+              {selectedThemeMeta.name}
             </span>
           </div>
         }
@@ -1021,44 +1165,59 @@ export default function Transactions() {
         width={450}
         footer={
           <div className="flex gap-2 justify-between items-center">
-            <div className="flex items-center gap-2">
-              {/* Live theme preview swatch */}
-              <div
-                className="flex items-center gap-1.5 px-2 py-1 rounded-lg border text-[9px] font-bold"
-                style={{
-                  borderColor: themePreviewColor,
-                  color: themePreviewColor,
-                  backgroundColor: `${themePreviewColor}15`,
-                }}
+            {/* PDF Theme toggle */}
+            <div className="flex items-center gap-1">
+              <span className="text-[9px] font-semibold text-gray-500 mr-1">PDF:</span>
+              <button
+                onClick={() => setPdfTheme("modern")}
+                className={`h-6 px-2 text-[9px] font-bold rounded-l border transition-all ${
+                  pdfTheme === "modern"
+                    ? "bg-amber-500 text-white border-amber-500"
+                    : "bg-white text-gray-500 border-gray-300 hover:border-amber-400 hover:text-amber-600"
+                }`}
               >
-                <span
-                  className="w-3 h-3 rounded-sm"
-                  style={{ backgroundColor: themePreviewColor }}
-                />
-                PDF: {currentThemeMeta.name}
-              </div>
+                Modern
+              </button>
+              <button
+                onClick={() => setPdfTheme("classic")}
+                className={`h-6 px-2 text-[9px] font-bold rounded-r border-t border-b border-r transition-all ${
+                  pdfTheme === "classic"
+                    ? "bg-gray-800 text-white border-gray-800"
+                    : "bg-white text-gray-500 border-gray-300 hover:border-gray-500 hover:text-gray-700"
+                }`}
+              >
+                B&W
+              </button>
             </div>
             <div className="flex gap-2">
               {!isEditing ? (
                 <>
-                  <Button
-                    size="small"
-                    icon={<EditOutlined />}
-                    onClick={() => setIsEditing(true)}
-                    className="text-xs border-amber-300 text-amber-600 hover:border-amber-500"
-                  >
-                    Edit
-                  </Button>
+                  {!isCompletedRecord && (
+                    <Button
+                      size="small"
+                      icon={<EditOutlined />}
+                      onClick={() => setIsEditing(true)}
+                      className="text-xs border-amber-300 text-amber-600 hover:border-amber-500"
+                    >
+                      Edit
+                    </Button>
+                  )}
                   <Button
                     size="small"
                     type="primary"
                     icon={<Printer size={14} />}
-                    onClick={() =>
-                      generateThemedPDF(selectedRecord, ticketSettings, formatTurnaroundTimeSimple)
-                    }
+                    onClick={async () => {
+                      setIsExportPreviewOpen(true);
+                      setPreviewLoading(true);
+                      const url = await generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple, true);
+                      setPreviewBlobUrl(url);
+                      setPreviewLoading(false);
+                    }}
                     className="text-xs border-0"
                     style={{
-                      background: `linear-gradient(135deg, ${themePreviewColor}, ${currentThemeMeta.preview.accent})`,
+                      background: pdfTheme === "modern"
+                        ? "linear-gradient(135deg, #f59e0b, #f97316)"
+                        : "linear-gradient(135deg, #374151, #111827)",
                     }}
                   >
                     Export PDF
@@ -1275,6 +1434,116 @@ export default function Transactions() {
           </div>
         )}
       </Drawer>
+
+      {/* Export Preview Modal */}
+      {selectedRecord && (
+        <Modal
+          open={isExportPreviewOpen}
+          onCancel={() => { setIsExportPreviewOpen(false); setPreviewBlobUrl(null); }}
+          width={980}
+          title={
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                <Printer size={13} className="text-white" />
+              </div>
+              <span className="text-sm font-bold text-gray-900">
+                Ticket Preview — {selectedRecord.receiptNo}
+              </span>
+            </div>
+          }
+          footer={null}
+          destroyOnClose
+        >
+          <div className="flex gap-4" style={{ height: 680 }}>
+            {/* ── Left: Exact PDF Preview via iframe ── */}
+            <div className="flex-1 bg-gray-100 rounded-lg overflow-hidden border border-gray-200 flex items-center justify-center">
+              {previewLoading || !previewBlobUrl ? (
+                <div className="text-gray-400 text-sm font-medium">Generating preview…</div>
+              ) : (
+                <iframe
+                  src={previewBlobUrl}
+                  title="Ticket Preview"
+                  className="w-full h-full rounded-lg"
+                  style={{ border: "none" }}
+                />
+              )}
+            </div>
+
+            {/* ── Right: Export Options ── */}
+            <div className="w-52 shrink-0 flex flex-col gap-3">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <div className="text-[10px] font-bold text-gray-600 uppercase mb-2">Print Style</div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={async () => {
+                      setPdfTheme("modern");
+                      setPreviewLoading(true);
+                      const url = await generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: "modern" }, formatTurnaroundTimeSimple, true);
+                      setPreviewBlobUrl(url);
+                      setPreviewLoading(false);
+                    }}
+                    className={`flex-1 py-2 text-[10px] font-bold rounded-l border transition-all ${
+                      pdfTheme === "modern"
+                        ? "bg-amber-500 text-white border-amber-500 shadow-sm"
+                        : "bg-white text-gray-500 border-gray-300 hover:border-amber-400 hover:text-amber-600"
+                    }`}
+                  >
+                    Modern
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setPdfTheme("classic");
+                      setPreviewLoading(true);
+                      const url = await generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: "classic" }, formatTurnaroundTimeSimple, true);
+                      setPreviewBlobUrl(url);
+                      setPreviewLoading(false);
+                    }}
+                    className={`flex-1 py-2 text-[10px] font-bold rounded-r border-t border-b border-r transition-all ${
+                      pdfTheme === "classic"
+                        ? "bg-gray-800 text-white border-gray-800 shadow-sm"
+                        : "bg-white text-gray-500 border-gray-300 hover:border-gray-500 hover:text-gray-700"
+                    }`}
+                  >
+                    B&amp;W
+                  </button>
+                </div>
+              </div>
+
+              <Button
+                type="primary"
+                block
+                icon={<Printer size={14} />}
+                onClick={() => {
+                  generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple);
+                  setIsExportPreviewOpen(false);
+                  setPreviewBlobUrl(null);
+                }}
+                style={{
+                  background: pdfTheme === "modern"
+                    ? "linear-gradient(135deg, #f59e0b, #f97316)"
+                    : "linear-gradient(135deg, #374151, #111827)",
+                  border: "none",
+                  fontWeight: 700,
+                }}
+              >
+                Download PDF
+              </Button>
+
+              <Button block onClick={() => { setIsExportPreviewOpen(false); setPreviewBlobUrl(null); }}>
+                Cancel
+              </Button>
+
+              <div className="text-[10px] text-gray-400 text-center mt-auto pt-2 border-t border-gray-100">
+                <div className="font-medium">{selectedRecord.receiptNo}</div>
+                <div>{selectedRecord.noPlate}</div>
+                <div className="mt-1" style={{ color: selectedThemeColor }}>
+                  {selectedThemeMeta.name} theme
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal>
+      )}
 
       <style>{`
         .compact-table .ant-table { font-size: 10px; }

@@ -59,10 +59,11 @@ export default function SuppliersPortal() {
     setLoading(true);
 
     try {
+      const payload = { ...form, email: form.email || undefined, phone: form.phone || undefined };
       if (editingSupplier) {
-        await updateSupplier(editingSupplier.id, form);
+        await updateSupplier(editingSupplier.id, payload);
       } else {
-        await createSupplier(form);
+        await createSupplier(payload);
       }
       resetForm();
       fetchSuppliersWithSearch();

@@ -36,6 +36,7 @@ const COLUMN_DEFINITIONS = [
   { key: "firstWeight",     label: "1st Weight",  defaultVisible: true,  alwaysVisible: false },
   { key: "wait",            label: "Wait",        defaultVisible: true,  alwaysVisible: false },
   { key: "tat",             label: "TAT",         defaultVisible: true,  alwaysVisible: false },
+  { key: "nprSource",        label: "NPR",         defaultVisible: true,  alwaysVisible: false },
   { key: "status",          label: "Status",      defaultVisible: true,  alwaysVisible: false },
   { key: "action",          label: "Actions",     defaultVisible: true,  alwaysVisible: true  },
 ];
@@ -122,8 +123,13 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       .unwrap()
       .then((data) => {
         console.log("✅ Fetch success. Count:", data?.length);
-        if (!data || data.length === 0) console.warn("⚠️ No incomplete transactions returned from API");
-        message.success(`Loaded ${data?.length || 0} incomplete transactions`);
+        const incompleteCount = (data || []).filter(tx => {
+          const done = tx.isCompleted === true || tx.completed === true ||
+            tx.status === 'Completed' || tx.status === 'completed';
+          return !done;
+        }).length;
+        if (incompleteCount === 0) console.warn("⚠️ No incomplete transactions returned from API");
+        message.success(`Loaded ${incompleteCount} incomplete transactions`);
         setLocalLoading(false);
       })
       .catch((error) => {
@@ -319,6 +325,20 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       render: (date) => {
         const tat = calculateTurnaroundTime(date);
         return <Tag color={getTurnaroundColor(tat.minutes)} className="text-[9px] font-bold px-1.5 py-0 rounded-full border-0 m-0">{tat.display}</Tag>;
+      },
+    },
+    {
+      key: "nprSource", title: 'NPR', dataIndex: 'nprSource', width: 65,
+      render: (val) => {
+        const isAuto = val === "auto";
+        return (
+          <Tag
+            color={isAuto ? "green" : "blue"}
+            className="text-[9px] font-semibold px-1.5 py-0 rounded-full border-0 m-0"
+          >
+            {isAuto ? "Auto" : "Manual"}
+          </Tag>
+        );
       },
     },
     {

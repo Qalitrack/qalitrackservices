@@ -127,8 +127,6 @@ namespace Masterdata.Infrastructure.Data
 
             modelBuilder.Entity<Sacco>(entity => {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.ContactInfo).HasColumnType("jsonb"); // ✅ Restored JSONB
-                entity.Property(e => e.OtherDetails).HasColumnType("jsonb");
             });
 
             modelBuilder.Entity<Organisation>(entity => {

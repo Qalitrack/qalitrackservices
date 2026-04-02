@@ -1,47 +1,36 @@
-import require$$0 from "electron";
-import require$$1 from "path";
-function getDefaultExportFromCjs(x) {
-  return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+import d from "electron";
+import c from "path";
+function u(e) {
+  return e && e.__esModule && Object.prototype.hasOwnProperty.call(e, "default") ? e.default : e;
 }
-var main$1 = {};
-var hasRequiredMain;
-function requireMain() {
-  if (hasRequiredMain) return main$1;
-  hasRequiredMain = 1;
-  const { app, BrowserWindow } = require$$0;
-  const path = require$$1;
-  const isDev = !app.isPackaged;
-  function createWindow() {
-    const win = new BrowserWindow({
+var r = {}, a;
+function f() {
+  if (a) return r;
+  a = 1;
+  const { app: e, BrowserWindow: n } = d, s = c, o = !e.isPackaged;
+  function i() {
+    const t = new n({
       width: 1400,
       height: 900,
       webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: true
+        nodeIntegration: !1,
+        contextIsolation: !0,
+        webSecurity: o
+        // allow file:// → http://localhost:7000 requests in production
       }
     });
-    if (isDev) {
-      win.loadURL("http://localhost:5173");
-      win.webContents.openDevTools();
-    } else {
-      win.loadFile(path.join(__dirname, "../dist/index.html"));
-    }
+    o ? (t.loadURL("http://localhost:5173"), t.webContents.openDevTools()) : t.loadFile(s.join(__dirname, "../dist/index.html")), t.webContents.on("before-input-event", (p, l) => {
+      l.key === "F12" && t.webContents.toggleDevTools();
+    });
   }
-  app.whenReady().then(createWindow);
-  app.on("window-all-closed", () => {
-    if (process.platform !== "darwin") {
-      app.quit();
-    }
-  });
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
-    }
-  });
-  return main$1;
+  return e.whenReady().then(i), e.on("window-all-closed", () => {
+    process.platform !== "darwin" && e.quit();
+  }), e.on("activate", () => {
+    n.getAllWindows().length === 0 && i();
+  }), r;
 }
-var mainExports = requireMain();
-const main = /* @__PURE__ */ getDefaultExportFromCjs(mainExports);
+var w = f();
+const v = /* @__PURE__ */ u(w);
 export {
-  main as default
+  v as default
 };

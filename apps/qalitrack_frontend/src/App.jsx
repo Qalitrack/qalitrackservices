@@ -1,6 +1,6 @@
 // App.jsx
 import React, { Suspense } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter as BrowserRouter, Routes, Route } from 'react-router-dom';
 import { routes } from './App/routes.jsx';
 import { SidebarSettingsProvider } from './components/Context/Sidebarsettingscontext'; // 👈 add this
 
@@ -24,12 +24,7 @@ const renderRoute = (route, index) => {
 
 function App() {
     return (
-        <BrowserRouter
-            future={{
-                v7_startTransition: true,
-                v7_relativeSplatPath: true,
-            }}
-        >
+        <BrowserRouter>
             <SidebarSettingsProvider>  {/* 👈 wrap here, inside BrowserRouter */}
                 <Suspense fallback={<Loading />}>
                     <Routes>

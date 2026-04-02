@@ -150,7 +150,7 @@ export const connectANPRStream = createAsyncThunk(
     "selfService/connectANPR",
     async (_, { dispatch }) => {
         try {
-            const eventSource = new EventSource("http://172.16.0.93:5000/api/Camera/npr1/stream");
+            const eventSource = new EventSource("http://localhost:5000/api/Camera/npr1/stream");
             
             eventSource.onmessage = (event) => {
                 try {
@@ -184,7 +184,7 @@ export const connectRFIDStream = createAsyncThunk(
     "selfService/connectRFID",
     async (_, { dispatch }) => {
         try {
-            const eventSource = new EventSource("http://172.16.0.93:5000/api/RFID/stream");
+            const eventSource = new EventSource("http://localhost:5000/api/RFID/stream");
             
             eventSource.onmessage = (event) => {
                 try {
@@ -217,7 +217,7 @@ export const connectNFCStream = createAsyncThunk(
     "selfService/connectNFC",
     async (_, { dispatch }) => {
         try {
-            const eventSource = new EventSource("http://172.16.0.93:5000/api/NFC/stream");
+            const eventSource = new EventSource("http://localhost:5000/api/NFC/stream");
             
             eventSource.onmessage = (event) => {
                 try {

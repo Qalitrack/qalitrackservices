@@ -83,6 +83,9 @@ public class WeighbridgeTransaction : BaseEntity
     
     // API Integration
     public string? ApiId { get; set; }
+
+    // NPR (Number Plate Recognition) capture source: "auto" = camera detected, "manual" = operator typed
+    public string? NprSource { get; set; }
 }
 
 // If you still need the ReweighRecord and enum, keep them separate or remove them

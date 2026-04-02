@@ -16,6 +16,9 @@ import { Edit, Trash2, PlusCircle, Users, FileText, ShieldCheck, ShieldAlert, Re
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import dayjs from 'dayjs';
+import logoSrc from '../../assets/logo.jpeg';
+import { getTicketSettings } from '../../utils/ticketThemeConfig';
 
 // A reusable Modal component
 const Modal = ({ children, isOpen, onClose, size = 'md' }) => {
@@ -124,124 +127,127 @@ const Roles = () => {
                 allRoles.map(async (role) => {
                     try {
                         const permissions = await getPermissionsForRole(role.id);
-                        const formattedPermissions = permissions.map(p => p.name || 'Unknown').join('\n');
-                        return {
-                            ...role,
-                            assignedPermissionsList: formattedPermissions || 'None'
-                        };
-                    } catch (err) {
-                        console.warn(`Failed to fetch permissions for role ${role.id}:`, err);
-                        return {
-                            ...role,
-                            assignedPermissionsList: 'Error fetching permissions'
-                        };
+                        return { ...role, assignedPermissionsList: permissions.map(p => p.name || 'Unknown').join(', ') || 'None' };
+                    } catch {
+                        return { ...role, assignedPermissionsList: 'N/A' };
                     }
                 })
             );
 
-            const doc = new jsPDF({
-                orientation: 'landscape'
-            });
+            const settings    = getTicketSettings();
+            const companyName = settings.companyName    || 'QALIBRATED SYSTEMS LTD';
+            const companyAddr = settings.companyAddress || 'PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996';
 
-            doc.setFontSize(18);
-            doc.text('Roles Report', 14, 22);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
-            doc.text(`Total Roles: ${rolesWithPermissions.length}`, 14, 38);
+            const doc = new jsPDF('landscape', 'mm', 'a4');
+            const PW  = doc.internal.pageSize.getWidth();
+            const L   = 14, R = PW - 14, TW = R - L;
 
-            const columns = [
-                { header: 'Name', dataKey: 'name', cellWidth: 'auto' },
-                { header: 'Description', dataKey: 'description', cellWidth: 'wrap' },
-                { header: 'Users', dataKey: 'totalUsers', cellWidth: 15 },
-                { header: 'Status', dataKey: 'status', cellWidth: 15 },
-                { header: 'Created At', dataKey: 'createdAt', cellWidth: 35 },
-                { header: 'Last Updated', dataKey: 'updatedAt', cellWidth: 35 },
-                { header: 'Assigned Permissions', dataKey: 'assignedPermissionsList', cellWidth: 'wrap' }
+            const black      = [0,   0,   0];
+            const amber      = [245, 158, 11];
+            const amberDark  = [217, 119,  6];
+            const amberLight = [254, 243, 199];
+            const gray       = [107, 114, 128];
+            const borderCol  = [229, 231, 235];
+            const green      = [21,  128, 61];
+
+            // Circular logo
+            let circularLogo = null;
+            try {
+                const img = await new Promise((resolve, reject) => {
+                    const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = logoSrc;
+                });
+                const sz = Math.min(img.naturalWidth, img.naturalHeight);
+                const cv = document.createElement('canvas'); cv.width = sz; cv.height = sz;
+                const ctx = cv.getContext('2d');
+                ctx.beginPath(); ctx.arc(sz/2, sz/2, sz/2, 0, Math.PI*2); ctx.clip();
+                ctx.drawImage(img, 0, 0, sz, sz);
+                circularLogo = cv.toDataURL('image/png');
+            } catch (_) {}
+
+            // Header
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L, 5, 17, 17);
+            doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text(companyName, PW/2, 11, { align: 'center' });
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(companyAddr, PW/2, 16, { align: 'center' });
+
+            // Badge
+            const badgeW = 44;
+            doc.setFillColor(...amber);
+            doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, 'F');
+            doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text('ROLES REPORT', R - badgeW/2, 9.5, { align: 'center' });
+            doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, R, 16, { align: 'right' });
+
+            // Amber divider
+            doc.setDrawColor(...amber); doc.setLineWidth(0.8); doc.line(L, 23, R, 23);
+
+            // Summary stats
+            let y = 27;
+            const statW = (TW - 8) / 3;
+            const activeCount = rolesWithPermissions.filter(r => r.isActive).length;
+            const stats = [
+                { label: 'TOTAL ROLES',  value: `${rolesWithPermissions.length}` },
+                { label: 'ACTIVE ROLES', value: `${activeCount}` },
+                { label: 'REPORT DATE',  value: dayjs().format('DD MMM YYYY') },
             ];
-
-            const data = rolesWithPermissions.map(role => ({
-                name: role.name || 'N/A',
-                description: role.description || 'N/A',
-                totalUsers: role.totalUsers || 0,
-                status: role.isActive ? 'Active' : 'Inactive',
-                createdAt: format(parseISO(role.createdAt), 'PPpp'),
-                updatedAt: format(parseISO(role.updatedAt), 'PPpp'),
-                assignedPermissionsList: role.assignedPermissionsList !== 'None' ? { content: role.assignedPermissionsList } : 'None'
-            }));
-
-            const columnStyles = {};
-            columns.forEach((col, index) => {
-                columnStyles[index] = {
-                    cellWidth: typeof col.cellWidth === 'number' ? col.cellWidth : (col.cellWidth === 'auto' ? 'auto' : undefined),
-                    minCellWidth: col.cellWidth === 'wrap' ? 60 : 10, // Reduced minimum width
-                    cellPadding: 2, // Reduced padding
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    valign: 'top',
-                    fontSize: 7 // Smaller font size
-                };
-                if (col.dataKey === 'assignedPermissionsList') {
-                    columnStyles[index].cellWidth = 80; // Slightly reduced width
-                } else if (col.dataKey === 'status') {
-                    columnStyles[index].halign = 'center'; // Center align status
-                } else if (col.dataKey === 'totalUsers') {
-                    columnStyles[index].halign = 'center'; // Center align user count
-                } else if (col.dataKey === 'createdAt' || col.dataKey === 'updatedAt') {
-                    columnStyles[index].fontSize = 6; // Smaller font for dates
-                    columnStyles[index].cellWidth = 30; // Slightly narrower date columns
-                }
+            stats.forEach((s, i) => {
+                const bx = L + i * (statW + 4);
+                doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3);
+                doc.roundedRect(bx, y, statW, 10, 2, 2, 'FD');
+                doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+                doc.text(s.label, bx + statW/2, y + 3.8, { align: 'center' });
+                doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+                doc.text(s.value, bx + statW/2, y + 8.2, { align: 'center' });
             });
+            y += 14;
+
+            // Table
+            const body = rolesWithPermissions.map((role, idx) => [
+                idx + 1,
+                role.name || 'N/A',
+                role.description || 'N/A',
+                role.totalUsers || 0,
+                role.isActive ? 'ACTIVE' : 'INACTIVE',
+                role.createdAt ? dayjs(role.createdAt).format('DD MMM YY HH:mm') : 'N/A',
+                role.updatedAt ? dayjs(role.updatedAt).format('DD MMM YY HH:mm') : 'N/A',
+                role.assignedPermissionsList || 'None',
+            ]);
 
             autoTable(doc, {
-                head: [columns.map(col => col.header)],
-                body: data.map(row => columns.map(col => row[col.dataKey])),
-                startY: 40,
-                styles: {
-                    fontSize: 8,
-                    cellPadding: 1,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    textColor: [0, 0, 0],
-                    fontStyle: 'normal'
+                startY: y,
+                margin: { left: L, right: L },
+                head: [['#', 'Name', 'Description', 'Users', 'Status', 'Created', 'Updated', 'Permissions']],
+                body,
+                styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
+                headStyles: { fillColor: amber, textColor: black, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: amberDark },
+                alternateRowStyles: { fillColor: [252, 252, 252] },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 8 },
+                    3: { halign: 'center', cellWidth: 14 },
+                    4: { halign: 'center', cellWidth: 18 },
+                    7: { cellWidth: 75 },
                 },
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                    lineWidth: 0.1,
-                    fontSize: 9
-                },
-                columnStyles,
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
-                margin: {
-                    top: 40,
-                    right: 10,
-                    bottom: 20,
-                    left: 10
-                },
-                tableWidth: 'wrap',
-                showHead: 'everyPage',
-                willDrawPage: function(data) {
-                    const pageSize = doc.internal.pageSize;
-                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-                    const pageNumber = data.pageNumber || 1;
-                    const pageCount = data.pageCount || 1;
-                    if (pageNumber && pageCount) {
-                        doc.setFontSize(10);
-                        doc.text(
-                            `Page ${pageNumber} of ${pageCount}`,
-                            data.settings.margin.left,
-                            pageHeight - 10
-                        );
+                didParseCell: (data) => {
+                    if (data.column.index === 4 && data.section === 'body') {
+                        if (data.cell.raw === 'ACTIVE')   { data.cell.styles.textColor = green;     data.cell.styles.fontStyle = 'bold'; }
+                        else                               { data.cell.styles.textColor = amberDark; data.cell.styles.fontStyle = 'bold'; }
                     }
-                }
+                },
             });
 
-            doc.save(`roles-report-${new Date().toISOString().split('T')[0]}.pdf`);
+            // Footer
+            const footerY = doc.lastAutoTable.finalY + 4;
+            doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3);
+            doc.roundedRect(L, footerY, TW, 10, 2, 2, 'FD');
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L+2, footerY+1, 8, 8);
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW/2, footerY+5, { align: 'center' });
+            doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text('Inventing and Making Happen', PW/2, footerY+8.5, { align: 'center' });
 
+            doc.save(`roles-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
             console.error('Error generating PDF:', error);

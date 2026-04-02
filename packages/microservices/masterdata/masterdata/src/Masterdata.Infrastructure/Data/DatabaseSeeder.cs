@@ -169,7 +169,7 @@ public static class DatabaseSeeder
                     Id = Guid.NewGuid().ToString(),
                     Name = "Acme Supplies Ltd",
                     ContactInfo = JsonSerializer.Serialize(new { Email = "contact@acmesupplies.com", Phone = "+254111222333", Address = "Nairobi, Kenya" }),
-                    Status = "active",
+                    Status = "Active",
                     Logo = "https://example.com/logos/acme.png"
                 },
                 new Supplier
@@ -177,7 +177,7 @@ public static class DatabaseSeeder
                     Id = Guid.NewGuid().ToString(),
                     Name = "Global Goods Co",
                     ContactInfo = JsonSerializer.Serialize(new { Email = "info@globalgoods.com", Phone = "+254444555666", Address = "Mombasa, Kenya" }),
-                    Status = "active",
+                    Status = "Active",
                     Logo = "https://example.com/logos/global.png"
                 }
             };
@@ -201,14 +201,14 @@ public static class DatabaseSeeder
                     Id = Guid.NewGuid().ToString(),
                     Name = "Nairobi Distributors",
                     ContactInfo = JsonSerializer.Serialize(new { Email = "sales@nairobidis.co.ke", Phone = "+254700111222", Address = "Nairobi, Kenya" }),
-                    Status = "active"
+                    Status = "Active"
                 },
                 new Customer
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = "Coast Imports",
                     ContactInfo = JsonSerializer.Serialize(new { Email = "info@coastimports.co.ke", Phone = "+254700333444", Address = "Mombasa, Kenya" }),
-                    Status = "active"
+                    Status = "Active"
                 }
             };
             
@@ -236,7 +236,7 @@ public static class DatabaseSeeder
                         Address = "Nairobi, Kenya",
                         LicenseNumber = "TRN-001"
                     }),
-                    Status = "active",
+                    Status = "Active",
                     Logo = "logos/swift_trans.png"
                 },
                 new Transporter
@@ -249,7 +249,7 @@ public static class DatabaseSeeder
                         Address = "Mombasa, Kenya",
                         LicenseNumber = "TRN-002"
                     }),
-                    Status = "active",
+                    Status = "Active",
                     Logo = "logos/coastal_hauliers.png"
                 }
             };
@@ -281,7 +281,7 @@ public static class DatabaseSeeder
                         Phone = "+254712345678",
                         LicenseNumber = "DL123456",
                         LicenseExpiryDate = DateTime.UtcNow.AddYears(2),
-                        Status = "active",
+                        Status = "Active",
                         TransporterId = transporter.Id,
                         SupplierId = supplier?.Id,
                         
@@ -294,7 +294,7 @@ public static class DatabaseSeeder
                         Phone = "+254723456789",
                         LicenseNumber = "DL789012",
                         LicenseExpiryDate = DateTime.UtcNow.AddYears(3),
-                        Status = "active",
+                        Status = "Active",
                         TransporterId = transporter.Id,
                         SupplierId = supplier?.Id,
                        
@@ -346,7 +346,7 @@ public static class DatabaseSeeder
                         RegistrationNumber = "KBC 123A",
                         Type = "Truck",
                         Model = "Mercedes Actros 2020",
-                        Status = "active",
+                        Status = "Active",
                         OwnerId = owner.Id,
                         SupplierId = supplier?.Id,
                         TransporterId = transporter?.Id,
@@ -358,7 +358,7 @@ public static class DatabaseSeeder
                         RegistrationNumber = "KBC 456B",
                         Type = "Truck",
                         Model = "Scania R500 2021",
-                        Status = "active",
+                        Status = "Active",
                         OwnerId = owner.Id,
                         SupplierId = supplier?.Id,
                         TransporterId = transporter?.Id,
@@ -419,7 +419,7 @@ public static class DatabaseSeeder
                     Name = "Nairobi-Mombasa",
                     StartPoint = "Nairobi",
                     EndPoint = "Mombasa",
-                    Status = "active"
+                    Status = "Active"
                 },
                 new Route
                 {
@@ -427,7 +427,7 @@ public static class DatabaseSeeder
                     Name = "Kisumu-Nakuru",
                     StartPoint = "Kisumu",
                     EndPoint = "Nakuru",
-                    Status = "active"
+                    Status = "Active"
                 }
             };
             
@@ -449,15 +449,15 @@ public static class DatabaseSeeder
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = "Unity Sacco",
-                    ContactInfo = JsonSerializer.Serialize(new { Email = "info@unitysacco.org", Phone = "+254111222333", Address = "Nairobi, Kenya" }),
-                    OtherDetails = JsonSerializer.Serialize(new { RegistrationNumber = "SAC123", Members = 500 })
+                    RegistrationNumber = "SAC123",
+                    OtherDetails = "500 members. Contact: info@unitysacco.org, +254111222333, Nairobi, Kenya."
                 },
                 new Sacco
                 {
                     Id = Guid.NewGuid().ToString(),
                     Name = "Prosper Sacco",
-                    ContactInfo = JsonSerializer.Serialize(new { Email = "contact@prospersacco.org", Phone = "+254444555666", Address = "Eldoret, Kenya" }),
-                    OtherDetails = JsonSerializer.Serialize(new { RegistrationNumber = "SAC456", Members = 300 })
+                    RegistrationNumber = "SAC456",
+                    OtherDetails = "300 members. Contact: contact@prospersacco.org, +254444555666, Eldoret, Kenya."
                 }
             };
             
@@ -481,7 +481,7 @@ public static class DatabaseSeeder
                     Name = "Kenya Transport Association",
                     ContactInfo = JsonSerializer.Serialize(new { Email = "info@kta.org", Phone = "+254777888999", Address = "Nairobi, Kenya" }),
                     Type = "Trade Association",
-                    Status = "active"
+                    Status = "Active"
                 },
                 new Organisation
                 {
@@ -489,7 +489,7 @@ public static class DatabaseSeeder
                     Name = "East Africa Logistics Network",
                     ContactInfo = JsonSerializer.Serialize(new { Email = "contact@ealn.org", Phone = "+254222333444", Address = "Mombasa, Kenya" }),
                     Type = "Logistics Network",
-                    Status = "active"
+                    Status = "Active"
                 }
             };
             
@@ -538,14 +538,14 @@ public static class DatabaseSeeder
                     Id = Guid.NewGuid().ToString(),
                     Location = "Athi River",
                     Description = "Weighbridge at Athi River industrial area",
-                    Status = "active"
+                    Status = "Active"
                 },
                 new Weighbridge
                 {
                     Id = Guid.NewGuid().ToString(),
                     Location = "Mlolongo",
                     Description = "Weighbridge on Mombasa Road",
-                    Status = "active"
+                    Status = "Active"
                 }
             };
             

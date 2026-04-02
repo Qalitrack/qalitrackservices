@@ -90,7 +90,7 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
     { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,              roles: ["Admin"] },
     { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,               roles: ["Admin"] },
     { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`,     roles: ["Admin"] },
-    { key: "attendance",       label: "Attendance",        icon: <User2 size={18} />,    path: `${basePath}/attendance`,           roles: ["Admin"] },
+    // { key: "attendance",       label: "Attendance",        icon: <User2 size={18} />,    path: `${basePath}/attendance`,           roles: ["Admin"] },
     {
       key: "security",
       label: "Security",
@@ -102,10 +102,10 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
         { key: "password-policy", label: "Password Policy",icon: <Lock size={16} />,   path: `${basePath}/security/password-policy`,roles: ["Admin"] },
       ],
     },
-    { key: "backup",      label: "Backup Service", icon: <Database size={18} />, path: `${basePath}/backup/microservice`, roles: ["Admin"] },
+    // { key: "backup",      label: "Backup Service", icon: <Database size={18} />, path: `${basePath}/backup/microservice`, roles: ["Admin"] },
     { key: "system",      label: "System",         icon: <Cog size={18} />,      path: `${basePath}/system`,              roles: ["Admin"] },
     { key: "automation",  label: "Automation",     icon: <Cog size={18} />,      path: `${basePath}/automation`,          roles: ["Admin"] },
-    { key: "calibrations",label: "Calibrations",   icon: <Wrench size={18} />,   path: `${basePath}/calibrations`,        roles: ["Admin"] },
+    // { key: "calibrations",label: "Calibrations",   icon: <Wrench size={18} />,   path: `${basePath}/calibrations`,        roles: ["Admin"] },
   ];
 
   const filterMenuByRole = (items) => {

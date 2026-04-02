@@ -1,5 +1,6 @@
 // src/store/weighingSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { REHYDRATE } from "redux-persist";
 import { apiClient } from "../api/helpers/apiClients";
 
 // ✅ CORRECTED: Import from the right path
@@ -798,6 +799,13 @@ const weighingSlice = createSlice({
         };
 
         builder
+            // Always reset loading/error on rehydration so a persisted
+            // loading:true can never lock the UI on next app start
+            .addCase(REHYDRATE, (state) => {
+                state.loading = false;
+                state.error = null;
+            })
+
             // Simulated weight
             .addCase(fetchSimulatedWeight.pending, pending)
             .addCase(fetchSimulatedWeight.fulfilled, (state, action) => {

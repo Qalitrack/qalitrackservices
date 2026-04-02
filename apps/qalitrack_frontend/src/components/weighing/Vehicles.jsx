@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Truck, Plus, Search, X } from "lucide-react";
+import { message } from "antd";
 import {
   getVehicles,
   createVehicle,
   updateVehicle,
   deleteVehicle,
   getVehicleByRfid,
+  updateVehicleStatus,
 } from "../../api/MasterData/Vehicles";
 import { getOwners } from "../../api/MasterData/Owners";
 import { getAxleConfigs } from "../../api/MasterData/AxleConfigs";
@@ -50,6 +52,7 @@ export default function Vehicles() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [rfidSearchTerm, setRfidSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const fetchVehicles = async () => {
     try {
@@ -105,7 +108,7 @@ export default function Vehicles() {
             return {
               ...vehicle,
               ownerName: vehicle.ownerName || owner?.name || owner?.ownerName || null,
-              axleConfigurationName: vehicle.axleConfigurationName || axleConfig?.name || axleConfig?.configurationName || null
+              axleConfigurationName: vehicle.axleConfigurationName || axleConfig?.code || axleConfig?.description || axleConfig?.name || null
             };
           });
           console.log("✅ Enriched first vehicle:", items[0]);
@@ -195,7 +198,7 @@ export default function Vehicles() {
         return {
           ...vehicle,
           ownerName: vehicle.ownerName || owner?.name || owner?.ownerName || null,
-          axleConfigurationName: vehicle.axleConfigurationName || axleConfig?.name || axleConfig?.configurationName || null
+          axleConfigurationName: vehicle.axleConfigurationName || axleConfig?.code || axleConfig?.description || axleConfig?.name || null
         };
       });
       setVehicles(enrichedVehicles);
@@ -204,7 +207,7 @@ export default function Vehicles() {
 
   const handleRfidSearch = async () => {
     if (!rfidSearchTerm.trim()) {
-      alert("Please enter an RFID code to search");
+      message.warning("Please enter an RFID code to search");
       return;
     }
 
@@ -219,11 +222,11 @@ export default function Vehicles() {
       if (data) {
         console.log(`✅ Found vehicle: ${data.registrationNumber}`);
       } else {
-        alert("No vehicle found with this RFID code");
+        message.warning("No vehicle found with this RFID code");
       }
     } catch (error) {
       console.error("❌ RFID search failed:", error.message);
-      alert("No vehicle found with RFID: " + rfidSearchTerm);
+      message.warning("No vehicle found with RFID: " + rfidSearchTerm);
       setVehicles([]);
     } finally {
       setLoading(false);
@@ -249,7 +252,7 @@ export default function Vehicles() {
       // Required fields - always include
       payload.registrationNumber = form.registrationNumber;
       payload.type = form.type;
-      payload.status = form.status;
+      payload.status = form.status ? (form.status.charAt(0).toUpperCase() + form.status.slice(1).toLowerCase()) : "Active";
       payload.ownerId = form.ownerId;
       payload.axleConfigurationId = form.axleConfigurationId;
       
@@ -308,13 +311,13 @@ export default function Vehicles() {
       
       // Validate required fields before sending
       if (!payload.ownerId || payload.ownerId === "") {
-        alert("Please select an Owner from the dropdown.");
+        message.warning("Please select an Owner from the dropdown.");
         setLoading(false);
         return;
       }
       
       if (!payload.axleConfigurationId || payload.axleConfigurationId === "") {
-        alert("Please select an Axle Configuration from the dropdown.");
+        message.warning("Please select an Axle Configuration from the dropdown.");
         setLoading(false);
         return;
       }
@@ -335,7 +338,7 @@ export default function Vehicles() {
       await fetchVehicles();
     } catch (error) {
       console.error("❌ Save error:", error);
-      alert("Error saving vehicle: " + error.message);
+      message.error("Error saving vehicle: " + error.message);
     } finally {
       setLoading(false);
     }
@@ -352,7 +355,7 @@ export default function Vehicles() {
       color: vehicle.color || "",
       chassisNumber: vehicle.chassisNumber || "",
       engineNumber: vehicle.engineNumber || "",
-      status: vehicle.status || "Active",
+      status: vehicle.status ? (vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1).toLowerCase()) : "Active",
       vehicleClass: vehicle.vehicleClass || "",
       bodyType: vehicle.bodyType || "",
       grossWeight: vehicle.grossWeight || "",
@@ -381,6 +384,16 @@ export default function Vehicles() {
       await fetchVehicles();
     } catch (error) {
       console.error("❌ Delete failed:", error.message);
+    }
+  };
+
+  const handleToggleStatus = async (vehicle) => {
+    const newStatus = vehicle.status?.toLowerCase() === "active" ? "Inactive" : "Active";
+    try {
+      await updateVehicleStatus(vehicle.id, newStatus);
+      await fetchVehicles();
+    } catch (err) {
+      message.error("Failed to update vehicle status.");
     }
   };
 
@@ -463,6 +476,15 @@ export default function Vehicles() {
                 🔍 RFID
               </button>
             </div>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="h-7 px-2 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm bg-white"
+            >
+              <option value="All">All Status</option>
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
             <button
               onClick={() => {
                 setSearchTerm("");
@@ -649,7 +671,7 @@ export default function Vehicles() {
                   <option value="">-- Select Axle Config --</option>
                   {Array.isArray(axleConfigs) && axleConfigs.map((config) => (
                     <option key={config.id} value={config.id}>
-                      {config.name || config.configurationName || `${config.numberOfAxles || ''} Axles`}
+                      {config.code || config.description || config.name || `Config ${config.id?.substring(0, 6)}`}
                     </option>
                   ))}
                 </select>
@@ -943,7 +965,7 @@ export default function Vehicles() {
               </tr>
             </thead>
             <tbody>
-              {vehicles.map((v, index) => (
+              {vehicles.filter(v => statusFilter === "All" || v.status?.toLowerCase() === statusFilter.toLowerCase()).map((v, index) => (
                 <tr
                   key={v.id}
                   className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
@@ -986,16 +1008,27 @@ export default function Vehicles() {
                   <td className="px-3 py-2">
                     <span
                       className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
-                        v.status === "Active"
+                        v.status?.toLowerCase() === "active"
                           ? "bg-green-100 text-green-700 border border-green-300"
                           : "bg-red-100 text-red-700 border border-red-300"
                       }`}
                     >
-                      {v.status === "Active" ? "✓ Active" : "✕ Inactive"}
+                      {v.status?.toLowerCase() === "active" ? "✓ Active" : "✕ Inactive"}
                     </span>
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex gap-1 justify-center">
+                      <button
+                        onClick={() => handleToggleStatus(v)}
+                        className={`p-1 rounded border text-[9px] font-semibold transition-all ${
+                          v.status?.toLowerCase() === "active"
+                            ? "text-green-700 border-green-300 hover:bg-green-50"
+                            : "text-red-700 border-red-300 hover:bg-red-50"
+                        }`}
+                        title={v.status?.toLowerCase() === "active" ? "Set Inactive" : "Set Active"}
+                      >
+                        {v.status?.toLowerCase() === "active" ? "✓" : "✕"}
+                      </button>
                       <button
                         onClick={() => handleEdit(v)}
                         className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"

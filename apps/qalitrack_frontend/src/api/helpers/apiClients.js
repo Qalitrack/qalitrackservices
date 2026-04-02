@@ -34,9 +34,7 @@ const getSessionData = () => {
 };
 
 const clearSession = () => {
-  console.log('🧹 Clearing session data');
   sessionStorage.removeItem("authSession");
-  sessionStorage.removeItem("temp2FASession");
   localStorage.removeItem("authToken");
   localStorage.removeItem("user");
 };

@@ -21,6 +21,9 @@ import {
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import dayjs from 'dayjs';
+import logoSrc from '../../assets/logo.jpeg';
+import { getTicketSettings } from '../../utils/ticketThemeConfig';
 import ShiftInstances from './Shifts/ShiftInstances';
 import AddShift from './Shifts/AddShift';
 import ShiftEdit from './Shifts/ShiftEdit';
@@ -452,120 +455,137 @@ const Shifts = () => {
     const generatePDF = async () => {
         setLoading(true);
         try {
-            // Fetch all shifts with pagination
             const allShifts = await fetchAllShifts(showDeleted);
+            const settings    = getTicketSettings();
+            const companyName = settings.companyName    || 'QALIBRATED SYSTEMS LTD';
+            const companyAddr = settings.companyAddress || 'PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996';
 
-            const doc = new jsPDF({
-                orientation: 'landscape'  // Use landscape for better table display
-            });
+            const doc  = new jsPDF('landscape', 'mm', 'a4');
+            const PW   = doc.internal.pageSize.getWidth();
+            const L    = 14;
+            const R    = PW - 14;
+            const TW   = R - L;
 
-            // Add title and metadata
-            doc.setFontSize(18);
-            doc.text('Shifts Report', 14, 22);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
-            doc.text(`Total Shifts: ${allShifts.length}`, 14, 38);
+            const black      = [0,   0,   0];
+            const amber      = [245, 158, 11];
+            const amberDark  = [217, 119,  6];
+            const amberLight = [254, 243, 199];
+            const gray       = [107, 114, 128];
+            const borderCol  = [229, 231, 235];
+            const green      = [21,  128, 61];
 
-            // Define the columns for the table
-            const columns = [
-                { header: 'Name', dataKey: 'name', width: 20 },
-                { header: 'Description', dataKey: 'description', width: 45 },
-                { header: 'Start Time', dataKey: 'startTime', width: 20 },
-                { header: 'End Time', dataKey: 'endTime', width: 20 },
-                { header: 'Type', dataKey: 'type', width: 15 },
-                { header: 'Status', dataKey: 'status', width: 20 },
-                { header: 'Req Staff', dataKey: 'requiredStaff', width: 10 },
-                { header: 'Assigned', dataKey: 'assignedUsers', width: 10 },
-                { header: 'Created', dataKey: 'createdAt', width: 30 }
+            // Circular logo
+            let circularLogo = null;
+            try {
+                const img = await new Promise((resolve, reject) => {
+                    const i = new Image();
+                    i.onload = () => resolve(i);
+                    i.onerror = reject;
+                    i.src = logoSrc;
+                });
+                const sz = Math.min(img.naturalWidth, img.naturalHeight);
+                const cv = document.createElement('canvas');
+                cv.width = sz; cv.height = sz;
+                const ctx = cv.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
+                ctx.clip();
+                ctx.drawImage(img, 0, 0, sz, sz);
+                circularLogo = cv.toDataURL('image/png');
+            } catch (_) {}
+
+            // Header
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L, 5, 17, 17);
+            doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text(companyName, PW / 2, 11, { align: 'center' });
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(companyAddr, PW / 2, 16, { align: 'center' });
+
+            // Badge
+            const badgeW = 44;
+            doc.setFillColor(...amber);
+            doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, 'F');
+            doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text('SHIFTS REPORT', R - badgeW / 2, 9.5, { align: 'center' });
+            doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, R, 16, { align: 'right' });
+
+            // Amber divider
+            doc.setDrawColor(...amber); doc.setLineWidth(0.8);
+            doc.line(L, 23, R, 23);
+
+            // Summary stats
+            let y = 27;
+            const statW = (TW - 8) / 3;
+            const activeCount = allShifts.filter(s => s.status === 3).length;
+            const stats = [
+                { label: 'TOTAL SHIFTS',  value: `${allShifts.length}` },
+                { label: 'ACTIVE SHIFTS', value: `${activeCount}` },
+                { label: 'REPORT DATE',   value: dayjs().format('DD MMM YYYY') },
             ];
+            stats.forEach((s, i) => {
+                const bx = L + i * (statW + 4);
+                doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3);
+                doc.roundedRect(bx, y, statW, 10, 2, 2, 'FD');
+                doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+                doc.text(s.label, bx + statW / 2, y + 3.8, { align: 'center' });
+                doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+                doc.text(s.value, bx + statW / 2, y + 8.2, { align: 'center' });
+            });
+            y += 14;
 
-            // Prepare the data for the table
-            const data = allShifts.map(shift => ({
-                name: shift.name || 'N/A',
-                description: shift.description || 'N/A',
-                startTime: formatTimeOnlyString(shift.startTime) || 'N/A',
-                endTime: formatTimeOnlyString(shift.endTime) || 'N/A',
-                type: shift.recurrenceType === 1 ? 'Daily' : shift.recurrenceType === 2 ? 'Weekly' : shift.recurrenceType === 3 ? 'Monthly' : 'Single',
-                status: shift.status === 3 ? 'Active' : shift.status === 2 ? 'Published' : shift.status === 1 ? 'Completed' : 'Draft',
-                requiredStaff: shift.requiredStaffCount || 0,
-                assignedUsers: shift.assignedUsers || 0,
-                createdAt: format(parseISO(shift.createdAt), 'PPpp')
-            }));
-            const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
-            const pageWidth = doc.internal.pageSize.getWidth() - 30;
-            const columnStyles = {};
-            // Calculate column widths based on content
-            columns.forEach((col, index) => {
-                columnStyles[index] = {
-                    cellWidth: (col.width / totalWidth) * pageWidth,
-                    cellPadding: 2,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    fontSize: 7,
-                    fontStyle: 'normal',
-                    halign: 'left',
-                    valign: 'middle'
-                };
+            // Table
+            const body = allShifts.map((shift, idx) => {
+                const type   = shift.recurrenceType === 1 ? 'Daily' : shift.recurrenceType === 2 ? 'Weekly' : shift.recurrenceType === 3 ? 'Monthly' : 'Single';
+                const status = shift.status === 3 ? 'ACTIVE' : shift.status === 2 ? 'PUBLISHED' : shift.status === 1 ? 'COMPLETED' : 'DRAFT';
+                return [
+                    idx + 1,
+                    shift.name || 'N/A',
+                    shift.description || 'N/A',
+                    formatTimeOnlyString(shift.startTime) || 'N/A',
+                    formatTimeOnlyString(shift.endTime) || 'N/A',
+                    type,
+                    status,
+                    shift.requiredStaffCount || 0,
+                    shift.assignedUsers || 0,
+                    shift.createdAt ? dayjs(shift.createdAt).format('DD MMM YY HH:mm') : 'N/A',
+                ];
             });
 
-            // Add the table with proper pagination
             autoTable(doc, {
-                head: [columns.map(col => col.header)],
-                body: data.map(row => columns.map(col => row[col.dataKey])),
-                startY: 40,
-                styles: {
-                    fontSize: 8,  // Slightly smaller font to fit more content
-                    cellPadding: 1,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    textColor: [0, 0, 0],
-                    fontStyle: 'normal'
+                startY: y,
+                margin: { left: L, right: L },
+                head: [['#', 'Name', 'Description', 'Start', 'End', 'Type', 'Status', 'Req.', 'Assigned', 'Created']],
+                body,
+                styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
+                headStyles: { fillColor: amber, textColor: black, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: amberDark },
+                alternateRowStyles: { fillColor: [252, 252, 252] },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 8 },
+                    6: { halign: 'center' },
+                    7: { halign: 'center', cellWidth: 12 },
+                    8: { halign: 'center', cellWidth: 16 },
                 },
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                    lineWidth: 0.1,
-                    fontSize: 9
-                },
-                columnStyles,
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
-                margin: {
-                    top: 40,
-                    right: 10,
-                    bottom: 20,
-                    left: 10
-                },
-                tableWidth: 'wrap',
-                showHead: 'everyPage',
-                didDrawPage: function(data) {
-                    // This is where we can add content after the table is drawn
-                },
-                willDrawPage: function(data) {
-                    // Add page number to bottom of each page
-                    const pageSize = doc.internal.pageSize;
-                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-                    const pageNumber = data.pageNumber || 1;
-                    const pageCount = data.pageCount || 1;
-
-                    // Only add page numbers if we have valid values
-                    if (pageNumber && pageCount) {
-                        doc.setFontSize(10);
-                        doc.text(
-                            `Page ${pageNumber} of ${pageCount}`,
-                            data.settings.margin.left,
-                            pageHeight - 10
-                        );
+                didParseCell: (data) => {
+                    if (data.column.index === 6 && data.section === 'body') {
+                        const raw = String(data.cell.raw || '');
+                        if (raw === 'ACTIVE')    { data.cell.styles.textColor = green;      data.cell.styles.fontStyle = 'bold'; }
+                        else if (raw === 'PUBLISHED') { data.cell.styles.textColor = amberDark; data.cell.styles.fontStyle = 'bold'; }
                     }
-                }
+                },
             });
 
-            // Save the PDF with a timestamp in the filename
-            doc.save(`shifts-report-${new Date().toISOString().split('T')[0]}.pdf`);
+            // Footer
+            const footerY = doc.lastAutoTable.finalY + 4;
+            doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3);
+            doc.roundedRect(L, footerY, TW, 10, 2, 2, 'FD');
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L + 2, footerY + 1, 8, 8);
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW / 2, footerY + 5, { align: 'center' });
+            doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text('Inventing and Making Happen', PW / 2, footerY + 8.5, { align: 'center' });
 
+            doc.save(`shifts-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
             console.error('Error generating PDF:', error);

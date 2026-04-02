@@ -118,7 +118,6 @@ export default function WeighingScreen({
   const vf = extractVehicleFields(vehicleData);
   const df = extractDriverFields(vehicleData, driverData);
 
-  const [showInspector, setShowInspector] = useState(false);
   const [products,      setProducts]      = useState([]);
   const [weighbridges,  setWeighbridges]  = useState([]);
 
@@ -384,32 +383,27 @@ export default function WeighingScreen({
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {form.noPlate    && <Pill bg="#f0fdf4" border="#bbf7d0" color="#16a34a">✓ {form.noPlate}</Pill>}
-          {form.driverName && <Pill bg="#eff6ff" border="#bfdbfe" color="#1d4ed8">✓ {form.driverName}</Pill>}
+          {form.driverName && <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">✓ {form.driverName}</Pill>}
           {isSecondWeigh && (
-            <Pill bg="#fef2f2" border="#fca5a5" color="#dc2626">
+            <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">
               ⚠️ 2nd Weight · 1st: {existingTransaction?.firstWeight ?? "—"} kg
             </Pill>
           )}
           <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">🔒 {form.weighBridgeName}</Pill>
           <Pill bg="#dcfce7" border="#bbf7d0" color="#16a34a">● LIVE</Pill>
-          <button
-            onClick={() => setShowInspector(v => !v)}
-            style={{ fontSize: "10px", padding: "2px 8px", borderRadius: "6px", background: showInspector ? "#fef3c7" : "#f3f4f6", border: "1px solid #e5e7eb", cursor: "pointer", color: "#6b7280" }}>
-            🔍 {showInspector ? "Hide" : "Inspect"}
-          </button>
         </div>
       </header>
 
       {/* ── SECOND WEIGHT BANNER ────────────────────────────────────────────── */}
       {isSecondWeigh && (
         <div className="shrink-0 px-6 py-3 flex items-center gap-4"
-          style={{ background: "linear-gradient(135deg,#fef2f2,#fff7ed)", borderBottom: "2px solid #fca5a5" }}>
+          style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "2px solid #fcd34d" }}>
           <span className="text-2xl">⚖️</span>
           <div>
-            <p className="text-sm font-black" style={{ color: "#dc2626" }}>
+            <p className="text-sm font-black" style={{ color: "#d97706" }}>
               SECOND WEIGHING MODE — Completing Existing Transaction
             </p>
-            <p className="text-xs" style={{ color: "#7f1d1d" }}>
+            <p className="text-xs" style={{ color: "#92400e" }}>
               Ticket: <strong>{existingTransaction?.ticketID ?? existingTransaction?.id ?? "—"}</strong>
               {" · "}
               First weight (gross): <strong>{existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg</strong>
@@ -420,32 +414,6 @@ export default function WeighingScreen({
         </div>
       )}
 
-      {/* ── DATA INSPECTOR ─────────────────────────────────────────────────── */}
-      {showInspector && (
-        <div style={{ background: "#0f172a", borderBottom: "2px solid #1e293b", padding: "12px 24px", fontFamily: "monospace", fontSize: "11px", color: "#94a3b8", maxHeight: "220px", overflowY: "auto" }}>
-          <p style={{ color: "#f59e0b", fontWeight: "bold", marginBottom: "6px" }}>🔍 Data Inspector</p>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
-            <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>vehicleData.vehicle:</p>
-              <pre style={{ color: "#86efac", fontSize: "10px", whiteSpace: "pre-wrap", wordBreak: "break-all", margin: 0 }}>
-                {JSON.stringify(vehicleData?.vehicle ?? vehicleData, null, 2)}
-              </pre>
-            </div>
-            <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>Resolved form:</p>
-              <pre style={{ color: "#93c5fd", fontSize: "10px", margin: 0 }}>
-                {JSON.stringify({ noPlate: form.noPlate, ownerId: form.ownerId, transporterName: form.transporterName, supplierName: form.supplierName, driverName: form.driverName }, null, 2)}
-              </pre>
-            </div>
-            <div>
-              <p style={{ color: "#64748b", fontSize: "10px", marginBottom: "4px" }}>existingTransaction:</p>
-              <pre style={{ color: "#fda4af", fontSize: "10px", whiteSpace: "pre-wrap", wordBreak: "break-all", margin: 0 }}>
-                {JSON.stringify(existingTransaction, null, 2)}
-              </pre>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── BODY ───────────────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-auto px-6 py-5 flex flex-col gap-5">
@@ -459,8 +427,8 @@ export default function WeighingScreen({
             </div>
             <div className="p-4 space-y-3">
               <div className="rounded-xl py-3 text-center"
-                style={{ background: isSecondWeigh ? "linear-gradient(135deg,#fef2f2,#fff1f2)" : "linear-gradient(135deg,#fffbeb,#fff7ed)", border: `2px solid ${isSecondWeigh ? "#fca5a5" : "#fcd34d"}` }}>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-0.5" style={{ color: isSecondWeigh ? "#991b1b" : "#92400e" }}>Registration</p>
+                style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", border: "2px solid #fcd34d" }}>
+                <p className="text-xs font-semibold uppercase tracking-wider mb-0.5" style={{ color: "#92400e" }}>Registration</p>
                 <p className="text-3xl font-black tracking-widest" style={{ color: "#111827" }}>{form.noPlate || "—"}</p>
                 {form.rfidTag && <p className="font-mono text-xs mt-1" style={{ color: "#9ca3af" }}>{form.rfidTag}</p>}
               </div>
@@ -522,12 +490,12 @@ export default function WeighingScreen({
               {/* Show first weight card in second-weigh mode */}
               {isSecondWeigh && (
                 <div className="rounded-xl p-3 mt-2"
-                  style={{ background: "linear-gradient(135deg,#fef2f2,#fff1f2)", border: "1.5px solid #fca5a5" }}>
-                  <p className="text-xs font-bold uppercase mb-1" style={{ color: "#dc2626" }}>First Weight (Gross)</p>
+                  style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", border: "1.5px solid #fcd34d" }}>
+                  <p className="text-xs font-bold uppercase mb-1" style={{ color: "#d97706" }}>First Weight (Gross)</p>
                   <p className="text-2xl font-black font-mono" style={{ color: "#111827" }}>
                     {existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} <span className="text-sm font-normal text-gray-400">kg</span>
                   </p>
-                  <p className="text-xs mt-1" style={{ color: "#7f1d1d" }}>
+                  <p className="text-xs mt-1" style={{ color: "#92400e" }}>
                     Captured: {existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}
                   </p>
                 </div>
@@ -656,12 +624,12 @@ export default function WeighingScreen({
             <div className="grid grid-cols-4 gap-4">
               <div>
                 <label className="block text-xs font-semibold mb-1"
-                  style={{ color: isSecondWeigh ? "#7f1d1d" : "#d97706" }}>
+                  style={{ color: "#d97706" }}>
                   Weighbridge {isSecondWeigh ? "(locked to original)" : <span style={{ color: "#ef4444" }}>*</span>}
                 </label>
                 {isSecondWeigh ? (
                   <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
-                    style={{ background: "#fef2f2", border: "1.5px solid #fca5a5" }}>
+                    style={{ background: "#fffbeb", border: "1.5px solid #fcd34d" }}>
                     <span className="text-xs">🔒</span>
                     <span className="text-sm font-semibold" style={{ color: "#111827" }}>{form.weighBridgeName}</span>
                   </div>
@@ -745,9 +713,9 @@ export default function WeighingScreen({
             background: submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0
               ? "#9ca3af"
               : isSecondWeigh
-              ? "linear-gradient(135deg,#dc2626,#ef4444)"
+              ? "linear-gradient(135deg,#d97706,#ea580c)"
               : "linear-gradient(135deg,#d97706,#f59e0b)",
-            boxShadow: submitting ? "none" : `0 3px 10px ${isSecondWeigh ? "rgba(220,38,38,0.35)" : "rgba(217,119,6,0.35)"}`,
+            boxShadow: submitting ? "none" : "0 3px 10px rgba(217,119,6,0.35)",
             cursor: submitting ? "not-allowed" : "pointer",
           }}>
           {submitting
