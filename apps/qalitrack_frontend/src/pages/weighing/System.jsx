@@ -64,6 +64,12 @@ import {
   SIDEBAR_THEMES,
 } from "../../components/Context/Sidebarsettingscontext";
 
+// ── Global color scheme context ───────────────────────────────────────────────
+import {
+  useColorScheme,
+  COLOR_SCHEMES,
+} from "../../components/Context/ColorSchemeContext";
+
 const { Option } = Select;
 
 // ── API Helpers ───────────────────────────────────────────────────────────────
@@ -108,7 +114,7 @@ const DEFAULT_SETTINGS = {
   timeFormat: "24h",
 
   // Ticket / PDF theme
-  ticketTheme: "modern",
+  ticketTheme: "amber",
   ticketPrimaryColor: "#f59e0b",
   ticketSecondaryColor: "#f97316",
   ticketAccentColor: "#d97706",
@@ -468,6 +474,7 @@ export default function SystemSettings() {
 // ═════════════════════════════════════════════════════════════════════════════
 function GeneralTab({ settings, setField, isDark }) {
   const { sidebarSettings, updateSidebarSettings } = useSidebarSettings();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
   // ── Logo: update SystemSettings state + sidebar context instantly ──────────
   const handleLogoUpload = (file) => {
@@ -577,6 +584,65 @@ function GeneralTab({ settings, setField, isDark }) {
               />
             </Field>
           </div>
+        </div>
+      </Section>
+
+      {/* ── App Color Scheme ──────────────────────────────────────────────── */}
+      <Section
+        title="App Color Scheme"
+        icon={<Palette className="w-4 h-4 text-amber-500" />}
+      >
+        <p className="text-xs text-gray-400 mb-4">
+          Changes the primary accent color across the entire application — instant, no save needed.
+        </p>
+        <div className="grid grid-cols-3 gap-3">
+          {Object.entries(COLOR_SCHEMES).map(([key, scheme]) => {
+            const isActive = colorScheme === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setColorScheme(key)}
+                className={`
+                  relative p-4 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer
+                  ${isActive
+                    ? "shadow-lg scale-[1.02]"
+                    : "border-gray-200 hover:shadow-md hover:scale-[1.01]"
+                  }
+                `}
+                style={{
+                  borderColor: isActive ? scheme.primary : undefined,
+                  background: isActive ? scheme.preview[2] : "#f9fafb",
+                }}
+              >
+                {isActive && (
+                  <div
+                    className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center shadow"
+                    style={{ backgroundColor: scheme.primary }}
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-white" />
+                  </div>
+                )}
+
+                {/* Color swatches preview */}
+                <div className="flex gap-1.5 mb-3">
+                  {scheme.preview.map((color, i) => (
+                    <div
+                      key={i}
+                      className="rounded-full border border-white/30"
+                      style={{
+                        width: i === 0 ? 20 : i === 1 ? 16 : 12,
+                        height: i === 0 ? 20 : i === 1 ? 16 : 12,
+                        backgroundColor: color,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                <p className="text-sm font-bold text-gray-800">{scheme.name}</p>
+                <p className="text-[10px] text-gray-500 mt-0.5">{scheme.description}</p>
+              </button>
+            );
+          })}
         </div>
       </Section>
 
@@ -761,7 +827,10 @@ function TicketsTab({ settings, setField, isDark }) {
 
   return (
     <div className="space-y-5 pb-6 pt-2">
-      <Section title="PDF Theme" icon={<Palette className="w-4 h-4 text-amber-600" />}>
+      <Section title="Export / PDF Theme" icon={<Palette className="w-4 h-4 text-amber-600" />}>
+        <p className="text-xs text-gray-400 mb-4">
+          Applied to all PDF exports — transaction tickets, reports, and data tables.
+        </p>
         <div className="grid grid-cols-2 gap-4 mb-5">
           {themesArray.map((theme) => {
             const isActive = settings.ticketTheme === theme.key;
@@ -769,23 +838,23 @@ function TicketsTab({ settings, setField, isDark }) {
               <div
                 key={theme.key}
                 onClick={() => setField("ticketTheme", theme.key)}
-                className={`
-                  relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-150
-                  ${isActive
-                    ? "border-amber-500 bg-amber-50 shadow-lg"
-                    : "border-gray-200 hover:border-amber-300 hover:shadow-md bg-white"
-                  }
-                `}
+                className={`relative p-4 rounded-xl border-2 cursor-pointer transition-all duration-150 ${
+                  isActive ? "shadow-lg" : "border-gray-200 hover:shadow-md bg-white"
+                }`}
+                style={isActive ? { borderColor: theme.preview.header, backgroundColor: theme.preview.bg } : {}}
               >
                 {isActive && (
-                  <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-amber-500 flex items-center justify-center shadow">
+                  <div
+                    className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center shadow"
+                    style={{ backgroundColor: theme.preview.header }}
+                  >
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
                 )}
                 {isActive && (
                   <div className="absolute top-2 left-2 flex items-center gap-1 bg-green-100 border border-green-300 text-green-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                    LIVE
+                    ACTIVE
                   </div>
                 )}
 
@@ -794,34 +863,33 @@ function TicketsTab({ settings, setField, isDark }) {
                   <p className="text-xs text-gray-400">{theme.description}</p>
                 </div>
 
+                {/* Mini PDF document preview */}
                 <div
-                  className="rounded-lg p-3 border-2"
+                  className="rounded-lg p-3 border"
                   style={{ backgroundColor: theme.preview.bg, borderColor: theme.preview.accent }}
                 >
+                  {/* Header bar */}
                   <div
-                    className="h-4 rounded mb-2 flex items-center justify-center gap-1"
+                    className="h-5 rounded mb-2 flex items-center px-2 gap-1.5"
                     style={{ backgroundColor: theme.preview.header }}
                   >
-                    <div className="h-1 w-8 rounded opacity-60" style={{ backgroundColor: theme.preview.bg }} />
-                    <div className="h-1 w-4 rounded opacity-40" style={{ backgroundColor: theme.preview.bg }} />
+                    <div className="h-1.5 w-10 rounded opacity-70" style={{ backgroundColor: theme.preview.bg }} />
+                    <div className="h-1.5 w-6 rounded opacity-40" style={{ backgroundColor: theme.preview.bg }} />
                   </div>
-                  <div className="space-y-1">
-                    <div className="flex gap-2">
-                      <div className="h-1 w-1/3 rounded opacity-30" style={{ backgroundColor: theme.preview.text }} />
-                      <div className="h-1 w-1/2 rounded opacity-20" style={{ backgroundColor: theme.preview.text }} />
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-1 w-1/4 rounded opacity-30" style={{ backgroundColor: theme.preview.text }} />
-                      <div className="h-1 w-2/3 rounded opacity-20" style={{ backgroundColor: theme.preview.text }} />
-                    </div>
-                    <div className="flex gap-2">
-                      <div className="h-1 w-1/3 rounded opacity-30" style={{ backgroundColor: theme.preview.text }} />
-                      <div className="h-1 w-1/3 rounded opacity-20" style={{ backgroundColor: theme.preview.text }} />
-                    </div>
+                  {/* Body rows */}
+                  <div className="space-y-1.5">
+                    {[["40%","55%"],["30%","65%"],["50%","40%"]].map(([w1, w2], i) => (
+                      <div key={i} className="flex gap-2">
+                        <div className="h-1 rounded opacity-30" style={{ width: w1, backgroundColor: theme.preview.text }} />
+                        <div className="h-1 rounded opacity-20" style={{ width: w2, backgroundColor: theme.preview.text }} />
+                      </div>
+                    ))}
                   </div>
-                  <div className="mt-2 h-2 rounded" style={{ backgroundColor: theme.preview.accent }} />
+                  {/* Footer accent bar */}
+                  <div className="mt-2 h-1.5 rounded" style={{ backgroundColor: theme.preview.accent }} />
                 </div>
 
+                {/* Color swatches */}
                 <div className="flex gap-1.5 mt-2.5">
                   <div className="w-5 h-2.5 rounded-sm" style={{ backgroundColor: theme.preview.header }} title="Header" />
                   <div className="w-5 h-2.5 rounded-sm" style={{ backgroundColor: theme.preview.accent }} title="Accent" />

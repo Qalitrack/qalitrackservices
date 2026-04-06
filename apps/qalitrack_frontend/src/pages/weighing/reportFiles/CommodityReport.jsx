@@ -7,7 +7,7 @@ import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 import * as XLSX from "xlsx"
 import logoSrc from "../../../assets/logo.jpeg"
-import { getTicketSettings } from "../../../utils/ticketThemeConfig"
+import { getTicketSettings, resolveReportColors } from "../../../utils/ticketThemeConfig"
 
 export default function CommodityReport({ transactions = [], loading }) {
   const [selectedCommodity, setSelectedCommodity] = useState(null)
@@ -106,10 +106,8 @@ export default function CommodityReport({ transactions = [], loading }) {
     const PW = doc.internal.pageSize.getWidth()
     const L = 14, R = PW - 14, TW = R - L
 
+    const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings)
     const black      = [0, 0, 0]
-    const amber      = [245, 158, 11]
-    const amberDark  = [217, 119, 6]
-    const amberLight = [254, 243, 199]
     const gray       = [107, 114, 128]
     const borderCol  = [229, 231, 235]
 
@@ -135,13 +133,13 @@ export default function CommodityReport({ transactions = [], loading }) {
     doc.text(companyAddr, PW / 2, 16, { align: "center" })
 
     const badgeW = 46
-    doc.setFillColor(...amber); doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, "F")
-    doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...black)
+    doc.setFillColor(...accent); doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, "F")
+    doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...accentHeaderText)
     doc.text("COMMODITY REPORT", R - badgeW / 2, 9.5, { align: "center" })
     doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(...gray)
     doc.text(`Generated: ${dayjs().format("DD MMM YYYY HH:mm")}`, R, 16, { align: "right" })
 
-    doc.setDrawColor(...amber); doc.setLineWidth(0.8); doc.line(L, 23, R, 23)
+    doc.setDrawColor(...accent); doc.setLineWidth(0.8); doc.line(L, 23, R, 23)
 
     // ── STATS ───────────────────────────────────────────────────────────
     let y = 27
@@ -153,7 +151,7 @@ export default function CommodityReport({ transactions = [], loading }) {
     ]
     stats.forEach((s, i) => {
       const bx = L + i * (statW + 4)
-      doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3)
+      doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3)
       doc.roundedRect(bx, y, statW, 10, 2, 2, "FD")
       doc.setFontSize(6.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...gray)
       doc.text(s.label, bx + statW / 2, y + 3.8, { align: "center" })
@@ -169,14 +167,14 @@ export default function CommodityReport({ transactions = [], loading }) {
       head: [["Commodity", "Trips", "Customers", "Net Weight (kg)"]],
       body: commoditySummary.map((c) => [c.commodityName, c.trips, c.customers, c.totalNetWeight.toLocaleString()]),
       styles: { fontSize: 8, cellPadding: 2, textColor: black, lineColor: borderCol },
-      headStyles: { fillColor: amber, textColor: black, fontStyle: "bold", fontSize: 8.5, halign: "center", lineColor: amberDark },
+      headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 8.5, halign: "center", lineColor: accentDark },
       alternateRowStyles: { fillColor: [252, 252, 252] },
       columnStyles: { 1: { halign: "center" }, 2: { halign: "center" }, 3: { halign: "right", fontStyle: "bold" } },
     })
 
     // ── FOOTER ──────────────────────────────────────────────────────────
     const footerY = doc.lastAutoTable.finalY + 4
-    doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3)
+    doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3)
     doc.roundedRect(L, footerY, TW, 10, 2, 2, "FD")
     if (circularLogo) doc.addImage(circularLogo, "PNG", L + 2, footerY + 1, 8, 8)
     doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); doc.setTextColor(...black)

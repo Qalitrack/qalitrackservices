@@ -348,7 +348,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
           return <Input value={editedData.status} onChange={(e) => handleFieldChange('status', e.target.value)}
             size="small" className="h-6 text-[10px] rounded border-amber-300" />;
         }
-        return <Tag color="#f59e0b" className="text-[9px] font-semibold px-2 py-0 rounded-full border-0 m-0">{status || 'PENDING'}</Tag>;
+        return <Tag style={{ backgroundColor: 'var(--cs-500)', borderColor: 'var(--cs-500)', color: 'white' }} className="text-[9px] font-semibold px-2 py-0 rounded-full border-0 m-0">{status || 'PENDING'}</Tag>;
       },
     },
     {
@@ -487,7 +487,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
               overlayInnerStyle={{ padding: '10px 10px 8px', borderRadius: '10px', boxShadow: '0 6px 20px rgba(0,0,0,0.12)', minWidth: 0 }}
             >
               <Tooltip title="Manage columns">
-                <Badge count={hiddenCount} size="small" color="#f59e0b" offset={[-2, 2]}>
+                <Badge count={hiddenCount} size="small" color="var(--cs-500)" offset={[-2, 2]}>
                   <Button
                     icon={<EyeOutlined className="text-[11px]" />}
                     className={`h-7 px-2.5 text-[11px] rounded-md shadow-sm font-medium transition-colors ${
@@ -602,17 +602,17 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       <style>{`
         .compact-table .ant-table { background: white; font-size: 10px; }
         .compact-table .ant-table-thead > tr > th {
-          background: linear-gradient(to bottom, #fffbeb, #fef3c7) !important;
-          border-bottom: 1.5px solid #f59e0b !important;
+          background: linear-gradient(to bottom, var(--cs-50), var(--cs-100)) !important;
+          border-bottom: 1.5px solid var(--cs-500) !important;
           padding: 6px 8px !important; font-weight: 700 !important; font-size: 9px !important;
-          color: #78350f !important; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.2;
+          color: var(--cs-900) !important; text-transform: uppercase; letter-spacing: 0.3px; line-height: 1.2;
         }
         .compact-table .ant-table-tbody > tr.regular-row > td {
           padding: 6px 8px !important; border-bottom: 1px solid #f3f4f6 !important;
           background: white !important; transition: all 0.12s ease; line-height: 1.3;
         }
         .compact-table .ant-table-tbody > tr.regular-row:hover > td {
-          background: #fffbeb !important; box-shadow: inset 0 0 0 1px #fef3c7;
+          background: var(--cs-50) !important; box-shadow: inset 0 0 0 1px var(--cs-100);
         }
         .compact-table .ant-table-tbody > tr.urgent-row > td {
           padding: 6px 8px !important; border-bottom: 1px solid #f3f4f6 !important;
@@ -622,8 +622,8 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
           background: #fee2e2 !important; box-shadow: inset 0 0 0 1px #fecaca;
         }
         .compact-table .ant-table-tbody > tr.editing-row > td {
-          padding: 6px 8px !important; background: #fef3c7 !important;
-          border-bottom: 1px solid #fbbf24 !important; box-shadow: inset 0 1px 2px rgba(251,191,36,0.12);
+          padding: 6px 8px !important; background: var(--cs-100) !important;
+          border-bottom: 1px solid var(--cs-300) !important; box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
         }
         .compact-table .ant-spin-container { min-height: 200px; }
         .compact-pagination .ant-pagination-item {
@@ -631,12 +631,12 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
           min-width: 24px; height: 24px; line-height: 22px; margin: 0 2px;
         }
         .compact-pagination .ant-pagination-item-active {
-          background: linear-gradient(135deg, #f59e0b, #f97316); border-color: #f59e0b;
-          box-shadow: 0 1px 3px rgba(245,158,11,0.25);
+          background: linear-gradient(135deg, var(--cs-500), var(--cs-600)); border-color: var(--cs-500);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.15);
         }
         .compact-pagination .ant-pagination-item-active a { color: white !important; font-weight: 700; }
-        .compact-pagination .ant-pagination-item:hover { border-color: #f59e0b; }
-        .compact-pagination .ant-pagination-item:hover a { color: #f59e0b; }
+        .compact-pagination .ant-pagination-item:hover { border-color: var(--cs-500); }
+        .compact-pagination .ant-pagination-item:hover a { color: var(--cs-500); }
         .compact-pagination .ant-pagination-options { font-size: 11px; }
         .compact-pagination .ant-select-selector { height: 24px !important; font-size: 11px !important; }
         .compact-pagination .ant-pagination-total-text { font-size: 10px; }

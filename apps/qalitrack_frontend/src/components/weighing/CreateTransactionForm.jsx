@@ -74,6 +74,7 @@ export default function CreateTransactionForm({
   const [previewEditData, setPreviewEditData] = useState({});
 
   const isSecondWeighing = !!(formData.id || formData.ticketID);
+  const [manualPlate, setManualPlate] = useState(false);
 
   useEffect(() => {
     if (weighbridges.length === 0) {
@@ -549,18 +550,41 @@ export default function CreateTransactionForm({
 
           {/* Vehicle Plate */}
           <Col span={12}>
-            <FieldLabel required>Vehicle Plate</FieldLabel>
-            <AutoComplete
-              size="middle"
-              className="w-full"
-              value={formData.noPlate}
-              options={vehicles.map((it) => ({ value: it.registrationNumber || it.plateNumber, label: it.registrationNumber || it.plateNumber, id: it.id }))}
-              onSearch={debounced.vehicles}
-              onChange={(val) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: null }))}
-              onSelect={(val, opt) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: opt.id }))}
-              disabled={isSecondWeighing}
-              placeholder="Type or search plate"
-            />
+            <div className="flex items-center justify-between mb-0.5">
+              <FieldLabel required>Vehicle Plate</FieldLabel>
+              <label className="flex items-center gap-1 text-[10px] text-gray-500 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={manualPlate}
+                  onChange={(e) => setManualPlate(e.target.checked)}
+                  disabled={isSecondWeighing}
+                  className="accent-amber-500 cursor-pointer"
+                />
+                Enter manually
+              </label>
+            </div>
+            {manualPlate ? (
+              <Input
+                size="middle"
+                className="w-full"
+                value={formData.noPlate}
+                onChange={(e) => setFormData((prev) => ({ ...prev, noPlate: e.target.value.toUpperCase(), vehicleID: null }))}
+                disabled={isSecondWeighing}
+                placeholder="Type plate number"
+              />
+            ) : (
+              <AutoComplete
+                size="middle"
+                className="w-full"
+                value={formData.noPlate}
+                options={vehicles.map((it) => ({ value: it.registrationNumber || it.plateNumber, label: it.registrationNumber || it.plateNumber, id: it.id }))}
+                onSearch={debounced.vehicles}
+                onChange={(val) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: null }))}
+                onSelect={(val, opt) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: opt.id }))}
+                disabled={isSecondWeighing}
+                placeholder="Type or search plate"
+              />
+            )}
           </Col>
 
           {/* Driver */}
@@ -710,7 +734,7 @@ export default function CreateTransactionForm({
           loading={loading}
           onClick={isSecondWeighing ? openFinalizePreview : handleSubmit}
           disabled={isSecondWeighing && !isValid}
-          style={{ backgroundColor: '#f59e0b', borderColor: '#f59e0b', color: 'white' }}
+          style={{ backgroundColor: 'var(--cs-500)', borderColor: 'var(--cs-500)', color: 'white' }}
           className="flex-1 font-bold shadow-md"
         >
           {isSecondWeighing ? "FINALIZE TRANSACTION" : "SAVE FIRST WEIGHT"}
@@ -743,7 +767,7 @@ export default function CreateTransactionForm({
             type="primary"
             loading={loading}
             onClick={() => { setShowFinalizePreview(false); doFinalizeSubmit(previewEditData); }}
-            style={{ background: "linear-gradient(135deg, #f59e0b, #f97316)", border: "none" }}
+            style={{ background: "linear-gradient(135deg, var(--cs-500), var(--cs-600))", border: "none" }}
             className="font-bold"
           >
             CONFIRM &amp; FINALIZE

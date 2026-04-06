@@ -138,11 +138,7 @@ function PlateCard({ cameraId, onPlateConfirmed }) {
           </div>
         ) : (
           <div className="text-center">
-            <div className="text-gray-600 text-sm mb-3">Waiting for vehicle…</div>
-            <button onClick={() => { setEditedPlate(""); setEditing(true); }}
-              className="bg-neutral-700 hover:bg-neutral-600 text-white text-xs px-3 py-1 rounded">
-              Enter Manually
-            </button>
+            <div className="text-gray-600 text-sm">Waiting for vehicle…</div>
           </div>
         )}
 

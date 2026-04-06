@@ -1,72 +1,77 @@
 /**
  * ticketThemeConfig.js
- * Shared utility for ticket PDF theming.
- * Settings are persisted in localStorage under "ticketSettings"
- * so that SystemSettings ↔ Transactions stay in sync.
+ * Shared utility for export/PDF theming across the entire app.
+ * Settings are persisted in localStorage under "ticketSettings".
+ *
+ * Themes: monochrome · amber · blue · green
  */
 
+// ── Transaction-ticket PDF themes (used by Transaction.jsx) ──────────────────
 export const TICKET_THEMES = {
-  classic: {
-    name: "Classic",
-    description: "Traditional black & white receipt style",
-    preview: { bg: "#ffffff", header: "#000000", text: "#333333", accent: "#666666" },
+  monochrome: {
+    name: "Black & White",
+    description: "Classic monochrome — clean and printer-friendly",
+    preview: { bg: "#ffffff", header: "#111111", text: "#333333", accent: "#888888" },
     pdf: {
-      headerBg: [0, 0, 0],
-      headerText: [255, 255, 255],
-      bodyText: [33, 33, 33],
-      lightBg: [245, 245, 245],
-      accentBg: [220, 220, 220],
-      border: [180, 180, 180],
-      netWeightBg: [240, 240, 240],
-      tableGridColor: [180, 180, 180],
+      headerBg:      [17, 17, 17],
+      headerText:    [255, 255, 255],
+      bodyText:      [33, 33, 33],
+      lightBg:       [245, 245, 245],
+      accentBg:      [210, 210, 210],
+      border:        [120, 120, 120],
+      netWeightBg:   [235, 235, 235],
+      tableGridColor:[150, 150, 150],
     },
   },
-  modern: {
-    name: "Modern",
-    description: "Clean gradient design with amber accents",
+  amber: {
+    name: "Amber",
+    description: "Warm golden — the classic QaliTrack look",
     preview: { bg: "#fffbeb", header: "#f59e0b", text: "#78350f", accent: "#fcd34d" },
     pdf: {
-      headerBg: [245, 158, 11],      // amber-500
-      headerText: [255, 255, 255],
-      bodyText: [33, 33, 33],
-      lightBg: [255, 251, 235],      // amber-50
-      accentBg: [252, 211, 77],      // amber-300
-      border: [245, 158, 11],
-      netWeightBg: [254, 243, 199],  // amber-100
-      tableGridColor: [245, 158, 11],
+      headerBg:      [245, 158, 11],
+      headerText:    [0, 0, 0],
+      bodyText:      [33, 33, 33],
+      lightBg:       [255, 251, 235],
+      accentBg:      [252, 211, 77],
+      border:        [245, 158, 11],
+      netWeightBg:   [254, 243, 199],
+      tableGridColor:[245, 158, 11],
     },
   },
-  minimal: {
-    name: "Minimal",
-    description: "Minimalist monochrome with subtle borders",
-    preview: { bg: "#fafafa", header: "#404040", text: "#262626", accent: "#d4d4d4" },
+  blue: {
+    name: "Blue",
+    description: "Professional cobalt — clear and corporate",
+    preview: { bg: "#eff6ff", header: "#3b82f6", text: "#1e3a8a", accent: "#93c5fd" },
     pdf: {
-      headerBg: [64, 64, 64],
-      headerText: [255, 255, 255],
-      bodyText: [38, 38, 38],
-      lightBg: [250, 250, 250],
-      accentBg: [212, 212, 212],
-      border: [212, 212, 212],
-      netWeightBg: [245, 245, 245],
-      tableGridColor: [200, 200, 200],
+      headerBg:      [59, 130, 246],
+      headerText:    [255, 255, 255],
+      bodyText:      [30, 58, 138],
+      lightBg:       [239, 246, 255],
+      accentBg:      [147, 197, 253],
+      border:        [59, 130, 246],
+      netWeightBg:   [219, 234, 254],
+      tableGridColor:[59, 130, 246],
     },
   },
-  colorful: {
-    name: "Colorful",
-    description: "Vibrant emerald & amber gradient theme",
-    preview: { bg: "#fef3c7", header: "#10b981", text: "#065f46", accent: "#34d399" },
+  green: {
+    name: "Green",
+    description: "Natural emerald — fresh and vibrant",
+    preview: { bg: "#f0fdf4", header: "#22c55e", text: "#14532d", accent: "#86efac" },
     pdf: {
-      headerBg: [16, 185, 129],      // emerald-500
-      headerText: [255, 255, 255],
-      bodyText: [6, 95, 70],         // emerald-900
-      lightBg: [254, 243, 199],      // amber-100
-      accentBg: [52, 211, 153],      // emerald-400
-      border: [16, 185, 129],
-      netWeightBg: [209, 250, 229],  // emerald-100
-      tableGridColor: [16, 185, 129],
+      headerBg:      [34, 197, 94],
+      headerText:    [255, 255, 255],
+      bodyText:      [20, 83, 45],
+      lightBg:       [240, 253, 244],
+      accentBg:      [134, 239, 172],
+      border:        [34, 197, 94],
+      netWeightBg:   [220, 252, 231],
+      tableGridColor:[34, 197, 94],
     },
   },
 };
+
+// Backward-compat aliases for stored settings written before the rename
+const _KEY_ALIASES = { modern: "amber", classic: "monochrome", minimal: "monochrome", colorful: "green" };
 
 const STORAGE_KEY = "ticketSettings";
 
@@ -77,7 +82,7 @@ export function getTicketSettings() {
     if (raw) return JSON.parse(raw);
   } catch (_) {}
   return {
-    ticketTheme: "modern",
+    ticketTheme: "amber",
     ticketPrimaryColor: "#f59e0b",
     ticketSecondaryColor: "#f97316",
     ticketAccentColor: "#d97706",
@@ -92,20 +97,19 @@ export function getTicketSettings() {
 /** Save ticket settings to localStorage (called from SystemSettings) */
 export function saveTicketSettings(settings) {
   const toSave = {
-    ticketTheme: settings.ticketTheme,
-    ticketPrimaryColor: settings.ticketPrimaryColor,
-    ticketSecondaryColor: settings.ticketSecondaryColor,
-    ticketAccentColor: settings.ticketAccentColor,
-    ticketShowLogo: settings.ticketShowLogo,
-    ticketShowQRCode: settings.ticketShowQRCode,
-    ticketFontSize: settings.ticketFontSize,
-    companyName: settings.companyName,
-    companyAddress: settings.companyAddress,
-    companyPhone: settings.companyPhone,
-    companyEmail: settings.companyEmail,
+    ticketTheme:         settings.ticketTheme,
+    ticketPrimaryColor:  settings.ticketPrimaryColor,
+    ticketSecondaryColor:settings.ticketSecondaryColor,
+    ticketAccentColor:   settings.ticketAccentColor,
+    ticketShowLogo:      settings.ticketShowLogo,
+    ticketShowQRCode:    settings.ticketShowQRCode,
+    ticketFontSize:      settings.ticketFontSize,
+    companyName:         settings.companyName,
+    companyAddress:      settings.companyAddress,
+    companyPhone:        settings.companyPhone,
+    companyEmail:        settings.companyEmail,
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
-  // Dispatch a custom event so Transactions.jsx can react in real-time
   window.dispatchEvent(new CustomEvent("ticketSettingsChanged", { detail: toSave }));
 }
 
@@ -118,36 +122,61 @@ export function hexToRgb(hex) {
 }
 
 /**
- * Resolve the full PDF color palette for a given settings object.
- * Custom colors (if set) override the theme defaults.
+ * Resolve the full PDF color palette for Transaction ticket PDFs.
+ * Custom primary/accent colors override the theme defaults when present.
  */
 export function resolvePdfTheme(settings) {
-  const themeKey = settings.ticketTheme || "modern";
-  const base = TICKET_THEMES[themeKey]?.pdf || TICKET_THEMES.modern.pdf;
+  const rawKey  = settings.ticketTheme || "amber";
+  const themeKey= _KEY_ALIASES[rawKey] || rawKey;
+  return { ...(TICKET_THEMES[themeKey]?.pdf || TICKET_THEMES.amber.pdf) };
+}
 
-  // If user has set custom primary color that differs from theme default,
-  // overlay it on the header
-  const customPrimary = settings.ticketPrimaryColor
-    ? hexToRgb(settings.ticketPrimaryColor)
-    : null;
-  const customAccent = settings.ticketAccentColor
-    ? hexToRgb(settings.ticketAccentColor)
-    : null;
+/**
+ * resolveReportColors — returns the accent palette for report/table PDFs.
+ * Used by DriverReport, SupplierReport, CommodityReport, CustomerReport,
+ * Roles, Permissions, Shifts, Users, Reports, CustomReportBuilder, etc.
+ *
+ * Returns: { primary, primaryDark, primaryLight, headerText }
+ */
+export function resolveReportColors(settings) {
+  const rawKey  = settings?.ticketTheme || "amber";
+  const themeKey= _KEY_ALIASES[rawKey] || rawKey;
 
-  return {
-    ...base,
-    headerBg: customPrimary || base.headerBg,
-    accentBg: customAccent || base.accentBg,
-    border: customPrimary || base.border,
-    tableGridColor: customPrimary || base.tableGridColor,
+  const palettes = {
+    monochrome: {
+      primary:      [33, 33, 33],
+      primaryDark:  [0, 0, 0],
+      primaryLight: [245, 245, 245],
+      headerText:   [255, 255, 255],
+    },
+    amber: {
+      primary:      [245, 158, 11],
+      primaryDark:  [217, 119, 6],
+      primaryLight: [254, 243, 199],
+      headerText:   [0, 0, 0],
+    },
+    blue: {
+      primary:      [59, 130, 246],
+      primaryDark:  [37, 99, 235],
+      primaryLight: [219, 234, 254],
+      headerText:   [255, 255, 255],
+    },
+    green: {
+      primary:      [34, 197, 94],
+      primaryDark:  [22, 163, 74],
+      primaryLight: [220, 252, 231],
+      headerText:   [255, 255, 255],
+    },
   };
+
+  return palettes[themeKey] || palettes.amber;
 }
 
 /** Font size px values for PDF */
 export function resolveFontSize(ticketFontSize) {
   switch (ticketFontSize) {
-    case "small": return { title: 12, heading: 8, body: 7.5, sub: 7 };
-    case "large": return { title: 16, heading: 10, body: 10, sub: 8.5 };
-    default:      return { title: 14, heading: 9, body: 8.5, sub: 8 };
+    case "small": return { title: 12, heading: 8,  body: 7.5, sub: 7   };
+    case "large": return { title: 16, heading: 10, body: 10,  sub: 8.5 };
+    default:      return { title: 14, heading: 9,  body: 8.5, sub: 8   };
   }
 }

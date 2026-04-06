@@ -8,7 +8,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import dayjs from 'dayjs';
 import logoSrc from '../../assets/logo.jpeg';
-import { getTicketSettings } from '../../utils/ticketThemeConfig';
+import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 
 // A reusable Modal component
 const Modal = ({ children, isOpen, onClose }) => {
@@ -102,10 +102,8 @@ const Permissions = () => {
             const PW  = doc.internal.pageSize.getWidth();
             const L   = 14, R = PW - 14, TW = R - L;
 
+            const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings);
             const black      = [0,   0,   0];
-            const amber      = [245, 158, 11];
-            const amberDark  = [217, 119,  6];
-            const amberLight = [254, 243, 199];
             const gray       = [107, 114, 128];
             const borderCol  = [229, 231, 235];
 
@@ -132,15 +130,15 @@ const Permissions = () => {
 
             // Badge
             const badgeW = 52;
-            doc.setFillColor(...amber);
+            doc.setFillColor(...accent);
             doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, 'F');
-            doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...accentHeaderText);
             doc.text('PERMISSIONS REPORT', R - badgeW/2, 9.5, { align: 'center' });
             doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
             doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, R, 16, { align: 'right' });
 
             // Amber divider
-            doc.setDrawColor(...amber); doc.setLineWidth(0.8); doc.line(L, 23, R, 23);
+            doc.setDrawColor(...accent); doc.setLineWidth(0.8); doc.line(L, 23, R, 23);
 
             // Summary stats
             let y = 27;
@@ -152,7 +150,7 @@ const Permissions = () => {
             ];
             stats.forEach((s, i) => {
                 const bx = L + i * (statW + 4);
-                doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3);
+                doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
                 doc.roundedRect(bx, y, statW, 10, 2, 2, 'FD');
                 doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
                 doc.text(s.label, bx + statW/2, y + 3.8, { align: 'center' });
@@ -177,7 +175,7 @@ const Permissions = () => {
                 head: [['#', 'Name', 'Description', 'Created', 'Updated', 'Assigned Roles']],
                 body,
                 styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
-                headStyles: { fillColor: amber, textColor: black, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: amberDark },
+                headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: accentDark },
                 alternateRowStyles: { fillColor: [252, 252, 252] },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 8 },
@@ -187,7 +185,7 @@ const Permissions = () => {
 
             // Footer
             const footerY = doc.lastAutoTable.finalY + 4;
-            doc.setFillColor(...amberLight); doc.setDrawColor(...amberDark); doc.setLineWidth(0.3);
+            doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
             doc.roundedRect(L, footerY, TW, 10, 2, 2, 'FD');
             if (circularLogo) doc.addImage(circularLogo, 'PNG', L+2, footerY+1, 8, 8);
             doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);

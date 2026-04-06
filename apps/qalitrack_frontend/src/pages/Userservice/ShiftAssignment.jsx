@@ -16,6 +16,7 @@ import { fetchRoles } from "../../api/helpers/UserService/Roles/Roles.js";
 import { format, parseISO } from "date-fns";
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 
 function isValidDateString(dateString) {
     if (!dateString) return false;
@@ -508,6 +509,7 @@ const ShiftAssignment = () => {
                 })
             );
 
+            const { primary: accent, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(getTicketSettings());
             const doc = new jsPDF({
                 orientation: 'landscape'  // Use landscape for better table display
             });
@@ -598,8 +600,8 @@ const ShiftAssignment = () => {
                     fontStyle: 'normal'
                 },
                 headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
+                    fillColor: accent,
+                    textColor: accentHeaderText,
                     fontStyle: 'bold',
                     lineWidth: 0.1,
                     fontSize: 9

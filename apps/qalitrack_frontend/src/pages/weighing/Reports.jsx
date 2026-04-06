@@ -23,7 +23,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import logoSrc from "../../assets/logo.jpeg";
-import { getTicketSettings } from "../../utils/ticketThemeConfig";
+import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -177,10 +177,8 @@ export default function Reports() {
     const TW  = R - L;
 
     // ── Palette ───────────────────────────────────────────────────────────
+    const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings);
     const black      = [0,   0,   0];
-    const amber      = [245, 158, 11];
-    const amberDark  = [217, 119,  6];
-    const amberLight = [254, 243, 199];
     const gray       = [107, 114, 128];
     const borderCol  = [229, 231, 235];
     const green      = [21,  128, 61];
@@ -220,11 +218,11 @@ export default function Reports() {
 
     // Report badge (right)
     const badgeW = 52;
-    doc.setFillColor(...amber);
+    doc.setFillColor(...accent);
     doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, "F");
     doc.setFontSize(8);
     doc.setFont("helvetica", "bold");
-    doc.setTextColor(...black);
+    doc.setTextColor(...accentHeaderText);
     doc.text("TRANSACTIONS REPORT", R - badgeW / 2, 9.5, { align: "center" });
 
     doc.setFontSize(7);
@@ -233,7 +231,7 @@ export default function Reports() {
     doc.text(`Generated: ${dayjs().format("DD MMM YYYY HH:mm")}`, R, 16, { align: "right" });
 
     // Amber divider
-    doc.setDrawColor(...amber);
+    doc.setDrawColor(...accent);
     doc.setLineWidth(0.8);
     doc.line(L, 23, R, 23);
 
@@ -248,8 +246,8 @@ export default function Reports() {
 
     stats.forEach((s, i) => {
       const bx = L + i * (statW + 4);
-      doc.setFillColor(...amberLight);
-      doc.setDrawColor(...amberDark);
+      doc.setFillColor(...accentLight);
+      doc.setDrawColor(...accentDark);
       doc.setLineWidth(0.3);
       doc.roundedRect(bx, y, statW, 10, 2, 2, "FD");
       doc.setFontSize(6.5);
@@ -309,12 +307,12 @@ export default function Reports() {
         lineColor: borderCol,
       },
       headStyles: {
-        fillColor: amber,
-        textColor: black,
+        fillColor: accent,
+        textColor: accentHeaderText,
         fontStyle: "bold",
         fontSize: 7,
         halign: "center",
-        lineColor: amberDark,
+        lineColor: accentDark,
       },
       alternateRowStyles: { fillColor: [252, 252, 252] },
       columnStyles: {
@@ -339,8 +337,8 @@ export default function Reports() {
 
     // ── FOOTER ────────────────────────────────────────────────────────────
     const footerY = doc.lastAutoTable.finalY + 4;
-    doc.setFillColor(...amberLight);
-    doc.setDrawColor(...amberDark);
+    doc.setFillColor(...accentLight);
+    doc.setDrawColor(...accentDark);
     doc.setLineWidth(0.3);
     doc.roundedRect(L, footerY, TW, 10, 2, 2, "FD");
 

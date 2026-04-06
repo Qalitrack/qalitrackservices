@@ -26,6 +26,7 @@ import {
   getTicketSettings,
   resolvePdfTheme,
   resolveFontSize,
+  resolveReportColors,
   TICKET_THEMES,
 } from "../utils/ticketThemeConfig"; // adjust path to match your project structure
 
@@ -54,8 +55,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   const lightGray = [243, 244, 246];
   const borderCol = [209, 213, 219];
   const cream     = [254, 252, 232];
-  const amberFill = [251, 191,  36];
-  const amberBdr  = [217, 119,   6];
+  const { primary: amberFill, primaryDark: amberBdr } = resolveReportColors(ticketSettings);
   const green     = [21,  128,  61];
   const red       = [185,  28,  28];
 
@@ -147,10 +147,10 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     styles: {
       fontSize: fontSize.body,
       cellPadding: { top: 1.8, right: 2, bottom: 1.8, left: 3 },
-      textColor: palette.bodyText,
+      textColor: black,
       lineColor: palette.border,
       lineWidth: 0.2,
-      fillColor: cream,
+      fillColor: [252, 252, 252],
     },
     columnStyles: {
       0: { fontStyle: "bold", cellWidth: 26 },
@@ -173,6 +173,52 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.setLineWidth(0.5);
   doc.roundedRect(L, detailsY, TW, doc.lastAutoTable.finalY - detailsY, 3, 3, "S");
 
+  // ── WEIGHT MEASUREMENTS ──────────────────────────────────────────────────
+  y = doc.lastAutoTable.finalY + 4;
+
+  const grossDate = record.firstWeightDate  ? dayjs(record.firstWeightDate).format("DD-MM-YY hh:mm A")  : "—";
+  const tareDate  = record.secondWeightDate ? dayjs(record.secondWeightDate).format("DD-MM-YY hh:mm A") : "—";
+  const operator  = record.operatorName  || "—";
+  const scale     = record.scaleName     || "—";
+  const bridge    = record.weighBridgeName || "—";
+
+  const wmY = y;
+  autoTable(doc, {
+    startY: wmY,
+    margin: { left: L, right: L },
+    theme: "grid",
+    headStyles: {
+      fillColor: lightGray,
+      textColor: black,
+      fontStyle: "bold",
+      fontSize: fontSize.body,
+      halign: "center",
+      lineColor: borderCol,
+    },
+    styles: {
+      fontSize: fontSize.body,
+      textColor: black,
+      lineColor: borderCol,
+      cellPadding: { top: 2, bottom: 2, left: 3, right: 2 },
+    },
+    columnStyles: {
+      0: { fontStyle: "bold", cellWidth: 32 },
+      1: { cellWidth: 26 },
+      2: { cellWidth: 34 },
+      3: { cellWidth: 30 },
+      4: { cellWidth: 22 },
+    },
+    head: [["MEASUREMENT", "WEIGHT (kg)", "DATE", "OPERATOR", "SCALE", "WEIGHBRIDGE"]],
+    body: [
+      ["GROSS WEIGHT", record.firstWeight  ? `${record.firstWeight} kg`  : "—", grossDate, operator, scale, bridge],
+      ["TARE WEIGHT",  record.secondWeight ? `${record.secondWeight} kg` : "—", tareDate,  operator, scale, bridge],
+      ["NET WEIGHT",   record.netWeight    ? `${record.netWeight} kg`    : "—", grossDate, operator, scale, bridge],
+    ],
+  });
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(L, wmY, TW, doc.lastAutoTable.finalY - wmY, 3, 3, "S");
+
   // ── AXLE WEIGHT ANALYSIS ─────────────────────────────────────────────────
   y = doc.lastAutoTable.finalY + 4;
 
@@ -180,12 +226,8 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.roundedRect(L, y, TW, 8, 2, 2, "F");
   doc.setFontSize(fontSize.sub);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(...amberFill);
+  doc.setTextColor(...palette.headerText);
   doc.text("AXLE WEIGHT ANALYSIS", W / 2, y + 5.5, { align: "center" });
-  const awW = doc.getTextWidth("AXLE WEIGHT ANALYSIS");
-  doc.setDrawColor(...amberFill);
-  doc.setLineWidth(0.3);
-  doc.line((W - awW) / 2, y + 6.8, (W + awW) / 2, y + 6.8);
   y += 10; // header height + small gap
 
   const axleY = y;
@@ -195,7 +237,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     theme: "grid",
     headStyles: {
       fillColor: lightGray,
-      textColor: palette.bodyText,
+      textColor: black,
       fontStyle: "bold",
       fontSize: fontSize.body,
       halign: "center",
@@ -204,7 +246,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     styles: {
       fontSize: fontSize.body,
       halign: "center",
-      textColor: palette.bodyText,
+      textColor: black,
       lineColor: borderCol,
       cellPadding: 2,
     },
@@ -244,7 +286,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     },
     headStyles: {
       fillColor: lightGray,
-      textColor: palette.bodyText,
+      textColor: black,
       fontStyle: "bold",
       fontSize: fontSize.sub,
       halign: "center",
@@ -270,7 +312,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.roundedRect(L, y, TW, 8, 2, 2, "F");
   doc.setFontSize(fontSize.sub);
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(...amberFill);
+  doc.setTextColor(...palette.headerText);
   doc.text("VEHICLE SNAPSHOT", W / 2, y + 5.5, { align: "center" });
   y += 8;
 
@@ -1216,7 +1258,7 @@ export default function Transactions() {
                     className="text-xs border-0"
                     style={{
                       background: pdfTheme === "modern"
-                        ? "linear-gradient(135deg, #f59e0b, #f97316)"
+                        ? "linear-gradient(135deg, var(--cs-500), var(--cs-600))"
                         : "linear-gradient(135deg, #374151, #111827)",
                     }}
                   >
@@ -1520,7 +1562,7 @@ export default function Transactions() {
                 }}
                 style={{
                   background: pdfTheme === "modern"
-                    ? "linear-gradient(135deg, #f59e0b, #f97316)"
+                    ? "linear-gradient(135deg, var(--cs-500), var(--cs-600))"
                     : "linear-gradient(135deg, #374151, #111827)",
                   border: "none",
                   fontWeight: 700,
@@ -1548,12 +1590,12 @@ export default function Transactions() {
       <style>{`
         .compact-table .ant-table { font-size: 10px; }
         .compact-table .ant-table-thead > tr > th {
-          background: linear-gradient(to bottom, #fffbeb, #fef3c7) !important;
-          border-bottom: 1.5px solid #f59e0b !important;
+          background: linear-gradient(to bottom, var(--cs-50), var(--cs-100)) !important;
+          border-bottom: 1.5px solid var(--cs-500) !important;
           padding: 5px 8px !important;
           font-weight: 700 !important;
           font-size: 9px !important;
-          color: #78350f !important;
+          color: var(--cs-900) !important;
           text-transform: uppercase;
           letter-spacing: 0.3px;
           line-height: 1.2;
@@ -1574,7 +1616,7 @@ export default function Transactions() {
           background: white !important;
         }
         .compact-table .ant-table-tbody > tr.incomplete-row:hover > td {
-          background: #fffbeb !important;
+          background: var(--cs-50) !important;
         }
         .compact-table .ant-pagination {
           margin: 6px 0 !important;
@@ -1591,8 +1633,8 @@ export default function Transactions() {
           margin: 0 2px !important;
         }
         .compact-table .ant-pagination-item-active {
-          background: linear-gradient(135deg, #f59e0b, #f97316) !important;
-          border-color: #f59e0b !important;
+          background: linear-gradient(135deg, var(--cs-500), var(--cs-600)) !important;
+          border-color: var(--cs-500) !important;
         }
         .compact-table .ant-pagination-item-active a {
           color: white !important;

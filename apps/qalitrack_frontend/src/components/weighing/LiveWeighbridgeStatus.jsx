@@ -110,11 +110,11 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
       </div>
 
       {/* WEIGHT */}
-      <div className="text-center my-3">
-        <span className="text-3xl font-mono font-semibold text-amber-500">
+      <div className="text-center flex-1 flex items-center justify-center">
+        <span className="font-mono font-black text-amber-500 leading-none"
+          style={{ fontSize: "clamp(3rem, 10vw, 7rem)" }}>
           {totalWeight}
         </span>
-        
       </div>
 
       {/* ACTION */}

@@ -4,6 +4,7 @@ import { completeWeighing, deactivateTransaction } from "../store/weighingSlice"
 import { FileDown, FileSpreadsheet, Ban, Ticket } from "lucide-react";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
+import { getTicketSettings, resolveReportColors } from "../utils/ticketThemeConfig";
 import "jspdf-autotable";
 import toast from "react-hot-toast";
 
@@ -79,6 +80,7 @@ export default function WeighingTable({ className }) {
   };
 
   const exportToPDF = () => {
+    const { primary: accent, headerText: accentHeaderText } = resolveReportColors(getTicketSettings());
     const doc = new jsPDF();
     doc.text("Weighing Transactions Report", 14, 10);
     doc.autoTable({
@@ -105,6 +107,7 @@ export default function WeighingTable({ className }) {
   };
 
   const generateTicket = (tx) => {
+    const { primary: accent, headerText: accentHeaderText } = resolveReportColors(getTicketSettings());
     const doc = new jsPDF();
 
     doc.setFontSize(18);
@@ -138,7 +141,7 @@ export default function WeighingTable({ className }) {
           tx.deactivated ? "Deactivated" : tx.w2 ? "Completed" : "In Queue",
         ],
       ],
-      headStyles: { fillColor: [255, 193, 7], textColor: 0 },
+      headStyles: { fillColor: accent, textColor: accentHeaderText },
     });
 
     const finalY = doc.lastAutoTable.finalY + 15;
