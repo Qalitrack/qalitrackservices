@@ -61,7 +61,6 @@ builder.Services.AddDirectoryBrowser();
 builder.Services.AddAutoMapper(cfg => { },
     typeof(Program),
     typeof(FinancialFormsProfile),
-    typeof(TechnicianProfile),
     typeof(AssignmentProfile),
     typeof(CheckInProfile),
     typeof(PhotoProfile),
@@ -125,7 +124,6 @@ builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Add specialized repositories
 builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
-builder.Services.AddScoped<ITechnicianRepository, TechnicianRepository>();
 
 // Add services
 builder.Services.AddScoped<IAssignmentService, AssignmentService>();
@@ -145,7 +143,6 @@ builder.Services.AddScoped<IRefundService, RefundService>();
 builder.Services.AddScoped<IAssignmentBalanceService, AssignmentBalanceService>();
 
 // Add QTruck services (merged from QTruck API)
-builder.Services.AddScoped<IDriverService, DriverService>();
 builder.Services.AddScoped<IDriverProfileService, DriverProfileService>();
 builder.Services.AddScoped<IDriverActivityService, DriverActivityService>();
 builder.Services.AddScoped<IMaterialService, MaterialService>();

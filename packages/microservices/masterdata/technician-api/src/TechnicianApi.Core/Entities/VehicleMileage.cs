@@ -32,5 +32,4 @@ public class VehicleMileage : BaseEntity
 
     // Navigation properties
     public virtual Truck Truck { get; set; } = null!;
-    public virtual Driver Driver { get; set; } = null!;
 }

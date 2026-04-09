@@ -18,8 +18,6 @@ public class DriverActivity : BaseEntity
     [MaxLength(500)]
     public string? UserAgent { get; set; }
 
-    // Navigation properties
-    public virtual Driver Driver { get; set; } = null!;
 }
 
 public enum DriverActivityType

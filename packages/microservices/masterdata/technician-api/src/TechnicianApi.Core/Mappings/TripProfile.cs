@@ -38,7 +38,6 @@ public class TripProfile : Profile
             .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
             .ForMember(dest => dest.Truck, opt => opt.Ignore())
-            .ForMember(dest => dest.Driver, opt => opt.Ignore())
             .ForMember(dest => dest.TripType, opt => opt.Ignore())
             .ForMember(dest => dest.Material, opt => opt.Ignore())
             .ForMember(dest => dest.MaterialVariant, opt => opt.Ignore())
