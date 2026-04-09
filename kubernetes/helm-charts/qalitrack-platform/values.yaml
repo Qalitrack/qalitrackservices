@@ -227,6 +227,8 @@ technician-service:
   postgresql:
     enabled: true
     fullnameOverride: "technician-service-postgresql"
+    image:
+      tag: "latest"
     auth:
       existingSecret: "qalitrack-secrets"
       secretKeys:
