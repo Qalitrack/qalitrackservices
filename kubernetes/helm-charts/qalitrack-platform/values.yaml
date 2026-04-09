@@ -222,6 +222,19 @@ technicianService:
           cpu: "1000m"
       persistence:
         size: 20Gi
+# Subchart values for technician-service (keyed by chart name, not alias)
+technician-service:
+  postgresql:
+    enabled: true
+    fullnameOverride: "technician-service-postgresql"
+    auth:
+      existingSecret: "qalitrack-secrets"
+      secretKeys:
+        adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
+      database: "techniciandb"
+    primary:
+      persistence:
+        size: 20Gi
 # ============================================================================
 # QTRUCK SERVICE - Drivers & Fleet Management
 # ============================================================================
