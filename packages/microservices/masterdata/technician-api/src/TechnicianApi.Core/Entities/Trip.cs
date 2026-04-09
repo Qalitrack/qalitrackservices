@@ -62,7 +62,6 @@ public class Trip : BaseEntity
 
     // Navigation properties
     public virtual Truck Truck { get; set; } = null!;
-    public virtual Driver Driver { get; set; } = null!;
     public virtual TripType? TripType { get; set; }
     public virtual Material? Material { get; set; }
     public virtual MaterialVariant? MaterialVariant { get; set; }

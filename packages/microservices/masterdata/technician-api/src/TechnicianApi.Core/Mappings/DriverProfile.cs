@@ -8,21 +8,6 @@ public class DriverMappingProfile : Profile
 {
     public DriverMappingProfile()
     {
-        // Driver mappings
-        CreateMap<Driver, DriverResponseDto>();
-        CreateMap<CreateDriverDto, Driver>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Activities, opt => opt.Ignore())
-            .ForMember(dest => dest.Trips, opt => opt.Ignore())
-            .ForMember(dest => dest.VehicleMileages, opt => opt.Ignore());
-        CreateMap<UpdateDriverDto, Driver>()
-            .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
-
         // DriverProfile mappings
         CreateMap<DriverProfile, DriverProfileResponseDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));

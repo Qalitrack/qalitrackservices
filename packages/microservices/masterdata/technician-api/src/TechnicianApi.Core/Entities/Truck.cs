@@ -14,7 +14,6 @@ public class Truck : BaseEntity
     public string? DriverId { get; set; }
 
     // Navigation properties
-    public virtual Driver? Driver { get; set; }
     public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
     public virtual ICollection<VehicleMileage> VehicleMileages { get; set; } = new List<VehicleMileage>();
 }
