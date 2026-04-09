@@ -224,12 +224,13 @@ userService:
           name: qalitrack-secrets
           key: EMAIL_ENABLE_SSL
 postgresql:
-  enabled: false
+  enabled: true
+  fullnameOverride: "technician-service-postgresql"
   auth:
     existingSecret: "qalitrack-secrets"
     secretKeys:
       adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
-    database: "qalitrack_techniciandb"
+    database: "techniciandb"
   primary:
     resources:
       requests:
