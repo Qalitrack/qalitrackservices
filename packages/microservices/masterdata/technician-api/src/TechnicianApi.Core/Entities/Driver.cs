@@ -18,7 +18,6 @@ public class Driver : BaseEntity
     public string? LicenseNumber { get; set; }
 
     // Navigation properties
-    public virtual ICollection<DriverProfile> ProfileVersions { get; set; } = new List<DriverProfile>();
     public virtual ICollection<DriverActivity> Activities { get; set; } = new List<DriverActivity>();
     public virtual ICollection<Trip> Trips { get; set; } = new List<Trip>();
     public virtual ICollection<VehicleMileage> VehicleMileages { get; set; } = new List<VehicleMileage>();
