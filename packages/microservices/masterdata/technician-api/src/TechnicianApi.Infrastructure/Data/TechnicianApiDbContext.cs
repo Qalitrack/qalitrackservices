@@ -488,11 +488,6 @@ public class TechnicianApiDbContext : DbContext
             entity.Property(e => e.DriverId).IsRequired().HasMaxLength(100);
             entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
 
-            entity.HasOne(e => e.Driver)
-                .WithMany(d => d.ProfileVersions)
-                .HasForeignKey(e => e.DriverId)
-                .OnDelete(DeleteBehavior.Cascade);
-
             entity.HasIndex(e => e.DriverId);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => new { e.DriverId, e.IsCurrent });
