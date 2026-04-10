@@ -59,10 +59,9 @@ export default function Login() {
 
         if (primaryRole === 'Admin') {
             navigate('/admin', { replace: true });
-        } else if (primaryRole === 'Operator') {
-            navigate('/operator', { replace: true });
         } else {
-            navigate('/login', { replace: true }); // Fallback if no valid role
+            // Operator and all other authenticated roles land on factory weighing
+            navigate('/operator', { replace: true });
         }
     };
 

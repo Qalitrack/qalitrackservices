@@ -37,6 +37,7 @@ const SaccosPortal       = lazy(() => import("../pages/Saccos.jsx"));
 const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
 const Transaction        = lazy(() => import("../pages/Transaction.jsx"));
 const UserManagement     = lazy(() => import("../pages/UserManagement.jsx"));
+const Profile            = lazy(() => import("../pages/Profile.jsx"));
 
 // ── Kiosk (public) ──
 const SelfServiceWeighing = lazy(() => import("../pages/SelfServiceWeighing.jsx"));
@@ -50,12 +51,10 @@ const RootRedirect = () => {
 
     const user = getCurrentUser();
     const primaryRole = user?.userRoles?.[0];
-    
-    // Redirect to the actual first page each role should see
-    if (primaryRole === "Admin")    return <Navigate to="/admin/dashboard" replace />;
-    if (primaryRole === "Operator") return <Navigate to="/operator/weighing/factory" replace />;
-    
-    return <Navigate to="/login" replace />;
+
+    // Admin gets the admin dashboard; everyone else lands on factory weighing
+    if (primaryRole === "Admin") return <Navigate to="/admin/dashboard" replace />;
+    return <Navigate to="/operator/weighing/factory" replace />;
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -93,10 +92,10 @@ export const routes = [
     { path: "/login", element: <Login /> },
     { path: "/",      element: <RootRedirect /> },
 
-    // ── Operator (protected) ──
+    // ── Operator (protected) — any authenticated user ──
     {
         path: "",
-        element: <ProtectedRoute allowedRoles={["Operator", "Admin"]} />,
+        element: <ProtectedRoute allowedRoles={[]} />,
         children: [
             {
                 path: "/operator",
@@ -105,7 +104,7 @@ export const routes = [
                     // Redirect /operator to /operator/weighing/factory
                     { index: true, element: <OperatorIndexRedirect /> },
                     
-                    { path: "dashboard",              element: <Dashboard /> },
+                    { path: "dashboard",              element: <AdminDashboard /> },
                     { path: "weighing/factory",       element: <FactoryWeighing /> },
                     { path: "transactions",           element: <Transaction /> },
                     { path: "weighing/vehicle",       element: <Vehicle /> },
@@ -123,6 +122,7 @@ export const routes = [
                     { path: "saccos",                 element: <SaccosPortal /> },
                     { path: "weighbridges",           element: <WeighbridgesPortal /> },
                     { path: "routes",                 element: <Routes /> },
+                    { path: "profile",                element: <Profile /> },
                 ]
             }
         ]
@@ -167,6 +167,7 @@ export const routes = [
                     { path: "attendance",               element: <Attendance /> },
                     { path: "shift-assignment",         element: <ShiftAssignment /> },
                     { path: "backup/microservice",      element: <Microservice /> },
+                    { path: "profile",                  element: <Profile /> },
                 ]
             }
         ]

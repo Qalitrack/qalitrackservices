@@ -74,14 +74,27 @@ export const TICKET_THEMES = {
 const _KEY_ALIASES = { modern: "amber", classic: "monochrome", minimal: "monochrome", colorful: "green" };
 
 const STORAGE_KEY = "ticketSettings";
+// companyLogo is stored under its own key to prevent the general settings
+// save/load cycle (which doesn't include the logo) from wiping it.
+const LOGO_STORAGE_KEY = "companyLogo";
+
+/** Read the stored company logo (base64 data URL) or null */
+export function getCompanyLogo() {
+  return localStorage.getItem(LOGO_STORAGE_KEY) || null;
+}
+
+/** Persist the company logo. Pass null to remove it. */
+export function saveCompanyLogo(logo) {
+  if (logo) {
+    localStorage.setItem(LOGO_STORAGE_KEY, logo);
+  } else {
+    localStorage.removeItem(LOGO_STORAGE_KEY);
+  }
+}
 
 /** Read current ticket settings from localStorage */
 export function getTicketSettings() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (_) {}
-  return {
+  let result = {
     ticketTheme: "amber",
     ticketPrimaryColor: "#f59e0b",
     ticketSecondaryColor: "#f97316",
@@ -91,7 +104,15 @@ export function getTicketSettings() {
     ticketFontSize: "normal",
     companyName: "QALIBRATED SYSTEMS LTD",
     companyAddress: "PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996",
+    companyLogo: null,
   };
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) result = { ...result, ...JSON.parse(raw) };
+  } catch (_) {}
+  // Always read logo from its own key so it is never wiped by a settings save
+  result.companyLogo = getCompanyLogo();
+  return result;
 }
 
 /** Save ticket settings to localStorage (called from SystemSettings) */

@@ -281,7 +281,7 @@ export default function CustomReportBuilder({ transactions = [] }) {
         const i = new Image();
         i.onload = () => resolve(i);
         i.onerror = reject;
-        i.src = logoSrc;
+        i.src = settings.companyLogo || logoSrc;
       });
       const sz = Math.min(img.naturalWidth, img.naturalHeight);
       const cv = document.createElement("canvas");

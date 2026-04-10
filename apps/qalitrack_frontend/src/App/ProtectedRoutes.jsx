@@ -34,11 +34,9 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
 
         if (primaryRole === 'Admin') {
             return <Navigate to="/admin/dashboard" replace />;
-        } else if (primaryRole === 'Operator') {
-            return <Navigate to="/operator/weighing/factory" replace />;
         } else {
-            // If no valid role, logout and redirect to login
-            return <Navigate to="/login" replace />;
+            // Operator and all other authenticated roles land on factory weighing
+            return <Navigate to="/operator/weighing/factory" replace />;
         }
     }
 

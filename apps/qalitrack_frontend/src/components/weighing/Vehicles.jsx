@@ -454,7 +454,7 @@ export default function Vehicles() {
               <input
                 type="text"
                 placeholder="Search by reg/type..."
-                className="w-40 h-7 pl-8 pr-3 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+                className="w-40 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -463,7 +463,7 @@ export default function Vehicles() {
               <input
                 type="text"
                 placeholder="RFID Code..."
-                className="w-32 h-7 px-2 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+                className="w-32 h-7 px-2 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
                 value={rfidSearchTerm}
                 onChange={(e) => setRfidSearchTerm(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleRfidSearch()}
@@ -479,7 +479,7 @@ export default function Vehicles() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-7 px-2 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm bg-white"
+              className="h-7 px-2 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm bg-white"
             >
               <option value="All">All Status</option>
               <option value="Active">Active</option>

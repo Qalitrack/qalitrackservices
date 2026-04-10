@@ -519,7 +519,7 @@ const Users = () => {
                     const i = new Image();
                     i.onload = () => resolve(i);
                     i.onerror = reject;
-                    i.src = logoSrc;
+                    i.src = settings.companyLogo || logoSrc;
                 });
                 const sz = Math.min(img.naturalWidth, img.naturalHeight);
                 const cv = document.createElement('canvas');
@@ -784,18 +784,18 @@ const Users = () => {
 
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-800">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Email</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Roles</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Shifts</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Email</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Roles</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Shifts</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Status</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Last Updated</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-100">
                     {users.map((user) => (
                         <tr key={user.id} className={`hover:bg-gray-50 ${user.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
                             <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.email}</td>

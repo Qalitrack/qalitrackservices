@@ -180,7 +180,7 @@ export default function DriverPortal() {
               <input
                 type="text"
                 placeholder="Search drivers..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />

@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Outlet } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import UnifiedSidebar from "../components/Sidebar"; // ← Use the new unified sidebar
 import Topbar from "../components/Topbar";
 
@@ -29,6 +30,18 @@ export default function MainLayout() {
           </div>
         </main>
       </div>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            fontSize: "1rem",
+            padding: "14px 18px",
+            minWidth: "320px",
+            maxWidth: "480px",
+          },
+          duration: 4000,
+        }}
+      />
     </div>
   );
 }

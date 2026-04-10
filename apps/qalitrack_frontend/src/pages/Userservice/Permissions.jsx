@@ -111,7 +111,7 @@ const Permissions = () => {
             let circularLogo = null;
             try {
                 const img = await new Promise((resolve, reject) => {
-                    const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = logoSrc;
+                    const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = settings.companyLogo || logoSrc;
                 });
                 const sz = Math.min(img.naturalWidth, img.naturalHeight);
                 const cv = document.createElement('canvas'); cv.width = sz; cv.height = sz;
@@ -348,71 +348,70 @@ const Permissions = () => {
     };
 
     if (loading) {
-        return <div className="flex justify-center items-center h-32"><div>Loading permissions...</div></div>;
+        return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
 
     if (error) {
-        return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md" role="alert">{error}</div>;
+        return <div className="m-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">{error}</div>;
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800">Manage Permissions</h2>
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-700">Show Deleted</label>
+        <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
+                <h2 className="text-sm font-bold text-gray-800">Manage Permissions</h2>
+                <div className="flex items-center gap-2">
+                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
                         <input
                             type="checkbox"
                             id="show-deleted"
                             checked={showDeleted}
                             onChange={handleToggleShowDeleted}
-                            className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                            className="h-3.5 w-3.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                         />
-                    </div>
+                        Show Deleted
+                    </label>
                     <button
                         onClick={handleDownloadPDF}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 rounded transition-colors"
                     >
-                        <Download size={18} />
-                        <span>Download PDF</span>
+                        <Download size={13} />
+                        <span>PDF</span>
                     </button>
                     <button
                         onClick={handleAddClick}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all"
                     >
-                        <PlusCircle size={18} />
+                        <PlusCircle size={13} />
                         <span>Add Permission</span>
                     </button>
                 </div>
             </div>
 
             {feedbackMessage.text && (
-                <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <div className={`mx-4 mt-2 px-3 py-2 rounded-md text-xs font-medium border ${feedbackMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                     {feedbackMessage.text}
                 </div>
             )}
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-800">
+            <div className="flex-1 overflow-auto">
+                <table className="min-w-full">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">Description</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
-
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider hidden md:table-cell">Description</th>
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Last Updated</th>
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-100">
                     {permissions.map((permission) => (
-                        <tr key={permission.id} className={`hover:bg-gray-50 ${permission.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{permission.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">{permission.description}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <tr key={permission.id} className={`border-b border-gray-100 hover:bg-amber-50 transition-all ${permission.isDeleted ? 'opacity-60 bg-gray-50' : ''}`}>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-800">{permission.name}</td>
+                            <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{permission.description}</td>
+                            <td className="px-4 py-3 text-sm text-gray-500">
                                 {format(parseISO(permission.updatedAt), "PPP")}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium space-x-4">
+                            <td className="px-4 py-3 text-sm font-medium space-x-3">
                                 <button onClick={() => handleLogsClick(permission)} className="text-gray-600 hover:text-gray-900 transition-colors" title="View Logs">
                                     <FileText size={18} />
                                 </button>
@@ -445,9 +444,9 @@ const Permissions = () => {
 
             {/* Edit Modal */}
             <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Edit Permission</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Permission</h3>
                 {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <div className={`px-3 py-2 rounded-md mb-4 text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                         {modalFeedback.text}
                     </div>
                 )}
@@ -489,9 +488,9 @@ const Permissions = () => {
 
             {/* Add Modal */}
             <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Add New Permission</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Add New Permission</h3>
                 {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <div className={`px-3 py-2 rounded-md mb-4 text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                         {modalFeedback.text}
                     </div>
                 )}
@@ -535,12 +534,12 @@ const Permissions = () => {
             <Modal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
                 <div className="text-center">
                     <ShieldAlert className="mx-auto h-12 w-12 text-red-500" />
-                    <h3 className="mt-2 text-lg font-bold text-gray-800">Delete Permission</h3>
+                    <h3 className="mt-2 text-lg font-semibold text-gray-800">Delete Permission</h3>
                     <p className="mt-2 text-sm text-gray-600">
                         Are you sure you want to delete the permission "{selectedPermission?.name}"? This action cannot be undone.
                     </p>
                     {modalFeedback.text && (
-                        <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        <div className={`mt-4 px-3 py-2 rounded-md text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                             {modalFeedback.text}
                         </div>
                     )}
@@ -565,11 +564,11 @@ const Permissions = () => {
 
             {/* Roles Modal */}
             <Modal isOpen={isRolesModalOpen} onClose={() => setRolesModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Roles with "{selectedPermission?.name}"</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Roles with "{selectedPermission?.name}"</h3>
                 {rolesForPermission.length > 0 ? (
                     <ul className="space-y-2">
                         {rolesForPermission.map(role => (
-                            <li key={role.id} className="bg-gray-100 p-3 rounded-md text-sm font-medium">{role.name}</li>
+                            <li key={role.id} className="bg-amber-50 border border-amber-100 px-3 py-2 rounded-md text-sm font-medium text-gray-700">{role.name}</li>
                         ))}
                     </ul>
                 ) : (
@@ -584,8 +583,8 @@ const Permissions = () => {
 
             {/* Logs Modal */}
             <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
-                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-                    <h3 className="text-lg font-bold mb-4">Audit Logs for "{selectedPermission?.name}"</h3>
+                <div className="bg-amber-50 border border-amber-100 p-5 rounded-lg">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Audit Logs — {selectedPermission?.name}</h3>
                     {selectedPermission && (
                         <div className="space-y-4">
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">

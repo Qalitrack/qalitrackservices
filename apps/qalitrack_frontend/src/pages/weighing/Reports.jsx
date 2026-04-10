@@ -190,7 +190,7 @@ export default function Reports() {
         const i = new Image();
         i.onload = () => resolve(i);
         i.onerror = reject;
-        i.src = logoSrc;
+        i.src = settings.companyLogo || logoSrc;
       });
       const sz = Math.min(img.naturalWidth, img.naturalHeight);
       const cv = document.createElement("canvas");
@@ -328,7 +328,7 @@ export default function Reports() {
             data.cell.styles.textColor = green;
             data.cell.styles.fontStyle = "bold";
           } else {
-            data.cell.styles.textColor = amberDark;
+            data.cell.styles.textColor = accentDark;
             data.cell.styles.fontStyle = "bold";
           }
         }
@@ -600,6 +600,17 @@ export default function Reports() {
                 />
               </div>
 
+              {/* Status filter — always visible */}
+              <select
+                value={filters.status}
+                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                className="h-7 px-2 border border-gray-300 rounded-md text-[11px] focus:outline-none focus:ring-1 focus:ring-amber-300 focus:border-amber-300 bg-white"
+              >
+                <option value="">All Status</option>
+                <option value="Completed">Completed</option>
+                <option value="In Progress">In Progress</option>
+              </select>
+
               {activeFilterCount > 0 && (
                 <span className="text-[9px] text-amber-900 font-bold bg-gradient-to-r from-amber-100 to-amber-200 px-2 py-0.5 rounded-full border border-amber-300 shadow-sm">
                   🎯 {activeFilterCount} active
@@ -660,7 +671,7 @@ export default function Reports() {
           {/* Collapsible filter panel */}
           {showFilters && (
             <div className="px-3 py-3 bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20">
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {/* Start Date */}
                 <div className="space-y-1">
                   <label className="flex items-center gap-1 text-[9px] font-semibold text-gray-700 uppercase tracking-wider">
@@ -725,24 +736,6 @@ export default function Reports() {
                   />
                 </div>
 
-                {/* Status */}
-                <div className="space-y-1">
-                  <label className="flex items-center gap-1 text-[9px] font-semibold text-gray-700 uppercase tracking-wider">
-                    <span className="w-1 h-1 bg-amber-500 rounded-full" />
-                    Status
-                  </label>
-                  <select
-                    value={filters.status}
-                    onChange={(e) =>
-                      setFilters({ ...filters, status: e.target.value })
-                    }
-                    className="w-full border border-amber-300 px-2 rounded-md text-[10px] focus:outline-none focus:ring-1 focus:ring-amber-300 focus:border-amber-400 bg-white h-6"
-                  >
-                    <option value="">All Status</option>
-                    <option value="Completed">Completed</option>
-                    <option value="In Progress">In Progress</option>
-                  </select>
-                </div>
               </div>
             </div>
           )}

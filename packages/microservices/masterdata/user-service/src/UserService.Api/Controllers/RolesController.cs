@@ -292,6 +292,38 @@ namespace UserService.Api.Controllers
 
 
 
+        [HttpPatch("{id}/restore")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Restore(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return BadRequest("Role ID is required");
+
+                var restored = await _roleService.RestoreAsync(id);
+                if (!restored)
+                    return NotFound(new { message = $"Deleted role with ID {id} not found" });
+
+                _logger.LogInformation("Successfully restored role with ID {RoleId}", id);
+                return Ok(new { message = "Role restored successfully" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error restoring role with ID: {RoleId}", id);
+                return StatusCode(500, new { message = "An error occurred while restoring the role" });
+            }
+        }
+
         [HttpPost("{roleId}/permissions/{permissionId}")]
         [Authorize(Policy = "roles.manage")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

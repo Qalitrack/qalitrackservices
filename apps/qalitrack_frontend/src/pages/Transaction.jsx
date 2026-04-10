@@ -76,7 +76,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
       const img = new Image();
       img.onload = () => resolve(img);
       img.onerror = reject;
-      img.src = logoSrc;
+      img.src = ticketSettings.companyLogo || logoSrc;
     });
   } catch (_) { /* logo unavailable – skip */ }
 

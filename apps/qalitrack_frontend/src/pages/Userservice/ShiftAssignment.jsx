@@ -662,125 +662,93 @@ const ShiftAssignment = () => {
 
     // Loading / Error states
     if (loading) {
-        return (
-            <div className="flex justify-center items-center h-32">
-                <div>Loading shifts...</div>
-            </div>
-        );
+        return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
     if (error) {
-        return (
-            <div
-                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md"
-                role="alert"
-            >
-                {error}
-            </div>
-        );
+        return <div className="m-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">{error}</div>;
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-                    Shift Assignment
-                </h2>
-                <button
-                    onClick={handleDownloadPDF}
-                    disabled={showDeleted}
-                    className={`flex items-center gap-2 px-4 py-2 border border-amber-500 rounded-lg transition-colors shadow ${showDeleted ? 'bg-gray-300 text-gray-500 border-gray-300 cursor-not-allowed' : 'bg-amber-500 text-white hover:bg-amber-600'}`}
-                    title={showDeleted ? "Download not available for deleted view" : "Download Shift Assignments as PDF"}
-                >
-                    <Download size={18} />
-                    <span className="hidden md:inline">Download PDF</span>
-                </button>
-            </div>
-            <div className="mb-4">
-                <label className="flex items-center space-x-2">
-                    <input
-                        type="checkbox"
-                        checked={showDeleted}
-                        onChange={(e) => {
-                            setShowDeleted(e.target.checked);
-                            setPagination((p) => ({ ...p, page: 1 }));
-                        }}
-                        className="rounded border-gray-300"
-                    />
-                    <span className="text-sm text-gray-700">Show Deleted</span>
-                </label>
+        <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
+                <h2 className="text-sm font-bold text-gray-800">Shift Assignment</h2>
+                <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={showDeleted}
+                            onChange={(e) => {
+                                setShowDeleted(e.target.checked);
+                                setPagination((p) => ({ ...p, page: 1 }));
+                            }}
+                            className="h-3.5 w-3.5 rounded border-gray-300"
+                        />
+                        Show Deleted
+                    </label>
+                    <button
+                        onClick={handleDownloadPDF}
+                        disabled={showDeleted}
+                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'border border-amber-300 text-amber-700 hover:bg-amber-100'}`}
+                    >
+                        <Download size={13} />
+                        <span>PDF</span>
+                    </button>
+                </div>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-800">
+            <div className="flex-1 overflow-auto">
+                <table className="min-w-full">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
                     <tr>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                            Name
-                        </th>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
                         {!showDeleted && (
                             <>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                                    Start Time
-                                </th>
-                                <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                                    End Time
-                                </th>
+                                <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Start Time</th>
+                                <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">End Time</th>
                             </>
                         )}
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                            Mode
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                            Users
-                        </th>
-                        <th className="px-6 py-4 text-left text-xs font-semibold text-white uppercase">
-                            Roles
-                        </th>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Mode</th>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Users</th>
+                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Roles</th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-100">
                     {shifts.map((shift) => (
-                        <tr key={shift.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                {shift.name}
-                            </td>
+                        <tr key={shift.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
+                            <td className="px-4 py-3 text-sm font-medium text-gray-800">{shift.name}</td>
                             {!showDeleted && (
                                 <>
-                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                    <td className="px-4 py-3 text-sm text-gray-500">
                                         {isValidDateString(shift.startTime)
                                             ? format(parseISO(shift.startTime), "PPP p")
                                             : formatTimeOnlyString(shift.startTime) || '-'}
                                     </td>
-                                    <td className="px-6 py-4 text-sm text-gray-500">
+                                    <td className="px-4 py-3 text-sm text-gray-500">
                                         {isValidDateString(shift.endTime)
                                             ? format(parseISO(shift.endTime), "PPP p")
                                             : formatTimeOnlyString(shift.endTime) || '-'}
                                     </td>
                                 </>
                             )}
-                            <td className="px-6 py-4 text-sm text-gray-500">
+                            <td className="px-4 py-3 text-sm text-gray-500">
                                 {shift.mode === 0 ? 'Open' : shift.mode === 1 ? 'Closed' : shift.mode || 'N/A'}
                             </td>
-                            <td className="px-6 py-4 text-sm">
+                            <td className="px-4 py-3 text-sm">
                                 <button
                                     onClick={() => handleViewUsersClick(shift)}
-                                    className={`flex items-center hover:underline ${
-                                        (shift.assignedUsersCount || 0) > 0
-                                            ? "text-green-600 font-semibold"
-                                            : "text-amber-500"
-                                    }`}
+                                    className={`flex items-center gap-1 hover:underline ${(shift.assignedUsersCount || 0) > 0 ? "text-green-600 font-semibold" : "text-amber-500"}`}
                                 >
-                                    <Users size={18} className="mr-1" />
+                                    <Users size={15} />
                                     {shift.assignedUsersCount || 0}
                                 </button>
                             </td>
-                            <td className="px-6 py-4 text-sm">
+                            <td className="px-4 py-3 text-sm">
                                 <button
                                     onClick={() => handleViewRolesClick(shift)}
                                     disabled={showDeleted}
-                                    className={`flex items-center ${showDeleted ? 'opacity-50 cursor-not-allowed' : 'hover:underline'}`}
+                                    className={`flex items-center gap-1 text-amber-600 ${showDeleted ? 'opacity-50 cursor-not-allowed' : 'hover:underline'}`}
                                 >
-                                    <Tag size={18} className="mr-1" />
+                                    <Tag size={15} />
                                     {shift.assignedRolesCount}
                                 </button>
                             </td>
@@ -791,7 +759,7 @@ const ShiftAssignment = () => {
             </div>
 
             {/* Pagination */}
-            <div className="flex justify-between items-center mt-4 text-sm text-gray-700">
+            <div className="px-4 py-2.5 border-t border-amber-100 bg-white flex justify-between items-center text-xs text-gray-600">
                 <p>
           <span className="font-medium">
             {pagination.page * pagination.pageSize - pagination.pageSize + 1}

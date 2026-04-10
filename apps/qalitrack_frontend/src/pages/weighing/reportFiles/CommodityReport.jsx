@@ -114,7 +114,7 @@ export default function CommodityReport({ transactions = [], loading }) {
     let circularLogo = null
     try {
       const img = await new Promise((resolve, reject) => {
-        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = logoSrc
+        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = settings.companyLogo || logoSrc
       })
       const sz = Math.min(img.naturalWidth, img.naturalHeight)
       const cv = document.createElement("canvas")

@@ -10,6 +10,7 @@
  */
 
 import { createContext, useContext, useState, useCallback } from "react";
+import { getTicketSettings, getCompanyLogo, saveCompanyLogo } from "../../utils/ticketThemeConfig";
 
 // ── Sidebar themes ────────────────────────────────────────────────────────────
 export const SIDEBAR_THEMES = {
@@ -95,14 +96,36 @@ const DEFAULT_SIDEBAR_SETTINGS = {
 const SidebarSettingsContext = createContext(null);
 
 export function SidebarSettingsProvider({ children }) {
-  const [sidebarSettings, setSidebarSettings] = useState(DEFAULT_SIDEBAR_SETTINGS);
+  const [sidebarSettings, setSidebarSettings] = useState(() => {
+    // Hydrate companyName and companyLogo from localStorage on first mount
+    try {
+      const saved = getTicketSettings();
+      return {
+        ...DEFAULT_SIDEBAR_SETTINGS,
+        ...(saved.companyName && { companyName: saved.companyName }),
+        companyLogo: getCompanyLogo(),
+      };
+    } catch (_) {
+      return DEFAULT_SIDEBAR_SETTINGS;
+    }
+  });
 
   /**
    * Merge partial updates — call this from SystemSettings GeneralTab
    * e.g. updateSidebarSettings({ companyLogo: base64, sidebarTheme: "midnight" })
+   * companyLogo is persisted to its own localStorage key so PDF generators can read it.
    */
   const updateSidebarSettings = useCallback((patch) => {
-    setSidebarSettings((prev) => ({ ...prev, ...patch }));
+    setSidebarSettings((prev) => {
+      const next = { ...prev, ...patch };
+      // Persist logo to its own key whenever it changes
+      if ("companyLogo" in patch) {
+        try {
+          saveCompanyLogo(next.companyLogo);
+        } catch (_) {}
+      }
+      return next;
+    });
   }, []);
 
   /**

@@ -65,32 +65,34 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
 
   // ── Menu items (unchanged from original) ──────────────────────────────────
   const allMenuItems = [
-    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: `${basePath}/dashboard`, roles: ["Admin", "Operator"] },
+    // Dashboard — all roles except Operator
+    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: `${basePath}/dashboard`, roles: null, excludeRoles: ["Operator"] },
     {
+      // Weighing group — visible to all authenticated users
       key: "weighing",
       label: "Weighing",
       icon: <Scale size={18} />,
-      roles: ["Admin", "Operator"],
+      roles: null,
       children: [
-        { key: "weighing-factory",     label: "Factory Weighing",  icon: <Factory size={16} />,       path: `${basePath}/weighing/factory`,    roles: ["Admin", "Operator"] },
-        { key: "transactions",         label: "Transactions",      icon: <LayoutDashboard size={16} />,path: `${basePath}/transactions`,        roles: ["Admin", "Operator"] },
-        { key: "weighing-vehicles",    label: "Vehicles",          icon: <Truck size={16} />,          path: `${basePath}/weighing/vehicle`,    roles: ["Admin", "Operator"] },
-        { key: "weighing-drivers",     label: "Drivers",           icon: <User size={16} />,           path: `${basePath}/weighing/drivers`,    roles: ["Admin", "Operator"] },
-        { key: "weighing-transporters",label: "Transporters",      icon: <Tractor size={16} />,        path: `${basePath}/transporters`,        roles: ["Admin", "Operator"] },
-        { key: "weighing-owners",      label: "Owners",            icon: <Users size={16} />,          path: `${basePath}/weighing/owners`,     roles: ["Admin", "Operator"] },
-        { key: "suppliers",            label: "Suppliers",         icon: <Satellite size={16} />,      path: `${basePath}/suppliers`,           roles: ["Admin", "Operator"] },
-        { key: "weighing-products",    label: "Products",          icon: <BarChart3 size={16} />,      path: `${basePath}/weighing/products`,   roles: ["Admin", "Operator"] },
-        { key: "weighing-weighbridges",label: "Weighbridges",      icon: <Scale size={16} />,          path: `${basePath}/weighbridges`,        roles: ["Admin"] },
-        { key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,          path: `${basePath}/weighing/axle-config`,roles: ["Admin"] },
-        { key: "weighing-saccos",      label: "Saccos",            icon: <User2 size={16} />,          path: `${basePath}/saccos`,              roles: ["Admin", "Operator"] },
+        { key: "weighing-factory",     label: "Factory Weighing",  icon: <Factory size={16} />,        path: `${basePath}/weighing/factory`,    roles: null },
+        { key: "transactions",         label: "Transactions",      icon: <LayoutDashboard size={16} />, path: `${basePath}/transactions`,        roles: null },
+        { key: "weighing-vehicles",    label: "Vehicles",          icon: <Truck size={16} />,           path: `${basePath}/weighing/vehicle`,    roles: null },
+        { key: "weighing-drivers",     label: "Drivers",           icon: <User size={16} />,            path: `${basePath}/weighing/drivers`,    roles: null },
+        { key: "weighing-transporters",label: "Transporters",      icon: <Tractor size={16} />,         path: `${basePath}/transporters`,        roles: null },
+        { key: "weighing-owners",      label: "Owners",            icon: <Users size={16} />,           path: `${basePath}/weighing/owners`,     roles: null },
+        { key: "suppliers",            label: "Suppliers",         icon: <Satellite size={16} />,       path: `${basePath}/suppliers`,           roles: null },
+        { key: "weighing-products",    label: "Products",          icon: <BarChart3 size={16} />,       path: `${basePath}/weighing/products`,   roles: null },
+        { key: "weighing-weighbridges",label: "Weighbridges",      icon: <Scale size={16} />,           path: `${basePath}/weighbridges`,        roles: ["Admin"] },
+        { key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,           path: `${basePath}/weighing/axle-config`,roles: ["Admin"] },
+        { key: "weighing-saccos",      label: "Saccos",            icon: <User2 size={16} />,           path: `${basePath}/saccos`,              roles: null },
       ],
     },
-    { key: "user-management",  label: "User Management",  icon: <Users size={18} />,    path: `${basePath}/user-management`,       roles: ["Admin"] },
-    { key: "analytics",        label: "Analytics",         icon: <BarChart3 size={18} />,path: `${basePath}/analytics`,            roles: ["Admin"] },
-    { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,              roles: ["Admin"] },
-    { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,               roles: ["Admin"] },
-    { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`,     roles: ["Admin"] },
-    // { key: "attendance",       label: "Attendance",        icon: <User2 size={18} />,    path: `${basePath}/attendance`,           roles: ["Admin"] },
+    { key: "user-management",  label: "User Management",  icon: <Users size={18} />,    path: `${basePath}/user-management`,   roles: ["Admin"] },
+    // Analytics, Reports — visible to all authenticated users; System — all except Operator
+    { key: "analytics",        label: "Analytics",         icon: <BarChart3 size={18} />,path: `${basePath}/analytics`,        roles: null },
+    { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,          roles: null },
+    { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,           roles: ["Admin"] },
+    { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`, roles: ["Admin"] },
     {
       key: "security",
       label: "Security",
@@ -102,20 +104,22 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
         { key: "password-policy", label: "Password Policy",icon: <Lock size={16} />,   path: `${basePath}/security/password-policy`,roles: ["Admin"] },
       ],
     },
-    // { key: "backup",      label: "Backup Service", icon: <Database size={18} />, path: `${basePath}/backup/microservice`, roles: ["Admin"] },
-    { key: "system",      label: "System",         icon: <Cog size={18} />,      path: `${basePath}/system`,              roles: ["Admin"] },
-    { key: "automation",  label: "Automation",     icon: <Cog size={18} />,      path: `${basePath}/automation`,          roles: ["Admin"] },
-    // { key: "calibrations",label: "Calibrations",   icon: <Wrench size={18} />,   path: `${basePath}/calibrations`,        roles: ["Admin"] },
+    { key: "system",      label: "System",         icon: <Cog size={18} />,  path: `${basePath}/system`,     roles: null, excludeRoles: ["Operator"] },
+    // { key: "automation",  label: "Automation",     icon: <Cog size={18} />,  path: `${basePath}/automation`, roles: ["Admin"] },
   ];
 
   const filterMenuByRole = (items) => {
     return items.filter((item) => {
-      const hasAccess = item.roles?.some((role) => userRoles.includes(role));
+      // excludeRoles: hide from specific roles even if they'd otherwise have access
+      if (item.excludeRoles?.some((role) => userRoles.includes(role))) return false;
+      // null/undefined roles = visible to all authenticated users
+      const hasAccess = !item.roles || item.roles.some((role) => userRoles.includes(role));
       if (!hasAccess) return false;
       if (item.children) {
-        item.children = item.children.filter((child) =>
-          child.roles?.some((role) => userRoles.includes(role))
-        );
+        item.children = item.children.filter((child) => {
+          if (child.excludeRoles?.some((role) => userRoles.includes(role))) return false;
+          return !child.roles || child.roles.some((role) => userRoles.includes(role));
+        });
         return item.children.length > 0;
       }
       return true;
