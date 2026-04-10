@@ -85,8 +85,9 @@ public class DriverProfilesController : ControllerBase
     [HttpPost("{id}/approve")]
     public async Task<IActionResult> Approve(string id, [FromBody] ApproveDriverProfileDto dto)
     {
-        // TODO: Get reviewedBy from authenticated user context
-        var reviewedBy = "admin"; // Placeholder
+        var reviewedBy = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+            ?? User.Identity?.Name
+            ?? "unknown";
         var result = await _service.ApproveProfileAsync(id, dto, reviewedBy);
         return result == null ? NotFound() : Ok(result);
     }
