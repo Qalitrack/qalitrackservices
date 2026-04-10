@@ -71,6 +71,10 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
                 name: "FK_VehicleMileages_Drivers_DriverId",
                 table: "VehicleMileages");
 
+            migrationBuilder.DropForeignKey(
+                name: "FK_DriverProfiles_Drivers_DriverId",
+                table: "DriverProfiles");
+
             migrationBuilder.DropTable(
                 name: "Drivers");
 
@@ -203,6 +207,14 @@ namespace TechnicianApi.Infrastructure.Data.Migrations
             migrationBuilder.AddForeignKey(
                 name: "FK_DriverActivities_Drivers_DriverId",
                 table: "DriverActivities",
+                column: "DriverId",
+                principalTable: "Drivers",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_DriverProfiles_Drivers_DriverId",
+                table: "DriverProfiles",
                 column: "DriverId",
                 principalTable: "Drivers",
                 principalColumn: "Id",
