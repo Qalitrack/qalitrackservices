@@ -27,8 +27,16 @@ public class DriverMappingProfile : Profile
             .ForMember(dest => dest.ReviewedAt, opt => opt.Ignore())
             .ForMember(dest => dest.ReviewedBy, opt => opt.Ignore())
             .ForMember(dest => dest.ApprovalNotes, opt => opt.Ignore())
-            .ForMember(dest => dest.RejectionReason, opt => opt.Ignore());
+            .ForMember(dest => dest.RejectionReason, opt => opt.Ignore())
+            .ForMember(dest => dest.LicenseExpiryDate, opt => opt.MapFrom(src =>
+                src.LicenseExpiryDate.HasValue
+                    ? DateTime.SpecifyKind(src.LicenseExpiryDate.Value, DateTimeKind.Utc)
+                    : (DateTime?)null));
         CreateMap<UpdateDriverProfileDto, DriverProfile>()
+            .ForMember(dest => dest.LicenseExpiryDate, opt => opt.MapFrom(src =>
+                src.LicenseExpiryDate.HasValue
+                    ? DateTime.SpecifyKind(src.LicenseExpiryDate.Value, DateTimeKind.Utc)
+                    : (DateTime?)null))
             .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
 
         // DriverActivity mappings
