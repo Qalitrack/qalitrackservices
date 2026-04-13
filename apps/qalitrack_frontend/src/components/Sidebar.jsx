@@ -104,7 +104,8 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
         { key: "password-policy", label: "Password Policy",icon: <Lock size={16} />,   path: `${basePath}/security/password-policy`,roles: ["Admin"] },
       ],
     },
-    { key: "system",      label: "System",         icon: <Cog size={18} />,  path: `${basePath}/system`,     roles: null, excludeRoles: ["Operator"] },
+    { key: "system",      label: "System",         icon: <Cog size={18} />,      path: `${basePath}/system`,              roles: null, excludeRoles: ["Operator"] },
+    { key: "backup",      label: "Backup",         icon: <Database size={18} />, path: `${basePath}/backup/microservice`, roles: ["Admin"] },
     // { key: "automation",  label: "Automation",     icon: <Cog size={18} />,  path: `${basePath}/automation`, roles: ["Admin"] },
   ];
 

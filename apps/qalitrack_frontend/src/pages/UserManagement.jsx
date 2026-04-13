@@ -15,7 +15,7 @@ const FilterSelect = ({ value, onChange, options, placeholder, icon: Icon, class
       value={value}
       onChange={(e) => onChange(e.target.value)}
       className={`
-        w-full pl-${Icon ? "7" : "2.5"} pr-7 py-1 text-[10px]
+        w-full pl-${Icon ? "7" : "2.5"} pr-7 py-1 text-xs
         bg-white border border-amber-200 rounded-md
         appearance-none cursor-pointer outline-none
         focus:border-amber-500 focus:ring-1 focus:ring-amber-300/40
@@ -119,8 +119,8 @@ export default function UserManagement() {
             <Users size={14} className="text-white" />
           </div>
           <div>
-            <h2 className="text-xs font-bold text-gray-900 leading-tight">User Management</h2>
-            <p className="text-[9px] text-amber-700 font-medium">Users • Roles • Permissions</p>
+            <h2 className="text-sm font-bold text-gray-900 leading-tight">User Management</h2>
+            <p className="text-xs text-amber-700 font-medium">Users • Roles • Permissions</p>
           </div>
         </div>
 
@@ -136,7 +136,7 @@ export default function UserManagement() {
                 setCurrentPage(1);
               }}
               className="
-                w-full pl-7 pr-2.5 py-1 text-[10px] rounded-md
+                w-full pl-7 pr-2.5 py-1 text-xs rounded-md
                 border border-amber-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-300/40
                 bg-white placeholder:text-gray-400 transition-all
               "
@@ -171,7 +171,7 @@ export default function UserManagement() {
             <button
               onClick={clearFilters}
               className="
-                flex items-center gap-1 px-2 py-1 text-[10px] font-semibold
+                flex items-center gap-1 px-2 py-1 text-xs font-semibold
                 bg-amber-100 text-amber-800 border border-amber-300 rounded-md
                 hover:bg-amber-200 active:opacity-90 transition-colors
               "
@@ -184,8 +184,8 @@ export default function UserManagement() {
 
       {/* Active filters */}
       {hasFilters && (
-        <div className="flex items-center gap-1.5 text-[9px] flex-wrap">
-          <span className="text-gray-500 font-medium">Filters:</span>
+        <div className="flex items-center gap-1.5 text-xs flex-wrap">
+          <span className="text-gray-700 font-medium">Filters:</span>
           {searchTerm && (
             <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full border border-amber-200">
               "{searchTerm.slice(0, 15)}{searchTerm.length > 15 ? "..." : ""}
@@ -209,9 +209,9 @@ export default function UserManagement() {
         <div className="shrink-0 px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <div className="w-0.5 h-4 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
-            <h3 className="text-[11px] font-semibold text-gray-900">User Directory</h3>
+            <h3 className="text-xs font-semibold text-gray-900">User Directory</h3>
           </div>
-          <span className="text-[9px] font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
+          <span className="text-xs font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
             5 per page
           </span>
         </div>
@@ -232,8 +232,8 @@ export default function UserManagement() {
 
         {/* Pagination with page numbers */}
         {totalUsers > 0 && totalPages > 1 && (
-          <div className="shrink-0 px-2 py-1.5 border-t border-amber-200 bg-amber-50/60 flex items-center justify-between text-[10px]">
-            <div className="text-gray-600 font-medium">
+          <div className="shrink-0 px-2 py-1.5 border-t border-amber-200 bg-amber-50/60 flex items-center justify-between text-xs">
+            <div className="text-gray-700 font-medium">
               {totalUsers} users • page {currentPage} of {totalPages}
             </div>
 
@@ -254,7 +254,7 @@ export default function UserManagement() {
                     <button
                       onClick={() => goToPage(page)}
                       className={`
-                        min-w-[24px] h-6 flex items-center justify-center rounded text-[10px] font-medium
+                        min-w-[24px] h-6 flex items-center justify-center rounded text-xs font-medium
                         ${currentPage === page 
                           ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm" 
                           : "hover:bg-amber-100 text-amber-800"}

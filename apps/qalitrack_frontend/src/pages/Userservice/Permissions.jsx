@@ -117,7 +117,9 @@ const Permissions = () => {
                 const cv = document.createElement('canvas'); cv.width = sz; cv.height = sz;
                 const ctx = cv.getContext('2d');
                 ctx.beginPath(); ctx.arc(sz/2, sz/2, sz/2, 0, Math.PI*2); ctx.clip();
-                ctx.drawImage(img, 0, 0, sz, sz);
+                const srcX = (img.naturalWidth - sz) / 2;
+                const srcY = (img.naturalHeight - sz) / 2;
+                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
                 circularLogo = cv.toDataURL('image/png');
             } catch (_) {}
 
@@ -192,6 +194,29 @@ const Permissions = () => {
             doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW/2, footerY+5, { align: 'center' });
             doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
             doc.text('Inventing and Making Happen', PW/2, footerY+8.5, { align: 'center' });
+
+            // Watermark on all pages
+            if (circularLogo) {
+                try {
+                    const wmSize = 90;
+                    const PH = doc.internal.pageSize.getHeight();
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = 200; wmCanvas.height = 200;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    const wmImg = await new Promise((resolve, reject) => {
+                        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+                        i.src = circularLogo;
+                    });
+                    wmCtx.globalAlpha = 0.07;
+                    wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+                    const wmData = wmCanvas.toDataURL('image/png');
+                    const totalPages = doc.internal.getNumberOfPages();
+                    for (let p = 1; p <= totalPages; p++) {
+                        doc.setPage(p);
+                        doc.addImage(wmData, 'PNG', PW/2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+                    }
+                } catch (_) {}
+            }
 
             doc.save(`permissions-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
@@ -286,11 +311,9 @@ const Permissions = () => {
         setModalFeedback({ text: '', type: '' });
         try {
             await updatePermission(selectedPermission);
-            await loadPermissions(); // Refresh the list
-            setModalFeedback({ text: 'Permission updated successfully!', type: 'success' });
-            setTimeout(() => {
-                setEditModalOpen(false);
-            }, 3000);
+            await loadPermissions(showDeleted);
+            setEditModalOpen(false);
+            showMessage('Permission updated successfully!', 'success');
         } catch (err) {
             console.error("Failed to update permission:", err);
             setModalFeedback({ text: err.message || 'Failed to update permission.', type: 'error' });
@@ -306,12 +329,10 @@ const Permissions = () => {
         setModalFeedback({ text: '', type: '' });
         try {
             await createPermission(newPermission);
-            setNewPermission({ name: '', description: '' }); // Clear form
-            await loadPermissions(); // Refresh the list
-            setModalFeedback({ text: 'Permission created successfully!', type: 'success' });
-            setTimeout(() => {
-                setAddModalOpen(false);
-            }, 3000);
+            setNewPermission({ name: '', description: '' });
+            await loadPermissions(showDeleted);
+            setAddModalOpen(false);
+            showMessage('Permission created successfully!', 'success');
         } catch (err) {
             console.error("Failed to create permission:", err);
             setModalFeedback({ text: err.message || 'Failed to create permission.', type: 'error' });
@@ -333,13 +354,9 @@ const Permissions = () => {
             } else {
                 await deletePermission(permission.id);
             }
-            setModalFeedback({ text: `Permission successfully ${actionVerb}.`, type: 'success' });
-            loadPermissions(showDeleted);
-            // Don't close the modal immediately to show success message
-            setTimeout(() => {
-                setDeleteModalOpen(false);
-                showMessage(`Permission successfully ${actionVerb}.`, 'success');
-            }, 1500);
+            await loadPermissions(showDeleted);
+            setDeleteModalOpen(false);
+            showMessage(`Permission successfully ${actionVerb}.`, 'success');
         } catch (err) {
             console.error(`Failed to ${action} permission:`, err);
             setModalFeedback({ text: err.message || `Failed to ${action} permission.`, type: 'error' });

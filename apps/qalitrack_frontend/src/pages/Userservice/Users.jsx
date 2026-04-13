@@ -528,7 +528,9 @@ const Users = () => {
                 ctx.beginPath();
                 ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
                 ctx.clip();
-                ctx.drawImage(img, 0, 0, sz, sz);
+                const srcX = (img.naturalWidth - sz) / 2;
+                const srcY = (img.naturalHeight - sz) / 2;
+                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
                 circularLogo = cv.toDataURL('image/png');
             } catch (_) {}
 
@@ -614,6 +616,29 @@ const Users = () => {
             doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW / 2, footerY + 5, { align: 'center' });
             doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
             doc.text('Inventing and Making Happen', PW / 2, footerY + 8.5, { align: 'center' });
+
+            // Watermark on all pages
+            if (circularLogo) {
+                try {
+                    const wmSize = 90;
+                    const PH = doc.internal.pageSize.getHeight();
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = 200; wmCanvas.height = 200;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    const wmImg = await new Promise((resolve, reject) => {
+                        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+                        i.src = circularLogo;
+                    });
+                    wmCtx.globalAlpha = 0.07;
+                    wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+                    const wmData = wmCanvas.toDataURL('image/png');
+                    const totalPages = doc.internal.getNumberOfPages();
+                    for (let p = 1; p <= totalPages; p++) {
+                        doc.setPage(p);
+                        doc.addImage(wmData, 'PNG', PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+                    }
+                } catch (_) {}
+            }
 
             doc.save(`users-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
@@ -744,9 +769,9 @@ const Users = () => {
         <div className="bg-white shadow-lg rounded-xl p-5 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 md:gap-0">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-800">Users</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">Users</h2>
                     <div className="flex items-center gap-2 ml-4">
-                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-700">Show Deleted</label>
+                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-800">Show Deleted</label>
                         <input
                             type="checkbox"
                             id="show-deleted"
@@ -798,9 +823,9 @@ const Users = () => {
                     <tbody className="bg-white divide-y divide-gray-100">
                     {users.map((user) => (
                         <tr key={user.id} className={`hover:bg-gray-50 ${user.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.email}</td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">{user.firstName} {user.lastName}</td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{user.email}</td>
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-800">{user.firstName} {user.lastName}</td>
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
                                 <button
                                     onClick={() => handleViewRolesClick(user)}
                                     className="flex items-center text-amber-500 hover:text-amber-600 transition-colors"
@@ -810,7 +835,7 @@ const Users = () => {
                                     <span>{user.roles ? user.roles.length : '0'}</span>
                                 </button>
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
                                 <button
                                     onClick={() => handleViewShiftsClick(user)}
                                     className="flex items-center text-purple-500 hover:text-purple-600 transition-colors"
@@ -825,7 +850,7 @@ const Users = () => {
                                         {getStatusText(user)}
                                     </span>
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
                                 {formatDistanceToNow(parseISO(user.updatedAt), { addSuffix: true })}
                             </td>
                             <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-left text-sm font-medium flex flex-wrap gap-2">
@@ -924,7 +949,7 @@ const Users = () => {
                 <form onSubmit={handleCreateUser} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name *</label>
+                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-800">First Name *</label>
                             <input
                                 type="text"
                                 name="firstName"
@@ -936,7 +961,7 @@ const Users = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name *</label>
+                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">Last Name *</label>
                             <input
                                 type="text"
                                 name="lastName"
@@ -950,7 +975,7 @@ const Users = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email *</label>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email *</label>
                         <input
                             type="email"
                             name="email"
@@ -963,7 +988,7 @@ const Users = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                        <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-800">Mobile Number</label>
                         <input
                             type="tel"
                             name="mobileNumber"
@@ -1008,7 +1033,7 @@ const Users = () => {
                     <form onSubmit={handleUpdate} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
+                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-800">First Name</label>
                                 <input
                                     type="text"
                                     name="firstName"
@@ -1019,7 +1044,7 @@ const Users = () => {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">Last Name</label>
                                 <input
                                     type="text"
                                     name="lastName"
@@ -1031,7 +1056,7 @@ const Users = () => {
                             </div>
                         </div>
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email</label>
                             <input
                                 type="email"
                                 name="email"
@@ -1042,7 +1067,7 @@ const Users = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-800">Mobile Number</label>
                             <input
                                 type="tel"
                                 name="mobileNumber"
@@ -1308,9 +1333,9 @@ const Users = () => {
                             {selectedUserShifts.map(shift => (
                                 <tr key={shift.id}>
                                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{format(parseISO(shift.startTime), 'PP')}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.startTime), 'p')}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.endTime), 'p')}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{format(parseISO(shift.startTime), 'p')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{format(parseISO(shift.endTime), 'p')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">
                                         {formatDistanceToNow(parseISO(shift.startTime), { addSuffix: false })}
                                     </td>
                                 </tr>

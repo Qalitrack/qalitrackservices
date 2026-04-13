@@ -93,7 +93,7 @@ const PasswordPolicy = () => {
                     </div>
                     <div>
                         <span className="text-sm font-bold text-gray-900 block leading-tight">Password Policy</span>
-                        <span className="text-[10px] text-amber-700 font-medium">Configure system-wide password requirements</span>
+                        <span className="text-xs text-amber-800 font-medium">Configure system-wide password requirements</span>
                     </div>
                 </div>
                 {!isEditing && (
@@ -127,7 +127,7 @@ const PasswordPolicy = () => {
                         <form onSubmit={handleUpdate} className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label htmlFor="minimumLength" className="block text-xs font-semibold text-gray-700 mb-1">Minimum Length</label>
+                                    <label htmlFor="minimumLength" className="block text-sm font-semibold text-gray-800 mb-1">Minimum Length</label>
                                     <input
                                         id="minimumLength" name="minimumLength" type="number"
                                         value={policy.minimumLength} onChange={handleChange}
@@ -136,7 +136,7 @@ const PasswordPolicy = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label htmlFor="maxAgeDays" className="block text-xs font-semibold text-gray-700 mb-1">Max Age (Days)</label>
+                                    <label htmlFor="maxAgeDays" className="block text-sm font-semibold text-gray-800 mb-1">Max Age (Days)</label>
                                     <input
                                         id="maxAgeDays" name="maxAgeDays" type="number"
                                         value={policy.maxAgeDays} onChange={handleChange}
@@ -192,13 +192,13 @@ const PasswordPolicy = () => {
                                     } else if (typeof value === 'boolean') {
                                         displayValue = value
                                             ? <span className="inline-flex items-center gap-1 text-green-700 font-semibold"><Check className="w-3.5 h-3.5" /> Yes</span>
-                                            : <span className="text-gray-400 font-medium">No</span>;
+                                            : <span className="text-gray-600 font-medium">No</span>;
                                     } else {
                                         displayValue = <span className="font-semibold text-gray-900">{value != null ? value.toString() : 'N/A'}</span>;
                                     }
                                     return (
                                         <div key={key} className="flex items-center justify-between bg-gray-50 hover:bg-amber-50 border border-gray-100 px-4 py-3 rounded-md transition-colors">
-                                            <span className="text-sm font-medium text-gray-600">{label}</span>
+                                            <span className="text-sm font-medium text-gray-800">{label}</span>
                                             <span className="text-sm">{displayValue}</span>
                                         </div>
                                     );

@@ -122,7 +122,9 @@ export default function SupplierReport({ transactions = [], loading }) {
       cv.width = sz; cv.height = sz
       const ctx = cv.getContext("2d")
       ctx.beginPath(); ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); ctx.clip()
-      ctx.drawImage(img, 0, 0, sz, sz)
+      const srcX = (img.naturalWidth - sz) / 2
+      const srcY = (img.naturalHeight - sz) / 2
+      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz)
       circularLogo = cv.toDataURL("image/png")
     } catch (_) {}
 
@@ -182,6 +184,29 @@ export default function SupplierReport({ transactions = [], loading }) {
     doc.text("Powered by Qalibrated Systems  |  www.qalibrated.co.ke", PW / 2, footerY + 5, { align: "center" })
     doc.setFontSize(6.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...gray)
     doc.text("Inventing and Making Happen", PW / 2, footerY + 8.5, { align: "center" })
+
+    // Watermark on all pages
+    if (circularLogo) {
+      try {
+        const wmSize = 90
+        const PH = doc.internal.pageSize.getHeight()
+        const wmCanvas = document.createElement("canvas")
+        wmCanvas.width = 200; wmCanvas.height = 200
+        const wmCtx = wmCanvas.getContext("2d")
+        const wmImg = await new Promise((resolve, reject) => {
+          const i = new Image(); i.onload = () => resolve(i); i.onerror = reject
+          i.src = circularLogo
+        })
+        wmCtx.globalAlpha = 0.07
+        wmCtx.drawImage(wmImg, 0, 0, 200, 200)
+        const wmData = wmCanvas.toDataURL("image/png")
+        const totalPages = doc.internal.getNumberOfPages()
+        for (let p = 1; p <= totalPages; p++) {
+          doc.setPage(p)
+          doc.addImage(wmData, "PNG", PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize)
+        }
+      } catch (_) {}
+    }
 
     doc.save(`supplier-report-${dayjs().format("YYYY-MM-DD")}.pdf`)
   }

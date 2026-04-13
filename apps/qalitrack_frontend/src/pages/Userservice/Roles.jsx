@@ -84,7 +84,7 @@ const Roles = () => {
         try {
             const fetchFunction = deleted ? fetchDeletedRoles : fetchRoles;
             const data = await fetchFunction();
-            setRoles(data);
+            setRoles(data.map(r => ({ ...r, isDeleted: r.isDeleted === true || r.isDeleted === 'True' })));
         } catch (err) {
             setError(err.message || 'Failed to fetch roles.');
         } finally {
@@ -158,7 +158,9 @@ const Roles = () => {
                 const cv = document.createElement('canvas'); cv.width = sz; cv.height = sz;
                 const ctx = cv.getContext('2d');
                 ctx.beginPath(); ctx.arc(sz/2, sz/2, sz/2, 0, Math.PI*2); ctx.clip();
-                ctx.drawImage(img, 0, 0, sz, sz);
+                const srcX = (img.naturalWidth - sz) / 2;
+                const srcY = (img.naturalHeight - sz) / 2;
+                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
                 circularLogo = cv.toDataURL('image/png');
             } catch (_) {}
 
@@ -244,6 +246,31 @@ const Roles = () => {
             doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW/2, footerY+5, { align: 'center' });
             doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
             doc.text('Inventing and Making Happen', PW/2, footerY+8.5, { align: 'center' });
+
+            // Watermark on all pages
+            try {
+                const wmSize = 90;
+                const PH = doc.internal.pageSize.getHeight();
+                const wmCanvas = document.createElement('canvas');
+                wmCanvas.width = 400; wmCanvas.height = 400;
+                const wmCtx = wmCanvas.getContext('2d');
+                const wmImg = await new Promise((resolve, reject) => {
+                    const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+                    i.src = settings.companyLogo || logoSrc;
+                });
+                wmCtx.beginPath(); wmCtx.arc(200, 200, 200, 0, Math.PI * 2); wmCtx.clip();
+                wmCtx.globalAlpha = 0.07;
+                const wmSz = Math.min(wmImg.naturalWidth, wmImg.naturalHeight);
+                const wmSrcX = (wmImg.naturalWidth - wmSz) / 2;
+                const wmSrcY = (wmImg.naturalHeight - wmSz) / 2;
+                wmCtx.drawImage(wmImg, wmSrcX, wmSrcY, wmSz, wmSz, 0, 0, 400, 400);
+                const wmData = wmCanvas.toDataURL('image/png');
+                const totalPages = doc.internal.getNumberOfPages();
+                for (let p = 1; p <= totalPages; p++) {
+                    doc.setPage(p);
+                    doc.addImage(wmData, 'PNG', PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+                }
+            } catch (_) {}
 
             doc.save(`roles-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
@@ -377,11 +404,9 @@ const Roles = () => {
         setModalFeedback({ text: '', type: '' });
         try {
             await updateRole(selectedRole);
-            await loadRoles(showDeleted); // Refresh the list
-            setModalFeedback({ text: 'Role updated successfully!', type: 'success' });
-            setTimeout(() => {
-                setEditModalOpen(false);
-            }, 3000);
+            await loadRoles(showDeleted);
+            setEditModalOpen(false);
+            showMessage('Role updated successfully!', 'success');
         } catch (err) {
             console.error("Failed to update role:", err);
             setModalFeedback({ text: err.message || 'Failed to update role.', type: 'error' });
@@ -398,11 +423,9 @@ const Roles = () => {
         try {
             await createRole(newRole);
             setNewRole({ name: '', description: '', isActive: true });
-            await loadRoles(showDeleted); // Refresh the list
-            setModalFeedback({ text: 'Role created successfully!', type: 'success' });
-            setTimeout(() => {
-                setAddModalOpen(false);
-            }, 3000);
+            await loadRoles(showDeleted);
+            setAddModalOpen(false);
+            showMessage('Role created successfully!', 'success');
         } catch (err) {
             console.error("Failed to create role:", err);
             setModalFeedback({ text: err.message || 'Failed to create role.', type: 'error' });
@@ -417,24 +440,32 @@ const Roles = () => {
         const actionVerb = role.isDeleted ? 'restored' : 'deleted';
 
         setIsUpdating(true);
+        setActionLoading(role.id);
         setModalFeedback({ text: '', type: '' });
+
+        // Optimistic removal from list
+        if (!role.isDeleted && !showDeleted) {
+            setRoles(prev => prev.filter(r => r.id !== role.id));
+        } else if (role.isDeleted && showDeleted) {
+            setRoles(prev => prev.filter(r => r.id !== role.id));
+        }
+
         try {
             if (role.isDeleted) {
                 await restoreRole(role.id);
             } else {
                 await deleteRole(role.id);
             }
-            setModalFeedback({ text: `Role successfully ${actionVerb}.`, type: 'success' });
-            loadRoles(showDeleted);
-            // Don't close the modal immediately to show success message
-            setTimeout(() => {
-                setDeleteModalOpen(false);
-                showMessage(`Role successfully ${actionVerb}.`, 'success');
-            }, 1500);
+            await loadRoles(showDeleted);
+            setDeleteModalOpen(false);
+            showMessage(`Role successfully ${actionVerb}.`, 'success');
         } catch (err) {
             console.error(`Failed to ${action} role:`, err);
             setModalFeedback({ text: err.message || `Failed to ${action} role.`, type: 'error' });
+            loadRoles(showDeleted);
+        } finally {
             setIsUpdating(false);
+            setActionLoading(null);
         }
     };
 
@@ -449,9 +480,9 @@ const Roles = () => {
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
             <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-sm font-bold text-gray-800">Manage Roles</h2>
+                <h2 className="text-base font-bold text-gray-900">Manage Roles</h2>
                 <div className="flex items-center gap-2">
-                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
+                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
                         <input
                             type="checkbox"
                             id="show-deleted"
@@ -499,9 +530,9 @@ const Roles = () => {
                     <tbody className="divide-y divide-gray-100">
                     {roles.map((role) => (
                         <tr key={role.id} className={`border-b border-gray-100 hover:bg-amber-50 transition-all ${role.isDeleted ? 'opacity-60 bg-gray-50' : ''}`}>
-                            <td className="px-4 py-3 text-sm font-medium text-gray-800">{role.name}</td>
-                            <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{role.description}</td>
-                            <td className="px-4 py-3 text-sm text-gray-500">
+                            <td className="px-4 py-3 text-sm font-semibold text-gray-900">{role.name}</td>
+                            <td className="px-4 py-3 text-sm text-gray-700 hidden md:table-cell max-w-xs truncate">{role.description}</td>
+                            <td className="px-4 py-3 text-sm text-gray-700">
                                 <button
                                     onClick={() => handleViewUsersClick(role)}
                                     className="flex items-center gap-1.5 text-amber-600 hover:text-amber-900 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
@@ -516,7 +547,7 @@ const Roles = () => {
                                     {role.isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </td>
-                            <td className="px-4 py-3 text-sm text-gray-500">
+                            <td className="px-4 py-3 text-sm text-gray-700">
                                 {format(parseISO(role.updatedAt), "PPP")}
                             </td>
                             <td className="px-4 py-3 text-sm font-medium space-x-3">
@@ -546,6 +577,16 @@ const Roles = () => {
                                         <Trash2 size={18} />
                                     </button>
                                 )}
+                                {showDeleted && (
+                                    <button
+                                        onClick={() => handleToggleDelete(role)}
+                                        className={`text-blue-600 hover:text-blue-800 transition-colors ${actionLoading === role.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        title="Restore Role"
+                                        disabled={actionLoading === role.id}
+                                    >
+                                        <RefreshCw size={18} />
+                                    </button>
+                                )}
                             </td>
                         </tr>
                     ))}
@@ -555,7 +596,7 @@ const Roles = () => {
 
             {/* Edit Modal */}
             <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Role</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Edit Role</h3>
                 {modalFeedback.text && (
                     <div className={`px-3 py-2 rounded-md mb-4 text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                         {modalFeedback.text}
@@ -564,7 +605,7 @@ const Roles = () => {
                 {selectedRole && (
                     <form onSubmit={handleUpdate} className="space-y-4 bg-white p-4 rounded-lg">
                         <div>
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
+                            <label htmlFor="name" className="block text-sm font-medium text-gray-800">Name</label>
                             <input
                                 type="text"
                                 name="name"
@@ -575,7 +616,7 @@ const Roles = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+                            <label htmlFor="description" className="block text-sm font-medium text-gray-800">Description</label>
                             <textarea
                                 name="description"
                                 id="description"
@@ -612,7 +653,7 @@ const Roles = () => {
 
             {/* Add Modal */}
             <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Add New Role</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Add New Role</h3>
                 {modalFeedback.text && (
                     <div className={`px-3 py-2 rounded-md mb-4 text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                         {modalFeedback.text}
@@ -620,7 +661,7 @@ const Roles = () => {
                 )}
                 <form onSubmit={handleCreate} className="space-y-4 bg-white p-4 rounded-lg">
                     <div>
-                        <label htmlFor="newName" className="block text-sm font-medium text-gray-700">Name</label>
+                        <label htmlFor="newName" className="block text-sm font-medium text-gray-800">Name</label>
                         <input
                             type="text"
                             name="name"
@@ -632,7 +673,7 @@ const Roles = () => {
                         />
                     </div>
                     <div>
-                        <label htmlFor="newDescription" className="block text-sm font-medium text-gray-700">Description</label>
+                        <label htmlFor="newDescription" className="block text-sm font-medium text-gray-800">Description</label>
                         <textarea
                             name="description"
                             id="newDescription"
@@ -671,7 +712,7 @@ const Roles = () => {
             <Modal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
                 <div className="text-center">
                     <ShieldAlert className="mx-auto h-12 w-12 text-red-500" />
-                    <h3 className="mt-2 text-lg font-semibold text-gray-800">Delete Role</h3>
+                    <h3 className="mt-2 text-lg font-semibold text-gray-900">Delete Role</h3>
                     <p className="mt-2 text-sm text-gray-600">
                         Are you sure you want to delete the role "{selectedRole?.name}"? This action cannot be undone.
                     </p>
@@ -701,7 +742,7 @@ const Roles = () => {
 
             {/* User List Modal */}
             <Modal isOpen={isUserListModalOpen} onClose={() => setUserListModalOpen(false)}>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Users in "{selectedRole?.name}" Role</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Users in "{selectedRole?.name}" Role</h3>
                 {selectedRole?.users && selectedRole.users.length > 0 ? (
                     <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
                         {selectedRole.users.map(user => (
@@ -726,7 +767,7 @@ const Roles = () => {
             {/* Logs Modal */}
             <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
                 <div className="bg-amber-50 border border-amber-100 p-5 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Audit Logs — {selectedRole?.name}</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-4">Audit Logs — {selectedRole?.name}</h3>
                     {selectedRole && (
                         <div className="space-y-4">
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
@@ -761,7 +802,7 @@ const Roles = () => {
 
             {/* Manage Permissions Modal */}
             <Modal isOpen={isPermissionsModalOpen} onClose={() => setPermissionsModalOpen(false)} size="lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Manage Permissions — {selectedRole?.name}</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Manage Permissions — {selectedRole?.name}</h3>
                 {loadingPermissions ? (
                     <div className="flex justify-center py-8"><div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500"></div></div>
                 ) : (
@@ -802,7 +843,7 @@ const Roles = () => {
             <Modal isOpen={isConfirmPermissionModalOpen} onClose={() => setConfirmPermissionModalOpen(false)} size="md">
                 <div className="text-center">
                     <ShieldAlert className={`mx-auto h-12 w-12 ${pendingPermissionAction.action === 'add' ? 'text-green-500' : 'text-red-500'}`} />
-                    <h3 className="mt-2 text-lg font-semibold text-gray-800">
+                    <h3 className="mt-2 text-lg font-semibold text-gray-900">
                         Confirm {pendingPermissionAction.action === 'add' ? 'Add' : 'Remove'} Permission
                     </h3>
                     <p className="mt-2 text-sm text-gray-600">

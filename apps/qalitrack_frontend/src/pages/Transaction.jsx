@@ -80,15 +80,31 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     });
   } catch (_) { /* logo unavailable – skip */ }
 
-  // ── HEADER ───────────────────────────────────────────────────────────────
-  // Logo image (left)
+  // ── Circular logo crop for header ────────────────────────────────────────
+  let circularLogo = null;
   if (logoImg) {
-    doc.addImage(logoImg, "JPEG", L, 7, 18, 18);
+    try {
+      const sz = 120;
+      const cCanvas = document.createElement("canvas");
+      cCanvas.width = sz; cCanvas.height = sz;
+      const cCtx = cCanvas.getContext("2d");
+      cCtx.beginPath(); cCtx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); cCtx.clip();
+      const srcSz = Math.min(logoImg.naturalWidth, logoImg.naturalHeight);
+      const srcX  = (logoImg.naturalWidth  - srcSz) / 2;
+      const srcY  = (logoImg.naturalHeight - srcSz) / 2;
+      cCtx.drawImage(logoImg, srcX, srcY, srcSz, srcSz, 0, 0, sz, sz);
+      circularLogo = cCanvas.toDataURL("image/png");
+    } catch (_) {}
+  }
+
+  // ── HEADER ───────────────────────────────────────────────────────────────
+  if (circularLogo) {
+    doc.addImage(circularLogo, "PNG", L, 7, 18, 18);
   }
 
   // Company name – centred
   doc.setFontSize(fontSize.title);
-  doc.setFont("helvetica", "bold");
+  doc.setFont("times", "bold");
   doc.setTextColor(...palette.bodyText);
   doc.text(companyName, W / 2, 13, { align: "center" });
 
@@ -100,6 +116,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
 
   // Date – top-right
   doc.setFontSize(fontSize.sub);
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(...palette.bodyText);
   doc.text(ticketDate, R, 10, { align: "right" });
 
@@ -112,50 +129,47 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.setTextColor(...white);
   doc.text(statusText, R - badgeW / 2, 17.5, { align: "center" });
 
-  // Divider
-  doc.setDrawColor(...borderCol);
-  doc.setLineWidth(0.3);
-  doc.line(L, 29, R, 29);
-
-  // "WEIGHING TICKET" badge – centred
-  const tBadgeW = 52;
-  doc.setFillColor(...amberFill);
+  // Divider – amber accent
   doc.setDrawColor(...amberBdr);
   doc.setLineWidth(0.5);
-  doc.roundedRect((W - tBadgeW) / 2, 32, tBadgeW, 8, 2, 2, "FD");
-  doc.setFontSize(fontSize.heading);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...black);
-  doc.text("WEIGHING TICKET", W / 2, 37.5, { align: "center" });
+  doc.line(L, 29, R, 29);
 
-  // ── TICKET DETAILS ───────────────────────────────────────────────────────
-  let y = 47;
+  // ── Helper: centred section title in Times bold with amber underline ───────
+  const drawTitle = (text, yPos) => {
+    doc.setFontSize(fontSize.heading + 1);
+    doc.setFont("times", "bold");
+    doc.setTextColor(...amberBdr);
+    doc.text(text, W / 2, yPos, { align: "center" });
+    const tw = doc.getTextWidth(text);
+    doc.setDrawColor(...amberBdr);
+    doc.setLineWidth(0.5);
+    doc.line(W / 2 - tw / 2, yPos + 1.2, W / 2 + tw / 2, yPos + 1.2);
+    return yPos + 6;
+  };
 
-  doc.setFillColor(...palette.headerBg);
-  doc.roundedRect(L, y, TW, 7, 2, 2, "F");
-  doc.setFontSize(fontSize.sub);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...palette.headerText);
-  doc.text("TICKET DETAILS", W / 2, y + 5, { align: "center" });
-  y += 9; // header height + small gap
+  // ── "WEIGHING TICKET" ─────────────────────────────────────────────────────
+  let y = drawTitle("WEIGHING TICKET", 35);
 
-  const detailsY = y;
+  // ── TICKET DETAILS ────────────────────────────────────────────────────────
+  const labelTint = [255, 249, 235]; // light amber for label columns
+  const detailsY  = y;
   autoTable(doc, {
     startY: detailsY,
     margin: { left: L, right: L },
     theme: "plain",
     styles: {
       fontSize: fontSize.body,
-      cellPadding: { top: 1.8, right: 2, bottom: 1.8, left: 3 },
+      font: "helvetica",
+      cellPadding: { top: 1, right: 1.5, bottom: 1, left: 2 },
       textColor: black,
-      lineColor: palette.border,
-      lineWidth: 0.2,
-      fillColor: [252, 252, 252],
+      lineColor: [225, 210, 180],
+      lineWidth: 0.15,
+      overflow: "linebreak",
     },
     columnStyles: {
-      0: { fontStyle: "bold", cellWidth: 26 },
+      0: { fontStyle: "bold", cellWidth: 26, fillColor: labelTint },
       1: { cellWidth: 62 },
-      2: { fontStyle: "bold", cellWidth: 28 },
+      2: { fontStyle: "bold", cellWidth: 28, fillColor: labelTint },
       3: { cellWidth: 66 },
     },
     body: [
@@ -170,88 +184,39 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     ],
   });
   doc.setDrawColor(...amberBdr);
-  doc.setLineWidth(0.5);
+  doc.setLineWidth(0.4);
   doc.roundedRect(L, detailsY, TW, doc.lastAutoTable.finalY - detailsY, 3, 3, "S");
 
-  // ── WEIGHT MEASUREMENTS ──────────────────────────────────────────────────
-  y = doc.lastAutoTable.finalY + 4;
-
-  const grossDate = record.firstWeightDate  ? dayjs(record.firstWeightDate).format("DD-MM-YY hh:mm A")  : "—";
-  const tareDate  = record.secondWeightDate ? dayjs(record.secondWeightDate).format("DD-MM-YY hh:mm A") : "—";
-  const operator  = record.operatorName  || "—";
-  const scale     = record.scaleName     || "—";
-  const bridge    = record.weighBridgeName || "—";
-
-  const wmY = y;
-  autoTable(doc, {
-    startY: wmY,
-    margin: { left: L, right: L },
-    theme: "grid",
-    headStyles: {
-      fillColor: lightGray,
-      textColor: black,
-      fontStyle: "bold",
-      fontSize: fontSize.body,
-      halign: "center",
-      lineColor: borderCol,
-    },
-    styles: {
-      fontSize: fontSize.body,
-      textColor: black,
-      lineColor: borderCol,
-      cellPadding: { top: 2, bottom: 2, left: 3, right: 2 },
-    },
-    columnStyles: {
-      0: { fontStyle: "bold", cellWidth: 32 },
-      1: { cellWidth: 26 },
-      2: { cellWidth: 34 },
-      3: { cellWidth: 30 },
-      4: { cellWidth: 22 },
-    },
-    head: [["MEASUREMENT", "WEIGHT (kg)", "DATE", "OPERATOR", "SCALE", "WEIGHBRIDGE"]],
-    body: [
-      ["GROSS WEIGHT", record.firstWeight  ? `${record.firstWeight} kg`  : "—", grossDate, operator, scale, bridge],
-      ["TARE WEIGHT",  record.secondWeight ? `${record.secondWeight} kg` : "—", tareDate,  operator, scale, bridge],
-      ["NET WEIGHT",   record.netWeight    ? `${record.netWeight} kg`    : "—", grossDate, operator, scale, bridge],
-    ],
-  });
-  doc.setDrawColor(...amberBdr);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(L, wmY, TW, doc.lastAutoTable.finalY - wmY, 3, 3, "S");
-
-  // ── AXLE WEIGHT ANALYSIS ─────────────────────────────────────────────────
-  y = doc.lastAutoTable.finalY + 4;
-
-  doc.setFillColor(...palette.headerBg);
-  doc.roundedRect(L, y, TW, 8, 2, 2, "F");
-  doc.setFontSize(fontSize.sub);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...palette.headerText);
-  doc.text("AXLE WEIGHT ANALYSIS", W / 2, y + 5.5, { align: "center" });
-  y += 10; // header height + small gap
+  // ── "AXLE WEIGHT ANALYSIS" ────────────────────────────────────────────────
+  y = drawTitle("AXLE WEIGHT ANALYSIS", doc.lastAutoTable.finalY + 6);
 
   const axleY = y;
   autoTable(doc, {
     startY: axleY,
     margin: { left: L, right: L },
-    theme: "grid",
+    theme: "plain",
     headStyles: {
-      fillColor: lightGray,
+      fillColor: amberFill,
       textColor: black,
       fontStyle: "bold",
+      font: "helvetica",
       fontSize: fontSize.body,
       halign: "center",
-      lineColor: borderCol,
+      lineColor: amberBdr,
+      lineWidth: 0.2,
     },
     styles: {
       fontSize: fontSize.body,
+      font: "helvetica",
       halign: "center",
       textColor: black,
-      lineColor: borderCol,
-      cellPadding: 2,
+      lineColor: [225, 210, 180],
+      lineWidth: 0.15,
+      cellPadding: { top: 1, right: 1.5, bottom: 1, left: 1.5 },
+      overflow: "linebreak",
     },
     columnStyles: {
-      0: { fontStyle: "bold", halign: "left", cellWidth: 28 },
+      0: { fontStyle: "bold", halign: "left", cellWidth: 28, fillColor: labelTint },
     },
     head: [["ITEMS", "GROUP 1", "GROUP 2", "GROUP 3", "GROUP 4", "GVW"]],
     body: [
@@ -268,61 +233,99 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     ],
   });
   doc.setDrawColor(...amberBdr);
-  doc.setLineWidth(0.5);
+  doc.setLineWidth(0.4);
   doc.roundedRect(L, axleY, TW, doc.lastAutoTable.finalY - axleY, 3, 3, "S");
 
-  // ── WEIGHT SUMMARY ───────────────────────────────────────────────────────
-  y = doc.lastAutoTable.finalY + 4;
+  // ── "WEIGHT MEASUREMENTS" ─────────────────────────────────────────────────
+  y = drawTitle("WEIGHT MEASUREMENTS", doc.lastAutoTable.finalY + 6);
 
-  const summaryY = y;
+  const grossDate = record.firstWeightDate  ? dayjs(record.firstWeightDate).format("DD-MM-YY hh:mm A")  : "—";
+  const tareDate  = record.secondWeightDate ? dayjs(record.secondWeightDate).format("DD-MM-YY hh:mm A") : "—";
+  const operator  = record.operatorName    || "—";
+  const scale     = record.scaleName       || "—";
+  const bridge    = record.weighBridgeName || "—";
+  const tatText   = formatTurnaroundTimeSimple(record.firstWeightDate, record.secondWeightDate, record.turnaroundTime);
+  const netHl     = [255, 245, 200]; // amber highlight for NET row
+
+  const wmY = y;
   autoTable(doc, {
-    startY: summaryY,
+    startY: wmY,
     margin: { left: L, right: L },
-    theme: "grid",
-    styles: {
-      lineColor: borderCol,
-      lineWidth: 0.4,
-      cellPadding: { top: 3, bottom: 3, left: 2, right: 2 },
-    },
+    theme: "plain",
     headStyles: {
-      fillColor: lightGray,
+      fillColor: amberFill,
       textColor: black,
       fontStyle: "bold",
-      fontSize: fontSize.sub,
+      font: "helvetica",
+      fontSize: fontSize.body,
       halign: "center",
+      lineColor: amberBdr,
+      lineWidth: 0.2,
     },
-    head: [["FIRST WEIGHT", "SECOND WEIGHT", "NET WEIGHT"]],
-    body: [[
-      { content: `${record.firstWeight  || 0} Kg`, styles: { fontSize: 13, fontStyle: "bold", halign: "center" } },
-      { content: `${record.secondWeight || 0} Kg`, styles: { fontSize: 13, fontStyle: "bold", halign: "center" } },
-      {
-        content: `${record.netWeight || 0} Kg`,
-        styles: { fontSize: 13, fontStyle: "bold", halign: "center", fillColor: palette.netWeightBg },
-      },
-    ]],
+    styles: {
+      fontSize: fontSize.body,
+      font: "helvetica",
+      textColor: black,
+      lineColor: [225, 210, 180],
+      lineWidth: 0.15,
+      cellPadding: { top: 1, right: 1.5, bottom: 1, left: 2 },
+      overflow: "linebreak",
+    },
+    columnStyles: {
+      0: { fontStyle: "bold", cellWidth: 32, fillColor: labelTint },
+      1: { cellWidth: 28 },
+      2: { cellWidth: 32 },
+      3: { cellWidth: 28 },
+      4: { cellWidth: 20 },
+    },
+    head: [["MEASUREMENT", "WEIGHT (kg)", "DATE", "OPERATOR", "SCALE", "WEIGHBRIDGE"]],
+    body: [
+      ["GROSS WEIGHT", record.firstWeight  ? `${record.firstWeight} kg`  : "—", grossDate, operator, scale, bridge],
+      ["TARE WEIGHT",  record.secondWeight ? `${record.secondWeight} kg` : "—", tareDate,  operator, scale, bridge],
+      [
+        { content: "NET WEIGHT",  styles: { fontStyle: "bold", fillColor: netHl } },
+        { content: record.netWeight ? `${record.netWeight} kg` : "—", styles: { fontStyle: "bold", fillColor: netHl } },
+        { content: grossDate, styles: { fillColor: netHl } },
+        { content: operator,  styles: { fillColor: netHl } },
+        { content: scale,     styles: { fillColor: netHl } },
+        { content: bridge,    styles: { fillColor: netHl } },
+      ],
+      [
+        { content: "TURNAROUND TIME", styles: { fontStyle: "bold", fillColor: labelTint } },
+        { content: tatText, colSpan: 5, styles: { halign: "center", fontStyle: "bold" } },
+      ],
+    ],
   });
   doc.setDrawColor(...amberBdr);
-  doc.setLineWidth(0.5);
-  doc.roundedRect(L, summaryY, TW, doc.lastAutoTable.finalY - summaryY, 3, 3, "S");
+  doc.setLineWidth(0.4);
+  doc.roundedRect(L, wmY, TW, doc.lastAutoTable.finalY - wmY, 3, 3, "S");
 
-  // ── VEHICLE SNAPSHOT ─────────────────────────────────────────────────────
-  y = doc.lastAutoTable.finalY + 4;
+  // ── "VEHICLE SNAPSHOT" ────────────────────────────────────────────────────
+  y = drawTitle("VEHICLE SNAPSHOT", doc.lastAutoTable.finalY + 6);
 
-  doc.setFillColor(...palette.headerBg);
-  doc.roundedRect(L, y, TW, 8, 2, 2, "F");
-  doc.setFontSize(fontSize.sub);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...palette.headerText);
-  doc.text("VEHICLE SNAPSHOT", W / 2, y + 5.5, { align: "center" });
-  y += 8;
+  const snapH   = 42;
+  const snapGap = 3;
+  const snapW   = (TW - snapGap) / 2;
 
-  const snapH = 45;
-  doc.setFillColor(30, 30, 35);
-  doc.roundedRect(L, y, TW, snapH, 3, 3, "F");
+  doc.setFillColor(25, 25, 30);
+  doc.roundedRect(L, y, snapW, snapH, 3, 3, "F");
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(L, y, snapW, snapH, 3, 3, "S");
   doc.setFontSize(fontSize.body);
   doc.setFont("helvetica", "italic");
   doc.setTextColor(160, 160, 160);
-  doc.text(`[ Vehicle Image: ${record.noPlate || "N/A"} ]`, W / 2, y + snapH / 2, { align: "center" });
+  doc.text(`[ Entry: ${record.noPlate || "N/A"} ]`, L + snapW / 2, y + snapH / 2, { align: "center" });
+
+  doc.setFillColor(25, 25, 30);
+  doc.roundedRect(L + snapW + snapGap, y, snapW, snapH, 3, 3, "F");
+  doc.setDrawColor(...amberBdr);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(L + snapW + snapGap, y, snapW, snapH, 3, 3, "S");
+  doc.setFontSize(fontSize.body);
+  doc.setFont("helvetica", "italic");
+  doc.setTextColor(160, 160, 160);
+  doc.text(`[ Exit: ${record.noPlate || "N/A"} ]`, L + snapW + snapGap + snapW / 2, y + snapH / 2, { align: "center" });
 
   doc.setFontSize(fontSize.body - 1);
   doc.setFont("helvetica", "italic");
@@ -362,8 +365,8 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.roundedRect(L, y, TW, 15, 3, 3, "FD");
 
   // Logo image (left inside footer)
-  if (logoImg) {
-    doc.addImage(logoImg, "JPEG", L + 2, y + 2, 11, 11);
+  if (circularLogo) {
+    doc.addImage(circularLogo, "PNG", L + 2, y + 2, 11, 11);
   }
 
   // Tagline (centre)
@@ -387,6 +390,29 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...black);
   doc.text("Inventing and Making Happen", tagX + tagW / 2, y + 8.5, { align: "center" });
+
+  // Watermark on all pages
+  if (logoImg) {
+    try {
+      const wmSize = 90;
+      const PH = doc.internal.pageSize.getHeight();
+      const wmCanvas = document.createElement("canvas");
+      wmCanvas.width = 200; wmCanvas.height = 200;
+      const wmCtx = wmCanvas.getContext("2d");
+      wmCtx.beginPath(); wmCtx.arc(100, 100, 100, 0, Math.PI * 2); wmCtx.clip();
+      wmCtx.globalAlpha = 0.07;
+      const wmSz = Math.min(logoImg.naturalWidth, logoImg.naturalHeight);
+      const wmSrcX = (logoImg.naturalWidth - wmSz) / 2;
+      const wmSrcY = (logoImg.naturalHeight - wmSz) / 2;
+      wmCtx.drawImage(logoImg, wmSrcX, wmSrcY, wmSz, wmSz, 0, 0, 200, 200);
+      const wmData = wmCanvas.toDataURL("image/png");
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let p = 1; p <= totalPages; p++) {
+        doc.setPage(p);
+        doc.addImage(wmData, "PNG", W / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+      }
+    } catch (_) {}
+  }
 
   if (previewOnly) {
     return URL.createObjectURL(doc.output("blob"));

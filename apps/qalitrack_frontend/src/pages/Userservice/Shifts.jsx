@@ -488,7 +488,9 @@ const Shifts = () => {
                 ctx.beginPath();
                 ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
                 ctx.clip();
-                ctx.drawImage(img, 0, 0, sz, sz);
+                const srcX = (img.naturalWidth - sz) / 2;
+                const srcY = (img.naturalHeight - sz) / 2;
+                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
                 circularLogo = cv.toDataURL('image/png');
             } catch (_) {}
 
@@ -583,6 +585,29 @@ const Shifts = () => {
             doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
             doc.text('Inventing and Making Happen', PW / 2, footerY + 8.5, { align: 'center' });
 
+            // Watermark on all pages
+            if (circularLogo) {
+                try {
+                    const wmSize = 90;
+                    const PH = doc.internal.pageSize.getHeight();
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = 200; wmCanvas.height = 200;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    const wmImg = await new Promise((resolve, reject) => {
+                        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+                        i.src = circularLogo;
+                    });
+                    wmCtx.globalAlpha = 0.07;
+                    wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+                    const wmData = wmCanvas.toDataURL('image/png');
+                    const totalPages = doc.internal.getNumberOfPages();
+                    for (let p = 1; p <= totalPages; p++) {
+                        doc.setPage(p);
+                        doc.addImage(wmData, 'PNG', PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+                    }
+                } catch (_) {}
+            }
+
             doc.save(`shifts-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
@@ -612,9 +637,9 @@ const Shifts = () => {
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
             <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-sm font-bold text-gray-800">Shifts</h2>
+                <h2 className="text-base font-bold text-gray-900">Shifts</h2>
                 <div className="flex items-center gap-2">
-                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
+                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
                         <input
                             id="show-deleted"
                             type="checkbox"
@@ -706,7 +731,7 @@ const Shifts = () => {
                                 <td className="px-3 py-4 whitespace-nowrap">
                                     <div className="text-sm">
                                         <div className="font-medium">{formatTimeOnlyString(shift.startTime) || '--:--'}</div>
-                                        <div className="font-medium text-gray-500">to {formatTimeOnlyString(shift.endTime) || '--:--'}</div>
+                                        <div className="font-medium text-gray-700">to {formatTimeOnlyString(shift.endTime) || '--:--'}</div>
                                     </div>
                                 </td>
 
@@ -714,7 +739,7 @@ const Shifts = () => {
                                     <div className="text-sm">
                                         <div>{startDate.toLocaleDateString()}</div>
                                         {isRecurring && (
-                                            <div className="text-medium text-gray-500">
+                                            <div className="text-sm text-gray-600">
                                                 to {endDate.toLocaleDateString()}
                                             </div>
                                         )}
@@ -723,11 +748,11 @@ const Shifts = () => {
 
                                 <td className="px-3 py-4 whitespace-nowrap">
                                     <div className="flex flex-col space-y-1">
-                      <span className="text-medium  text-gray-900">
+                      <span className="text-sm text-gray-900">
                         {shift.type === 1 ? 'Single' : shift.type === 2 ? 'Recurring' : ''}
                       </span>
                                         {isRecurring && (
-                                            <span className="font-medium text-gray-500">
+                                            <span className="font-medium text-gray-700">
                           {shift.recurrenceType === 1 ? 'Daily' :
                               shift.recurrenceType === 2 ? 'Weekly' :
                                   shift.recurrenceType === 3 ? 'Monthly' : 'Custom'}
@@ -749,7 +774,7 @@ const Shifts = () => {
                         {shift.status === 3 ? 'Active' : shift.status === 1 ? 'completed' : 'Draft'}
                       </span>
                                         {shift.totalInstances > 0 && (
-                                            <span className="text-xs text-gray-500">
+                                            <span className="text-xs text-gray-600">
                           {shift.totalInstances} instance{shift.totalInstances !== 1 ? 's' : ''}
                         </span>
                                         )}

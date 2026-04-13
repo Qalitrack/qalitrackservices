@@ -671,9 +671,9 @@ const ShiftAssignment = () => {
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
             <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-sm font-bold text-gray-800">Shift Assignment</h2>
+                <h2 className="text-base font-bold text-gray-900">Shift Assignment</h2>
                 <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
+                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
                         <input
                             type="checkbox"
                             checked={showDeleted}
@@ -715,22 +715,22 @@ const ShiftAssignment = () => {
                     <tbody className="divide-y divide-gray-100">
                     {shifts.map((shift) => (
                         <tr key={shift.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
-                            <td className="px-4 py-3 text-sm font-medium text-gray-800">{shift.name}</td>
+                            <td className="px-4 py-3 text-sm font-semibold text-gray-900">{shift.name}</td>
                             {!showDeleted && (
                                 <>
-                                    <td className="px-4 py-3 text-sm text-gray-500">
+                                    <td className="px-4 py-3 text-sm text-gray-700">
                                         {isValidDateString(shift.startTime)
                                             ? format(parseISO(shift.startTime), "PPP p")
                                             : formatTimeOnlyString(shift.startTime) || '-'}
                                     </td>
-                                    <td className="px-4 py-3 text-sm text-gray-500">
+                                    <td className="px-4 py-3 text-sm text-gray-700">
                                         {isValidDateString(shift.endTime)
                                             ? format(parseISO(shift.endTime), "PPP p")
                                             : formatTimeOnlyString(shift.endTime) || '-'}
                                     </td>
                                 </>
                             )}
-                            <td className="px-4 py-3 text-sm text-gray-500">
+                            <td className="px-4 py-3 text-sm text-gray-700">
                                 {shift.mode === 0 ? 'Open' : shift.mode === 1 ? 'Closed' : shift.mode || 'N/A'}
                             </td>
                             <td className="px-4 py-3 text-sm">
@@ -759,7 +759,7 @@ const ShiftAssignment = () => {
             </div>
 
             {/* Pagination */}
-            <div className="px-4 py-2.5 border-t border-amber-100 bg-white flex justify-between items-center text-xs text-gray-600">
+            <div className="px-4 py-2.5 border-t border-amber-100 bg-white flex justify-between items-center text-xs text-gray-700">
                 <p>
           <span className="font-medium">
             {pagination.page * pagination.pageSize - pagination.pageSize + 1}
