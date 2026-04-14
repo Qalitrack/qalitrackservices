@@ -4,6 +4,7 @@ import { HashRouter as BrowserRouter, Routes, Route } from 'react-router-dom';
 import { routes } from './App/routes.jsx';
 import { SidebarSettingsProvider } from './components/Context/Sidebarsettingscontext';
 import { ColorSchemeProvider } from './components/Context/ColorSchemeContext';
+import AppLicenseGate from './components/AppLicenseGate';
 
 const Loading = () => (
     <div className="flex items-center justify-center min-h-screen">
@@ -26,15 +27,17 @@ const renderRoute = (route, index) => {
 function App() {
     return (
         <ColorSchemeProvider>
-            <BrowserRouter>
-                <SidebarSettingsProvider>
-                    <Suspense fallback={<Loading />}>
-                        <Routes>
-                            {routes.map((route, index) => renderRoute(route, index))}
-                        </Routes>
-                    </Suspense>
-                </SidebarSettingsProvider>
-            </BrowserRouter>
+            <AppLicenseGate>
+                <BrowserRouter>
+                    <SidebarSettingsProvider>
+                        <Suspense fallback={<Loading />}>
+                            <Routes>
+                                {routes.map((route, index) => renderRoute(route, index))}
+                            </Routes>
+                        </Suspense>
+                    </SidebarSettingsProvider>
+                </BrowserRouter>
+            </AppLicenseGate>
         </ColorSchemeProvider>
     );
 }

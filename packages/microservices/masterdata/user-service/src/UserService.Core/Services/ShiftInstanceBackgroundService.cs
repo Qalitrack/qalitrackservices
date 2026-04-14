@@ -162,7 +162,6 @@ public class ShiftInstanceBackgroundService : BackgroundService
             // Get Nairobi timezone
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
-            var nairobiToday = nairobiNow.Date;
             
             // FIXED: Get only scheduled instances (more efficient query)
             var allScheduledInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled))
@@ -173,48 +172,17 @@ public class ShiftInstanceBackgroundService : BackgroundService
                 return; // Early return if no scheduled instances
             }
             
-            // Filter instances that should have started by now in Nairobi time
-            // Only include instances scheduled for today
-            var pastDueInstances = allScheduledInstances
-                .Where(instance => 
+            // All Scheduled instances whose start time has passed — regardless of date.
+            // This catches any instance the service missed while it was down.
+            var allInstances = allScheduledInstances
+                .Where(instance =>
                 {
-                    var scheduledDateUtc = instance.ScheduledDate.Date;
-                    var scheduledDateInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledDateUtc, nairobiTimeZone).Date;
-                    
-                    // Only process instances scheduled for today in Nairobi time
-                    if (scheduledDateInNairobi != nairobiToday)
-                        return false;
-                        
-                    var scheduledTimeUtc = instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay);
-                    var scheduledTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledTimeUtc, nairobiTimeZone);
-                    
-                    // Include if the scheduled time has passed in Nairobi time
-                    return scheduledTimeInNairobi <= nairobiNow;
+                    var startUtc = instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay);
+                    var startNairobi = TimeZoneInfo.ConvertTimeFromUtc(startUtc, nairobiTimeZone);
+                    return startNairobi <= nairobiNow;
                 })
                 .OrderBy(instance => instance.ScheduledDate)
                 .ThenBy(instance => instance.ScheduledStartTime)
-                .ToList();
-            
-            // Get shifts starting soon (in the next check interval) in Nairobi time
-            var upcomingInstances = allScheduledInstances
-                .Where(instance => 
-                {
-                    if (instance.ScheduledDate.Date != DateTime.UtcNow.Date)
-                        return false;
-        
-                    var scheduledTimeUtc = instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay);
-                    var scheduledTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledTimeUtc, nairobiTimeZone);
-                    return scheduledTimeInNairobi > nairobiNow && 
-                           scheduledTimeInNairobi <= nairobiNow.Add(_frequentCheckInterval);
-                })
-                .OrderBy(instance => instance.ScheduledDate)
-                .ToList();
-
-            // Combine and deduplicate
-            var allInstances = pastDueInstances
-                .Concat(upcomingInstances)
-                .GroupBy(i => i.Id)
-                .Select(g => g.First())
                 .ToList();
             
             if (!allInstances.Any())
@@ -319,60 +287,42 @@ public class ShiftInstanceBackgroundService : BackgroundService
     {
         try
         {
-            // Convert current UTC time to Nairobi time
             var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
             var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
-            
-            // Get all incomplete instances
-            var allIncompleteInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.InProgress))
-                .ToList();
-            
-            if (!allIncompleteInstances.Any())
-            {
-                return; // Early return if no instances to check
-            }
-            
-            // Filter instances where the scheduled end time has passed in Nairobi time
-            var instancesToCheck = allIncompleteInstances
-                .Where(instance => 
+
+            // Single query — catch both InProgress AND Scheduled instances past their end time.
+            // Scheduled past end time means the service missed the start; jump straight to Completed.
+            var candidates = (await shiftInstanceRepository.GetInstancesByStatusesAsync(
+                    new[] { ShiftInstanceStatus.InProgress, ShiftInstanceStatus.Scheduled }))
+                .Where(instance =>
                 {
-                    var scheduledDateUtc = instance.ScheduledDate;
-                    var scheduledTimeUtc = scheduledDateUtc.Date.Add(instance.ScheduledEndTime.TimeOfDay);
-                    var scheduledTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(scheduledTimeUtc, nairobiTimeZone);
-                    
-                    return scheduledTimeInNairobi <= nairobiNow;
+                    var endUtc = instance.ScheduledDate.Date.Add(instance.ScheduledEndTime.TimeOfDay);
+                    var endNairobi = TimeZoneInfo.ConvertTimeFromUtc(endUtc, nairobiTimeZone);
+                    return endNairobi <= nairobiNow;
                 })
                 .ToList();
-            
-            if (!instancesToCheck.Any())
-            {
-                return; // Early return if no instances need completion
-            }
+
+            if (!candidates.Any()) return;
 
             int completedCount = 0;
-
-            foreach (var instance in instancesToCheck)
+            foreach (var instance in candidates)
             {
                 try
                 {
-                    if (instance.Status == ShiftInstanceStatus.InProgress)
-                    {
-                        instance.Status = ShiftInstanceStatus.Completed;
-                        instance.UpdatedAt = now;
-                        await shiftInstanceRepository.UpdateAsync(instance);
-                        completedCount++;
-                    }
+                    instance.Status    = ShiftInstanceStatus.Completed;
+                    instance.UpdatedAt = now;
+                    instance.UpdatedBy = "System";
+                    await shiftInstanceRepository.UpdateAsync(instance);
+                    completedCount++;
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "Error processing shift instance {InstanceId}", instance.Id);
+                    _logger.LogError(ex, "Error completing shift instance {InstanceId}", instance.Id);
                 }
             }
 
             if (completedCount > 0)
-            {
                 _logger.LogInformation("Marked {Count} shift instances as completed", completedCount);
-            }
         }
         catch (Exception ex)
         {

@@ -21,7 +21,7 @@
  * Reset → restores from localStorage, falls back to API defaults
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   message,
   Tabs,
@@ -42,6 +42,9 @@ import {
   Monitor,
   Users,
   Lock,
+  KeyRound,
+  ShieldCheck,
+  Globe,
   Webhook,
   Database,
   FileText,
@@ -70,20 +73,13 @@ import {
   COLOR_SCHEMES,
 } from "../../components/Context/ColorSchemeContext";
 
+// ── License utilities ─────────────────────────────────────────────────────────
+import FeatureLicenseGate from "../../components/FeatureLicenseGate";
+import { LicenseFeatures } from "../../utils/LicenseFeatures";
+import { getLicenseStatus, deactivateLicense } from "../../utils/licenseUtils";
+
 const { Option } = Select;
 
-// ── API Helpers ───────────────────────────────────────────────────────────────
-import { apiClient } from "../../api/helpers/apiClients";
-
-const getSettings = async () => {
-  const response = await apiClient.get("/Settings");
-  return response.data;
-};
-
-const postSettings = async (settings) => {
-  const response = await apiClient.post("/Settings", settings);
-  return response.data;
-};
 
 // ── Keys that should be synced live to Transactions PDF ──────────────────────
 const TICKET_KEYS = new Set([
@@ -124,25 +120,26 @@ const DEFAULT_SETTINGS = {
 
   // Hardware — RFID
   rfidEnabled: true,
-  rfidStreamUrl: "http://172.16.0.134:5000/api/rfid/stream",
+  rfidStreamUrl: "http://localhost:5000/api/RFID/stream",
   rfidReaderType: "UHF Reader",
 
   // Hardware — NFC
   nfcEnabled: true,
-  nfcStreamUrl: "http://172.16.0.134:5000/api/nfc/stream",
+  nfcStreamUrl: "http://localhost:5000/api/NFC/stream",
   nfcReaderType: "MIFARE Classic",
 
   // Hardware — ANPR
   anprEnabled: false,
-  anprCameraUrl: "http://192.168.1.50/stream",
-  anprApiUrl: "http://192.168.1.50/api/detect",
+  anprStreamUrl: "http://localhost:5000/api/Camera/npr1/stream",
+  anprCameraUrl: "http://localhost:5000/api/Camera/npr1/stream",
+  anprApiUrl: "http://localhost:5000/api/Camera/npr1/snapshot",
   anprConfidenceThreshold: 85,
   anprCameraPosition: "entry",
   anprFallbackToManual: true,
 
   // Hardware — Scale
   scaleEnabled: true,
-  scaleStreamUrl: "http://172.16.0.134:5000/api/scale/stream",
+  scaleStreamUrl: "http://localhost:5000/api/PlatformData/stream",
   scaleBrand: "Avery Weigh-Tronix",
   scaleCapacity: 60000,
   scaleStabilityThreshold: 5,
@@ -181,11 +178,6 @@ const DEFAULT_SETTINGS = {
   apiRateLimit: 100,
   apiLogging: true,
 
-  // Backup & Logs
-  autoBackupEnabled: true,
-  backupFrequency: "daily",
-  backupTime: "02:00",
-  backupRetentionDays: 30,
   auditLogEnabled: true,
   auditLogRetentionDays: 365,
   errorLogEnabled: true,
@@ -218,51 +210,31 @@ export default function SystemSettings() {
     loadSettings();
   }, []);
 
-  const loadSettings = async () => {
+  const loadSettings = () => {
     setLoading(true);
-    try {
-      const data = await getSettings();
-      if (data?.settings) {
-        const merged = { ...DEFAULT_SETTINGS, ...data.settings };
+    const saved = localStorage.getItem("systemSettings");
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Wipe stale hardware URLs from the old wrong IP
+        if (parsed.rfidStreamUrl?.includes("172.16.0.134")) delete parsed.rfidStreamUrl;
+        if (parsed.nfcStreamUrl?.includes("172.16.0.134"))  delete parsed.nfcStreamUrl;
+        if (parsed.scaleStreamUrl?.includes("172.16.0.134")) delete parsed.scaleStreamUrl;
+        const merged = { ...DEFAULT_SETTINGS, ...parsed };
         setSettings(merged);
         saveTicketSettings(merged);
-        localStorage.setItem("systemSettings", JSON.stringify(merged));
+      } catch (_) {
+        // corrupt — fall through to defaults
       }
-    } catch (error) {
-      // API unavailable — restore from localStorage
-      const saved = localStorage.getItem("systemSettings");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          const merged = { ...DEFAULT_SETTINGS, ...parsed };
-          setSettings(merged);
-          saveTicketSettings(merged);
-        } catch (_) {
-          console.warn("Corrupt localStorage settings, using defaults");
-        }
-      } else {
-        console.warn("Using default settings:", error.message);
-      }
-    } finally {
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   // ── Save: always writes to localStorage, tries API as a bonus ────────────
-  const handleSave = async () => {
+  const handleSave = () => {
     setSaving(true);
     try {
-      // Broadcast ticket-related changes live
       saveTicketSettings(settings);
-
-      // Try API — fail silently if backend is unavailable
-      try {
-        await postSettings(settings);
-      } catch (_) {
-        // backend unavailable — localStorage is the source of truth
-      }
-
-      // Always persist to localStorage
       localStorage.setItem("systemSettings", JSON.stringify(settings));
 
       setLastSaved(new Date());
@@ -342,49 +314,27 @@ export default function SystemSettings() {
       children: <TicketsTab settings={settings} setField={setField} isDark={isDark} />,
     },
     {
-      key: "hardware",
-      label: (
-        <span className="flex items-center gap-1.5 text-xs">
-          <Wifi className="w-3.5 h-3.5" /> Hardware
-        </span>
-      ),
-      children: <HardwareTab settings={settings} setField={setField} isDark={isDark} />,
-    },
-    {
       key: "kiosk",
       label: (
         <span className="flex items-center gap-1.5 text-xs">
-          <Monitor className="w-3.5 h-3.5" /> Kiosk
+          <Monitor className="w-3.5 h-3.5" /> Unmanned
+          <Lock className="w-3 h-3 text-amber-500" />
         </span>
       ),
-      children: <KioskTab settings={settings} setField={setField} isDark={isDark} />,
+      children: (
+        <FeatureLicenseGate feature={LicenseFeatures.KIOSK}>
+          <KioskTab settings={settings} setField={setField} isDark={isDark} />
+        </FeatureLicenseGate>
+      ),
     },
     {
-      key: "users",
+      key: "license",
       label: (
         <span className="flex items-center gap-1.5 text-xs">
-          <Users className="w-3.5 h-3.5" /> Users &amp; Auth
+          <KeyRound className="w-3.5 h-3.5" /> License
         </span>
       ),
-      children: <UsersTab settings={settings} setField={setField} isDark={isDark} />,
-    },
-    {
-      key: "api",
-      label: (
-        <span className="flex items-center gap-1.5 text-xs">
-          <Webhook className="w-3.5 h-3.5" /> API &amp; Integration
-        </span>
-      ),
-      children: <ApiTab settings={settings} setField={setField} isDark={isDark} />,
-    },
-    {
-      key: "backup",
-      label: (
-        <span className="flex items-center gap-1.5 text-xs">
-          <Database className="w-3.5 h-3.5" /> Backup &amp; Logs
-        </span>
-      ),
-      children: <BackupTab settings={settings} setField={setField} isDark={isDark} />,
+      children: <LicenseTab />,
     },
   ];
 
@@ -973,223 +923,16 @@ function TicketsTab({ settings, setField, isDark }) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// TAB: HARDWARE
-// ═════════════════════════════════════════════════════════════════════════════
-function HardwareTab({ settings, setField, isDark }) {
-  return (
-    <div className="space-y-5 pb-6 pt-2">
-      {/* RFID */}
-      <Section title="RFID Reader" icon={<Wifi className="w-4 h-4 text-green-600" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Enable RFID Reader"
-            description="Detect vehicles via RFID tags"
-            checked={settings.rfidEnabled}
-            onChange={(v) => setField("rfidEnabled", v)}
-          />
-          {settings.rfidEnabled && (
-            <IndentGroup color="green">
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Stream URL">
-                  <Input
-                    value={settings.rfidStreamUrl}
-                    onChange={(e) => setField("rfidStreamUrl", e.target.value)}
-                    placeholder="http://172.16.0.134:5000/api/rfid/stream"
-                  />
-                </Field>
-                <Field label="Reader Type">
-                  <Select value={settings.rfidReaderType} onChange={(v) => setField("rfidReaderType", v)} style={{ width: "100%" }}>
-                    <Option value="UHF Reader">UHF Reader</Option>
-                    <Option value="HF Reader">HF Reader</Option>
-                    <Option value="LF Reader">LF Reader</Option>
-                  </Select>
-                </Field>
-              </div>
-            </IndentGroup>
-          )}
-        </div>
-      </Section>
-
-      {/* NFC */}
-      <Section title="NFC Reader" icon={<CreditCard className="w-4 h-4 text-purple-600" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Enable NFC Reader"
-            description="Authenticate drivers via NFC cards"
-            checked={settings.nfcEnabled}
-            onChange={(v) => setField("nfcEnabled", v)}
-          />
-          {settings.nfcEnabled && (
-            <IndentGroup color="purple">
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Stream URL">
-                  <Input
-                    value={settings.nfcStreamUrl}
-                    onChange={(e) => setField("nfcStreamUrl", e.target.value)}
-                    placeholder="http://172.16.0.134:5000/api/nfc/stream"
-                  />
-                </Field>
-                <Field label="Reader Type">
-                  <Select value={settings.nfcReaderType} onChange={(v) => setField("nfcReaderType", v)} style={{ width: "100%" }}>
-                    <Option value="MIFARE Classic">MIFARE Classic</Option>
-                    <Option value="MIFARE DESFire">MIFARE DESFire</Option>
-                    <Option value="NTAG">NTAG</Option>
-                  </Select>
-                </Field>
-              </div>
-            </IndentGroup>
-          )}
-        </div>
-      </Section>
-
-      {/* ANPR */}
-      <Section title="ANPR Camera" icon={<Monitor className="w-4 h-4 text-blue-600" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Enable ANPR Camera"
-            description="Automatic number plate recognition via camera"
-            checked={settings.anprEnabled}
-            onChange={(v) => setField("anprEnabled", v)}
-          />
-          {settings.anprEnabled && (
-            <IndentGroup color="blue">
-              <div className="grid grid-cols-2 gap-4 mb-3">
-                <Field label="Camera Stream URL">
-                  <Input
-                    value={settings.anprCameraUrl}
-                    onChange={(e) => setField("anprCameraUrl", e.target.value)}
-                    placeholder="http://192.168.1.50/stream"
-                  />
-                </Field>
-                <Field label="API Endpoint">
-                  <Input
-                    value={settings.anprApiUrl}
-                    onChange={(e) => setField("anprApiUrl", e.target.value)}
-                    placeholder="http://192.168.1.50/api/detect"
-                  />
-                </Field>
-                <Field label="Camera Position">
-                  <Select value={settings.anprCameraPosition} onChange={(v) => setField("anprCameraPosition", v)} style={{ width: "100%" }}>
-                    <Option value="entry">Entry Gate Only</Option>
-                    <Option value="exit">Exit Gate Only</Option>
-                    <Option value="both">Both Entry &amp; Exit</Option>
-                  </Select>
-                </Field>
-                <Field label="Confidence Threshold">
-                  <InputNumber
-                    value={settings.anprConfidenceThreshold}
-                    onChange={(v) => setField("anprConfidenceThreshold", v)}
-                    min={50} max={100}
-                    addonAfter="% accuracy"
-                    style={{ width: "100%" }}
-                  />
-                </Field>
-              </div>
-              <ToggleRow
-                label="Fallback to Manual Entry"
-                description="Allow operator to type plate if ANPR fails"
-                checked={settings.anprFallbackToManual}
-                onChange={(v) => setField("anprFallbackToManual", v)}
-              />
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
-                <p className="text-xs text-blue-800 font-semibold mb-1">💡 Integration Notes:</p>
-                <ul className="text-xs text-blue-700 space-y-0.5 ml-3 list-disc">
-                  <li>Camera must support HTTP/RTSP streaming</li>
-                  <li>API should return JSON: <code className="bg-blue-100 px-1 rounded">{'{"plate":"KCB 123A","confidence":95}'}</code></li>
-                  <li>Low confidence readings trigger manual verification</li>
-                </ul>
-              </div>
-            </IndentGroup>
-          )}
-        </div>
-      </Section>
-
-      {/* Scale */}
-      <Section title="Weighing Scale" icon={<Scale className="w-4 h-4 text-blue-600" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Enable Scale Integration"
-            description="Live weight readings from scale hardware"
-            checked={settings.scaleEnabled}
-            onChange={(v) => setField("scaleEnabled", v)}
-          />
-          {settings.scaleEnabled && (
-            <IndentGroup color="blue">
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Stream URL">
-                  <Input
-                    value={settings.scaleStreamUrl}
-                    onChange={(e) => setField("scaleStreamUrl", e.target.value)}
-                    placeholder="http://172.16.0.134:5000/api/scale/stream"
-                  />
-                </Field>
-                <Field label="Scale Brand">
-                  <Select value={settings.scaleBrand} onChange={(v) => setField("scaleBrand", v)} style={{ width: "100%" }}>
-                    <Option value="Avery Weigh-Tronix">Avery Weigh-Tronix</Option>
-                    <Option value="Mettler Toledo">Mettler Toledo</Option>
-                    <Option value="Rice Lake">Rice Lake</Option>
-                    <Option value="Cardinal">Cardinal Scale</Option>
-                  </Select>
-                </Field>
-                <Field label="Capacity (kg)">
-                  <InputNumber value={settings.scaleCapacity} onChange={(v) => setField("scaleCapacity", v)} min={1000} max={200000} style={{ width: "100%" }} />
-                </Field>
-                <Field label="Stability Threshold">
-                  <InputNumber value={settings.scaleStabilityThreshold} onChange={(v) => setField("scaleStabilityThreshold", v)} min={3} max={10} addonAfter="readings" style={{ width: "100%" }} />
-                </Field>
-              </div>
-            </IndentGroup>
-          )}
-        </div>
-      </Section>
-
-      {/* Printer */}
-      <Section title="Ticket Printer" icon={<Printer className="w-4 h-4 text-orange-600" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Enable Printer"
-            description="Print weighbridge tickets"
-            checked={settings.printerEnabled}
-            onChange={(v) => setField("printerEnabled", v)}
-          />
-          {settings.printerEnabled && (
-            <IndentGroup color="orange">
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Printer Model">
-                  <Select value={settings.printerModel} onChange={(v) => setField("printerModel", v)} style={{ width: "100%" }}>
-                    <Option value="Zebra ZD420">Zebra ZD420</Option>
-                    <Option value="Zebra ZD620">Zebra ZD620</Option>
-                    <Option value="TSC TTP-244 Pro">TSC TTP-244 Pro</Option>
-                    <Option value="Brother QL-820NWB">Brother QL-820NWB</Option>
-                  </Select>
-                </Field>
-                <Field label="Printer IP Address">
-                  <Input
-                    value={settings.printerIp}
-                    onChange={(e) => setField("printerIp", e.target.value)}
-                    placeholder="192.168.1.100"
-                  />
-                </Field>
-              </div>
-            </IndentGroup>
-          )}
-        </div>
-      </Section>
-    </div>
-  );
-}
-
-// ═════════════════════════════════════════════════════════════════════════════
 // TAB: KIOSK
 // ═════════════════════════════════════════════════════════════════════════════
 function KioskTab({ settings, setField, isDark }) {
   return (
     <div className="space-y-5 pb-6 pt-2">
-      <Section title="Kiosk Mode" icon={<Monitor className="w-4 h-4 text-amber-600" />}>
+      <Section title="Unmanned Mode" icon={<Monitor className="w-4 h-4 text-amber-600" />}>
         <div className="space-y-4">
           <ToggleRow
-            label="Enable Kiosk Mode"
-            description="Self-service weighing without operator login"
+            label="Enable Unmanned Mode"
+            description="Unmanned weighing without operator login"
             checked={settings.kioskMode}
             onChange={(v) => setField("kioskMode", v)}
           />
@@ -1242,182 +985,166 @@ function KioskTab({ settings, setField, isDark }) {
   );
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// TAB: USERS & AUTH
-// ═════════════════════════════════════════════════════════════════════════════
-function UsersTab({ settings, setField, isDark }) {
-  return (
-    <div className="space-y-5 pb-6 pt-2">
-      <Section title="Password Policy" icon={<Lock className="w-4 h-4 text-red-500" />}>
-        <div className="space-y-4">
-          <Field label="Minimum Length">
-            <InputNumber value={settings.passwordMinLength} onChange={(v) => setField("passwordMinLength", v)} min={6} max={32} addonAfter="characters" style={{ width: "240px" }} />
-          </Field>
-          <ToggleRow label="Require Uppercase Letters" checked={settings.passwordRequireUppercase} onChange={(v) => setField("passwordRequireUppercase", v)} />
-          <ToggleRow label="Require Numbers" checked={settings.passwordRequireNumbers} onChange={(v) => setField("passwordRequireNumbers", v)} />
-          <ToggleRow label="Require Symbols (!@#$%)" checked={settings.passwordRequireSymbols} onChange={(v) => setField("passwordRequireSymbols", v)} />
-          <Field label="Password Expiry">
-            <InputNumber value={settings.passwordExpiryDays} onChange={(v) => setField("passwordExpiryDays", v)} min={0} max={365} addonAfter="days (0 = never)" style={{ width: "240px" }} />
-          </Field>
-        </div>
-      </Section>
 
-      <Section title="Session &amp; Login" icon={<Users className="w-4 h-4 text-blue-500" />}>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <Field label="Session Timeout">
-            <InputNumber value={settings.sessionTimeout} onChange={(v) => setField("sessionTimeout", v)} min={5} max={480} addonAfter="minutes" style={{ width: "100%" }} />
-          </Field>
-          <Field label="Max Login Attempts">
-            <InputNumber value={settings.maxLoginAttempts} onChange={(v) => setField("maxLoginAttempts", v)} min={3} max={10} style={{ width: "100%" }} />
-          </Field>
-          <Field label="Lockout Duration">
-            <InputNumber value={settings.lockoutDuration} onChange={(v) => setField("lockoutDuration", v)} min={5} max={120} addonAfter="minutes" style={{ width: "100%" }} />
-          </Field>
-        </div>
-        <ToggleRow
-          label="Two-Factor Authentication (2FA)"
-          description="Require OTP for all user logins"
-          checked={settings.twoFactorEnabled}
-          onChange={(v) => setField("twoFactorEnabled", v)}
-        />
-      </Section>
-    </div>
+// ═════════════════════════════════════════════════════════════════════════════
+// TAB: LICENSE
+// ═════════════════════════════════════════════════════════════════════════════
+function LicenseTab() {
+  const [license,    setLicense]   = useState(null);
+  const [confirming, setConfirm]   = useState(false);
+  const [serverUrl,  setServerUrl] = useState(
+    () => localStorage.getItem("licenseServerUrl") || import.meta.env.VITE_LICENSE_SERVER_URL || ""
   );
-}
+  const [urlSaved, setUrlSaved] = useState(false);
 
-// ═════════════════════════════════════════════════════════════════════════════
-// TAB: API & INTEGRATION
-// ═════════════════════════════════════════════════════════════════════════════
-function ApiTab({ settings, setField, isDark }) {
+  useEffect(() => {
+    getLicenseStatus("").then(setLicense);
+  }, []);
+
+  const handleDeactivate = () => {
+    deactivateLicense();
+    window.location.reload();
+  };
+
+  const handleSaveUrl = () => {
+    const trimmed = serverUrl.trim();
+    if (trimmed) localStorage.setItem("licenseServerUrl", trimmed);
+    else         localStorage.removeItem("licenseServerUrl");
+    setUrlSaved(true);
+    setTimeout(() => setUrlSaved(false), 2000);
+  };
+
+  const features = license?.features ?? [];
+  const expiry   = license?.expiresAt ? new Date(license.expiresAt) : null;
+  const daysLeft = expiry ? Math.ceil((expiry - Date.now()) / 86400000) : null;
+
   return (
     <div className="space-y-5 pb-6 pt-2">
-      <Section title="Webhooks" icon={<Webhook className="w-4 h-4 text-indigo-500" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Enable Webhooks"
-            description="Send events to external systems"
-            checked={settings.webhookEnabled}
-            onChange={(v) => setField("webhookEnabled", v)}
-          />
-          {settings.webhookEnabled && (
-            <IndentGroup color="indigo">
-              <Field label="Webhook URL">
-                <Input
-                  value={settings.webhookUrl}
-                  onChange={(e) => setField("webhookUrl", e.target.value)}
-                  placeholder="https://your-app.com/api/webhooks"
-                />
-              </Field>
-              <div className="mt-3">
-                <Field label="Events to Send">
-                  <Select
-                    mode="multiple"
-                    value={settings.webhookEvents}
-                    onChange={(v) => setField("webhookEvents", v)}
-                    style={{ width: "100%" }}
-                    placeholder="Select events..."
-                  >
-                    <Option value="transaction.created">Transaction Created</Option>
-                    <Option value="transaction.completed">Transaction Completed</Option>
-                    <Option value="vehicle.detected">Vehicle Detected (RFID)</Option>
-                    <Option value="driver.authenticated">Driver Authenticated (NFC)</Option>
-                    <Option value="weight.captured">Weight Captured</Option>
-                    <Option value="ticket.printed">Ticket Printed</Option>
-                  </Select>
-                </Field>
-              </div>
-            </IndentGroup>
-          )}
-        </div>
-      </Section>
-
-      <Section title="API Configuration" icon={<Settings className="w-4 h-4 text-gray-500" />}>
-        <div className="grid grid-cols-2 gap-4">
-          <Field label="Rate Limit">
-            <InputNumber value={settings.apiRateLimit} onChange={(v) => setField("apiRateLimit", v)} min={10} max={1000} addonAfter="req/min" style={{ width: "100%" }} />
-          </Field>
-          <div className="flex items-center justify-between mt-5">
-            <span className="text-sm text-gray-700">Enable API Request Logging</span>
-            <Switch checked={settings.apiLogging} onChange={(v) => setField("apiLogging", v)} />
+      <Section title="Active License" icon={<KeyRound className="w-4 h-4 text-amber-600" />}>
+        {!license ? (
+          <div className="flex justify-center py-6">
+            <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
           </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <InfoRow label="Customer ID"  value={license.customerId  ?? "—"} />
+              <InfoRow label="App"          value={license.appId       ?? "—"} />
+              <InfoRow label="Issued"       value={license.issuedAt  ? new Date(license.issuedAt).toLocaleDateString()  : "—"} />
+              <InfoRow
+                label="Expires"
+                value={expiry ? expiry.toLocaleDateString() : "—"}
+                badge={
+                  daysLeft !== null
+                    ? daysLeft > 30
+                      ? { text: `${daysLeft}d left`, color: "green" }
+                      : daysLeft > 7
+                      ? { text: `${daysLeft}d left`, color: "orange" }
+                      : { text: `${daysLeft}d left`, color: "red" }
+                    : null
+                }
+              />
+            </div>
+
+            <div>
+              <p className="text-xs font-semibold text-gray-600 mb-2">Licensed Features</p>
+              <div className="flex flex-wrap gap-1.5">
+                {features.length === 0
+                  ? <span className="text-xs text-gray-400">None</span>
+                  : features.map(f => (
+                      <span key={f} className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-medium border border-amber-200">
+                        {f}
+                      </span>
+                    ))
+                }
+              </div>
+            </div>
+          </div>
+        )}
+      </Section>
+
+      <Section title="License Server" icon={<Globe className="w-4 h-4 text-gray-500" />}>
+        <p className="text-sm text-gray-500 mb-3">
+          URL of the Lante ERP license service. The app checks in here daily to detect revocations and renewals.
+          Leave blank to run fully offline (7-day grace period applies on expiry).
+        </p>
+        <div className="flex gap-2">
+          <input
+            type="url"
+            value={serverUrl}
+            onChange={e => setServerUrl(e.target.value)}
+            placeholder={import.meta.env.VITE_LICENSE_SERVER_URL || "http://localhost:8084"}
+            className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
+          />
+          <button
+            onClick={handleSaveUrl}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition"
+          >
+            {urlSaved ? <CheckCircle2 className="w-4 h-4" /> : <Save className="w-4 h-4" />}
+            {urlSaved ? "Saved" : "Save"}
+          </button>
         </div>
+        {serverUrl && (
+          <p className="text-xs text-gray-400 mt-1.5">
+            Validates at: <span className="font-mono">{serverUrl.trim()}/api/v1/licenses/validate</span>
+          </p>
+        )}
+      </Section>
+
+      <Section title="Update License" icon={<ShieldCheck className="w-4 h-4 text-gray-500" />}>
+        <p className="text-sm text-gray-500 mb-4">
+          Deactivating clears the stored token. The app will lock and prompt for a new license key on next load.
+          Use this when renewing, upgrading, or transferring the license.
+        </p>
+        {!confirming ? (
+          <button
+            onClick={() => setConfirm(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm font-semibold hover:bg-red-100 transition"
+          >
+            <Lock className="w-4 h-4" /> Deactivate &amp; Enter New License
+          </button>
+        ) : (
+          <div className="rounded-lg border border-red-200 bg-red-50 p-4 space-y-3">
+            <p className="text-sm font-semibold text-red-800">
+              This will lock the app immediately. You will need a valid license token to continue.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleDeactivate}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition"
+              >
+                Yes, deactivate
+              </button>
+              <button
+                onClick={() => setConfirm(false)}
+                className="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-700 text-sm font-semibold hover:bg-gray-50 transition"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </Section>
     </div>
   );
 }
 
-// ═════════════════════════════════════════════════════════════════════════════
-// TAB: BACKUP & LOGS
-// ═════════════════════════════════════════════════════════════════════════════
-function BackupTab({ settings, setField, isDark }) {
+function InfoRow({ label, value, badge }) {
   return (
-    <div className="space-y-5 pb-6 pt-2">
-      <Section title="Database Backup" icon={<Database className="w-4 h-4 text-green-600" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Enable Auto Backup"
-            description="Automatic scheduled database backups"
-            checked={settings.autoBackupEnabled}
-            onChange={(v) => setField("autoBackupEnabled", v)}
-          />
-          {settings.autoBackupEnabled && (
-            <IndentGroup color="green">
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Frequency">
-                  <Select value={settings.backupFrequency} onChange={(v) => setField("backupFrequency", v)} style={{ width: "100%" }}>
-                    <Option value="daily">Daily</Option>
-                    <Option value="weekly">Weekly</Option>
-                    <Option value="monthly">Monthly</Option>
-                  </Select>
-                </Field>
-                <Field label="Backup Time">
-                  <input
-                    type="time"
-                    value={settings.backupTime}
-                    onChange={(e) => setField("backupTime", e.target.value)}
-                    className="w-full h-8 text-sm rounded border border-gray-300 px-3 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
-                  />
-                </Field>
-                <Field label="Retention Period">
-                  <InputNumber value={settings.backupRetentionDays} onChange={(v) => setField("backupRetentionDays", v)} min={7} max={365} addonAfter="days" style={{ width: "100%" }} />
-                </Field>
-              </div>
-            </IndentGroup>
-          )}
-        </div>
-      </Section>
-
-      <Section title="Logging &amp; Audit" icon={<FileText className="w-4 h-4 text-gray-500" />}>
-        <div className="space-y-4">
-          <ToggleRow
-            label="Audit Logs"
-            description="Track all user actions — login, CRUD operations"
-            checked={settings.auditLogEnabled}
-            onChange={(v) => setField("auditLogEnabled", v)}
-          />
-          {settings.auditLogEnabled && (
-            <div className="ml-4 pl-4 border-l-2 border-gray-200">
-              <Field label="Audit Log Retention">
-                <InputNumber value={settings.auditLogRetentionDays} onChange={(v) => setField("auditLogRetentionDays", v)} min={30} max={3650} addonAfter="days" style={{ width: "240px" }} />
-              </Field>
-            </div>
-          )}
-
-          <ToggleRow
-            label="Error Logs"
-            description="Capture system errors and exceptions"
-            checked={settings.errorLogEnabled}
-            onChange={(v) => setField("errorLogEnabled", v)}
-          />
-          {settings.errorLogEnabled && (
-            <div className="ml-4 pl-4 border-l-2 border-gray-200">
-              <Field label="Error Log Retention">
-                <InputNumber value={settings.errorLogRetentionDays} onChange={(v) => setField("errorLogRetentionDays", v)} min={7} max={365} addonAfter="days" style={{ width: "240px" }} />
-              </Field>
-            </div>
-          )}
-        </div>
-      </Section>
+    <div className="rounded-lg bg-gray-50 border border-gray-200 px-3 py-2.5">
+      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
+      <div className="flex items-center gap-2">
+        <p className="text-sm font-mono text-gray-800">{value}</p>
+        {badge && (
+          <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full
+            ${badge.color === "green"  ? "bg-green-100 text-green-700"  : ""}
+            ${badge.color === "orange" ? "bg-orange-100 text-orange-700" : ""}
+            ${badge.color === "red"    ? "bg-red-100 text-red-700"      : ""}
+          `}>
+            {badge.text}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

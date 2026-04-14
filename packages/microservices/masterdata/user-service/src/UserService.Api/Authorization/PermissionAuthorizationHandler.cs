@@ -60,7 +60,7 @@ namespace UserService.Api.Authorization
 
                     await CheckUserPermission(context, requirement);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     context.Fail();
                 }
@@ -74,7 +74,7 @@ namespace UserService.Api.Authorization
        
 
         // Extract the token from the request header
-        private string GetTokenFromRequest()
+        private string? GetTokenFromRequest()
         {
             try
             {

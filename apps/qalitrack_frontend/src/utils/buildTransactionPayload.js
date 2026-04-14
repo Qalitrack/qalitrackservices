@@ -19,7 +19,7 @@ export const buildTransactionPayload = ({
   if (isValidGuid(form.customerID)) payload.customerID = form.customerID;
   if (isValidGuid(form.productID)) payload.productID = form.productID;
 
-  payload.operatorName = operator?.name || "Self-Service Kiosk";
+  payload.operatorName = operator?.name || "Unmanned";
   payload.operatorID = operator?.id ?? null;
 
   return payload;

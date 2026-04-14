@@ -5,6 +5,8 @@ import CreateTransactionForm from "./CreateTransactionForm";
 import IncompleteTransactionsTable from "./IncompleteTransactionsTable";
 import LiveWeighbridgeStatus from "./LiveWeighbridgeStatus";
 import CameraGrid from "../CameraGrid";
+import { useLicenseFeature } from "../../hooks/useLicenseFeature";
+import { LicenseFeatures } from "../../utils/LicenseFeatures";
 
 import {
   fetchVehicles, fetchDrivers, fetchProducts, fetchRoutes,
@@ -58,6 +60,7 @@ const INITIAL_FORM_DATA = {
 export default function WeighingDashboard() {
   const dispatch = useDispatch();
   const { error, weighbridges = [] } = useSelector((state) => state.weighing);
+  const anprLicensed = useLicenseFeature(LicenseFeatures.ANPR);
   const [capturedWeight, setCapturedWeight] = useState(null);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -137,11 +140,19 @@ export default function WeighingDashboard() {
         <div className="w-[62%] flex flex-col gap-2 h-full">
           <div className="grid grid-cols-2 gap-2 h-1/2">
             <LiveWeighbridgeStatus onManualCapture={handleManualCapture} />
-            <div className="bg-black rounded overflow-hidden"><CameraGrid type="live" /></div>
+            <div className="bg-black rounded overflow-hidden">
+              {anprLicensed ? <CameraGrid type="live" /> : <AnprLockedTile label="Live Feed" />}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 h-1/2">
-            <div className="bg-black rounded overflow-hidden"><CameraGrid type="snapshot" /></div>
-            <div className="bg-black rounded overflow-hidden"><CameraGrid type="plate" onPlateConfirmed={handlePlateConfirmed} /></div>
+            <div className="bg-black rounded overflow-hidden">
+              {anprLicensed ? <CameraGrid type="snapshot" /> : <AnprLockedTile label="Snapshot" />}
+            </div>
+            <div className="bg-black rounded overflow-hidden">
+              {anprLicensed
+                ? <CameraGrid type="plate" onPlateConfirmed={handlePlateConfirmed} />
+                : <AnprLockedTile label="Plate Recognition" />}
+            </div>
           </div>
         </div>
       </div>
@@ -172,6 +183,18 @@ export default function WeighingDashboard() {
           />
         </Card>
       </div>
+    </div>
+  );
+}
+
+function AnprLockedTile({ label }) {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gray-950 text-gray-600">
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      <p className="text-[10px] font-medium">{label}</p>
+      <p className="text-[9px] text-gray-700">ANPR not licensed</p>
     </div>
   );
 }

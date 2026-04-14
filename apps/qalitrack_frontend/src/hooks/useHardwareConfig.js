@@ -18,9 +18,10 @@ import { useState, useEffect, useCallback } from "react";
 
 // ── Defaults (match SystemSettings.jsx DEFAULT_SETTINGS) ─────────────────────
 const DEFAULTS = {
-  rfidStreamUrl:            "http://localhost:5000/api/rfid/stream",
-  nfcStreamUrl:             "http://localhost:5000/api/nfc/stream",
+  rfidStreamUrl:            "http://localhost:5000/api/RFID/stream",
+  nfcStreamUrl:             "http://localhost:5000/api/NFC/stream",
   scaleStreamUrl:           "http://localhost:5000/api/PlatformData/stream",
+  anprStreamUrl:            "http://localhost:5000/api/Camera/npr1/stream",
   rfidEnabled:              true,
   nfcEnabled:               true,
   scaleEnabled:             true,

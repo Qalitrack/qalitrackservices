@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getHardwareConfig } from "../hooks/useHardwareConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Select, Button, message, Card, Tabs, Table, Tag, Modal } from "antd";
 import {
@@ -37,7 +38,7 @@ function LiveWeighbridgeStatus({ onManualCapture }) {
   const UPDATE_INTERVAL_MS = 1000;
 
   useEffect(() => {
-    const source = new EventSource("http://localhost:5000/api/PlatformData/stream");
+    const source = new EventSource(getHardwareConfig().scaleStreamUrl);
     source.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);

@@ -1,5 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -44,8 +45,9 @@ public class UserServiceTests
             _mockUserRepository.Object
         );
     
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<UserProfile>());
-        _mapper = config.CreateMapper();
+        var services = new ServiceCollection();
+        services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
+        _mapper = services.BuildServiceProvider().GetRequiredService<IMapper>();
     
         _userService = new UserService.Core.Services.UserService(
             _mockUserRepository.Object,

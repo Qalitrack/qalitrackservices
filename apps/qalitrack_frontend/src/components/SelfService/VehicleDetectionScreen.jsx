@@ -313,7 +313,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
               <span className="text-white text-xl font-black">KW</span>
             </div>
             <div>
-              <h1 className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>Self-Service Weighing</h1>
+              <h1 className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>Unmanned Weighing</h1>
               <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>
                 RFID: <span className="font-mono">{rfidStreamUrl}</span>
               </p>

@@ -2,6 +2,8 @@ import React, { lazy } from 'react';
 import { Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoutes.jsx";
 import useAuth from '../api/helpers/auth.js';
+import FeatureLicenseGate from '../components/FeatureLicenseGate.jsx';
+import { LicenseFeatures } from '../utils/LicenseFeatures.js';
 
 // ── Layout ──
 const MainLayout = lazy(() => import("../layouts/MainLayout.jsx"));
@@ -111,8 +113,8 @@ export const routes = [
                     { path: "weighing/drivers",       element: <Drivers /> },
                     { path: "automation",             element: <Automation /> },
                     { path: "calibrations",           element: <Calibrations /> },
-                    { path: "analytics",              element: <Analytics /> },
-                    { path: "reports",                element: <Reports /> },
+                    { path: "analytics",              element: <FeatureLicenseGate feature={LicenseFeatures.ANALYTICS}><Analytics /></FeatureLicenseGate> },
+                    { path: "reports",                element: <FeatureLicenseGate feature={LicenseFeatures.REPORTS}><Reports /></FeatureLicenseGate> },
                     { path: "system",                 element: <System /> },
                     { path: "transporters",           element: <Transporters /> },
                     { path: "weighing/axle-config",   element: <AxleConfigs /> },
@@ -159,14 +161,14 @@ export const routes = [
                     { path: "weighbridges",             element: <WeighbridgesPortal /> },
                     { path: "routes",                   element: <Routes /> },
                     // admin-only
-                    { path: "user-management",          element: <UserManagement /> },
+                    { path: "user-management",          element: <FeatureLicenseGate feature={LicenseFeatures.USER_MANAGEMENT}><UserManagement /></FeatureLicenseGate> },
                     { path: "security/password-policy", element: <PasswordPolicy /> },
                     { path: "security/permissions",     element: <Permissions /> },
                     { path: "security/roles",           element: <Roles /> },
-                    { path: "shifts",                   element: <Shifts /> },
+                    { path: "shifts",                   element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><Shifts /></FeatureLicenseGate> },
                     { path: "attendance",               element: <Attendance /> },
                     { path: "shift-assignment",         element: <ShiftAssignment /> },
-                    { path: "backup/microservice",      element: <Microservice /> },
+                    { path: "backup/microservice",      element: <FeatureLicenseGate feature={LicenseFeatures.BACKUP}><Microservice /></FeatureLicenseGate> },
                     { path: "profile",                  element: <Profile /> },
                 ]
             }

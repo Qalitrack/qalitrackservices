@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { getHardwareConfig } from "../hooks/useHardwareConfig";
 
 // Accept a callback function from the parent via props
 export default function LiveWeighbridgeStatus({ onWeightStable }) {
@@ -16,7 +17,7 @@ export default function LiveWeighbridgeStatus({ onWeightStable }) {
 
   // --- 1. LISTEN TO SSE STREAM (High Frequency) ---
   useEffect(() => {
-    const source = new EventSource("http://localhost:5000/api/PlatformData/stream");
+    const source = new EventSource(getHardwareConfig().scaleStreamUrl);
 
     source.onmessage = (event) => {
       try {

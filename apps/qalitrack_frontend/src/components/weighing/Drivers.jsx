@@ -18,6 +18,8 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2 } from "lucide-react";
 import { message } from "antd";
+import { useLicenseFeature } from "../../hooks/useLicenseFeature";
+import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import {
   getDrivers,
   createDriver,
@@ -26,6 +28,7 @@ import {
 } from "../../api/MasterData/Drivers";
 
 export default function DriverPortal() {
+  const nfcLicensed = useLicenseFeature(LicenseFeatures.NFC);
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingDriver, setEditingDriver] = useState(null);
@@ -232,21 +235,23 @@ export default function DriverPortal() {
             />
           </div>
 
-          <div>
-            <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
-              <CreditCard className="w-3 h-3 text-purple-600" />
-              NFC UID
-            </label>
-            <input
-              type="text"
-              name="nfCcode"
-              value={form.nfCcode}
-              onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-purple-300 px-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 font-mono"
-              placeholder="e.g. 3CD2FF9D"
-              title="NFC card unique identifier (8-16 hex chars)"
-            />
-          </div>
+          {nfcLicensed && (
+            <div>
+              <label className="text-[10px] font-semibold text-gray-700 mb-1 block flex items-center gap-1">
+                <CreditCard className="w-3 h-3 text-purple-600" />
+                NFC UID
+              </label>
+              <input
+                type="text"
+                name="nfCcode"
+                value={form.nfCcode}
+                onChange={handleChange}
+                className="w-full h-7 text-[11px] rounded border-purple-300 px-2 focus:border-purple-500 focus:ring-1 focus:ring-purple-200 font-mono"
+                placeholder="e.g. 3CD2FF9D"
+                title="NFC card unique identifier (8-16 hex chars)"
+              />
+            </div>
+          )}
 
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">

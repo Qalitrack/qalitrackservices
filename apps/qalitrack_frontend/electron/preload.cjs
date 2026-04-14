@@ -1,5 +1,6 @@
-const { contextBridge } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld('electron', {
-  // Expose any APIs you need here
+// Expose only what the renderer needs — nothing more.
+contextBridge.exposeInMainWorld('electronAPI', {
+  getMachineId: () => ipcRenderer.invoke('get-machine-id'),
 });

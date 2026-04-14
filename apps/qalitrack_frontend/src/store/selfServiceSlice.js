@@ -2,6 +2,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { apiClient } from "../api/helpers/apiClients";
 import { createTransaction } from "../api/Transaction/Transaction";
+import { getHardwareConfig } from "../hooks/useHardwareConfig";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SELF-SERVICE KIOSK THUNKS
@@ -150,7 +151,7 @@ export const connectANPRStream = createAsyncThunk(
     "selfService/connectANPR",
     async (_, { dispatch }) => {
         try {
-            const eventSource = new EventSource("http://localhost:5000/api/Camera/npr1/stream");
+            const eventSource = new EventSource(getHardwareConfig().anprStreamUrl);
             
             eventSource.onmessage = (event) => {
                 try {
@@ -184,7 +185,7 @@ export const connectRFIDStream = createAsyncThunk(
     "selfService/connectRFID",
     async (_, { dispatch }) => {
         try {
-            const eventSource = new EventSource("http://localhost:5000/api/RFID/stream");
+            const eventSource = new EventSource(getHardwareConfig().rfidStreamUrl);
             
             eventSource.onmessage = (event) => {
                 try {
@@ -217,7 +218,7 @@ export const connectNFCStream = createAsyncThunk(
     "selfService/connectNFC",
     async (_, { dispatch }) => {
         try {
-            const eventSource = new EventSource("http://localhost:5000/api/NFC/stream");
+            const eventSource = new EventSource(getHardwareConfig().nfcStreamUrl);
             
             eventSource.onmessage = (event) => {
                 try {

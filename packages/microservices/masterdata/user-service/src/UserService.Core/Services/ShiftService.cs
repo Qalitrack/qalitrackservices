@@ -796,8 +796,8 @@ namespace UserService.Core.Services
     existingShift.Mode = request.Mode;
     existingShift.RecurrenceType = request.RecurrenceType;
     existingShift.RecurrenceInterval = request.RecurrenceInterval;
-    existingShift.CustomDays = request.CustomDays;
-    existingShift.ExceptionDates = request.ExceptionDates;
+    existingShift.CustomDays = request.CustomDays ?? Array.Empty<DayOfWeek>();
+    existingShift.ExceptionDates = request.ExceptionDates ?? Array.Empty<DateTime>();
     existingShift.RequiredStaffCount = request.RequiredStaffCount;
     existingShift.UpdatedBy = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
     existingShift.UpdatedAt = DateTime.UtcNow;

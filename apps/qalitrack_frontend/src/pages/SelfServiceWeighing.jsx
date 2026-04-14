@@ -47,13 +47,13 @@ class KioskErrorBoundary extends React.Component {
             style={{ background: "#fef2f2" }}>
             <span className="text-3xl">⚠️</span>
           </div>
-          <h2 className="text-xl font-bold mb-2" style={{ color: "#111827" }}>Kiosk Error</h2>
+          <h2 className="text-xl font-bold mb-2" style={{ color: "#111827" }}>Unmanned Error</h2>
           <p className="text-sm mb-1" style={{ color: "#6b7280" }}>Something went wrong. Check the browser console.</p>
           <p className="text-xs mb-4 font-mono break-all" style={{ color: "#ef4444" }}>{this.state.error?.message}</p>
           <button onClick={() => window.location.reload()}
             className="px-5 py-2 rounded-lg text-sm font-semibold text-white"
             style={{ background: "linear-gradient(135deg,#d97706,#f59e0b)" }}>
-            Reload Kiosk
+            Reload
           </button>
         </div>
       </div>

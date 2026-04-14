@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Truck, Plus, Search, X } from "lucide-react";
+import { useLicenseFeature } from "../../hooks/useLicenseFeature";
+import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import { message } from "antd";
 import {
   getVehicles,
@@ -13,6 +15,7 @@ import { getOwners } from "../../api/MasterData/Owners";
 import { getAxleConfigs } from "../../api/MasterData/AxleConfigs";
 
 export default function Vehicles() {
+  const rfidLicensed = useLicenseFeature(LicenseFeatures.RFID);
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [owners, setOwners] = useState([]);
@@ -459,23 +462,25 @@ export default function Vehicles() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="relative flex gap-1">
-              <input
-                type="text"
-                placeholder="RFID Code..."
-                className="w-32 h-7 px-2 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
-                value={rfidSearchTerm}
-                onChange={(e) => setRfidSearchTerm(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleRfidSearch()}
-              />
-              <button
-                onClick={handleRfidSearch}
-                className="h-7 px-2 text-[11px] rounded-md bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-700 shadow-sm font-medium"
-                title="Search by RFID"
-              >
-                🔍 RFID
-              </button>
-            </div>
+            {rfidLicensed && (
+              <div className="relative flex gap-1">
+                <input
+                  type="text"
+                  placeholder="RFID Code..."
+                  className="w-32 h-7 px-2 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                  value={rfidSearchTerm}
+                  onChange={(e) => setRfidSearchTerm(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleRfidSearch()}
+                />
+                <button
+                  onClick={handleRfidSearch}
+                  className="h-7 px-2 text-[11px] rounded-md bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-700 shadow-sm font-medium"
+                  title="Search by RFID"
+                >
+                  🔍 RFID
+                </button>
+              </div>
+            )}
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -677,20 +682,22 @@ export default function Vehicles() {
                 </select>
               </div>
 
-              <div>
-                <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-                  RFID Code {editingVehicle && <span className="text-[9px] text-blue-600">(Update only)</span>}
-                </label>
-                <input
-                  name="rfiDcode"
-                  value={form.rfiDcode}
-                  onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  placeholder={editingVehicle ? "RFID/NFC Code" : "Set after creation"}
-                  disabled={!editingVehicle}
-                  title={editingVehicle ? "Edit RFID code" : "RFID can only be set when updating a vehicle"}
-                />
-              </div>
+              {rfidLicensed && (
+                <div>
+                  <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+                    RFID Code {editingVehicle && <span className="text-[9px] text-blue-600">(Update only)</span>}
+                  </label>
+                  <input
+                    name="rfiDcode"
+                    value={form.rfiDcode}
+                    onChange={handleChange}
+                    className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    placeholder={editingVehicle ? "RFID/NFC Code" : "Set after creation"}
+                    disabled={!editingVehicle}
+                    title={editingVehicle ? "Edit RFID code" : "RFID can only be set when updating a vehicle"}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

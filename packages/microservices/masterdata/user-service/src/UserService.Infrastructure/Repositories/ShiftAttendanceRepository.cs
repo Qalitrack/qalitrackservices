@@ -18,7 +18,7 @@ namespace UserService.Infrastructure.Repositories
     public class ShiftAttendanceRepository : Repository<ShiftAttendance>, IShiftAttendanceRepository
     {
         private readonly UserServiceDbContext _context;
-        private readonly ILogger<ShiftAttendanceRepository> _logger;
+        private new readonly ILogger<ShiftAttendanceRepository> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ShiftAttendanceRepository(
@@ -136,7 +136,7 @@ namespace UserService.Infrastructure.Repositories
       
 
         
-        public async Task<ShiftAttendance> CreateAsync(ShiftAttendance attendance)
+        public new async Task<ShiftAttendance> CreateAsync(ShiftAttendance attendance)
         {
             if (attendance == null)
                 throw new ArgumentNullException(nameof(attendance));
@@ -155,7 +155,7 @@ namespace UserService.Infrastructure.Repositories
             return attendance;
         }
 
-        public async Task<ShiftAttendance?> UpdateAsync(ShiftAttendance attendance)
+        public new async Task<ShiftAttendance?> UpdateAsync(ShiftAttendance attendance)
         {
             if (attendance == null)
                 throw new ArgumentNullException(nameof(attendance));

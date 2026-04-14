@@ -5,19 +5,19 @@ namespace UserService.Core.DTOs.Report
 {
     public class UserShiftInfoDto
     {
-        public string ShiftId { get; set; }
-        public string ShiftName { get; set; }
-        public string ShiftMode { get; set; }
+        public required string ShiftId { get; set; }
+        public required string ShiftName { get; set; }
+        public required string ShiftMode { get; set; }
         public DateTime AssignedAt { get; set; }
         public bool IsActive { get; set; }
     }
 
     public class UserReportDto
     {
-        public string Id { get; set; }
-        public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public required string Id { get; set; }
+        public required string Email { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
         public bool IsActive { get; set; }
         public List<UserShiftInfoDto>? AssignedShifts { get; set; } = new List<UserShiftInfoDto>();
         public int TotalShiftsAssigned => AssignedShifts?.Count ?? 0;

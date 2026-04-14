@@ -108,7 +108,7 @@ namespace UserService.Api.Controllers
                         {
                             Success = false,
                             Message = codeResult.Message,
-                            Errors = (string[])null,
+                            Errors = (string[]?)null,
                             StatusCode = 400
                         });
                     }
@@ -169,7 +169,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -186,7 +186,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -197,7 +197,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred during login",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -210,7 +210,7 @@ namespace UserService.Api.Controllers
             {
                 // Log incoming request
                 _logger.LogInformation(
-                    "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid} | RequestBodyRaw={Body}",
+                    "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid}",
                     request?.SessionId ?? "(null)",
                     request?.Code ?? "(null)",
                     ModelState.IsValid
@@ -232,7 +232,7 @@ namespace UserService.Api.Controllers
                     {
                         Success = false,
                         Message = "Invalid or expired session",
-                        Errors = (string[])null,
+                        Errors = (string[]?)null,
                         StatusCode = 400
                     });
                 }
@@ -248,7 +248,7 @@ namespace UserService.Api.Controllers
                     {
                         Success = false,
                         Message = verifyResult.Message,
-                        Errors = (string[])null,
+                        Errors = (string[]?)null,
                         StatusCode = 400
                     });
                 }
@@ -262,7 +262,7 @@ namespace UserService.Api.Controllers
                     {
                         Success = false,
                         Message = "User not found",
-                        Errors = (string[])null,
+                        Errors = (string[]?)null,
                         StatusCode = 400
                     });
                 }
@@ -309,7 +309,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred during verification",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -378,7 +378,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -395,7 +395,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -410,7 +410,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while updating password",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -493,7 +493,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -504,7 +504,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred during logout",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }

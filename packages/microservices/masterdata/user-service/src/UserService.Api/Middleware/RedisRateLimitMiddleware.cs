@@ -92,7 +92,7 @@ public class RedisRateLimitMiddleware
     {
         context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
         context.Response.ContentType = "application/json";
-        context.Response.Headers.Add("Retry-After", window.TotalSeconds.ToString());
+        context.Response.Headers.Append("Retry-After", window.TotalSeconds.ToString());
         
         var response = new ApiResponseDto<object>
         {

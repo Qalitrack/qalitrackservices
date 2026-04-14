@@ -17,7 +17,7 @@ namespace UserService.Infrastructure.Repositories
     public class ShiftInstanceRepository : Repository<ShiftInstance>, IShiftInstanceRepository
     {
         private readonly UserServiceDbContext _context;
-        private readonly ILogger<ShiftInstanceRepository> _logger;
+        private new readonly ILogger<ShiftInstanceRepository> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ShiftInstanceRepository(
@@ -57,7 +57,7 @@ namespace UserService.Infrastructure.Repositories
                 .FirstOrDefaultAsync(si => si.Id == id && !si.IsDeleted);
         }
 
-        public async Task<ShiftInstance> CreateAsync(ShiftInstance shiftInstance)
+        public new async Task<ShiftInstance> CreateAsync(ShiftInstance shiftInstance)
         {
             if (shiftInstance == null)
                 throw new ArgumentNullException(nameof(shiftInstance));
@@ -76,7 +76,7 @@ namespace UserService.Infrastructure.Repositories
             return shiftInstance;
         }
 
-        public async Task<ShiftInstance?> UpdateAsync(ShiftInstance shiftInstance)
+        public new async Task<ShiftInstance?> UpdateAsync(ShiftInstance shiftInstance)
         {
             if (shiftInstance == null)
                 throw new ArgumentNullException(nameof(shiftInstance));
@@ -177,6 +177,17 @@ namespace UserService.Infrastructure.Repositories
                 .Include(si => si.Shift)
                 .Include(si => si.Attendances)
                 .Where(si => si.Status == status && !si.IsDeleted)
+                .OrderBy(si => si.ScheduledDate)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<ShiftInstance>> GetInstancesByStatusesAsync(IEnumerable<ShiftInstanceStatus> statuses)
+        {
+            var statusSet = statuses.ToHashSet();
+            return await _context.ShiftInstances
+                .Include(si => si.Shift)
+                .Include(si => si.Attendances)
+                .Where(si => statusSet.Contains(si.Status) && !si.IsDeleted)
                 .OrderBy(si => si.ScheduledDate)
                 .ToListAsync();
         }

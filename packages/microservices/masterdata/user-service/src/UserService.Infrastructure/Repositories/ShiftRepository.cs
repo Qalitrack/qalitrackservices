@@ -138,8 +138,8 @@ public class ShiftRepository(
             existingShift.RequiredStaffCount = request.RequiredStaffCount;
             existingShift.RecurrenceType = request.RecurrenceType;
             existingShift.RecurrenceInterval = request.RecurrenceInterval;
-            existingShift.CustomDays = request.CustomDays;
-            existingShift.ExceptionDates = request.ExceptionDates;
+            existingShift.CustomDays = request.CustomDays ?? Array.Empty<DayOfWeek>();
+            existingShift.ExceptionDates = request.ExceptionDates ?? Array.Empty<DateTime>();
             existingShift.UpdatedAt = DateTime.UtcNow;
             existingShift.UpdatedBy = updatedBy;
 

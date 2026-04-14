@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { getHardwareConfig } from "../../hooks/useHardwareConfig";
 import { message } from "antd";
 
 /**
@@ -29,7 +30,7 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
 
   /* ----------------------------- STREAM ----------------------------- */
   useEffect(() => {
-    const source = new EventSource("http://localhost:5000/api/PlatformData/stream");
+    const source = new EventSource(getHardwareConfig().scaleStreamUrl);
 
     source.onmessage = (event) => {
       try {

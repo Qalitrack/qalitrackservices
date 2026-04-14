@@ -103,7 +103,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -126,7 +126,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -141,7 +141,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while creating the role",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -174,7 +174,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -197,7 +197,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -207,7 +207,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 404
                 });
             }
@@ -222,7 +222,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while updating the role",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -269,7 +269,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -284,7 +284,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while deleting the role",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -358,7 +358,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -408,7 +408,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }

@@ -158,7 +158,7 @@ namespace UserService.Infrastructure.Services
             }
         }
 
-        public async Task<ShiftReportDto> GetShiftDetailsReportAsync(string shiftId)
+        public async Task<ShiftReportDto?> GetShiftDetailsReportAsync(string shiftId)
         {
             try
             {
@@ -204,7 +204,7 @@ namespace UserService.Infrastructure.Services
             }
         }
 
-        public async Task<UserReportDto> GetUserDetailsReportAsync(string userId)
+        public async Task<UserReportDto?> GetUserDetailsReportAsync(string userId)
         {
             try
             {

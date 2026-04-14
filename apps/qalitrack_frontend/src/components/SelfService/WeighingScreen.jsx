@@ -1,5 +1,5 @@
 /**
- * WeighingScreen.jsx — Self-Service Kiosk Weighing
+ * WeighingScreen.jsx — Unmanned Weighing
  *
  * Changes from original:
  *  1. Accepts `existingTransaction` prop — when present, switches to
@@ -145,7 +145,7 @@ export default function WeighingScreen({
     employeeId:      df.employeeId,
     nfcUid:          df.nfcUid,
     operatorID:      df.driverID   || null,
-    operatorName:    df.driverName || "Self-Service Kiosk",
+    operatorName:    df.driverName || "Unmanned",
     weighMode:       "Gross/Tare",
     weighBridgeID:   null,
     weighBridgeName: existingTransaction?.weighBridgeName ?? "Factory A",
@@ -182,7 +182,7 @@ export default function WeighingScreen({
       employeeId:      newDf.employeeId,
       nfcUid:          newDf.nfcUid,
       operatorID:      newDf.driverID   || null,
-      operatorName:    newDf.driverName || "Self-Service Kiosk",
+      operatorName:    newDf.driverName || "Unmanned",
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicleData, driverData]);
@@ -275,7 +275,7 @@ export default function WeighingScreen({
           weighMode:    "Kiosk",
           isCompleted:  true,
           status:       "Complete",
-          notes:        form.notes?.trim() || "Self-service kiosk — second weight",
+          notes:        form.notes?.trim() || "Unmanned — second weight",
         };
         if (isValidGuid(form.driverID)) patchPayload.driverID = form.driverID;
         if (form.driverName?.trim())    patchPayload.driverName = form.driverName.trim();
@@ -293,7 +293,7 @@ export default function WeighingScreen({
           firstWeight:  String(effectiveWeight),
           weighMode:    "Kiosk",
           operation:    form.operation,
-          operatorName: form.operatorName || "Self-Service Kiosk",
+          operatorName: form.operatorName || "Unmanned",
         };
 
         if (isValidGuid(form.vehicleID))  payload.vehicleID  = form.vehicleID;
@@ -328,7 +328,7 @@ export default function WeighingScreen({
         if (form.customerName?.trim())    payload.customerName    = form.customerName.trim();
         if (form.originName?.trim())      payload.originName      = form.originName.trim();
         if (form.destinationName?.trim()) payload.destinationName = form.destinationName.trim();
-        payload.notes = form.notes?.trim() || "Self-service kiosk transaction";
+        payload.notes = form.notes?.trim() || "Unmanned transaction";
 
         console.log("📤 First-weight POST payload:", payload);
         result = await postTransaction(payload);
@@ -376,7 +376,7 @@ export default function WeighingScreen({
             <p className="text-xs" style={{ color: "#6b7280" }}>
               {isSecondWeigh
                 ? `Completing transaction · First weight: ${existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg`
-                : "RFID verified · NFC authenticated · Kiosk mode"
+                : "RFID verified · NFC authenticated · Unmanned mode"
               }
             </p>
           </div>
@@ -552,7 +552,7 @@ export default function WeighingScreen({
                     </span>
                     <span className="text-xs px-2 py-1 rounded-lg font-semibold"
                       style={{ background: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0" }}>
-                      Mode: Kiosk
+                      Mode: Unmanned
                     </span>
                   </div>
                 </>
@@ -649,7 +649,7 @@ export default function WeighingScreen({
                 <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
                   style={{ background: "#fffbeb", border: "1.5px solid #fcd34d" }}>
                   <span className="text-xs">🔒</span>
-                  <span className="text-sm font-semibold" style={{ color: "#111827" }}>Kiosk</span>
+                  <span className="text-sm font-semibold" style={{ color: "#111827" }}>Unmanned</span>
                 </div>
               </div>
               <div>

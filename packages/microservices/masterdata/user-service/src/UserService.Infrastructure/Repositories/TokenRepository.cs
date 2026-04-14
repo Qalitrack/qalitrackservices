@@ -18,7 +18,7 @@ namespace UserService.Infrastructure.Repositories
     public class TokenRepository : Repository<PersonalAccessToken>, ITokenRepository
     {
         private readonly UserServiceDbContext _dbContext;
-        private readonly ILogger<TokenRepository> _logger;
+        private new readonly ILogger<TokenRepository> _logger;
         
 
         public TokenRepository(UserServiceDbContext dbContext, ILogger<TokenRepository> logger, IHttpContextAccessor httpContextAccessor)

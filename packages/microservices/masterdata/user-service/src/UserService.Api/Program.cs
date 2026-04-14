@@ -47,7 +47,7 @@ try
     // Register Core + Infrastructure + AutoMapper
     services.AddCoreServices();
     services.AddInfrastructureServices(builder.Configuration);
-    services.AddAutoMapper(typeof(UserProfile));
+    services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
 
     // Background Services
     services.AddHostedService<ShiftInstanceBackgroundService>();
@@ -247,7 +247,7 @@ try
             await dbContext.Database.MigrateAsync();
             logger.LogInformation("Database migrations applied successfully.");
 
-            PrepDb.PrepPopulation(app, isProduction: app.Environment.IsProduction());
+            await PrepDb.PrepPopulation(app, isProduction: app.Environment.IsProduction());
         }
         catch (Exception ex)
         {

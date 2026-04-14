@@ -5,22 +5,22 @@ namespace UserService.Core.DTOs.Report
 {
     public class AssignedUserDto
     {
-        public string Id { get; set; }
-        public string Email { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public required string Id { get; set; }
+        public required string Email { get; set; }
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
         public DateTime AssignedAt { get; set; }
         public bool IsActive { get; set; }
     }
 
     public class ShiftReportDto
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public required string Id { get; set; }
+        public required string Name { get; set; }
+        public required string Description { get; set; }
         public TimeSpan StartTime { get; set; }
         public TimeSpan EndTime { get; set; }
-        public string Mode { get; set; }
+        public required string Mode { get; set; }
         public bool IsActive { get; set; }
         public int AssignedUsersCount { get; set; }
         public DateTime? UpdatedAt { get; set; }

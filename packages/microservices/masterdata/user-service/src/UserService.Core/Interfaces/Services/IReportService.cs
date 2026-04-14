@@ -7,7 +7,7 @@ namespace UserService.Core.Interfaces.Services
     {
         Task<PagedResult<ShiftReportDto>> GenerateShiftReportAsync(PaginationParameters parameters);
         Task<PagedResult<UserReportDto>> GenerateUserReportAsync(PaginationParameters parameters);
-        Task<ShiftReportDto> GetShiftDetailsReportAsync(string shiftId);
-        Task<UserReportDto> GetUserDetailsReportAsync(string userId);
+        Task<ShiftReportDto?> GetShiftDetailsReportAsync(string shiftId);
+        Task<UserReportDto?> GetUserDetailsReportAsync(string userId);
     }
 }

@@ -87,7 +87,7 @@ namespace UserService.Core.Services
             }
         }
 
-        public async Task<ValidationResult> ValidatePasswordAsync(string password, string userId = null)
+        public async Task<ValidationResult> ValidatePasswordAsync(string password, string? userId = null)
         {
             var policy = await GetPolicyAsync();
             var errors = new List<string>();

@@ -258,7 +258,7 @@ public class ShiftInstanceService : IShiftInstanceService
         return currentDate.Date.AddDays(daysToAdd);
     }
     
-    private async Task CreateAndAddInstance(ShiftInstanceGenerateRequest request, List<ShiftInstance> instances, DateTime currentDate)
+    private Task CreateAndAddInstance(ShiftInstanceGenerateRequest request, List<ShiftInstance> instances, DateTime currentDate)
     {
         // Get Nairobi timezone
         var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
@@ -300,8 +300,9 @@ public class ShiftInstanceService : IShiftInstanceService
             endDateTime);
         
         instances.Add(instance);
-        _logger.LogDebug("Created instance for {Date} from {StartTime} to {EndTime}", 
+        _logger.LogDebug("Created instance for {Date} from {StartTime} to {EndTime}",
             currentDate.Date, startDateTime, endDateTime);
+        return Task.CompletedTask;
     }
 
     public async Task<IEnumerable<ShiftInstanceResponse>> GetInstancesByShiftAsync(string shiftId)
