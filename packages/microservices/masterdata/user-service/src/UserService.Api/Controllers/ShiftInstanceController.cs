@@ -225,6 +225,63 @@ public class ShiftInstanceController : ControllerBase
    
 
     /// <summary>
+    /// Remove scheduled instances that fall on exception dates for a shift
+    /// </summary>
+    /// <param name="shiftId">Shift ID</param>
+    /// <returns>Number of instances cleaned up</returns>
+    [HttpPost("{shiftId}/cleanup-exceptions")]
+    public async Task<ActionResult<int>> CleanupInstancesOnExceptionDatesAsync([FromRoute] string shiftId)
+    {
+        try
+        {
+            var count = await _shiftInstanceService.CleanupInstancesOnExceptionDatesAsync(shiftId);
+            _logger.LogInformation("Admin {UserId} cleaned up {Count} instances on exception dates for shift {ShiftId}",
+                User.Identity?.Name, count, shiftId);
+            return Ok(new { cleaned = count });
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Invalid shift ID: {ShiftId}", shiftId);
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error cleaning up exception date instances for shift {ShiftId}", shiftId);
+            return StatusCode(500, "An error occurred while cleaning up instances");
+        }
+    }
+
+    /// <summary>
+    /// Cancel past instances that fall on exception dates (for retroactively added exception dates)
+    /// </summary>
+    /// <param name="shiftId">Shift ID</param>
+    /// <param name="reason">Cancellation reason</param>
+    /// <returns>Number of instances cancelled</returns>
+    [HttpPost("{shiftId}/cancel-past-exceptions")]
+    public async Task<ActionResult<int>> CancelPastExceptionInstancesAsync(
+        [FromRoute] string shiftId,
+        [FromQuery] string reason = "Exception date added retroactively")
+    {
+        try
+        {
+            var count = await _shiftInstanceService.CancelPastExceptionInstancesAsync(shiftId, reason);
+            _logger.LogInformation("Admin {UserId} cancelled {Count} past exception date instances for shift {ShiftId}",
+                User.Identity?.Name, count, shiftId);
+            return Ok(new { cancelled = count });
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Invalid shift ID: {ShiftId}", shiftId);
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error cancelling past exception date instances for shift {ShiftId}", shiftId);
+            return StatusCode(500, "An error occurred while cancelling instances");
+        }
+    }
+
+    /// <summary>
     /// Get current active shift instance for a specific shift
     /// </summary>
     /// <param name="shiftId">Shift ID</param>

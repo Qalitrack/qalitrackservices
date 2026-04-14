@@ -49,9 +49,6 @@ try
     services.AddInfrastructureServices(builder.Configuration);
     services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
 
-    // Background Services
-    services.AddHostedService<ShiftInstanceBackgroundService>();
-
     // PostgreSQL
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
         ?? throw new InvalidOperationException("Database connection string is not configured.");

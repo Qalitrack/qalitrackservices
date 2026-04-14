@@ -159,28 +159,15 @@ public class ShiftInstanceBackgroundService : BackgroundService
     {
         try
         {
-            // Get Nairobi timezone
-            var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
-            var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
-            
-            // FIXED: Get only scheduled instances (more efficient query)
             var allScheduledInstances = (await shiftInstanceRepository.GetInstancesByStatusAsync(ShiftInstanceStatus.Scheduled))
                 .ToList();
-            
+
             if (!allScheduledInstances.Any())
-            {
-                return; // Early return if no scheduled instances
-            }
-            
-            // All Scheduled instances whose start time has passed — regardless of date.
-            // This catches any instance the service missed while it was down.
+                return;
+
+            // All Scheduled instances whose start time has passed — ScheduledStartTime is stored as UTC.
             var allInstances = allScheduledInstances
-                .Where(instance =>
-                {
-                    var startUtc = instance.ScheduledDate.Date.Add(instance.ScheduledStartTime.TimeOfDay);
-                    var startNairobi = TimeZoneInfo.ConvertTimeFromUtc(startUtc, nairobiTimeZone);
-                    return startNairobi <= nairobiNow;
-                })
+                .Where(instance => instance.ScheduledStartTime <= now)
                 .OrderBy(instance => instance.ScheduledDate)
                 .ThenBy(instance => instance.ScheduledStartTime)
                 .ToList();
@@ -287,19 +274,11 @@ public class ShiftInstanceBackgroundService : BackgroundService
     {
         try
         {
-            var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
-            var nairobiNow = TimeZoneInfo.ConvertTimeFromUtc(now, nairobiTimeZone);
-
-            // Single query — catch both InProgress AND Scheduled instances past their end time.
-            // Scheduled past end time means the service missed the start; jump straight to Completed.
+            // ScheduledEndTime is stored as UTC — compare directly, no timezone reconstruction needed.
+            // Catches both InProgress and Scheduled instances whose end time has passed.
             var candidates = (await shiftInstanceRepository.GetInstancesByStatusesAsync(
                     new[] { ShiftInstanceStatus.InProgress, ShiftInstanceStatus.Scheduled }))
-                .Where(instance =>
-                {
-                    var endUtc = instance.ScheduledDate.Date.Add(instance.ScheduledEndTime.TimeOfDay);
-                    var endNairobi = TimeZoneInfo.ConvertTimeFromUtc(endUtc, nairobiTimeZone);
-                    return endNairobi <= nairobiNow;
-                })
+                .Where(instance => instance.ScheduledEndTime <= now)
                 .ToList();
 
             if (!candidates.Any()) return;

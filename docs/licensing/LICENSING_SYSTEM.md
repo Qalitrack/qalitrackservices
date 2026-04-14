@@ -505,3 +505,4 @@ ConnectionStrings__DefaultConnection=Host=...;Database=lante_licensing;Username=
 - **Push revocation** — WebSocket/SSE from ERP to app for instant lock without waiting 24h
 - **White-label deployments** — separate key pairs per white-label partner
 - **License bundles** — predefined feature sets (Basic, Pro, Enterprise) selectable in one click
+bu

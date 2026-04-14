@@ -205,9 +205,10 @@ async function checkWithServer(token) {
     });
 
     const body = await res.json().catch(() => ({}));
+    const payload = body.data ?? body; // unwrap envelope { data: {...} } if present
     return res.ok
-      ? { ...body, serverChecked: true, serverCheckedAt: Date.now() }
-      : { valid: false, reason: body.reason || "server_rejected" };
+      ? { ...payload, serverChecked: true, serverCheckedAt: Date.now() }
+      : { valid: false, reason: payload.reason || body.message || "server_rejected" };
   } catch {
     return null; // network failure → caller decides fallback
   }

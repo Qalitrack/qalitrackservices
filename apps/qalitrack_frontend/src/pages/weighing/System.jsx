@@ -64,7 +64,6 @@ import {
 // ── Sidebar live-mutation context ────────────────────────────────────────────
 import {
   useSidebarSettings,
-  SIDEBAR_THEMES,
 } from "../../components/Context/Sidebarsettingscontext";
 
 // ── Global color scheme context ───────────────────────────────────────────────
@@ -423,7 +422,7 @@ export default function SystemSettings() {
 // TAB: GENERAL
 // ═════════════════════════════════════════════════════════════════════════════
 function GeneralTab({ settings, setField, isDark }) {
-  const { sidebarSettings, updateSidebarSettings } = useSidebarSettings();
+  const { updateSidebarSettings } = useSidebarSettings();
   const { colorScheme, setColorScheme } = useColorScheme();
 
   // ── Logo: update SystemSettings state + sidebar context instantly ──────────
@@ -447,18 +446,6 @@ function GeneralTab({ settings, setField, isDark }) {
   const handleCompanyNameChange = (value) => {
     setField("companyName", value);
     updateSidebarSettings({ companyName: value });
-  };
-
-  // ── Sidebar preset theme ──────────────────────────────────────────────────
-  const handleThemeSelect = (themeKey) => {
-    updateSidebarSettings({ sidebarTheme: themeKey });
-  };
-
-  // ── Custom sidebar color — auto-activates "custom" theme ─────────────────
-  const handleCustomColor = (key, value) => {
-    const patch = { [key]: value };
-    if (sidebarSettings.sidebarTheme !== "custom") patch.sidebarTheme = "custom";
-    updateSidebarSettings(patch);
   };
 
   return (
@@ -543,7 +530,7 @@ function GeneralTab({ settings, setField, isDark }) {
         icon={<Palette className="w-4 h-4 text-amber-500" />}
       >
         <p className="text-xs text-gray-400 mb-4">
-          Changes the primary accent color across the entire application — instant, no save needed.
+          Changes the primary accent color across the entire application and sidebar — instant, no save needed.
         </p>
         <div className="grid grid-cols-3 gap-3">
           {Object.entries(COLOR_SCHEMES).map(([key, scheme]) => {
@@ -593,134 +580,6 @@ function GeneralTab({ settings, setField, isDark }) {
               </button>
             );
           })}
-        </div>
-      </Section>
-
-      {/* ── Sidebar Theme ─────────────────────────────────────────────────── */}
-      <Section
-        title="Sidebar Theme"
-        icon={<Palette className="w-4 h-4 text-purple-500" />}
-      >
-        <p className="text-xs text-gray-400 mb-4">
-          Changes apply live to the sidebar — no save required.
-        </p>
-
-        {/* Preset swatches */}
-        <div className="grid grid-cols-3 gap-3 mb-5">
-          {Object.entries(SIDEBAR_THEMES)
-            .filter(([key]) => key !== "custom")
-            .map(([key, theme]) => {
-              const isActive = sidebarSettings.sidebarTheme === key;
-              return (
-                <button
-                  key={key}
-                  onClick={() => handleThemeSelect(key)}
-                  className={`
-                    relative p-3 rounded-xl border-2 text-left transition-all duration-200 cursor-pointer
-                    ${isActive
-                      ? "border-amber-500 shadow-lg scale-[1.02]"
-                      : "border-gray-200 hover:border-amber-300 hover:shadow-md"
-                    }
-                  `}
-                  style={{ background: theme.bg }}
-                >
-                  {isActive && (
-                    <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center shadow">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-white" />
-                    </div>
-                  )}
-                  {isActive && (
-                    <div className="absolute top-1.5 left-1.5 flex items-center gap-0.5 bg-green-500/20 border border-green-400/40 text-green-300 text-[8px] font-bold px-1 py-0.5 rounded-full">
-                      <span className="w-1 h-1 rounded-full bg-green-400 animate-pulse" />
-                      LIVE
-                    </div>
-                  )}
-
-                  {/* Mini sidebar preview */}
-                  <div
-                    className="w-full h-16 rounded-lg mb-2 flex flex-col justify-between p-2 mt-4"
-                    style={{ background: theme.bg, border: `1px solid ${theme.border}` }}
-                  >
-                    <div className="flex items-center gap-1">
-                      <div className="w-4 h-4 rounded" style={{ background: theme.accent, opacity: 0.9 }} />
-                      <div className="h-1.5 w-10 rounded" style={{ background: theme.text, opacity: 0.3 }} />
-                    </div>
-                    <div className="space-y-1">
-                      {[0.5, 0.3, 0.4].map((op, i) => (
-                        <div key={i} className="flex items-center gap-1">
-                          <div
-                            className="w-2 h-2 rounded-sm"
-                            style={{ background: i === 0 ? theme.accent : theme.text, opacity: op }}
-                          />
-                          <div
-                            className="h-1 rounded"
-                            style={{ width: `${[55, 40, 48][i]}%`, background: theme.text, opacity: op * 0.7 }}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <p className="text-[11px] font-semibold" style={{ color: theme.text }}>{theme.name}</p>
-                  <p className="text-[9px] mt-0.5 leading-tight" style={{ color: theme.text, opacity: 0.5 }}>
-                    {theme.description}
-                  </p>
-
-                  <div className="flex gap-1 mt-2">
-                    <div className="w-3 h-3 rounded-full border border-white/10" style={{ background: theme.bg }} />
-                    <div className="w-3 h-3 rounded-full" style={{ background: theme.accent }} />
-                    <div className="w-3 h-3 rounded-full opacity-40" style={{ background: theme.text }} />
-                  </div>
-                </button>
-              );
-            })}
-        </div>
-
-        {/* Custom color overrides */}
-        <div
-          className={`rounded-xl border p-4 transition-all duration-200 ${
-            sidebarSettings.sidebarTheme === "custom"
-              ? "border-purple-300 bg-purple-50"
-              : "border-gray-200 bg-gray-50"
-          }`}
-        >
-          <div className="flex items-center gap-2 mb-3">
-            <Palette className="w-3.5 h-3.5 text-purple-500" />
-            <span className="text-xs font-bold text-gray-700">Custom Colors</span>
-            {sidebarSettings.sidebarTheme === "custom" && (
-              <span className="text-[9px] font-bold bg-purple-500 text-white px-1.5 py-0.5 rounded-full ml-auto">
-                ACTIVE
-              </span>
-            )}
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {[
-              ["customBg",     "Background"],
-              ["customAccent", "Accent / Icons"],
-              ["customText",   "Text"],
-            ].map(([key, label]) => (
-              <Field key={key} label={label}>
-                <div className="flex items-center gap-1.5">
-                  <input
-                    type="color"
-                    value={sidebarSettings[key]}
-                    onChange={(e) => handleCustomColor(key, e.target.value)}
-                    className="w-8 h-7 rounded border border-gray-300 cursor-pointer p-0.5 flex-shrink-0"
-                  />
-                  <input
-                    type="text"
-                    value={sidebarSettings[key]}
-                    onChange={(e) => handleCustomColor(key, e.target.value)}
-                    className="w-full text-xs font-mono border border-gray-300 rounded px-2 py-1 focus:border-purple-400 focus:outline-none bg-white"
-                    placeholder="#000000"
-                  />
-                </div>
-              </Field>
-            ))}
-          </div>
-          <p className="text-[10px] text-gray-400 mt-2.5">
-            Picking any custom color automatically activates the Custom theme.
-          </p>
         </div>
       </Section>
 

@@ -11,74 +11,39 @@
 
 import { createContext, useContext, useState, useCallback } from "react";
 import { getTicketSettings, getCompanyLogo, saveCompanyLogo } from "../../utils/ticketThemeConfig";
+import { useColorScheme } from "./ColorSchemeContext";
 
-// ── Sidebar themes ────────────────────────────────────────────────────────────
+// ── Sidebar themes — one per system color scheme ──────────────────────────────
 export const SIDEBAR_THEMES = {
-  obsidian: {
-    name: "Obsidian",
-    description: "Classic dark black with amber accents",
-    bg: "#000000",
-    text: "#ffffff",
-    accent: "#f59e0b",       // amber-400
-    hoverBg: "rgba(255,255,255,0.05)",
-    activeBg: "rgba(255,255,255,0.08)",
-    border: "rgba(255,255,255,0.06)",
-    preview: "#f59e0b",
-  },
-  midnight: {
-    name: "Midnight Blue",
-    description: "Deep navy with cyan highlights",
-    bg: "#0f172a",
-    text: "#e2e8f0",
-    accent: "#38bdf8",       // sky-400
-    hoverBg: "rgba(56,189,248,0.08)",
-    activeBg: "rgba(56,189,248,0.12)",
-    border: "rgba(255,255,255,0.07)",
-    preview: "#38bdf8",
-  },
-  forest: {
-    name: "Forest",
-    description: "Dark green with emerald accents",
-    bg: "#0d1f17",
-    text: "#d1fae5",
-    accent: "#34d399",       // emerald-400
-    hoverBg: "rgba(52,211,153,0.08)",
-    activeBg: "rgba(52,211,153,0.13)",
-    border: "rgba(52,211,153,0.10)",
-    preview: "#34d399",
-  },
-  charcoal: {
-    name: "Charcoal",
-    description: "Warm grey with rose gold accents",
-    bg: "#1c1917",
-    text: "#f5f5f4",
-    accent: "#fb923c",       // orange-400
-    hoverBg: "rgba(251,146,60,0.08)",
-    activeBg: "rgba(251,146,60,0.12)",
-    border: "rgba(255,255,255,0.06)",
-    preview: "#fb923c",
-  },
-  slate: {
-    name: "Slate",
-    description: "Cool grey with violet highlights",
-    bg: "#1e1b4b",
-    text: "#e0e7ff",
-    accent: "#a78bfa",       // violet-400
-    hoverBg: "rgba(167,139,250,0.08)",
-    activeBg: "rgba(167,139,250,0.13)",
-    border: "rgba(167,139,250,0.10)",
-    preview: "#a78bfa",
-  },
-  custom: {
-    name: "Custom",
-    description: "Your own colors",
+  amber: {
+    name: "Amber",
+    description: "Dark with warm amber accents",
     bg: "#111111",
     text: "#ffffff",
     accent: "#f59e0b",
-    hoverBg: "rgba(255,255,255,0.05)",
-    activeBg: "rgba(255,255,255,0.08)",
-    border: "rgba(255,255,255,0.06)",
-    preview: "#f59e0b",
+    hoverBg: "rgba(245,158,11,0.08)",
+    activeBg: "rgba(245,158,11,0.13)",
+    border: "rgba(245,158,11,0.10)",
+  },
+  blue: {
+    name: "Blue",
+    description: "Dark navy with blue accents",
+    bg: "#0f172a",
+    text: "#e2e8f0",
+    accent: "#3b82f6",
+    hoverBg: "rgba(59,130,246,0.08)",
+    activeBg: "rgba(59,130,246,0.13)",
+    border: "rgba(59,130,246,0.10)",
+  },
+  green: {
+    name: "Green",
+    description: "Dark with emerald green accents",
+    bg: "#0d1f17",
+    text: "#d1fae5",
+    accent: "#22c55e",
+    hoverBg: "rgba(34,197,94,0.08)",
+    activeBg: "rgba(34,197,94,0.13)",
+    border: "rgba(34,197,94,0.10)",
   },
 };
 
@@ -86,18 +51,15 @@ export const SIDEBAR_THEMES = {
 const DEFAULT_SIDEBAR_SETTINGS = {
   companyName: "QALIBRATED SYSTEMS LTD",
   companyLogo: null,           // base64 string or null
-  sidebarTheme: "obsidian",    // key from SIDEBAR_THEMES
-  customBg: "#111111",
-  customAccent: "#f59e0b",
-  customText: "#ffffff",
 };
 
 // ── Context ───────────────────────────────────────────────────────────────────
 const SidebarSettingsContext = createContext(null);
 
 export function SidebarSettingsProvider({ children }) {
+  const { colorScheme } = useColorScheme();
+
   const [sidebarSettings, setSidebarSettings] = useState(() => {
-    // Hydrate companyName and companyLogo from localStorage on first mount
     try {
       const saved = getTicketSettings();
       return {
@@ -112,13 +74,12 @@ export function SidebarSettingsProvider({ children }) {
 
   /**
    * Merge partial updates — call this from SystemSettings GeneralTab
-   * e.g. updateSidebarSettings({ companyLogo: base64, sidebarTheme: "midnight" })
+   * e.g. updateSidebarSettings({ companyLogo: base64, companyName: "Acme" })
    * companyLogo is persisted to its own localStorage key so PDF generators can read it.
    */
   const updateSidebarSettings = useCallback((patch) => {
     setSidebarSettings((prev) => {
       const next = { ...prev, ...patch };
-      // Persist logo to its own key whenever it changes
       if ("companyLogo" in patch) {
         try {
           saveCompanyLogo(next.companyLogo);
@@ -128,21 +89,8 @@ export function SidebarSettingsProvider({ children }) {
     });
   }, []);
 
-  /**
-   * Derive the resolved theme object (merging custom colors if theme === "custom")
-   */
-  const resolvedTheme = (() => {
-    const base = SIDEBAR_THEMES[sidebarSettings.sidebarTheme] || SIDEBAR_THEMES.obsidian;
-    if (sidebarSettings.sidebarTheme === "custom") {
-      return {
-        ...base,
-        bg: sidebarSettings.customBg,
-        accent: sidebarSettings.customAccent,
-        text: sidebarSettings.customText,
-      };
-    }
-    return base;
-  })();
+  // Sidebar theme follows the system color scheme automatically
+  const resolvedTheme = SIDEBAR_THEMES[colorScheme] ?? SIDEBAR_THEMES.amber;
 
   return (
     <SidebarSettingsContext.Provider

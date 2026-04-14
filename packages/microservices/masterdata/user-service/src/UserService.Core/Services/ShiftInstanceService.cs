@@ -390,219 +390,125 @@ public class ShiftInstanceService : IShiftInstanceService
             instance.Id, shiftId);
         return result;
     }
-   public async Task<IEnumerable<ShiftInstanceResponse>> UpdateShiftInstancesAsync(string shiftId, ShiftInstanceGenerateRequest request)
-{
-    if (string.IsNullOrWhiteSpace(shiftId))
-        throw new ArgumentException("Shift ID cannot be null or empty", nameof(shiftId));
-    
-    if (request == null)
-        throw new ArgumentNullException(nameof(request));
-
-    // Convert StartDate and EndDate to UTC
-    var startDate = request.StartDate.Kind != DateTimeKind.Utc ? request.StartDate.ToUniversalTime() : request.StartDate;
-    var endDate = request.EndDate.HasValue 
-        ? (request.EndDate.Value.Kind != DateTimeKind.Utc 
-            ? request.EndDate.Value.ToUniversalTime() 
-            : request.EndDate.Value)
-        : (DateTime?)null;
-    if (startDate > endDate)
-        throw new ArgumentException("Start date cannot be after end date");
-
-    // Validate shift existence
-    var shift = await _shiftRepository.GetByIdAsync(shiftId);
-    if (shift == null)
-        throw new ArgumentException($"Shift with ID {shiftId} not found");
-
-    _logger.LogInformation("Updating shift instances for shift {ShiftId}", shiftId);
-
-    // Get all existing instances for this shift
-    var existingInstances = (await _shiftInstanceRepository.GetInstancesByShiftIdAsync(shiftId)).ToList();
-    var currentTime = DateTime.UtcNow;
-    var today = DateTime.UtcNow.Date; // Use UTC midnight
-
-    // Categorize existing instances
-    var pastInstances = existingInstances.Where(i => i.ScheduledEndTime < currentTime).ToList();
-    var currentInstances = existingInstances.Where(i => 
-        i.ScheduledStartTime <= currentTime && 
-        i.ScheduledEndTime >= currentTime && 
-        i.Status == ShiftInstanceStatus.InProgress).ToList();
-    var futureInstances = existingInstances.Where(i => 
-        i.ScheduledDate >= today && 
-        i.Status == ShiftInstanceStatus.Scheduled).ToList();
-
-    _logger.LogInformation("Found {PastCount} past, {CurrentCount} current, {FutureCount} future instances", 
-        pastInstances.Count, currentInstances.Count, futureInstances.Count);
-
-    // Strategy for handling different instance categories:
-    // 1. Past instances: Keep as-is (cannot be modified)
-    // 2. Current instances: Keep as-is but log warning if there are conflicts
-    // 3. Future scheduled instances: Delete and regenerate
-
-    var warnings = new List<string>();
-
-    // Check for conflicts with current instances
-    foreach (var currentInstance in currentInstances)
+    public async Task<IEnumerable<ShiftInstanceResponse>> UpdateShiftInstancesAsync(string shiftId, ShiftInstanceGenerateRequest request)
     {
-        var newStartTime = currentInstance.ScheduledDate.Date.Add(request.StartTime);
-        var newEndTime = currentInstance.ScheduledDate.Date.Add(request.EndTime);
-        
-        // Handle overnight shifts
-        if (request.EndTime < request.StartTime)
+        if (string.IsNullOrWhiteSpace(shiftId))
+            throw new ArgumentException("Shift ID cannot be null or empty", nameof(shiftId));
+        if (request == null)
+            throw new ArgumentNullException(nameof(request));
+
+        var shift = await _shiftRepository.GetByIdAsync(shiftId);
+        if (shift == null)
+            throw new ArgumentException($"Shift with ID {shiftId} not found");
+
+        _logger.LogInformation("Updating shift instances for shift {ShiftId}", shiftId);
+
+        var existingInstances = (await _shiftInstanceRepository.GetInstancesByShiftIdAsync(shiftId)).ToList();
+        var currentTime = DateTime.UtcNow;
+
+        var pastInstances = existingInstances.Where(i => i.ScheduledEndTime < currentTime).ToList();
+        var currentInstances = existingInstances.Where(i =>
+            i.ScheduledStartTime <= currentTime &&
+            i.ScheduledEndTime >= currentTime &&
+            i.Status == ShiftInstanceStatus.InProgress).ToList();
+        var scheduledInstances = existingInstances.Where(i => i.Status == ShiftInstanceStatus.Scheduled).ToList();
+
+        _logger.LogInformation("Found {PastCount} past, {CurrentCount} current, {ScheduledCount} scheduled instances",
+            pastInstances.Count, currentInstances.Count, scheduledInstances.Count);
+
+        // Delete all scheduled instances (includes stuck past-Scheduled ones)
+        if (scheduledInstances.Any())
         {
-            newEndTime = newEndTime.AddDays(1);
+            _logger.LogInformation("Deleting {Count} scheduled instances", scheduledInstances.Count);
+            foreach (var instance in scheduledInstances)
+                await _shiftInstanceRepository.DeleteAsync(instance.Id);
         }
 
-        // Ensure UTC for comparison
-        newStartTime = DateTime.SpecifyKind(newStartTime, DateTimeKind.Utc);
-        newEndTime = DateTime.SpecifyKind(newEndTime, DateTimeKind.Utc);
+        // Determine generation window using Nairobi local time
+        var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
+        var currentTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(currentTime, nairobiTimeZone);
+        var currentDateInNairobi = currentTimeInNairobi.Date;
+        var startTimeTodayInNairobi = currentDateInNairobi.Add(request.StartTime);
 
-        if (currentInstance.ScheduledStartTime != newStartTime || 
-            currentInstance.ScheduledEndTime != newEndTime)
+        var startDate = request.StartDate.Kind != DateTimeKind.Utc ? request.StartDate.ToUniversalTime() : request.StartDate;
+        var endDate = request.EndDate.HasValue
+            ? (request.EndDate.Value.Kind != DateTimeKind.Utc ? request.EndDate.Value.ToUniversalTime() : request.EndDate.Value)
+            : (shift.EndDate ?? DateTime.UtcNow.AddYears(1));
+
+        var generateStartDate = startTimeTodayInNairobi > currentTimeInNairobi
+            ? currentDateInNairobi
+            : currentDateInNairobi.AddDays(1);
+
+        if (generateStartDate < startDate.Date)
+            generateStartDate = startDate.Date;
+
+        _logger.LogInformation("Generating instances from {GenerateStartDate} to {EndDate} (Nairobi time: {NairobiTime})",
+            generateStartDate, endDate, currentTimeInNairobi);
+
+        if (generateStartDate <= endDate)
         {
-            warnings.Add($"Current in-progress instance on {currentInstance.ScheduledDate:yyyy-MM-dd} has different times than the updated shift schedule");
+            var newInstances = await _shiftInstanceRepository.GenerateShiftInstancesAsync(shiftId, generateStartDate, endDate);
+            _logger.LogInformation("Generated {Count} new instances for shift {ShiftId}", newInstances.Count(), shiftId);
         }
+        else
+        {
+            _logger.LogInformation("No new instances to generate — start {Start} is after end {End}", generateStartDate, endDate);
+        }
+
+        // Clean up any instances that landed on exception dates
+        var cleanedUp = await _shiftInstanceRepository.CleanupInstancesOnExceptionDatesAsync(shiftId);
+        if (cleanedUp > 0)
+            _logger.LogInformation("Cleaned up {Count} instances on exception dates for shift {ShiftId}", cleanedUp, shiftId);
+
+        // Return all surviving instances ordered by date
+        var allInstances = await _shiftInstanceRepository.GetInstancesByShiftIdAsync(shiftId);
+        return _mapper.Map<IEnumerable<ShiftInstanceResponse>>(allInstances.OrderBy(i => i.ScheduledDate));
     }
 
-    // Delete only future scheduled instances
-    if (futureInstances.Any())
+    public async Task<int> CleanupInstancesOnExceptionDatesAsync(string shiftId)
     {
-        _logger.LogInformation("Deleting {Count} future scheduled instances", futureInstances.Count);
-        foreach (var futureInstance in futureInstances)
-        {
-            await _shiftInstanceRepository.DeleteAsync(futureInstance.Id);
-        }
+        if (string.IsNullOrWhiteSpace(shiftId))
+            throw new ArgumentException("Shift ID cannot be null or empty", nameof(shiftId));
+
+        _logger.LogInformation("Cleaning up instances on exception dates for shift {ShiftId}", shiftId);
+        var count = await _shiftInstanceRepository.CleanupInstancesOnExceptionDatesAsync(shiftId);
+        _logger.LogInformation("Cleaned up {Count} instances on exception dates for shift {ShiftId}", count, shiftId);
+        return count;
     }
 
-    // Get the current time in Nairobi timezone
-    var nairobiTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
-    var currentTimeInNairobi = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, nairobiTimeZone);
-    var currentDateInNairobi = currentTimeInNairobi.Date;
-    
-    // Calculate the start time for today in Nairobi time
-    var startTimeTodayInNairobi = currentDateInNairobi.Add(request.StartTime);
-    
-    // If the start time for today is in the future, we can include today
-    var generateStartDate = startDate > currentDateInNairobi 
-        ? startDate 
-        : (startTimeTodayInNairobi > currentTimeInNairobi 
-            ? currentDateInNairobi  // Use today's date if start time is still in the future
-            : currentDateInNairobi.AddDays(1));  // Otherwise, start from tomorrow
-    
-    // Ensure we don't generate instances before the shift's actual start date
-    if (generateStartDate < startDate)
-        generateStartDate = startDate;
-        
-    _logger.LogInformation("Generating instances starting from {GenerateStartDate} (current time in Nairobi: {CurrentTimeInNairobi})", 
-        generateStartDate, currentTimeInNairobi);
-
-    var newInstances = new List<ShiftInstance>();
-    
-    if (generateStartDate <= endDate)
+    public async Task<int> CancelPastExceptionInstancesAsync(string shiftId, string reason = "Exception date added retroactively")
     {
-        var currentDate = generateStartDate;
-        int instanceCount = 0;
+        if (string.IsNullOrWhiteSpace(shiftId))
+            throw new ArgumentException("Shift ID cannot be null or empty", nameof(shiftId));
 
-        _logger.LogInformation("Generating new instances from {StartDate} to {EndDate}", generateStartDate, endDate);
+        _logger.LogInformation("Cancelling past instances on exception dates for shift {ShiftId}", shiftId);
 
-        while (currentDate <= endDate && instanceCount < MaxInstances)
+        var shift = await _shiftRepository.GetByIdAsync(shiftId);
+        if (shift == null)
+            throw new ArgumentException($"Shift with ID {shiftId} not found");
+
+        if (shift.ExceptionDates == null || shift.ExceptionDates.Length == 0)
+            return 0;
+
+        var exceptionSet = shift.ExceptionDates.Select(d => d.Date).ToHashSet();
+        var currentTime = DateTime.UtcNow;
+
+        var allInstances = (await _shiftInstanceRepository.GetInstancesByShiftIdAsync(shiftId)).ToList();
+        var pastExceptionInstances = allInstances
+            .Where(i => i.ScheduledEndTime < currentTime &&
+                        exceptionSet.Contains(i.ScheduledDate.Date) &&
+                        i.Status != ShiftInstanceStatus.Cancelled &&
+                        i.Status != ShiftInstanceStatus.Completed)
+            .ToList();
+
+        int cancelledCount = 0;
+        foreach (var instance in pastExceptionInstances)
         {
-            // Skip if current date is in exception dates
-            if (request.ExceptionDates != null && request.ExceptionDates.Contains(currentDate.Date))
-            {
-                currentDate = GetNextRecurrenceDate(shift, currentDate);
-                continue;
-            }
-            
-            // Skip if current day of week is not in custom days (if specified)
-            if (request.CustomDays != null && request.CustomDays.Length > 0 && 
-                !request.CustomDays.Contains(currentDate.DayOfWeek))
-            {
-                currentDate = GetNextRecurrenceDate(shift, currentDate);
-                continue;
-            }
-            
-            // Get the timezone from the shift or use a default (e.g., 'Africa/Nairobi')
-            var timeZone = TimeZoneInfo.FindSystemTimeZoneById("Africa/Nairobi");
-            
-            // Convert current date to the target timezone
-            var localDate = TimeZoneInfo.ConvertTimeFromUtc(currentDate, timeZone).Date;
-            
-            // Combine date with time components in local time
-            var localStartDateTime = localDate.Add(request.StartTime);
-            var localEndDateTime = localDate.Add(request.EndTime);
-            
-            // Handle overnight shifts
-            if (request.EndTime < request.StartTime)
-            {
-                localEndDateTime = localEndDateTime.AddDays(1);
-            }
-            
-            // Convert local times back to UTC for storage
-            var startDateTime = TimeZoneInfo.ConvertTimeToUtc(localStartDateTime, timeZone);
-            var endDateTime = TimeZoneInfo.ConvertTimeToUtc(localEndDateTime, timeZone);
-            var scheduledDate = TimeZoneInfo.ConvertTimeToUtc(localDate, timeZone);
-
-            // Create shift instance
-            var instance = new ShiftInstance
-            {
-                Id = Guid.NewGuid().ToString(),
-                ShiftId = request.ShiftId,
-                ScheduledDate = scheduledDate,
-                ScheduledStartTime = startDateTime,
-                ScheduledEndTime = endDateTime,
-                Status = ShiftInstanceStatus.Scheduled,
-                CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow,
-                CreatedBy = request.CreatedBy ?? AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User) ?? "System",
-                UpdatedBy = request.UpdatedBy ?? AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User) ?? "System"
-            };
-            
-            newInstances.Add(instance);
-            instanceCount++;
-            
-            // Move to next occurrence
-            currentDate = GetNextRecurrenceDate(shift, currentDate);
+            var success = await _shiftInstanceRepository.CancelShiftInstanceAsync(instance.Id, reason);
+            if (success) cancelledCount++;
         }
 
-        // Save all new instances in batches
-        const int batchSize = 100;
-        var savedInstances = new List<ShiftInstance>();
-        
-        for (int i = 0; i < newInstances.Count; i += batchSize)
-        {
-            var batch = newInstances.Skip(i).Take(batchSize).ToList();
-            await _shiftInstanceRepository.AddRangeAsync(batch);
-            savedInstances.AddRange(batch);
-        }
-        
-        _logger.LogInformation("Generated {Count} new shift instances for shift {ShiftId}", 
-            savedInstances.Count, shiftId);
-
-        // Log any warnings
-        foreach (var warning in warnings)
-        {
-            _logger.LogWarning("Shift update warning: {Warning}", warning);
-        }
-
-        // Return all instances that will exist after the update (past + current + new)
-        var allFinalInstances = new List<ShiftInstance>();
-        allFinalInstances.AddRange(pastInstances);
-        allFinalInstances.AddRange(currentInstances);
-        allFinalInstances.AddRange(savedInstances);
-        
-        return _mapper.Map<IEnumerable<ShiftInstanceResponse>>(allFinalInstances.OrderBy(i => i.ScheduledDate));
+        _logger.LogInformation("Cancelled {Count} past instances on exception dates for shift {ShiftId}", cancelledCount, shiftId);
+        return cancelledCount;
     }
-    else
-    {
-        _logger.LogInformation("No new instances to generate - generate start date {StartDate} is after end date {EndDate}", 
-            generateStartDate, endDate);
-        
-        // Return existing past and current instances only
-        var remainingInstances = new List<ShiftInstance>();
-        remainingInstances.AddRange(pastInstances);
-        remainingInstances.AddRange(currentInstances);
-        
-        return _mapper.Map<IEnumerable<ShiftInstanceResponse>>(remainingInstances.OrderBy(i => i.ScheduledDate));
-    }
-}
 }

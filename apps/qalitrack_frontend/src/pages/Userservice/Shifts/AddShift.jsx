@@ -1,6 +1,246 @@
 import React, { useState, useEffect } from 'react';
 import { createShift } from '../../../api/helpers/UserService/Shifts/Shifts';
 
+// Build "YYYY-MM-DD" from local year/month/day — avoids UTC midnight shift
+const toLocalDateStr = (year, month, day) =>
+    `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+// Parse a "YYYY-MM-DD" string in local time (not UTC)
+const parseLocalDate = (str) => {
+    const [y, m, d] = str.split('-').map(Number);
+    return new Date(y, m - 1, d);
+};
+
+const MONTH_NAMES = [
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December',
+];
+const DAY_NAMES = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+const ExceptionCalendar = ({ startDate, endDate, exceptionDates, onChange }) => {
+    const rangeStart = new Date(startDate);
+    rangeStart.setHours(0, 0, 0, 0);
+    const rangeEnd = new Date(endDate);
+    rangeEnd.setHours(23, 59, 59, 999);
+
+    const [viewYear, setViewYear] = useState(rangeStart.getFullYear());
+    const [viewMonth, setViewMonth] = useState(rangeStart.getMonth());
+
+    useEffect(() => {
+        const d = new Date(startDate);
+        setViewYear(d.getFullYear());
+        setViewMonth(d.getMonth());
+    }, [startDate]);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const exceptionSet = new Set(exceptionDates);
+    const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+    const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+    const canGoPrev = () => {
+        const lastOfPrev = new Date(viewYear, viewMonth, 0); // last day of prev month
+        return lastOfPrev >= rangeStart;
+    };
+    const canGoNext = () => {
+        const firstOfNext = new Date(viewYear, viewMonth + 1, 1);
+        return firstOfNext <= rangeEnd;
+    };
+
+    const prevMonth = () => {
+        if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
+        else setViewMonth(m => m - 1);
+    };
+    const nextMonth = () => {
+        if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
+        else setViewMonth(m => m + 1);
+    };
+
+    const handleDayClick = (day) => {
+        const date = new Date(viewYear, viewMonth, day);
+        if (date < rangeStart || date > rangeEnd) return;
+        const key = toLocalDateStr(viewYear, viewMonth, day);
+        const next = exceptionSet.has(key)
+            ? exceptionDates.filter(d => d !== key)
+            : [...exceptionDates, key].sort();
+        onChange(next);
+    };
+
+    const cells = [];
+    for (let i = 0; i < firstDay; i++) cells.push(null);
+    for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+    while (cells.length % 7 !== 0) cells.push(null);
+
+    return (
+        <div className="border border-gray-200 rounded-lg p-3 bg-white select-none inline-block">
+            {/* Month navigation */}
+            <div className="flex items-center justify-between mb-2 gap-2">
+                <button
+                    type="button"
+                    onClick={prevMonth}
+                    disabled={!canGoPrev()}
+                    className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed text-gray-600 font-bold"
+                >‹</button>
+                <span className="text-sm font-semibold text-gray-700 min-w-[130px] text-center">
+                    {MONTH_NAMES[viewMonth]} {viewYear}
+                </span>
+                <button
+                    type="button"
+                    onClick={nextMonth}
+                    disabled={!canGoNext()}
+                    className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed text-gray-600 font-bold"
+                >›</button>
+            </div>
+
+            {/* Day-of-week headers */}
+            <div className="grid grid-cols-7 mb-1">
+                {DAY_NAMES.map(d => (
+                    <div key={d} className="w-8 h-6 flex items-center justify-center text-xs font-medium text-gray-400">
+                        {d}
+                    </div>
+                ))}
+            </div>
+
+            {/* Day cells */}
+            <div className="grid grid-cols-7">
+                {cells.map((day, i) => {
+                    if (!day) return <div key={`b-${i}`} className="w-8 h-8" />;
+
+                    const date = new Date(viewYear, viewMonth, day);
+                    const inRange = date >= rangeStart && date <= rangeEnd;
+                    const key = toLocalDateStr(viewYear, viewMonth, day);
+                    const isException = exceptionSet.has(key);
+                    const isToday = date.getTime() === today.getTime();
+
+                    return (
+                        <button
+                            key={day}
+                            type="button"
+                            onClick={() => handleDayClick(day)}
+                            disabled={!inRange}
+                            title={isException ? 'Click to remove exception' : inRange ? 'Click to mark as exception' : ''}
+                            className={[
+                                'w-8 h-8 rounded-full text-xs flex items-center justify-center transition-colors',
+                                !inRange
+                                    ? 'text-gray-300 cursor-not-allowed'
+                                    : isException
+                                        ? 'bg-red-500 text-white hover:bg-red-600 cursor-pointer font-medium'
+                                        : isToday
+                                            ? 'text-amber-700 font-bold ring-1 ring-amber-400 hover:bg-amber-100 cursor-pointer'
+                                            : 'text-gray-700 hover:bg-amber-100 cursor-pointer',
+                            ].filter(Boolean).join(' ')}
+                        >
+                            {day}
+                        </button>
+                    );
+                })}
+            </div>
+
+            {/* Legend */}
+            <div className="mt-2 flex items-center gap-3 text-xs text-gray-500 border-t pt-2">
+                <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded-full bg-red-500 inline-block" /> Exception
+                </span>
+                <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded-full ring-1 ring-amber-400 inline-block" /> Today
+                </span>
+            </div>
+        </div>
+    );
+};
+
+const MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+
+const TimePicker = ({ value, onChange, disabled, hasError, startValue }) => {
+    const parseTime = (iso) => {
+        if (!iso) return { hour: 9, minute: 0 };
+        const d = new Date(iso);
+        return { hour: d.getHours(), minute: d.getMinutes() };
+    };
+
+    const { hour, minute } = parseTime(value);
+    const isPM = hour >= 12;
+    const displayHour = hour % 12 || 12;
+
+    const buildISO = (h24, m) => {
+        const d = new Date();
+        d.setHours(h24, m, 0, 0);
+        return d.toISOString();
+    };
+
+    const setHour = (h12) => {
+        let h24 = parseInt(h12);
+        if (isPM && h24 !== 12) h24 += 12;
+        if (!isPM && h24 === 12) h24 = 0;
+        onChange(buildISO(h24, minute));
+    };
+
+    const setMinute = (m) => onChange(buildISO(hour, parseInt(m)));
+
+    const setPeriod = (period) => {
+        let h24 = hour;
+        if (period === 'PM' && h24 < 12) h24 += 12;
+        if (period === 'AM' && h24 >= 12) h24 -= 12;
+        onChange(buildISO(h24, minute));
+    };
+
+    // Detect overnight: this field's time is before the start time
+    const isOvernight = (() => {
+        if (!startValue || !value) return false;
+        const sH = new Date(startValue).getHours(), sM = new Date(startValue).getMinutes();
+        const eH = hour, eM = minute;
+        return eH * 60 + eM < sH * 60 + sM;
+    })();
+
+    return (
+        <div className="flex flex-wrap items-center gap-2">
+            <div className={[
+                'flex items-center gap-1 border rounded-md px-2 py-1.5 bg-white',
+                hasError ? 'border-red-500' : 'border-gray-300',
+                disabled ? 'opacity-60' : '',
+            ].join(' ')}>
+                <select
+                    value={displayHour}
+                    onChange={e => setHour(e.target.value)}
+                    disabled={disabled}
+                    className="text-sm border-0 outline-none bg-transparent text-gray-700 cursor-pointer"
+                >
+                    {[...Array(12)].map((_, i) => (
+                        <option key={i + 1} value={i + 1}>{String(i + 1).padStart(2, '0')}</option>
+                    ))}
+                </select>
+                <span className="text-gray-400 font-bold text-sm select-none">:</span>
+                <select
+                    value={minute}
+                    onChange={e => setMinute(e.target.value)}
+                    disabled={disabled}
+                    className="text-sm border-0 outline-none bg-transparent text-gray-700 cursor-pointer"
+                >
+                    {MINUTES.map(m => (
+                        <option key={m} value={m}>{String(m).padStart(2, '0')}</option>
+                    ))}
+                </select>
+                <div className="flex ml-2 rounded overflow-hidden border border-gray-200 text-xs font-medium">
+                    <button type="button" disabled={disabled}
+                        onClick={() => setPeriod('AM')}
+                        className={`px-2 py-0.5 transition-colors ${!isPM ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                    >AM</button>
+                    <button type="button" disabled={disabled}
+                        onClick={() => setPeriod('PM')}
+                        className={`px-2 py-0.5 transition-colors ${isPM ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
+                    >PM</button>
+                </div>
+            </div>
+            {isOvernight && (
+                <span className="text-xs font-medium text-indigo-600 bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-full">
+                    +1 day (overnight)
+                </span>
+            )}
+        </div>
+    );
+};
+
 // Enums from the server
 const ShiftMode = {
     Open: 0,    // Anyone can log in
@@ -21,11 +261,14 @@ const RecurrenceType = {
 };
 
 const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState(() => {
+        const s = new Date(); s.setHours(9, 0, 0, 0);
+        const e = new Date(); e.setHours(17, 0, 0, 0);
+        return {
         name: '',
         description: '',
-        startTime: '',
-        endTime: '',
+        startTime: s.toISOString(),
+        endTime: e.toISOString(),
         mode: ShiftMode.Open.toString(),
         startDate: new Date().toISOString(),
         endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
@@ -35,13 +278,13 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
         recurrenceInterval: 1,
         customDays: [1, 2, 3, 4, 5], // Default to weekdays
         exceptionDates: []
+        };
     });
 
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-    const [newExceptionDate, setNewExceptionDate] = useState('');
 
 
     const validateForm = (data) => {
@@ -54,8 +297,6 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
 
         // Basic validations
         if (!data.name.trim()) newErrors.name = 'Name is required';
-        if (!data.startTime) newErrors.startTime = 'Start time is required';
-        if (!data.endTime) newErrors.endTime = 'End time is required';
         if (data.requiredStaffCount < 1) newErrors.requiredStaffCount = 'At least 1 staff member is required';
 
         // Date validations
@@ -67,13 +308,12 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
             newErrors.endDate = 'End date must be after start date';
         }
 
-        // Time validations for the same day
+        // Reject zero-duration shifts only (start === end time means 0 minutes, which is never valid)
         if (data.startTime && data.endTime) {
-            const start = new Date(`1970-01-01T${data.startTime.split('T')[1] || data.startTime}`);
-            const end = new Date(`1970-01-01T${data.endTime.split('T')[1] || data.endTime}`);
-
-            if (startDate.toDateString() === endDate.toDateString() && end <= start) {
-                newErrors.endTime = 'End time must be after start time';
+            const sH = new Date(data.startTime).getHours(), sM = new Date(data.startTime).getMinutes();
+            const eH = new Date(data.endTime).getHours(),   eM = new Date(data.endTime).getMinutes();
+            if (sH === eH && sM === eM) {
+                newErrors.endTime = 'End time cannot equal start time';
             }
         }
 
@@ -119,31 +359,10 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
         }
     };
 
-    const handleTimeChange = (e, field) => {
-        const { value } = e.target;
+    const handleTimeChange = (field, iso) => {
         const timeField = field === 'start' ? 'startTime' : 'endTime';
-        const date = formData[timeField] ? new Date(formData[timeField]) : new Date();
-        const [hours, minutes] = value.split(':');
-        date.setHours(parseInt(hours, 10), parseInt(minutes, 10));
-
-        // Clear any previous time-related errors
-        setErrors(prev => {
-            const newErrors = { ...prev };
-            delete newErrors[`${timeField}Invalid`];
-            delete newErrors[`${field}Time`];
-            return newErrors;
-        });
-
-        setFormData(prev => ({
-            ...prev,
-            [timeField]: date.toISOString(),
-            ...(field === 'start' && {
-                durationMinutes: Math.round((new Date(prev.endTime || date.toISOString()).getTime() - date.getTime()) / (1000 * 60))
-            }),
-            ...(field === 'end' && {
-                durationMinutes: Math.round((date.getTime() - new Date(prev.startTime || date.toISOString()).getTime()) / (1000 * 60))
-            })
-        }));
+        setErrors(prev => { const e = { ...prev }; delete e.endTime; return e; });
+        setFormData(prev => ({ ...prev, [timeField]: iso }));
     };
 
     const handleDateChange = (e, field) => {
@@ -187,38 +406,12 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
         });
     };
 
-    // Handle adding exception date
-    const handleAddExceptionDate = () => {
-        if (!newExceptionDate) return;
-
-        const dateStr = new Date(newExceptionDate).toISOString().split('T')[0];
-
-        if (!formData.exceptionDates.includes(dateStr)) {
-            setFormData(prev => ({
-                ...prev,
-                exceptionDates: [...prev.exceptionDates, dateStr].sort()
-            }));
-
-            setNewExceptionDate('');
-        }
-    };
-
     // Handle removing exception date
     const handleRemoveExceptionDate = (dateToRemove) => {
         setFormData(prev => ({
             ...prev,
             exceptionDates: prev.exceptionDates.filter(d => d !== dateToRemove)
         }));
-    };
-
-    // Format date for display
-    const formatDisplayDate = (dateStr) => {
-        if (!dateStr) return '';
-        try {
-            return new Date(dateStr).toLocaleDateString();
-        } catch (e) {
-            return dateStr;
-        }
     };
 
     // Convert local time to ISO string without timezone conversion
@@ -248,17 +441,6 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
             return;
         }
 
-        // Additional validation for time
-        const startTime = new Date(formData.startTime);
-        const endTime = new Date(formData.endTime);
-        if (endTime <= startTime) {
-            setErrors(prev => ({
-                ...prev,
-                endTime: 'End time must be after start time'
-            }));
-            return;
-        }
-
         // Additional validation for date range
         const startDate = new Date(formData.startDate);
         const endDate = new Date(formData.endDate);
@@ -274,18 +456,53 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
         // Check for too many instances (e.g., more than 100)
         if (formData.type === ShiftType.Recurring.toString()) {
             const daysDiff = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+            const interval = parseInt(formData.recurrenceInterval, 10);
             let instanceCount = 0;
 
+            const exceptionSet = new Set(formData.exceptionDates); // "YYYY-MM-DD" strings
+
+            const isException = (date) => {
+                const key = toLocalDateStr(date.getFullYear(), date.getMonth(), date.getDate());
+                return exceptionSet.has(key);
+            };
+
             if (formData.recurrenceType === RecurrenceType.Daily.toString()) {
-                instanceCount = Math.ceil(daysDiff / formData.recurrenceInterval);
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+                const end = new Date(endDate);
+                end.setHours(0, 0, 0, 0);
+                const cursor = new Date(start);
+                while (cursor <= end) {
+                    const dayIndex = Math.floor((cursor - start) / (24 * 60 * 60 * 1000));
+                    if (dayIndex % interval === 0 && !isException(cursor)) {
+                        instanceCount++;
+                    }
+                    cursor.setDate(cursor.getDate() + 1);
+                }
             } else if (formData.recurrenceType === RecurrenceType.Weekly.toString()) {
-                const weeks = Math.ceil(daysDiff / 7);
-                instanceCount = Math.ceil(weeks / formData.recurrenceInterval) * formData.customDays.length;
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+                const end = new Date(endDate);
+                end.setHours(0, 0, 0, 0);
+                const cursor = new Date(start);
+                const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+                while (cursor <= end) {
+                    const weekIndex = Math.floor((cursor - start) / msPerWeek);
+                    if (formData.customDays.includes(cursor.getDay()) && weekIndex % interval === 0 && !isException(cursor)) {
+                        instanceCount++;
+                    }
+                    cursor.setDate(cursor.getDate() + 1);
+                }
             } else if (formData.recurrenceType === RecurrenceType.Monthly.toString()) {
-                // Rough estimate - actual count might be less due to varying month lengths
-                const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-                    (endDate.getMonth() - startDate.getMonth());
-                instanceCount = Math.ceil(months / formData.recurrenceInterval);
+                const start = new Date(startDate);
+                const end = new Date(endDate);
+                let cursor = new Date(start);
+                while (cursor <= end) {
+                    if (!isException(cursor)) {
+                        instanceCount++;
+                    }
+                    cursor.setMonth(cursor.getMonth() + interval);
+                }
             }
 
             if (instanceCount > 100) {
@@ -368,12 +585,6 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
         if (!dateString) return '';
         const date = new Date(dateString);
         return date.toISOString().split('T')[0];
-    };
-
-    const formatTimeForInput = (dateString) => {
-        if (!dateString) return '09:00';
-        const date = new Date(dateString);
-        return date.toTimeString().substring(0, 5);
     };
 
     const weekDays = [
@@ -510,15 +721,11 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
                         {/* Start Time */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">Start Time *</label>
-                            <input
-                                type="time"
-                                value={formatTimeForInput(formData.startTime)}
-                                onChange={(e) => handleTimeChange(e, 'start')}
-                                className={`mt-1 block w-full border ${
-                                    errors.startTime ? 'border-red-500' : 'border-gray-300'
-                                } rounded-md p-2`}
-                                required
+                            <TimePicker
+                                value={formData.startTime}
+                                onChange={(iso) => handleTimeChange('start', iso)}
                                 disabled={isLoading}
+                                hasError={!!errors.startTime}
                             />
                             {errors.startTime && <p className="mt-1 text-sm text-red-600">{errors.startTime}</p>}
                         </div>
@@ -526,16 +733,12 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
                         {/* End Time */}
                         <div>
                             <label className="block text-sm font-medium text-gray-700">End Time *</label>
-                            <input
-                                type="time"
-                                value={formatTimeForInput(formData.endTime)}
-                                onChange={(e) => handleTimeChange(e, 'end')}
-                                min={formatTimeForInput(formData.startTime)}
-                                className={`mt-1 block w-full border ${
-                                    errors.endTime ? 'border-red-500' : 'border-gray-300'
-                                } rounded-md p-2`}
-                                required
-                                disabled={isLoading || !formData.startTime}
+                            <TimePicker
+                                value={formData.endTime}
+                                onChange={(iso) => handleTimeChange('end', iso)}
+                                disabled={isLoading}
+                                hasError={!!errors.endTime}
+                                startValue={formData.startTime}
                             />
                             {errors.endTime && <p className="mt-1 text-sm text-red-600">{errors.endTime}</p>}
                         </div>
@@ -678,49 +881,43 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
                         {/* Exception Dates */}
                         <div className="col-span-2 space-y-2">
                             <h4 className="text-sm font-medium text-gray-700">Exception Dates</h4>
-                            <p className="text-xs text-gray-500">Add dates when this shift should not occur (e.g., holidays)</p>
-                            <div className="flex gap-2">
-                                <input
-                                    type="date"
-                                    value={newExceptionDate}
-                                    onChange={(e) => setNewExceptionDate(e.target.value)}
-                                    className="flex-1 border border-gray-300 rounded-md p-2 text-sm"
-                                    min={formatDateForInput(new Date())}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddExceptionDate}
-                                    disabled={!newExceptionDate || isLoading}
-                                    className="px-3 py-2 bg-blue-50 text-blue-600 rounded-md text-sm font-medium hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                    Add
-                                </button>
-                            </div>
+                            <p className="text-xs text-gray-500">
+                                Click any date in the shift range to mark it as an exception (e.g. holidays). Click again to remove.
+                            </p>
 
-                            {formData.exceptionDates.length > 0 && (
-                                <div className="mt-2">
-                                    <div className="flex flex-wrap gap-2">
-                                        {formData.exceptionDates.map((date) => (
-                                            <span
-                                                key={date}
-                                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                                            >
-                                                {formatDisplayDate(date)}
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleRemoveExceptionDate(date)}
-                                                    className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-blue-400 hover:bg-blue-200 hover:text-blue-500"
-                                                    disabled={isLoading}
+                            <div className="flex flex-wrap gap-4 items-start">
+                                <ExceptionCalendar
+                                    startDate={formData.startDate}
+                                    endDate={formData.endDate}
+                                    exceptionDates={formData.exceptionDates}
+                                    onChange={(dates) => setFormData(prev => ({ ...prev, exceptionDates: dates }))}
+                                />
+
+                                {formData.exceptionDates.length > 0 && (
+                                    <div className="flex-1 min-w-[180px]">
+                                        <p className="text-xs font-medium text-gray-500 mb-2">
+                                            {formData.exceptionDates.length} exception{formData.exceptionDates.length !== 1 ? 's' : ''} selected
+                                        </p>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {formData.exceptionDates.map((date) => (
+                                                <span
+                                                    key={date}
+                                                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700"
                                                 >
-                                                    <svg className="h-2.5 w-2.5" fill="currentColor" viewBox="0 0 20 20">
-                                                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        ))}
+                                                    {parseLocalDate(date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveExceptionDate(date)}
+                                                        disabled={isLoading}
+                                                        className="hover:text-red-900 leading-none"
+                                                        title="Remove"
+                                                    >×</button>
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
 
                         {/* Description */}

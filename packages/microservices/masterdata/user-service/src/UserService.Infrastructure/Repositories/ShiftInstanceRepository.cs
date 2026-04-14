@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using UserService.Core.DTOs.Common;
 using UserService.Core.Entities;
 using UserService.Core.Enums;
 using UserService.Core.Interfaces.Repositories;
@@ -31,6 +30,8 @@ namespace UserService.Infrastructure.Repositories
             _httpContextAccessor = httpContextAccessor;
         }
 
+        // === Existing methods (kept mostly as-is, with minor cleanups) ===
+
         public async Task<IEnumerable<ShiftInstance>> GetAllAsync()
         {
             return await _context.ShiftInstances
@@ -42,10 +43,7 @@ namespace UserService.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public Task<ShiftInstance?> GetByIdAsync(string id, bool b)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<ShiftInstance?> GetByIdAsync(string id, bool b) => throw new NotImplementedException();
 
         public async Task<ShiftInstance?> GetByIdAsync(string id)
         {
@@ -59,8 +57,7 @@ namespace UserService.Infrastructure.Repositories
 
         public new async Task<ShiftInstance> CreateAsync(ShiftInstance shiftInstance)
         {
-            if (shiftInstance == null)
-                throw new ArgumentNullException(nameof(shiftInstance));
+            if (shiftInstance == null) throw new ArgumentNullException(nameof(shiftInstance));
 
             shiftInstance.CreatedAt = DateTime.UtcNow;
             shiftInstance.UpdatedAt = DateTime.UtcNow;
@@ -78,24 +75,22 @@ namespace UserService.Infrastructure.Repositories
 
         public new async Task<ShiftInstance?> UpdateAsync(ShiftInstance shiftInstance)
         {
-            if (shiftInstance == null)
-                throw new ArgumentNullException(nameof(shiftInstance));
+            if (shiftInstance == null) throw new ArgumentNullException(nameof(shiftInstance));
 
             var existingInstance = await _context.ShiftInstances
                 .AsTracking()
                 .FirstOrDefaultAsync(si => si.Id == shiftInstance.Id && !si.IsDeleted);
 
-            if (existingInstance == null)
-                return null;
+            if (existingInstance == null) return null;
 
-            // Update specific fields
             existingInstance.ScheduledDate = shiftInstance.ScheduledDate;
             existingInstance.ScheduledStartTime = shiftInstance.ScheduledStartTime;
             existingInstance.ScheduledEndTime = shiftInstance.ScheduledEndTime;
             existingInstance.Status = shiftInstance.Status;
             existingInstance.Notes = shiftInstance.Notes;
             existingInstance.UpdatedAt = DateTime.UtcNow;
-            existingInstance.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
+            existingInstance.UpdatedBy = shiftInstance.UpdatedBy 
+                ?? AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
 
             await _context.SaveChangesAsync();
             
@@ -112,21 +107,11 @@ namespace UserService.Infrastructure.Repositories
                 using var transaction = await _context.Database.BeginTransactionAsync();
                 try
                 {
-                    var shiftInstance = await _context.ShiftInstances
-                        .AsTracking()
+                    var shiftInstance = await _context.ShiftInstances.AsTracking()
                         .FirstOrDefaultAsync(si => si.Id == id);
 
-                    if (shiftInstance == null)
-                    {
-                        _logger.LogWarning("Shift instance {ShiftInstanceId} not found for deletion", id);
+                    if (shiftInstance == null || shiftInstance.IsDeleted)
                         return false;
-                    }
-
-                    if (shiftInstance.IsDeleted)
-                    {
-                        _logger.LogWarning("Shift instance {ShiftInstanceId} already marked as deleted", id);
-                        return false;
-                    }
 
                     shiftInstance.IsDeleted = true;
                     shiftInstance.UpdatedAt = DateTime.UtcNow;
@@ -146,6 +131,9 @@ namespace UserService.Infrastructure.Repositories
                 }
             });
         }
+
+        // === Other Get methods (unchanged for brevity - keep your original implementations) ===
+        // GetInstancesByShiftIdAsync, GetInstancesByDateRangeAsync, GetInstancesByStatusAsync, etc.
 
         public async Task<IEnumerable<ShiftInstance>> GetInstancesByShiftIdAsync(string shiftId)
         {
@@ -183,11 +171,11 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task<IEnumerable<ShiftInstance>> GetInstancesByStatusesAsync(IEnumerable<ShiftInstanceStatus> statuses)
         {
-            var statusSet = statuses.ToHashSet();
+            var statusList = statuses.ToList();
             return await _context.ShiftInstances
                 .Include(si => si.Shift)
                 .Include(si => si.Attendances)
-                .Where(si => statusSet.Contains(si.Status) && !si.IsDeleted)
+                .Where(si => statusList.Contains(si.Status) && !si.IsDeleted)
                 .OrderBy(si => si.ScheduledDate)
                 .ToListAsync();
         }
@@ -200,28 +188,23 @@ namespace UserService.Infrastructure.Repositories
             return await _context.ShiftInstances
                 .Include(si => si.Shift)
                 .Include(si => si.Attendances)
-                .Where(si => !si.IsDeleted && 
-                            si.ScheduledDate >= today && 
+                .Where(si => !si.IsDeleted &&
+                            si.ScheduledDate >= today &&
                             si.ScheduledDate <= endDate)
                 .OrderBy(si => si.ScheduledDate)
                 .ToListAsync();
         }
-        
+
         public async Task<IEnumerable<ShiftInstance>> GetInstancesByStatusAndTimeAsync(
-            ShiftInstanceStatus status, 
-            DateTime startTime, 
-            DateTime endTime)
+            ShiftInstanceStatus status, DateTime startTime, DateTime endTime)
         {
-            // First get all instances with the specified status
             var query = _context.ShiftInstances
                 .Include(si => si.Shift)
                 .Include(si => si.Attendances)
                 .Where(si => !si.IsDeleted && si.Status == status);
 
-            // Materialize the query to avoid EF Core translation issues with complex date/time operations
             var allInstances = await query.ToListAsync();
 
-            // Now filter in memory where ScheduledDate + ScheduledStartTime is within the time range
             var filteredInstances = allInstances
                 .Where(si => 
                 {
@@ -235,6 +218,8 @@ namespace UserService.Infrastructure.Repositories
             _logger.LogInformation("Found {Count} instances matching the criteria", filteredInstances.Count);
             return filteredInstances;
         }
+
+        // === NEW & IMPROVED METHODS ===
 
         public async Task<IEnumerable<ShiftInstance>> GenerateShiftInstancesAsync(string shiftId, DateTime startDate, DateTime endDate)
         {
@@ -257,39 +242,38 @@ namespace UserService.Infrastructure.Repositories
                     var generatedInstances = new List<ShiftInstance>();
                     var currentUserId = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
 
-                    // Check if shift is one-time or recurring
                     if (shift.Type == ShiftType.OneTime)
                     {
-                        // For one-time shifts, create a single instance on the start date
-                        var existingInstance = await _context.ShiftInstances
-                            .FirstOrDefaultAsync(si => si.ShiftId == shiftId && 
-                                                      si.ScheduledDate.Date == startDate.Date &&
-                                                      !si.IsDeleted);
+                        var existing = await _context.ShiftInstances
+                            .AnyAsync(si => si.ShiftId == shiftId 
+                                         && si.ScheduledDate.Date == startDate.Date 
+                                         && !si.IsDeleted);
 
-                        if (existingInstance == null)
+                        if (!existing)
                         {
-                            var instance = CreateShiftInstance(shift, startDate, currentUserId);
+                            var instance = CreateShiftInstance(shift, startDate.Date, currentUserId);
                             await _context.ShiftInstances.AddAsync(instance);
                             generatedInstances.Add(instance);
                         }
                     }
                     else if (shift.Type == ShiftType.Recurring)
                     {
+                        var exceptionSet = shift.ExceptionDates.Length > 0 
+                            ? shift.ExceptionDates.Select(d => d.Date).ToHashSet() 
+                            : new HashSet<DateTime>();
+
                         var currentDate = startDate.Date;
-                        
+
                         while (currentDate <= endDate.Date)
                         {
-                            var shouldCreateInstance = ShouldCreateInstanceForDate(shift, currentDate);
-
-                            if (shouldCreateInstance)
+                            if (!exceptionSet.Contains(currentDate) && ShouldCreateInstanceForDate(shift, currentDate))
                             {
-                                // Check if instance already exists
-                                var existingInstance = await _context.ShiftInstances
-                                    .FirstOrDefaultAsync(si => si.ShiftId == shiftId && 
-                                                              si.ScheduledDate.Date == currentDate &&
-                                                              !si.IsDeleted);
+                                var existing = await _context.ShiftInstances
+                                    .AnyAsync(si => si.ShiftId == shiftId 
+                                                 && si.ScheduledDate.Date == currentDate 
+                                                 && !si.IsDeleted);
 
-                                if (existingInstance == null)
+                                if (!existing)
                                 {
                                     var instance = CreateShiftInstance(shift, currentDate, currentUserId);
                                     await _context.ShiftInstances.AddAsync(instance);
@@ -298,18 +282,22 @@ namespace UserService.Infrastructure.Repositories
                             }
 
                             currentDate = GetNextDate(shift, currentDate);
-                            
-                            // Prevent infinite loops
-                            if (currentDate <= startDate.Date)
-                                break;
+                            if (currentDate <= startDate.Date) break; // prevent infinite loop
                         }
                     }
 
                     await _context.SaveChangesAsync();
+
+                    // Automatic cleanup after generation
+                    if (shift.Type == ShiftType.Recurring && shift.ExceptionDates.Length > 0)
+                    {
+                        await CleanupInstancesOnExceptionDatesAsync(shiftId);
+                    }
+
                     await transaction.CommitAsync();
 
-                    _logger.LogInformation("Generated {Count} shift instances for shift {ShiftId} between {StartDate} and {EndDate}", 
-                        generatedInstances.Count, shiftId, startDate, endDate);
+                    _logger.LogInformation("Generated {Count} shift instances for shift {ShiftId}", 
+                        generatedInstances.Count, shiftId);
 
                     return generatedInstances;
                 }
@@ -320,6 +308,48 @@ namespace UserService.Infrastructure.Repositories
                     throw;
                 }
             });
+        }
+
+        public async Task<int> CleanupInstancesOnExceptionDatesAsync(string shiftId)
+        {
+            var shift = await _context.Shifts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == shiftId && !s.IsDeleted);
+
+            if (shift == null || shift.ExceptionDates.Length == 0)
+                return 0;
+
+            var exceptionSet = shift.ExceptionDates.Select(d => d.Date).ToHashSet();
+
+            // Only remove Scheduled instances — Completed/InProgress/Cancelled are kept as historical records
+            var instancesToCleanup = await _context.ShiftInstances
+                .Where(si => si.ShiftId == shiftId
+                          && !si.IsDeleted
+                          && si.Status == ShiftInstanceStatus.Scheduled
+                          && exceptionSet.Contains(si.ScheduledDate.Date))
+                .ToListAsync();
+
+            if (instancesToCleanup.Count == 0)
+                return 0;
+
+            var currentUserId = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
+
+            foreach (var instance in instancesToCleanup)
+            {
+                instance.IsDeleted = true;
+                instance.UpdatedAt = DateTime.UtcNow;
+                instance.UpdatedBy = currentUserId;
+                instance.Notes = string.IsNullOrEmpty(instance.Notes) 
+                    ? "Automatically removed due to exception date" 
+                    : $"{instance.Notes}; Removed due to exception date";
+            }
+
+            await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Cleaned up {Count} shift instances on exception dates for shift {ShiftId}", 
+                instancesToCleanup.Count, shiftId);
+
+            return instancesToCleanup.Count;
         }
 
         public async Task<bool> CancelShiftInstanceAsync(string shiftInstanceId, string reason)
@@ -335,23 +365,9 @@ namespace UserService.Infrastructure.Repositories
                         .AsTracking()
                         .FirstOrDefaultAsync(si => si.Id == shiftInstanceId && !si.IsDeleted);
 
-                    if (shiftInstance == null)
-                    {
-                        _logger.LogWarning("Shift instance {ShiftInstanceId} not found for cancellation", shiftInstanceId);
-                        return false;
-                    }
-
-                    if (shiftInstance.Status == ShiftInstanceStatus.Cancelled)
-                    {
-                        _logger.LogWarning("Shift instance {ShiftInstanceId} already cancelled", shiftInstanceId);
-                        return true; // Already cancelled
-                    }
-
-                    if (shiftInstance.Status == ShiftInstanceStatus.Completed)
-                    {
-                        _logger.LogWarning("Cannot cancel completed shift instance {ShiftInstanceId}", shiftInstanceId);
-                        return false;
-                    }
+                    if (shiftInstance == null) return false;
+                    if (shiftInstance.Status == ShiftInstanceStatus.Cancelled) return true;
+                    if (shiftInstance.Status == ShiftInstanceStatus.Completed) return false;
 
                     shiftInstance.Status = ShiftInstanceStatus.Cancelled;
                     shiftInstance.Notes = string.IsNullOrEmpty(shiftInstance.Notes) 
@@ -363,8 +379,7 @@ namespace UserService.Infrastructure.Repositories
                     await _context.SaveChangesAsync();
                     await transaction.CommitAsync();
 
-                    _logger.LogInformation("Cancelled shift instance {ShiftInstanceId} with reason: {Reason}", 
-                        shiftInstanceId, reason);
+                    _logger.LogInformation("Cancelled shift instance {ShiftInstanceId}", shiftInstanceId);
                     return true;
                 }
                 catch (Exception ex)
@@ -378,23 +393,21 @@ namespace UserService.Infrastructure.Repositories
 
         public async Task AddRangeAsync(List<ShiftInstance> batch)
         {
-            if (batch == null || !batch.Any())
-                return;
+            if (batch == null || !batch.Any()) return;
 
             await _context.ShiftInstances.AddRangeAsync(batch);
             await _context.SaveChangesAsync();
         }
 
+        // === Private Helper Methods ===
+
         private ShiftInstance CreateShiftInstance(Shift shift, DateTime date, string? currentUserId)
         {
             var scheduledStartTime = date.Date.Add(shift.StartTime);
             var scheduledEndTime = date.Date.Add(shift.EndTime);
-            
-            // Handle overnight shifts
+
             if (shift.EndTime < shift.StartTime)
-            {
                 scheduledEndTime = scheduledEndTime.AddDays(1);
-            }
 
             return new ShiftInstance
             {
@@ -412,42 +425,43 @@ namespace UserService.Infrastructure.Repositories
 
         private bool ShouldCreateInstanceForDate(Shift shift, DateTime date)
         {
-            // Check if date is in exception dates
-            if (shift.ExceptionDates.Contains(date.Date))
+            var checkDate = date.Date;
+
+            // Fast exception date check using HashSet
+            if (shift.ExceptionDates.Length > 0)
+            {
+                var exceptionSet = shift.ExceptionDates.Select(d => d.Date).ToHashSet();
+                if (exceptionSet.Contains(checkDate))
+                    return false;
+            }
+
+            if (checkDate < shift.StartDate.Date)
                 return false;
 
-            // Check if shift has ended
-            if (shift.EndDate.HasValue && date > shift.EndDate.Value)
-                return false;
-
-            // Check if date is before shift start
-            if (date < shift.StartDate.Date)
+            if (shift.EndDate.HasValue && checkDate > shift.EndDate.Value.Date)
                 return false;
 
             return shift.RecurrenceType switch
             {
-                RecurrenceType.None => date.Date == shift.StartDate.Date,
+                RecurrenceType.None => checkDate == shift.StartDate.Date,
                 RecurrenceType.Daily => true,
-                RecurrenceType.Weekly => IsValidWeeklyDate(shift, date),
-                RecurrenceType.Monthly => IsValidMonthlyDate(shift, date),
-                RecurrenceType.Custom => shift.CustomDays.Contains(date.DayOfWeek),
+                RecurrenceType.Weekly => IsValidWeeklyDate(shift, checkDate),
+                RecurrenceType.Monthly => IsValidMonthlyDate(shift, checkDate),
+                RecurrenceType.Custom => shift.CustomDays.Contains(checkDate.DayOfWeek),
                 _ => false
             };
         }
 
         private bool IsValidWeeklyDate(Shift shift, DateTime date)
         {
-            var daysSinceStart = (date.Date - shift.StartDate.Date).Days;
+            var daysSinceStart = (date - shift.StartDate.Date).Days;
             return daysSinceStart % (shift.RecurrenceInterval * 7) == 0;
         }
 
         private bool IsValidMonthlyDate(Shift shift, DateTime date)
         {
-            var monthsSinceStart = (date.Year - shift.StartDate.Year) * 12 + 
-                                   (date.Month - shift.StartDate.Month);
-            
-            return monthsSinceStart % shift.RecurrenceInterval == 0 && 
-                   date.Day == shift.StartDate.Day;
+            var monthsSinceStart = (date.Year - shift.StartDate.Year) * 12 + (date.Month - shift.StartDate.Month);
+            return monthsSinceStart % shift.RecurrenceInterval == 0 && date.Day == shift.StartDate.Day;
         }
 
         private DateTime GetNextDate(Shift shift, DateTime currentDate)
@@ -465,20 +479,13 @@ namespace UserService.Infrastructure.Repositories
         private DateTime GetNextCustomDate(Shift shift, DateTime currentDate)
         {
             var nextDate = currentDate.AddDays(1);
-            var maxDays = 14; // Prevent infinite loops
-            var dayCount = 0;
-
-            while (dayCount < maxDays)
+            for (int i = 0; i < 14; i++)
             {
                 if (shift.CustomDays.Contains(nextDate.DayOfWeek))
                     return nextDate;
-                    
                 nextDate = nextDate.AddDays(1);
-                dayCount++;
             }
-
-            return currentDate.AddDays(7); // Fallback
+            return currentDate.AddDays(7);
         }
-        
     }
 }
