@@ -1,0 +1,33 @@
+{
+  "Chains": [
+    {
+      "Id": 1,
+      "MicroserviceId": 0,
+      "MicroserviceName": "TransactionService",
+      "FullBackupFile": "TransactionService_full_20260413_082212.dump",
+      "Timestamp": "2026-04-13T08:22:13.2094987Z",
+      "Incrementals": [],
+      "ChainId": "TransactionService_20260413082213",
+      "Lsn": null,
+      "Timeline": 0,
+      "lastLsn": null
+    },
+    {
+      "Id": 2,
+      "MicroserviceId": 0,
+      "MicroserviceName": "TransactionService",
+      "FullBackupFile": "TransactionService_full_20260413_082545.dump",
+      "Timestamp": "2026-04-13T08:25:45.3663197Z",
+      "Incrementals": [],
+      "ChainId": "TransactionService_20260413082545",
+      "Lsn": null,
+      "Timeline": 0,
+      "lastLsn": null
+    }
+  ],
+  "CreatedAt": "0001-01-01T00:00:00",
+  "Lsn": null,
+  "Timeline": null,
+  "BackupId": null,
+  "ChainId": null
+}
