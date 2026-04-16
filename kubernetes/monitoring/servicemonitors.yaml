@@ -123,24 +123,6 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: technician-service
-  namespace: qalitrack-prod
-  labels:
-    app.kubernetes.io/name: technician-service
-    app.kubernetes.io/part-of: qalitrack
-spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: technician-service
-  endpoints:
-  - port: http
-    path: /metrics
-    interval: 30s
-
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
   name: argocd-server
   namespace: argocd
   labels:
