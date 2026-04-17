@@ -3,420 +3,348 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Qalitrack Installation Guide</title>
+<title>Qalitrack Manned — Installation Guide</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  html, body {
-    overflow-x: hidden;
-    max-width: 100%;
-  }
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 14px;
-    color: #1a1a1a;
-    line-height: 1.5;
-  }
+/* ── Screen base ── */
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #1c1c1c;
+  background: #f5f5f5;
+}
+
+.page {
+  background: #fff;
+  max-width: 860px;
+  margin: 24px auto;
+  padding: 36px 40px;
+  border-radius: 6px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* ── Header ── */
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 3px solid #F59E0B;
+  padding-bottom: 10px;
+  margin-bottom: 6px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.doc-header h1 { font-size: 22px; color: #F59E0B; font-weight: 800; line-height: 1.1; }
+.doc-header .meta { font-size: 11px; color: #888; text-align: right; white-space: nowrap; }
+
+/* ── Scope banner ── */
+.scope-banner {
+  background: #FEF3C7;
+  border: 2px solid #F59E0B;
+  border-radius: 5px;
+  padding: 8px 14px;
+  margin: 10px 0 18px;
+  font-size: 13px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.scope-banner .icon { font-size: 18px; flex-shrink: 0; }
+
+/* ── Section heading ── */
+h2 {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: #F59E0B;
+  border-bottom: 1px solid #FDE68A;
+  padding-bottom: 3px;
+  margin: 22px 0 8px;
+}
+
+h3 { font-size: 15px; font-weight: 700; margin: 10px 0 4px; color: #222; }
+
+p { margin-bottom: 5px; }
+
+/* ── Folder table ── */
+.folder-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Consolas', monospace;
+  font-size: 13px;
+  margin: 6px 0 14px;
+  border: 1px solid #FDE68A;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.folder-table td {
+  padding: 5px 12px;
+  border-bottom: 1px solid #FDE68A;
+  vertical-align: top;
+}
+.folder-table tr:last-child td { border-bottom: none; }
+.folder-table tr:nth-child(even) td { background: #FFFBEB; }
+.folder-table .fname { font-weight: 600; white-space: nowrap; width: 1%; padding-right: 20px; }
+.folder-table .fdesc { color: #666; font-family: 'Segoe UI', Arial, sans-serif; font-size: 12px; }
+
+/* ── Note / warn ── */
+.note {
+  background: #FFFBEB;
+  border-left: 4px solid #F59E0B;
+  padding: 8px 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  border-radius: 0 4px 4px 0;
+}
+
+/* ── Steps ── */
+.steps { list-style: none; margin: 6px 0 10px; }
+.steps li {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+  align-items: flex-start;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  background: #F59E0B;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+.step-body { flex: 1; }
+
+/* ── Two col (only on wide screens) ── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* ── Inline code ── */
+code {
+  font-family: 'Consolas', monospace;
+  font-size: 12px;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  border-radius: 3px;
+  padding: 1px 5px;
+  word-break: break-all;
+}
+
+/* ── Data table (URLs, troubleshooting) ── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 6px 0 12px;
+  table-layout: fixed;
+}
+.data-table th {
+  background: #B45309;
+  color: #fff;
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 600;
+}
+.data-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #FDE68A;
+  vertical-align: top;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+.data-table tr:nth-child(even) td { background: #FFFBEB; }
+.data-table .col-narrow { width: 38%; }
+
+ul { padding-left: 18px; margin: 4px 0 6px; }
+li { margin-bottom: 3px; }
+
+/* ── Print ── */
+@media print {
+  body { background: #fff; font-size: 8.5pt; line-height: 1.3; }
 
   .page {
-    width: 100%;
-    max-width: 210mm;
+    max-width: none;
+    width: 180mm;        /* content width inside A4 margins */
     margin: 0 auto;
-    padding: 20px 16px;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
     page-break-after: always;
   }
-
   .page:last-child { page-break-after: avoid; }
 
-  /* Header */
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 2.5px solid #F59E0B;
-    padding-bottom: 6px;
-    margin-bottom: 10px;
-  }
-  .header h1 { font-size: 20px; color: #F59E0B; font-weight: 700; }
-  .header .sub { font-size: 12px; color: #666; text-align: right; }
+  .doc-header { padding-bottom: 5px; margin-bottom: 4px; }
+  .doc-header h1 { font-size: 14pt; }
+  .doc-header .meta { font-size: 7.5pt; }
 
-  /* Section headings */
-  h2 {
-    font-size: 11px;
-    font-weight: 700;
-    color: #F59E0B;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin: 14px 0 6px 0;
-    padding-bottom: 4px;
-    border-bottom: 1px solid #FDE68A;
-  }
+  .scope-banner { padding: 4px 8px; margin: 6px 0 10px; font-size: 7.5pt; }
+  .scope-banner .icon { font-size: 11pt; }
 
-  h3 {
-    font-size: 14px;
-    font-weight: 700;
-    margin: 8px 0 4px 0;
-    color: #222;
-  }
+  h2 { font-size: 7.5pt; margin: 10px 0 4px; }
+  h3 { font-size: 8.5pt; margin: 6px 0 2px; }
+  p { margin-bottom: 2px; }
 
-  p { margin-bottom: 4px; }
+  .folder-table { font-size: 7.5pt; margin: 3px 0 8px; }
+  .folder-table td { padding: 2px 7px; }
+  .folder-table .fdesc { font-size: 7pt; }
 
-  /* Steps */
-  .steps { counter-reset: step; }
-  .step {
-    display: flex;
-    gap: 6px;
-    margin-bottom: 3px;
-    align-items: flex-start;
-  }
-  .step-num {
-    flex-shrink: 0;
-    width: 18px;
-    height: 18px;
-    background: #F59E0B;
-    color: white;
-    border-radius: 50%;
-    font-size: 8pt;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 1px;
-  }
-  .step-body { flex: 1; }
+  .note { font-size: 7.5pt; padding: 4px 8px; margin: 4px 0; }
 
-  /* Steps */
-  .step-num {
-    flex-shrink: 0;
-    width: 22px;
-    height: 22px;
-    font-size: 11px;
-  }
+  .steps { margin: 3px 0 6px; }
+  .steps li { gap: 6px; margin-bottom: 4px; }
+  .step-num { width: 16px; height: 16px; font-size: 7pt; }
 
-  /* Inline code */
-  code {
-    font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 12px;
-    background: #FFFBEB;
-    border: 1px solid #FDE68A;
-    border-radius: 3px;
-    padding: 0 4px;
-    word-break: break-all;
-  }
+  .two-col { gap: 14px; }
 
-  /* Tables */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 6px 0 8px 0;
-    font-size: 13px;
-  }
-  th {
-    background: #B45309;
-    color: white;
-    padding: 5px 8px;
-    text-align: left;
-    font-weight: 600;
-  }
-  td { padding: 5px 8px; border-bottom: 1px solid #FDE68A; }
-  tr:nth-child(even) td { background: #FFFBEB; }
+  code { font-size: 7.5pt; }
 
-  /* Callout boxes */
-  .note {
-    background: #fffbe6;
-    border-left: 3px solid #f0a500;
-    padding: 6px 10px;
-    margin: 6px 0;
-    font-size: 13px;
-  }
-  .warn {
-    background: #fff0f0;
-    border-left: 3px solid #e53e3e;
-    padding: 6px 10px;
-    margin: 6px 0;
-    font-size: 13px;
-  }
+  .data-table { font-size: 7.5pt; margin: 3px 0 8px; }
+  .data-table th { padding: 3px 6px; }
+  .data-table td { padding: 3px 6px; }
 
-  ul { padding-left: 16px; margin: 4px 0 6px; }
-  li { margin-bottom: 3px; }
+  ul { padding-left: 10px; margin: 2px 0 4px; }
+  li { margin-bottom: 1px; }
+}
 
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .col {}
+/* ── Mobile ── */
+@media screen and (max-width: 700px) {
+  .page { margin: 0; border-radius: 0; padding: 20px 16px; box-shadow: none; }
+  .doc-header { flex-direction: column; align-items: flex-start; }
+  .doc-header .meta { text-align: left; }
+  .two-col { grid-template-columns: 1fr; gap: 0; }
+  .data-table { font-size: 12px; }
+  .data-table .col-narrow { width: auto; }
+}
 
-  .folder-contents {
-    background: #FFFBEB;
-    border: 1px solid #FDE68A;
-    border-radius: 4px;
-    padding: 0;
-    margin: 6px 0 10px;
-    overflow: hidden;
-  }
-  .folder-contents table {
-    font-family: 'Consolas', monospace;
-    font-size: 12px;
-    margin: 0;
-    border: none;
-  }
-  .folder-contents td {
-    padding: 3px 10px;
-    border: none;
-    vertical-align: top;
-    white-space: nowrap;
-  }
-  .folder-contents td:first-child { color: #1a1a1a; font-weight: 500; }
-  .folder-contents td:last-child  { color: #888; white-space: normal; font-size: 11px; }
-  .folder-contents tr:nth-child(even) td { background: #FEF3C7; }
-
-  .page-label {
-    font-size: 11px;
-    color: #aaa;
-    text-align: right;
-    margin-top: 12px;
-  }
-
-  /* ── Mobile + narrow laptop ── */
-  @media (max-width: 750px) {
-    body { font-size: 15px; }
-
-    .page { padding: 16px 14px; }
-
-    .header { flex-direction: column; align-items: flex-start; gap: 4px; }
-    .header .sub { text-align: left; }
-    .header h1 { font-size: 18px; }
-
-    .two-col { grid-template-columns: 1fr; gap: 0; }
-
-    table { font-size: 13px; display: block; overflow-x: auto; }
-
-    .folder-contents { font-size: 11px; }
-
-    .page-label { display: none; }
-  }
-
-  /* ── Print — restore tight layout ── */
-  @media print {
-    body { font-size: 8.8pt; line-height: 1.35; }
-    .page {
-      width: 210mm;
-      min-height: 297mm;
-      padding: 10mm 14mm 8mm 14mm;
-      margin: 0;
-      overflow: hidden;
-    }
-    .header h1 { font-size: 15pt; }
-    .header .sub { font-size: 8pt; }
-    h2 { font-size: 8.5pt; margin: 7px 0 3px 0; }
-    h3 { font-size: 9pt; margin: 4px 0 2px 0; }
-    p { margin-bottom: 2px; }
-    .step { margin-bottom: 3px; gap: 6px; }
-    .step-num { width: 18px; height: 18px; font-size: 8pt; }
-    code { font-size: 8.5pt; word-break: break-all; }
-    table {
-      font-size: 8pt;
-      margin: 3px 0 4px 0;
-      table-layout: fixed;
-      width: 100%;
-    }
-    th { padding: 2px 5px; overflow-wrap: break-word; }
-    td { padding: 2px 5px; overflow-wrap: break-word; }
-    /* Troubleshooting: symptom col narrower, fix col takes the rest */
-    .page:last-child > table th:first-child,
-    .page:last-child > table td:first-child { width: 38%; }
-    .note, .warn { font-size: 8pt; padding: 3px 7px; margin: 3px 0; }
-    ul { padding-left: 12px; margin: 2px 0 3px; }
-    li { margin-bottom: 1px; }
-    .two-col { gap: 10px; }
-    .folder-contents { margin: 4px 0 8px; }
-    .folder-contents table { font-size: 8pt; table-layout: auto; }
-    .folder-contents td { white-space: nowrap; padding: 1px 6px; }
-    .folder-contents td:last-child { white-space: normal; }
-    .page-label { display: block; font-size: 7.5pt; margin-top: 8px; }
-  }
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════ PAGE 1 ═══════════════════════════════ -->
+<!-- ═══════ PAGE 1 ═══════ -->
 <div class="page">
 
-  <div class="header">
+  <div class="doc-header">
     <h1>Qalitrack &mdash; Installation Guide</h1>
-    <div class="sub">Version: katani branch<br>Keep this document on site</div>
+    <div class="meta">Katani branch &nbsp;|&nbsp; Keep this document on site</div>
   </div>
 
-  <!-- Scope banner -->
-  <div style="background:#FEF3C7;border:2px solid #F59E0B;border-radius:4px;padding:5px 10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
-    <span style="font-size:13pt;line-height:1;">&#9888;</span>
-    <div>
-      <strong>Qalitrack Manned only.</strong>
-      This guide covers Qalitrack Manned. Qalitrack Unmanned has its own installation guide.
-    </div>
+  <div class="scope-banner">
+    <span class="icon">&#9888;</span>
+    <div><strong>Qalitrack Manned only.</strong> This guide covers Qalitrack Manned. Qalitrack Unmanned has its own installation guide.</div>
   </div>
 
-  <!-- Deployment folder contents -->
-  <h2>What Is in the Deployment Folder</h2>
-  <div class="folder-contents">
-    <table>
-      <tr><td>install.bat</td><td>Double-click to install the backend</td></tr>
-      <tr><td>install.ps1</td><td>Called automatically by install.bat</td></tr>
-      <tr><td>docker-compose.yml</td><td>Backend service definitions</td></tr>
-      <tr><td>.env</td><td>Secrets file — provided by Qalitrack team</td></tr>
-      <tr><td>QalitrackHardware.exe</td><td>Hardware client (weighbridge, camera, RFID)</td></tr>
-      <tr><td>QalitrackFrontend.exe</td><td>Web frontend desktop app</td></tr>
-    </table>
-  </div>
+  <!-- Deployment folder -->
+  <h2>Deployment Folder Contents</h2>
+  <table class="folder-table">
+    <tr><td class="fname">install.bat</td><td class="fdesc">Double-click to install the backend</td></tr>
+    <tr><td class="fname">install.ps1</td><td class="fdesc">Called automatically by install.bat</td></tr>
+    <tr><td class="fname">docker-compose.yml</td><td class="fdesc">Backend service definitions</td></tr>
+    <tr><td class="fname">.env</td><td class="fdesc">Secrets file — provided by the Qalitrack team</td></tr>
+    <tr><td class="fname">QalitrackHardware.exe</td><td class="fdesc">Hardware client installer (weighbridge, camera, RFID/NFC)</td></tr>
+    <tr><td class="fname">QalitrackFrontend.exe</td><td class="fdesc">Frontend desktop app installer</td></tr>
+  </table>
 
   <!-- Prerequisites -->
   <h2>Prerequisites</h2>
-  <div class="note"><strong>Docker Desktop and WSL2 are installed automatically by the script.</strong> If a restart is required mid-install, the script will say so — restart the PC and double-click <code>install.bat</code> again to continue.</div>
+  <div class="note"><strong>Docker Desktop and WSL2 are installed automatically by the script.</strong> If a restart is required mid-install the script will tell you — restart the PC and double-click <code>install.bat</code> again.</div>
 
-  <!-- Backend -->
+  <!-- Part 1 -->
   <h2>Part 1 &mdash; Backend Services</h2>
-  <div class="steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <div class="step-body">Confirm Docker Desktop is running (whale icon in taskbar).</div>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <div class="step-body">Place the <code>.env</code> file provided for this site inside the <code>Deployment</code> folder (same level as <code>install.bat</code>).</div>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <div class="step-body">Double-click <strong>install.bat</strong>. Click <strong>Yes</strong> on the UAC prompt. The script clones the source code, builds all service images, and starts everything. <em>First run takes 5–15 minutes.</em></div>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <div class="step-body">When the window shows the green success banner, open a browser and verify:
-        <table style="margin-top:4px;">
-          <tr><th>Service</th><th>URL</th></tr>
-          <tr><td>Gateway</td><td><code>http://localhost:7000</code></td></tr>
-          <tr><td>User Service</td><td><code>http://localhost:7001</code></td></tr>
-          <tr><td>Master Data</td><td><code>http://localhost:7002</code></td></tr>
-          <tr><td>Backup</td><td><code>http://localhost:7003</code></td></tr>
-          <tr><td>Transactions</td><td><code>http://localhost:7004</code></td></tr>
-        </table>
-      </div>
-    </div>
-  </div>
-
+  <ol class="steps">
+    <li><div class="step-num">1</div><div class="step-body">Confirm Docker Desktop is running (whale icon in the taskbar).</div></li>
+    <li><div class="step-num">2</div><div class="step-body">Place the <code>.env</code> file provided for this site in the same folder as <code>install.bat</code>.</div></li>
+    <li><div class="step-num">3</div><div class="step-body">Double-click <strong>install.bat</strong> and click <strong>Yes</strong> on the UAC prompt. The script installs WSL2 and Docker Desktop if missing, clones the source, builds all images, and starts every service. <em>First run: 5–15 minutes.</em></div></li>
+    <li><div class="step-num">4</div><div class="step-body">When the green banner appears, verify in a browser:
+      <table class="data-table" style="margin-top:6px;">
+        <tr><th>Service</th><th>URL</th></tr>
+        <tr><td>Gateway</td><td><code>http://localhost:7000</code></td></tr>
+        <tr><td>User Service</td><td><code>http://localhost:7001</code></td></tr>
+        <tr><td>Master Data</td><td><code>http://localhost:7002</code></td></tr>
+        <tr><td>Backup</td><td><code>http://localhost:7003</code></td></tr>
+        <tr><td>Transactions</td><td><code>http://localhost:7004</code></td></tr>
+      </table>
+    </div></li>
+  </ol>
   <div class="note">The backend restarts automatically after every reboot — no action needed.</div>
 
-  <div class="page-label">Page 1 of 2</div>
 </div>
 
-<!-- ═══════════════════════════════ PAGE 2 ═══════════════════════════════ -->
+<!-- ═══════ PAGE 2 ═══════ -->
 <div class="page">
 
-  <div class="header">
+  <div class="doc-header">
     <h1>Qalitrack &mdash; Installation Guide</h1>
-    <div class="sub">Version: katani branch<br>Keep this document on site</div>
+    <div class="meta">Katani branch &nbsp;|&nbsp; Keep this document on site</div>
   </div>
 
   <div class="two-col">
 
-    <!-- Hardware client -->
-    <div class="col">
+    <!-- Part 2 -->
+    <div>
       <h2>Part 2 &mdash; Hardware Client</h2>
       <p>Collects weighbridge data, camera feed, RFID and NFC reads.</p>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-body">Right-click <strong>QalitrackHardware.exe</strong> &rarr; <em>Run as administrator</em>.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-body">Fill in the setup wizard:
-            <ul>
-              <li><strong>Weighbridge</strong> — TCP (IP + port, default 3002) or Serial (COM port + baud rate from the weighbridge manual)</li>
-              <li><strong>Camera</strong> — IP, RTSP port (554), path, username/password</li>
-              <li><strong>RFID</strong> — tick if installed, enter IP + port (2022)</li>
-              <li><strong>NFC</strong> — tick if installed, select COM port</li>
-            </ul>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">Click <strong>Install Service</strong>. The service starts automatically and survives reboots.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <div class="step-body">Verify at <code>http://localhost:5000</code>.</div>
-        </div>
-      </div>
-      <div class="note"><strong>Update:</strong> run the new <code>QalitrackHardware.exe</code> as Administrator — the wizard pre-fills the existing config and the button reads <em>Update &amp; Reinstall</em>.</div>
+      <ol class="steps">
+        <li><div class="step-num">1</div><div class="step-body">Right-click <strong>QalitrackHardware.exe</strong> &rarr; <em>Run as administrator</em>.</div></li>
+        <li><div class="step-num">2</div><div class="step-body">Fill in the setup wizard:
+          <ul>
+            <li><strong>Weighbridge</strong> — TCP (IP + port, default 3002) or Serial (COM port + baud rate)</li>
+            <li><strong>Camera</strong> — IP, RTSP port 554, path, username/password</li>
+            <li><strong>RFID</strong> — tick if installed, enter IP + port (2022)</li>
+            <li><strong>NFC</strong> — tick if installed, select COM port</li>
+          </ul>
+        </div></li>
+        <li><div class="step-num">3</div><div class="step-body">Click <strong>Install Service</strong>. Starts automatically, survives reboots.</div></li>
+        <li><div class="step-num">4</div><div class="step-body">Verify at <code>http://localhost:5000</code>.</div></li>
+      </ol>
+      <div class="note"><strong>Update:</strong> run the new exe as Administrator — wizard pre-fills existing config, button reads <em>Update &amp; Reinstall</em>.</div>
     </div>
 
-    <!-- Frontend -->
-    <div class="col">
+    <!-- Part 3 -->
+    <div>
       <h2>Part 3 &mdash; Frontend</h2>
       <p>The Qalitrack web application desktop client.</p>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-body">Double-click <strong>QalitrackFrontend.exe</strong>.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-body">Follow the on-screen installation steps and accept the defaults.</div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">Launch the application from the desktop shortcut created by the installer.</div>
-        </div>
-      </div>
-      <div class="note"><strong>Update:</strong> run the new <code>QalitrackFrontend.exe</code> — the installer upgrades in place.</div>
+      <ol class="steps">
+        <li><div class="step-num">1</div><div class="step-body">Double-click <strong>QalitrackFrontend.exe</strong>.</div></li>
+        <li><div class="step-num">2</div><div class="step-body">Follow the on-screen steps and accept the defaults.</div></li>
+        <li><div class="step-num">3</div><div class="step-body">Launch from the desktop shortcut created by the installer.</div></li>
+      </ol>
+      <div class="note"><strong>Update:</strong> run the new <code>QalitrackFrontend.exe</code> — upgrades in place.</div>
     </div>
+
   </div>
 
   <!-- Troubleshooting -->
   <h2>Troubleshooting</h2>
-  <table>
-    <tr><th>Symptom</th><th>Fix</th></tr>
-    <tr>
-      <td>install.bat says "restart required"</td>
-      <td>Restart the PC, then double-click <code>install.bat</code> again. This happens once when WSL2 or Docker Desktop is installed for the first time.</td>
-    </tr>
-    <tr>
-      <td>install.bat reports Docker not running</td>
-      <td>Open Docker Desktop manually, wait for the whale icon to be solid, then re-run <code>install.bat</code>.</td>
-    </tr>
-    <tr>
-      <td>install.bat reports .env not found</td>
-      <td>Place the <code>.env</code> file in the same folder as <code>install.bat</code> and re-run.</td>
-    </tr>
-    <tr>
-      <td>install.bat reports WSL not installed</td>
-      <td>Run <code>wsl --install</code> in PowerShell as Administrator, restart the PC, re-run <code>install.bat</code>.</td>
-    </tr>
-    <tr>
-      <td>Services show unhealthy after install</td>
-      <td>Wait 60 seconds — databases take time on first boot. Open a browser and check the URLs again.</td>
-    </tr>
-    <tr>
-      <td>Hardware: "Installation Failed"</td>
-      <td>Right-click <code>QalitrackHardware.exe</code> &rarr; <em>Run as administrator</em>. Administrator rights are required.</td>
-    </tr>
-    <tr>
-      <td>Weighbridge shows no data (TCP)</td>
-      <td>Confirm IP and port with the site engineer. Test: <code>ping &lt;ip&gt;</code> in PowerShell.</td>
-    </tr>
-    <tr>
-      <td>Weighbridge shows no data (Serial)</td>
-      <td>Confirm COM port in Device Manager. Check baud rate against the weighbridge manual.</td>
-    </tr>
-    <tr>
-      <td>Camera not connecting</td>
-      <td>Test the RTSP stream in VLC: Media &rarr; Open Network Stream &rarr; <code>rtsp://user:pass@ip:554/path</code>. The service retries automatically.</td>
-    </tr>
+  <table class="data-table">
+    <tr><th class="col-narrow">Symptom</th><th>Fix</th></tr>
+    <tr><td>install.bat says "restart required"</td><td>Restart the PC then double-click <code>install.bat</code> again. Happens once when WSL2 or Docker Desktop installs for the first time.</td></tr>
+    <tr><td>Docker not running</td><td>Open Docker Desktop, wait for the whale icon to be solid, re-run <code>install.bat</code>.</td></tr>
+    <tr><td>.env not found</td><td>Place <code>.env</code> in the same folder as <code>install.bat</code> and re-run.</td></tr>
+    <tr><td>WSL not installed</td><td>Run <code>wsl --install</code> in PowerShell as Administrator, restart, re-run <code>install.bat</code>.</td></tr>
+    <tr><td>Services unhealthy</td><td>Wait 60 s — databases take time on first boot. Recheck the URLs.</td></tr>
+    <tr><td>Hardware: Installation Failed</td><td>Must run <code>QalitrackHardware.exe</code> as Administrator.</td></tr>
+    <tr><td>Weighbridge no data (TCP)</td><td>Confirm IP and port. Test: <code>ping &lt;ip&gt;</code> in PowerShell.</td></tr>
+    <tr><td>Weighbridge no data (Serial)</td><td>Confirm COM port in Device Manager. Check baud rate against weighbridge manual.</td></tr>
+    <tr><td>Camera not connecting</td><td>Test in VLC: <code>rtsp://user:pass@ip:554/path</code>. Service retries automatically.</td></tr>
   </table>
 
-  <!-- Updating -->
+  <!-- Update -->
   <h2>Updating the Backend</h2>
-  <p>Re-run <code>install.bat</code> — it pulls the latest code and rebuilds the images. Existing data is preserved.</p>
+  <p>Re-run <code>install.bat</code> — pulls latest code and rebuilds. Existing data is preserved.</p>
 
-  <div class="page-label">Page 2 of 2</div>
 </div>
 
 </body>
