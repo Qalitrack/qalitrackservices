@@ -2,21 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Qalitrack Installation Guide</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 8.8pt;
+    font-size: 14px;
     color: #1a1a1a;
-    line-height: 1.35;
+    line-height: 1.5;
   }
 
   .page {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 10mm 14mm 8mm 14mm;
+    width: 100%;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 20px 16px;
     page-break-after: always;
   }
 
@@ -31,29 +33,29 @@
     padding-bottom: 6px;
     margin-bottom: 10px;
   }
-  .header h1 { font-size: 15pt; color: #F59E0B; font-weight: 700; }
-  .header .sub { font-size: 8pt; color: #666; text-align: right; }
+  .header h1 { font-size: 20px; color: #F59E0B; font-weight: 700; }
+  .header .sub { font-size: 12px; color: #666; text-align: right; }
 
   /* Section headings */
   h2 {
-    font-size: 8.5pt;
+    font-size: 11px;
     font-weight: 700;
     color: #F59E0B;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin: 7px 0 3px 0;
-    padding-bottom: 2px;
+    margin: 14px 0 6px 0;
+    padding-bottom: 4px;
     border-bottom: 1px solid #FDE68A;
   }
 
   h3 {
-    font-size: 9pt;
+    font-size: 14px;
     font-weight: 700;
-    margin: 4px 0 2px 0;
+    margin: 8px 0 4px 0;
     color: #222;
   }
 
-  p { margin-bottom: 2px; }
+  p { margin-bottom: 4px; }
 
   /* Steps */
   .steps { counter-reset: step; }
@@ -79,76 +81,129 @@
   }
   .step-body { flex: 1; }
 
+  /* Steps */
+  .step-num {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
   /* Inline code */
   code {
     font-family: 'Consolas', 'Courier New', monospace;
-    font-size: 8.5pt;
+    font-size: 12px;
     background: #FFFBEB;
     border: 1px solid #FDE68A;
     border-radius: 3px;
-    padding: 0 3px;
+    padding: 0 4px;
+    word-break: break-all;
   }
 
   /* Tables */
   table {
     width: 100%;
     border-collapse: collapse;
-    margin: 3px 0 4px 0;
-    font-size: 8pt;
+    margin: 6px 0 8px 0;
+    font-size: 13px;
   }
   th {
     background: #B45309;
     color: white;
-    padding: 2px 5px;
+    padding: 5px 8px;
     text-align: left;
     font-weight: 600;
   }
-  td { padding: 2px 5px; border-bottom: 1px solid #FDE68A; }
+  td { padding: 5px 8px; border-bottom: 1px solid #FDE68A; }
   tr:nth-child(even) td { background: #FFFBEB; }
 
   /* Callout boxes */
   .note {
     background: #fffbe6;
     border-left: 3px solid #f0a500;
-    padding: 3px 7px;
-    margin: 3px 0;
-    font-size: 8pt;
+    padding: 6px 10px;
+    margin: 6px 0;
+    font-size: 13px;
   }
   .warn {
     background: #fff0f0;
     border-left: 3px solid #e53e3e;
-    padding: 3px 7px;
-    margin: 3px 0;
-    font-size: 8pt;
+    padding: 6px 10px;
+    margin: 6px 0;
+    font-size: 13px;
   }
 
-  ul { padding-left: 12px; margin: 2px 0 3px; }
-  li { margin-bottom: 1px; }
+  ul { padding-left: 16px; margin: 4px 0 6px; }
+  li { margin-bottom: 3px; }
 
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .col {}
 
   .folder-contents {
     background: #FFFBEB;
     border: 1px solid #FDE68A;
     border-radius: 4px;
-    padding: 6px 10px;
-    font-size: 8.5pt;
-    margin: 4px 0 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    margin: 6px 0 10px;
     font-family: 'Consolas', monospace;
+    overflow-x: auto;
+    white-space: nowrap;
   }
   .folder-contents .comment { color: #888; margin-left: 8px; }
 
   .page-label {
-    font-size: 7.5pt;
+    font-size: 11px;
     color: #aaa;
     text-align: right;
-    margin-top: 8px;
+    margin-top: 12px;
   }
 
+  /* ── Mobile ── */
+  @media (max-width: 600px) {
+    body { font-size: 15px; }
+
+    .page { padding: 16px 14px; }
+
+    .header { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .header .sub { text-align: left; }
+    .header h1 { font-size: 18px; }
+
+    .two-col { grid-template-columns: 1fr; gap: 0; }
+
+    table { font-size: 13px; display: block; overflow-x: auto; }
+
+    .folder-contents { font-size: 11px; }
+
+    .page-label { display: none; }
+  }
+
+  /* ── Print — restore tight layout ── */
   @media print {
-    body { margin: 0; }
-    .page { margin: 0; }
+    body { font-size: 8.8pt; line-height: 1.35; }
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 10mm 14mm 8mm 14mm;
+      margin: 0;
+    }
+    .header h1 { font-size: 15pt; }
+    .header .sub { font-size: 8pt; }
+    h2 { font-size: 8.5pt; margin: 7px 0 3px 0; }
+    h3 { font-size: 9pt; margin: 4px 0 2px 0; }
+    p { margin-bottom: 2px; }
+    .step { margin-bottom: 3px; gap: 6px; }
+    .step-num { width: 18px; height: 18px; font-size: 8pt; }
+    code { font-size: 8.5pt; }
+    table { font-size: 8pt; margin: 3px 0 4px 0; }
+    th { padding: 2px 5px; }
+    td { padding: 2px 5px; }
+    .note, .warn { font-size: 8pt; padding: 3px 7px; margin: 3px 0; }
+    ul { padding-left: 12px; margin: 2px 0 3px; }
+    li { margin-bottom: 1px; }
+    .two-col { gap: 10px; }
+    .folder-contents { font-size: 8.5pt; padding: 6px 10px; margin: 4px 0 8px; }
+    .page-label { display: block; font-size: 7.5pt; margin-top: 8px; }
   }
 </style>
 </head>
