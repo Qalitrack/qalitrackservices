@@ -7,6 +7,11 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+
   body {
     font-family: 'Segoe UI', Arial, sans-serif;
     font-size: 14px;
@@ -143,14 +148,25 @@
     background: #FFFBEB;
     border: 1px solid #FDE68A;
     border-radius: 4px;
-    padding: 8px 12px;
-    font-size: 12px;
+    padding: 0;
     margin: 6px 0 10px;
+    overflow: hidden;
+  }
+  .folder-contents table {
     font-family: 'Consolas', monospace;
-    overflow-x: auto;
+    font-size: 12px;
+    margin: 0;
+    border: none;
+  }
+  .folder-contents td {
+    padding: 3px 10px;
+    border: none;
+    vertical-align: top;
     white-space: nowrap;
   }
-  .folder-contents .comment { color: #888; margin-left: 8px; }
+  .folder-contents td:first-child { color: #1a1a1a; font-weight: 500; }
+  .folder-contents td:last-child  { color: #888; white-space: normal; font-size: 11px; }
+  .folder-contents tr:nth-child(even) td { background: #FEF3C7; }
 
   .page-label {
     font-size: 11px;
@@ -159,8 +175,8 @@
     margin-top: 12px;
   }
 
-  /* ── Mobile ── */
-  @media (max-width: 600px) {
+  /* ── Mobile + narrow laptop ── */
+  @media (max-width: 750px) {
     body { font-size: 15px; }
 
     .page { padding: 16px 14px; }
@@ -229,13 +245,14 @@
   <!-- Deployment folder contents -->
   <h2>What Is in the Deployment Folder</h2>
   <div class="folder-contents">
-    Deployment\<br>
-    &nbsp;&nbsp;install.bat &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← double-click to install the backend</span><br>
-    &nbsp;&nbsp;install.ps1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← called automatically by install.bat</span><br>
-    &nbsp;&nbsp;docker-compose.yml &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← backend service definitions</span><br>
-    &nbsp;&nbsp;.env &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← secrets file — provided by Qalitrack team</span><br>
-    &nbsp;&nbsp;QalitrackHardware.exe &nbsp;<span class="comment">← hardware client (weighbridge, camera, RFID)</span><br>
-    &nbsp;&nbsp;QalitrackFrontend.exe &nbsp;<span class="comment">← web frontend desktop app</span>
+    <table>
+      <tr><td>install.bat</td><td>Double-click to install the backend</td></tr>
+      <tr><td>install.ps1</td><td>Called automatically by install.bat</td></tr>
+      <tr><td>docker-compose.yml</td><td>Backend service definitions</td></tr>
+      <tr><td>.env</td><td>Secrets file — provided by Qalitrack team</td></tr>
+      <tr><td>QalitrackHardware.exe</td><td>Hardware client (weighbridge, camera, RFID)</td></tr>
+      <tr><td>QalitrackFrontend.exe</td><td>Web frontend desktop app</td></tr>
+    </table>
   </div>
 
   <!-- Prerequisites -->
