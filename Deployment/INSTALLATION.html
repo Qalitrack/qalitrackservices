@@ -202,6 +202,7 @@
       min-height: 297mm;
       padding: 10mm 14mm 8mm 14mm;
       margin: 0;
+      overflow: hidden;
     }
     .header h1 { font-size: 15pt; }
     .header .sub { font-size: 8pt; }
@@ -210,15 +211,26 @@
     p { margin-bottom: 2px; }
     .step { margin-bottom: 3px; gap: 6px; }
     .step-num { width: 18px; height: 18px; font-size: 8pt; }
-    code { font-size: 8.5pt; }
-    table { font-size: 8pt; margin: 3px 0 4px 0; }
-    th { padding: 2px 5px; }
-    td { padding: 2px 5px; }
+    code { font-size: 8.5pt; word-break: break-all; }
+    table {
+      font-size: 8pt;
+      margin: 3px 0 4px 0;
+      table-layout: fixed;
+      width: 100%;
+    }
+    th { padding: 2px 5px; overflow-wrap: break-word; }
+    td { padding: 2px 5px; overflow-wrap: break-word; }
+    /* Troubleshooting: symptom col narrower, fix col takes the rest */
+    .page:last-child > table th:first-child,
+    .page:last-child > table td:first-child { width: 38%; }
     .note, .warn { font-size: 8pt; padding: 3px 7px; margin: 3px 0; }
     ul { padding-left: 12px; margin: 2px 0 3px; }
     li { margin-bottom: 1px; }
     .two-col { gap: 10px; }
-    .folder-contents { font-size: 8.5pt; padding: 6px 10px; margin: 4px 0 8px; }
+    .folder-contents { margin: 4px 0 8px; }
+    .folder-contents table { font-size: 8pt; table-layout: auto; }
+    .folder-contents td { white-space: nowrap; padding: 1px 6px; }
+    .folder-contents td:last-child { white-space: normal; }
     .page-label { display: block; font-size: 7.5pt; margin-top: 8px; }
   }
 </style>
