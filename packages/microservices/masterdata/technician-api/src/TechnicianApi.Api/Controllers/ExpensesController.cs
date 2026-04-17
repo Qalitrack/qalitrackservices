@@ -64,7 +64,8 @@ public class ExpensesController : ControllerBase
     }
 
     [HttpPost("{id}/upload-receipt")]
-    public async Task<IActionResult> UploadReceipt(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadReceipt(string id, IFormFile file)
     {
         var expense = await _service.GetByIdAsync(id);
         if (expense == null) return NotFound();

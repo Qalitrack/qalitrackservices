@@ -26,16 +26,39 @@ public class PlateReceiverController : ControllerBase
     [HttpPost("plateresult.php")]
     public async Task<IActionResult> ReceivePlateResult()
     {
+        return await ProcessPlateResult(null);
+    }
+
+    /// <summary>
+    /// Receives plate recognition results from a specific camera
+    /// Camera sends POST to: /devicemanagement/php/plateresult/{cameraId}.php
+    /// Examples:
+    ///   - /devicemanagement/php/plateresult/front.php (front camera)
+    ///   - /devicemanagement/php/plateresult/back.php (back camera)
+    ///   - /devicemanagement/php/plateresult/cameraA.php (camera A)
+    ///   - /devicemanagement/php/plateresult/cameraB.php (camera B)
+    /// </summary>
+    [HttpPost("plateresult/{cameraId}.php")]
+    public async Task<IActionResult> ReceivePlateResultFromCamera(string cameraId)
+    {
+        return await ProcessPlateResult(cameraId);
+    }
+
+    private async Task<IActionResult> ProcessPlateResult(string? cameraId)
+    {
         try
         {
             // Read the raw body
             using var reader = new StreamReader(Request.Body);
             var body = await reader.ReadToEndAsync();
 
+            var cameraLabel = string.IsNullOrEmpty(cameraId) ? "UNKNOWN" : cameraId.ToUpper();
+
             // Log everything for debugging
             Console.WriteLine("\n╔════════════════════════════════════════════════════════════════╗");
-            Console.WriteLine("║               PLATE DATA RECEIVED FROM CAMERA                  ║");
+            Console.WriteLine($"║          PLATE DATA RECEIVED FROM CAMERA: {cameraLabel,-15}║");
             Console.WriteLine("╚════════════════════════════════════════════════════════════════╝");
+            Console.WriteLine($"Camera ID: {cameraId ?? "not specified"}");
             Console.WriteLine($"Time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff} UTC");
             Console.WriteLine($"Source IP: {HttpContext.Connection.RemoteIpAddress}");
             Console.WriteLine($"Content-Type: {Request.ContentType}");
@@ -51,37 +74,59 @@ public class PlateReceiverController : ControllerBase
 
             if (string.IsNullOrWhiteSpace(body))
             {
-                _logger.LogWarning("Received empty plate data from camera");
-                return Ok(new { status = "received", message = "empty_body" });
+                _logger.LogWarning("Received empty plate data from camera {cameraId}", cameraId);
+                return Ok(new { status = "received", message = "empty_body", cameraId });
             }
 
             // Try to parse as JSON
             object plateData;
             try
             {
-                plateData = JsonSerializer.Deserialize<JsonElement>(body);
-                
+                var jsonElement = JsonSerializer.Deserialize<JsonElement>(body);
+
+                // Add camera ID to the data
+                var dataWithCamera = new Dictionary<string, object>
+                {
+                    ["cameraId"] = cameraId ?? "unknown",
+                    ["sourceIp"] = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    ["receivedAt"] = DateTime.UtcNow
+                };
+
+                // Copy all properties from the original JSON
+                foreach (var property in jsonElement.EnumerateObject())
+                {
+                    dataWithCamera[property.Name] = property.Value;
+                }
+
+                plateData = dataWithCamera;
+
                 // Pretty print the JSON
-                var prettyJson = JsonSerializer.Serialize(plateData, new JsonSerializerOptions 
-                { 
-                    WriteIndented = true 
+                var prettyJson = JsonSerializer.Serialize(plateData, new JsonSerializerOptions
+                {
+                    WriteIndented = true
                 });
-                Console.WriteLine("--- Parsed JSON ---");
+                Console.WriteLine("--- Parsed JSON (with camera ID) ---");
                 Console.WriteLine(prettyJson);
                 Console.WriteLine("═══════════════════════════════════════════════════════════════\n");
             }
             catch (JsonException)
             {
                 // Not JSON, treat as plain text or form data
-                _logger.LogInformation("Received non-JSON plate data: {body}", body);
-                plateData = new { rawData = body, timestamp = DateTime.UtcNow };
+                _logger.LogInformation("Received non-JSON plate data from camera {cameraId}: {body}", cameraId, body);
+                plateData = new
+                {
+                    cameraId = cameraId ?? "unknown",
+                    sourceIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                    rawData = body,
+                    receivedAt = DateTime.UtcNow
+                };
             }
 
             // Publish to all connected SSE clients
             await _plateDataStreamService.PublishPlateAsync(plateData);
 
             var clientCount = _plateDataStreamService.GetClientCount();
-            _logger.LogInformation("Plate data published to {clientCount} clients", clientCount);
+            _logger.LogInformation("Plate data from camera {cameraId} published to {clientCount} clients", cameraId, clientCount);
 
             // Show a more prominent message when clients are listening
             if (clientCount > 0)
@@ -98,22 +143,22 @@ public class PlateReceiverController : ControllerBase
             }
 
             // Return success response to camera
-            return Ok(new 
-            { 
+            return Ok(new
+            {
                 status = "success",
+                cameraId = cameraId ?? "unknown",
                 received = DateTime.UtcNow,
-                clientsNotified = clientCount,
-                license = plateData.GetType().GetProperty("license")?.GetValue(plateData, null)?.ToString() ?? "unknown"
+                clientsNotified = clientCount
             });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing plate data from camera");
-            Console.WriteLine($"\n❌ ERROR processing plate data: {ex.Message}");
+            _logger.LogError(ex, "Error processing plate data from camera {cameraId}", cameraId);
+            Console.WriteLine($"\n❌ ERROR processing plate data from camera {cameraId}: {ex.Message}");
             Console.WriteLine($"Stack trace: {ex.StackTrace}\n");
-            
+
             // Still return OK to camera so it doesn't retry
-            return Ok(new { status = "error", message = ex.Message });
+            return Ok(new { status = "error", message = ex.Message, cameraId });
         }
     }
 
@@ -151,12 +196,27 @@ public class PlateReceiverController : ControllerBase
     [HttpPost("quickplateresult.php")]
     public async Task<IActionResult> ReceiveQuickPlateResult()
     {
+        return await ProcessQuickPlateResult(null);
+    }
+
+    /// <summary>
+    /// Receives quick plate result from a specific camera
+    /// Camera sends POST to: /devicemanagement/php/quickplateresult/{cameraId}.php
+    /// </summary>
+    [HttpPost("quickplateresult/{cameraId}.php")]
+    public async Task<IActionResult> ReceiveQuickPlateResultFromCamera(string cameraId)
+    {
+        return await ProcessQuickPlateResult(cameraId);
+    }
+
+    private async Task<IActionResult> ProcessQuickPlateResult(string? cameraId)
+    {
         try
         {
             using var reader = new StreamReader(Request.Body);
             var body = await reader.ReadToEndAsync();
 
-            Console.WriteLine("\n⚡ QUICK Plate Result:");
+            Console.WriteLine($"\n⚡ QUICK Plate Result from Camera: {cameraId ?? "UNKNOWN"}");
             Console.WriteLine($"Time: {DateTime.UtcNow:HH:mm:ss.fff}");
             Console.WriteLine($"Source: {HttpContext.Connection.RemoteIpAddress}");
             Console.WriteLine($"Data: {body}\n");
@@ -166,22 +226,45 @@ public class PlateReceiverController : ControllerBase
                 object plateData;
                 try
                 {
-                    plateData = JsonSerializer.Deserialize<JsonElement>(body);
+                    var jsonElement = JsonSerializer.Deserialize<JsonElement>(body);
+
+                    // Add camera ID to the data
+                    var dataWithCamera = new Dictionary<string, object>
+                    {
+                        ["cameraId"] = cameraId ?? "unknown",
+                        ["sourceIp"] = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        ["receivedAt"] = DateTime.UtcNow,
+                        ["quickResult"] = true
+                    };
+
+                    foreach (var property in jsonElement.EnumerateObject())
+                    {
+                        dataWithCamera[property.Name] = property.Value;
+                    }
+
+                    plateData = dataWithCamera;
                 }
                 catch
                 {
-                    plateData = new { rawData = body, timestamp = DateTime.UtcNow };
+                    plateData = new
+                    {
+                        cameraId = cameraId ?? "unknown",
+                        sourceIp = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                        rawData = body,
+                        receivedAt = DateTime.UtcNow,
+                        quickResult = true
+                    };
                 }
 
                 await _plateDataStreamService.PublishPlateAsync(plateData);
             }
 
-            return Ok(new { status = "success" });
+            return Ok(new { status = "success", cameraId = cameraId ?? "unknown" });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error processing quick plate result");
-            return Ok(new { status = "error", message = ex.Message });
+            _logger.LogError(ex, "Error processing quick plate result from camera {cameraId}", cameraId);
+            return Ok(new { status = "error", message = ex.Message, cameraId });
         }
     }
 

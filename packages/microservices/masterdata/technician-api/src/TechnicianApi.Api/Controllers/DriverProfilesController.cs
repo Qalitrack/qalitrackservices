@@ -99,7 +99,8 @@ public class DriverProfilesController : ControllerBase
     }
 
     [HttpPost("{id}/upload-profile-photo")]
-    public async Task<IActionResult> UploadProfilePhoto(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadProfilePhoto(string id, IFormFile file)
     {
         var profile = await _service.GetByIdAsync(id);
         if (profile == null) return NotFound();
@@ -116,7 +117,8 @@ public class DriverProfilesController : ControllerBase
     }
 
     [HttpPost("{id}/upload-license-front")]
-    public async Task<IActionResult> UploadLicenseFront(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadLicenseFront(string id, IFormFile file)
     {
         var profile = await _service.GetByIdAsync(id);
         if (profile == null) return NotFound();
@@ -133,7 +135,8 @@ public class DriverProfilesController : ControllerBase
     }
 
     [HttpPost("{id}/upload-license-back")]
-    public async Task<IActionResult> UploadLicenseBack(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadLicenseBack(string id, IFormFile file)
     {
         var profile = await _service.GetByIdAsync(id);
         if (profile == null) return NotFound();
@@ -150,7 +153,8 @@ public class DriverProfilesController : ControllerBase
     }
 
     [HttpPost("{id}/upload-id-front")]
-    public async Task<IActionResult> UploadIdFront(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadIdFront(string id, IFormFile file)
     {
         var profile = await _service.GetByIdAsync(id);
         if (profile == null) return NotFound();
@@ -167,7 +171,8 @@ public class DriverProfilesController : ControllerBase
     }
 
     [HttpPost("{id}/upload-id-back")]
-    public async Task<IActionResult> UploadIdBack(string id, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadIdBack(string id, IFormFile file)
     {
         var profile = await _service.GetByIdAsync(id);
         if (profile == null) return NotFound();

@@ -14,6 +14,7 @@ using TechnicianApi.Infrastructure.Data;
 using TechnicianApi.Infrastructure.Repositories;
 using TechnicianApi.Api.Middleware;
 using TechnicianApi.Infrastructure.Services;
+using TechnicianApi.Api.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,14 +38,15 @@ builder.Services.AddHttpContextAccessor();
 // Configure Swagger with JWT authentication
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "TechnicianApi API", 
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "TechnicianApi API",
         Version = "v1",
         Description = @"QaliTrack TechnicianApi - Technician API service"
     });
-    
 
+    // Support file uploads in Swagger
+    c.OperationFilter<FileUploadOperationFilter>();
 });
 
 // Add AutoMapper
@@ -139,6 +141,7 @@ builder.Services.AddScoped<IPettyCashAdvanceFormService, PettyCashAdvanceFormSer
 builder.Services.AddScoped<IAdvanceReturnFormService, AdvanceReturnFormService>();
 builder.Services.AddScoped<IPerDiemReturnFormService, PerDiemReturnFormService>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
+builder.Services.AddScoped<IRefundService, RefundService>();
 builder.Services.AddScoped<IAssignmentBalanceService, AssignmentBalanceService>();
 
 // Add QTruck services (merged from QTruck API)
@@ -254,6 +257,13 @@ app.UseDirectoryBrowser(new DirectoryBrowserOptions
 });
 
 // Configure the HTTP request pipeline
+app.UseHttpsRedirection();
+
+// Use Serilog request logging
+app.UseSerilogRequestLogging();
+
+app.UseRouting();
+
 // ALWAYS generate Swagger JSON (for both DEV + PROD)
 app.UseSwagger();
 
@@ -278,12 +288,6 @@ else
     });
 }
 
-app.UseHttpsRedirection();
-
-// Use Serilog request logging
-app.UseSerilogRequestLogging();
-
-app.UseRouting();
 app.UseHttpMetrics();
 
 // CORS must be after UseRouting() but before UseAuthentication() and UseAuthorization()

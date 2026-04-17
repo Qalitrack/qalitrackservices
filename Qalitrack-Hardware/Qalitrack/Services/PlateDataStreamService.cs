@@ -13,7 +13,7 @@ namespace Qalitrack.Services;
 
 public class PlateDataStreamService : IDisposable
 {
-    private readonly ConcurrentDictionary<string, (Channel<string> Channel, DateTime LastActivity)> _streams = new();
+    private readonly ConcurrentDictionary<string, (Channel<string> Channel, DateTime LastActivity, string? CameraFilter)> _streams = new();
     private readonly ILogger<PlateDataStreamService> _logger;
     private readonly StreamingMetrics _metrics;
     private readonly JsonSerializerOptions _jsonOptions = new()
@@ -45,42 +45,66 @@ public class PlateDataStreamService : IDisposable
         {
             json = JsonSerializer.Serialize(plateData, _jsonOptions);
 
-            var tasks = _streams.Select(async kvp =>
+            // Extract camera ID from the plate data
+            string? cameraId = null;
+            try
             {
-                var (clientId, (channel, _)) = kvp;
-
-                try
+                using var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("cameraId", out var cameraIdElement))
                 {
-                    var sw = Stopwatch.StartNew();
-                    using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-                    cts.CancelAfter(TimeSpan.FromMilliseconds(100));
+                    cameraId = cameraIdElement.GetString();
+                }
+            }
+            catch
+            {
+                // Ignore parse errors
+            }
 
-                    if (await channel.Writer.WaitToWriteAsync(cts.Token).ConfigureAwait(false))
+            var tasks = _streams
+                .Where(kvp =>
+                {
+                    var (_, (_, _, cameraFilter)) = kvp;
+                    // Send to client if:
+                    // 1. Client has no filter (receives all cameras)
+                    // 2. Client's filter matches the camera ID
+                    return cameraFilter == null || cameraFilter == cameraId;
+                })
+                .Select(async kvp =>
+                {
+                    var (clientId, (channel, _, cameraFilter)) = kvp;
+
+                    try
                     {
-                        await channel.Writer.WriteAsync(json, cts.Token).ConfigureAwait(false);
-                        _metrics.MessageProcessed(clientId, json.Length, sw.Elapsed.TotalMilliseconds);
-                        _streams[clientId] = (channel, DateTime.UtcNow);
-                        return (clientId, Success: true);
-                    }
+                        var sw = Stopwatch.StartNew();
+                        using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+                        cts.CancelAfter(TimeSpan.FromMilliseconds(100));
 
-                    return (clientId, Success: false);
-                }
-                catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
-                {
-                    _logger.LogDebug("Timeout writing to channel for client {ClientId}", clientId);
-                    return (clientId, Success: false);
-                }
-                catch (Exception ex) when (ex is ChannelClosedException or ObjectDisposedException)
-                {
-                    _logger.LogDebug("Channel closed for client {ClientId}", clientId);
-                    return (clientId, Success: false);
-                }
-                catch (Exception ex)
-                {
-                    _metrics.RecordError(clientId, ex);
-                    return (clientId, Success: false);
-                }
-            });
+                        if (await channel.Writer.WaitToWriteAsync(cts.Token).ConfigureAwait(false))
+                        {
+                            await channel.Writer.WriteAsync(json, cts.Token).ConfigureAwait(false);
+                            _metrics.MessageProcessed(clientId, json.Length, sw.Elapsed.TotalMilliseconds);
+                            _streams[clientId] = (channel, DateTime.UtcNow, cameraFilter);
+                            return (clientId, Success: true);
+                        }
+
+                        return (clientId, Success: false);
+                    }
+                    catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+                    {
+                        _logger.LogDebug("Timeout writing to channel for client {ClientId}", clientId);
+                        return (clientId, Success: false);
+                    }
+                    catch (Exception ex) when (ex is ChannelClosedException or ObjectDisposedException)
+                    {
+                        _logger.LogDebug("Channel closed for client {ClientId}", clientId);
+                        return (clientId, Success: false);
+                    }
+                    catch (Exception ex)
+                    {
+                        _metrics.RecordError(clientId, ex);
+                        return (clientId, Success: false);
+                    }
+                });
 
             var results = await Task.WhenAll(tasks);
 
@@ -113,7 +137,7 @@ public class PlateDataStreamService : IDisposable
         }
     }
 
-    public IAsyncEnumerable<string> SubscribeAsync(string clientId, CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<string> SubscribeAsync(string clientId, string? cameraFilter = null, CancellationToken cancellationToken = default)
     {
         if (_disposed)
             throw new ObjectDisposedException(nameof(PlateDataStreamService));
@@ -127,11 +151,12 @@ public class PlateDataStreamService : IDisposable
         });
 
         var now = DateTime.UtcNow;
-        _streams[clientId] = (channel, now);
+        _streams[clientId] = (channel, now, cameraFilter);
         _metrics.ConnectionStarted(clientId);
 
-        _logger.LogInformation("Client {ClientId} subscribed to plate recognition stream. Active clients: {ClientCount}",
-            clientId, _streams.Count);
+        var filterInfo = cameraFilter != null ? $" (filtered to camera: {cameraFilter})" : " (all cameras)";
+        _logger.LogInformation("Client {ClientId} subscribed to plate recognition stream{FilterInfo}. Active clients: {ClientCount}",
+            clientId, filterInfo, _streams.Count);
 
         cancellationToken.Register(() =>
         {
