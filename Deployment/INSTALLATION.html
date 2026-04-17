@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Qalitrack Installation Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 8.8pt;
+    color: #1a1a1a;
+    line-height: 1.35;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 10mm 14mm 8mm 14mm;
+    page-break-after: always;
+  }
+
+  .page:last-child { page-break-after: avoid; }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2.5px solid #F59E0B;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .header h1 { font-size: 15pt; color: #F59E0B; font-weight: 700; }
+  .header .sub { font-size: 8pt; color: #666; text-align: right; }
+
+  /* Section headings */
+  h2 {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #F59E0B;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 7px 0 3px 0;
+    padding-bottom: 2px;
+    border-bottom: 1px solid #FDE68A;
+  }
+
+  h3 {
+    font-size: 9pt;
+    font-weight: 700;
+    margin: 4px 0 2px 0;
+    color: #222;
+  }
+
+  p { margin-bottom: 2px; }
+
+  /* Steps */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 3px;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    background: #F59E0B;
+    color: white;
+    border-radius: 50%;
+    font-size: 8pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .step-body { flex: 1; }
+
+  /* Inline code */
+  code {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 8.5pt;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 3px;
+    padding: 0 3px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 3px 0 4px 0;
+    font-size: 8pt;
+  }
+  th {
+    background: #B45309;
+    color: white;
+    padding: 2px 5px;
+    text-align: left;
+    font-weight: 600;
+  }
+  td { padding: 2px 5px; border-bottom: 1px solid #FDE68A; }
+  tr:nth-child(even) td { background: #FFFBEB; }
+
+  /* Callout boxes */
+  .note {
+    background: #fffbe6;
+    border-left: 3px solid #f0a500;
+    padding: 3px 7px;
+    margin: 3px 0;
+    font-size: 8pt;
+  }
+  .warn {
+    background: #fff0f0;
+    border-left: 3px solid #e53e3e;
+    padding: 3px 7px;
+    margin: 3px 0;
+    font-size: 8pt;
+  }
+
+  ul { padding-left: 12px; margin: 2px 0 3px; }
+  li { margin-bottom: 1px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .col {}
+
+  .folder-contents {
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: 8.5pt;
+    margin: 4px 0 8px;
+    font-family: 'Consolas', monospace;
+  }
+  .folder-contents .comment { color: #888; margin-left: 8px; }
+
+  .page-label {
+    font-size: 7.5pt;
+    color: #aaa;
+    text-align: right;
+    margin-top: 8px;
+  }
+
+  @media print {
+    body { margin: 0; }
+    .page { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ PAGE 1 ═══════════════════════════════ -->
+<div class="page">
+
+  <div class="header">
+    <h1>Qalitrack &mdash; Installation Guide</h1>
+    <div class="sub">Version: katani branch<br>Keep this document on site</div>
+  </div>
+
+  <!-- Scope banner -->
+  <div style="background:#FEF3C7;border:2px solid #F59E0B;border-radius:4px;padding:5px 10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+    <span style="font-size:13pt;line-height:1;">&#9888;</span>
+    <div>
+      <strong>Qalitrack Manned only.</strong>
+      This guide covers Qalitrack Manned. Qalitrack Unmanned has its own installation guide.
+    </div>
+  </div>
+
+  <!-- Deployment folder contents -->
+  <h2>What Is in the Deployment Folder</h2>
+  <div class="folder-contents">
+    Deployment\<br>
+    &nbsp;&nbsp;install.bat &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← double-click to install the backend</span><br>
+    &nbsp;&nbsp;install.ps1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← called automatically by install.bat</span><br>
+    &nbsp;&nbsp;docker-compose.yml &nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← backend service definitions</span><br>
+    &nbsp;&nbsp;.env &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">← secrets file — provided by Qalitrack team</span><br>
+    &nbsp;&nbsp;QalitrackHardware.exe &nbsp;<span class="comment">← hardware client (weighbridge, camera, RFID)</span><br>
+    &nbsp;&nbsp;QalitrackFrontend.exe &nbsp;<span class="comment">← web frontend desktop app</span>
+  </div>
+
+  <!-- Prerequisites -->
+  <h2>Prerequisites</h2>
+  <div class="note"><strong>Docker Desktop and WSL2 are installed automatically by the script.</strong> If a restart is required mid-install, the script will say so — restart the PC and double-click <code>install.bat</code> again to continue.</div>
+
+  <!-- Backend -->
+  <h2>Part 1 &mdash; Backend Services</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">Confirm Docker Desktop is running (whale icon in taskbar).</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">Place the <code>.env</code> file provided for this site inside the <code>Deployment</code> folder (same level as <code>install.bat</code>).</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">Double-click <strong>install.bat</strong>. Click <strong>Yes</strong> on the UAC prompt. The script clones the source code, builds all service images, and starts everything. <em>First run takes 5–15 minutes.</em></div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">When the window shows the green success banner, open a browser and verify:
+        <table style="margin-top:4px;">
+          <tr><th>Service</th><th>URL</th></tr>
+          <tr><td>Gateway</td><td><code>http://localhost:7000</code></td></tr>
+          <tr><td>User Service</td><td><code>http://localhost:7001</code></td></tr>
+          <tr><td>Master Data</td><td><code>http://localhost:7002</code></td></tr>
+          <tr><td>Backup</td><td><code>http://localhost:7003</code></td></tr>
+          <tr><td>Transactions</td><td><code>http://localhost:7004</code></td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">The backend restarts automatically after every reboot — no action needed.</div>
+
+  <div class="page-label">Page 1 of 2</div>
+</div>
+
+<!-- ═══════════════════════════════ PAGE 2 ═══════════════════════════════ -->
+<div class="page">
+
+  <div class="header">
+    <h1>Qalitrack &mdash; Installation Guide</h1>
+    <div class="sub">Version: katani branch<br>Keep this document on site</div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- Hardware client -->
+    <div class="col">
+      <h2>Part 2 &mdash; Hardware Client</h2>
+      <p>Collects weighbridge data, camera feed, RFID and NFC reads.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">Right-click <strong>QalitrackHardware.exe</strong> &rarr; <em>Run as administrator</em>.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">Fill in the setup wizard:
+            <ul>
+              <li><strong>Weighbridge</strong> — TCP (IP + port, default 3002) or Serial (COM port + baud rate from the weighbridge manual)</li>
+              <li><strong>Camera</strong> — IP, RTSP port (554), path, username/password</li>
+              <li><strong>RFID</strong> — tick if installed, enter IP + port (2022)</li>
+              <li><strong>NFC</strong> — tick if installed, select COM port</li>
+            </ul>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">Click <strong>Install Service</strong>. The service starts automatically and survives reboots.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">Verify at <code>http://localhost:5000</code>.</div>
+        </div>
+      </div>
+      <div class="note"><strong>Update:</strong> run the new <code>QalitrackHardware.exe</code> as Administrator — the wizard pre-fills the existing config and the button reads <em>Update &amp; Reinstall</em>.</div>
+    </div>
+
+    <!-- Frontend -->
+    <div class="col">
+      <h2>Part 3 &mdash; Frontend</h2>
+      <p>The Qalitrack web application desktop client.</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">Double-click <strong>QalitrackFrontend.exe</strong>.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">Follow the on-screen installation steps and accept the defaults.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">Launch the application from the desktop shortcut created by the installer.</div>
+        </div>
+      </div>
+      <div class="note"><strong>Update:</strong> run the new <code>QalitrackFrontend.exe</code> — the installer upgrades in place.</div>
+    </div>
+  </div>
+
+  <!-- Troubleshooting -->
+  <h2>Troubleshooting</h2>
+  <table>
+    <tr><th>Symptom</th><th>Fix</th></tr>
+    <tr>
+      <td>install.bat says "restart required"</td>
+      <td>Restart the PC, then double-click <code>install.bat</code> again. This happens once when WSL2 or Docker Desktop is installed for the first time.</td>
+    </tr>
+    <tr>
+      <td>install.bat reports Docker not running</td>
+      <td>Open Docker Desktop manually, wait for the whale icon to be solid, then re-run <code>install.bat</code>.</td>
+    </tr>
+    <tr>
+      <td>install.bat reports .env not found</td>
+      <td>Place the <code>.env</code> file in the same folder as <code>install.bat</code> and re-run.</td>
+    </tr>
+    <tr>
+      <td>install.bat reports WSL not installed</td>
+      <td>Run <code>wsl --install</code> in PowerShell as Administrator, restart the PC, re-run <code>install.bat</code>.</td>
+    </tr>
+    <tr>
+      <td>Services show unhealthy after install</td>
+      <td>Wait 60 seconds — databases take time on first boot. Open a browser and check the URLs again.</td>
+    </tr>
+    <tr>
+      <td>Hardware: "Installation Failed"</td>
+      <td>Right-click <code>QalitrackHardware.exe</code> &rarr; <em>Run as administrator</em>. Administrator rights are required.</td>
+    </tr>
+    <tr>
+      <td>Weighbridge shows no data (TCP)</td>
+      <td>Confirm IP and port with the site engineer. Test: <code>ping &lt;ip&gt;</code> in PowerShell.</td>
+    </tr>
+    <tr>
+      <td>Weighbridge shows no data (Serial)</td>
+      <td>Confirm COM port in Device Manager. Check baud rate against the weighbridge manual.</td>
+    </tr>
+    <tr>
+      <td>Camera not connecting</td>
+      <td>Test the RTSP stream in VLC: Media &rarr; Open Network Stream &rarr; <code>rtsp://user:pass@ip:554/path</code>. The service retries automatically.</td>
+    </tr>
+  </table>
+
+  <!-- Updating -->
+  <h2>Updating the Backend</h2>
+  <p>Re-run <code>install.bat</code> — it pulls the latest code and rebuilds the images. Existing data is preserved.</p>
+
+  <div class="page-label">Page 2 of 2</div>
+</div>
+
+</body>
+</html>
