@@ -5,6 +5,7 @@ import { routes } from './App/routes.jsx';
 import { SidebarSettingsProvider } from './components/Context/Sidebarsettingscontext';
 import { ColorSchemeProvider } from './components/Context/ColorSchemeContext';
 import AppLicenseGate from './components/AppLicenseGate';
+import ErrorBoundary from './components/ErrorBoundary';
 
 const Loading = () => (
     <div className="flex items-center justify-center min-h-screen">
@@ -30,11 +31,13 @@ function App() {
             <AppLicenseGate>
                 <BrowserRouter>
                     <SidebarSettingsProvider>
-                        <Suspense fallback={<Loading />}>
-                            <Routes>
-                                {routes.map((route, index) => renderRoute(route, index))}
-                            </Routes>
-                        </Suspense>
+                        <ErrorBoundary>
+                            <Suspense fallback={<Loading />}>
+                                <Routes>
+                                    {routes.map((route, index) => renderRoute(route, index))}
+                                </Routes>
+                            </Suspense>
+                        </ErrorBoundary>
                     </SidebarSettingsProvider>
                 </BrowserRouter>
             </AppLicenseGate>

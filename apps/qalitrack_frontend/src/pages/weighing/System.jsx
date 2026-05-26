@@ -142,6 +142,7 @@ const DEFAULT_SETTINGS = {
   // Weighbridge
   weighbridgeName: "Syokimau",
   selectedScaleName: "Katani",
+  manualWeighingEnabled: false,
 
   // Hardware — Scale
   scaleEnabled: true,
@@ -242,6 +243,7 @@ export default function SystemSettings() {
     try {
       saveTicketSettings(settings);
       localStorage.setItem("systemSettings", JSON.stringify(settings));
+      window.dispatchEvent(new CustomEvent("systemSettingsChanged", { detail: settings }));
 
       setLastSaved(new Date());
       message.success("Settings saved successfully!");
@@ -713,6 +715,13 @@ function WeighbridgeSection({ settings, setField }) {
             <span className="text-amber-600">{settings.selectedScaleName || "—"}</span>
           </p>
         </div>
+
+        <ToggleRow
+          label="Manual Weight Entry"
+          description="Allow operators to type weights directly instead of reading from the scale. Disable to enforce scale-only capture."
+          checked={!!settings.manualWeighingEnabled}
+          onChange={(v) => setField("manualWeighingEnabled", v)}
+        />
       </div>
     </Section>
   );

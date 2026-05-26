@@ -10,12 +10,11 @@ import { LicenseFeatures } from "../../utils/LicenseFeatures";
 
 import {
   fetchVehicles, fetchDrivers, fetchProducts, fetchRoutes,
-  fetchSaccosByName, fetchSuppliersByName, fetchTransportersByName,
+  fetchSuppliers, fetchTransporters,
   fetchWeighbridges, fetchTransactions, fetchSimulatedWeight,
 } from "../../store/weighingSlice";
 
-const INITIAL_FORM_DATA = {
-  // Transaction identity — must be explicitly null so isSecondWeighing = false after reset
+const BASE_FORM_DATA = {
   id: null,
   ticketID: null,
   receiptNo: "",
@@ -48,39 +47,74 @@ const INITIAL_FORM_DATA = {
   weighMode: "Gross/Tare",
   firstWeight: "",
   secondWeight: "",
-  scaleName: "Katani Simple",
+  scaleName: "",
   operatorName: "",
   operatorId: null,
   operatorID: null,
   weighBridgeId: null,
   weighBridgeID: null,
-  weighBridgeName: "Katani Simple",
+  weighBridgeName: "",
 };
+
+function readSystemSettings() {
+  try {
+    return JSON.parse(localStorage.getItem("systemSettings") || "{}");
+  } catch (_) {
+    return {};
+  }
+}
+
+function buildFormData() {
+  const sys = readSystemSettings();
+  return {
+    ...BASE_FORM_DATA,
+    weighBridgeName: sys.weighbridgeName || "",
+    scaleName: sys.selectedScaleName || "",
+  };
+}
 
 export default function WeighingDashboard() {
   const dispatch = useDispatch();
   const { error, weighbridges = [] } = useSelector((state) => state.weighing);
   const anprLicensed = useLicenseFeature(LicenseFeatures.ANPR);
   const [capturedWeight, setCapturedWeight] = useState(null);
-  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [formData, setFormData] = useState(buildFormData);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [manualWeighingEnabled, setManualWeighingEnabled] = useState(() => {
+    const sys = readSystemSettings();
+    return sys.manualWeighingEnabled === true;
+  });
 
   useEffect(() => {
-    dispatch(fetchVehicles());
-    dispatch(fetchDrivers());
-    dispatch(fetchProducts());
-    dispatch(fetchRoutes());
-    dispatch(fetchSaccosByName(""));
-    dispatch(fetchSuppliersByName(""));
-    dispatch(fetchTransportersByName(""));
+    dispatch(fetchVehicles({ pageSize: 500 }));
+    dispatch(fetchDrivers({ pageSize: 500 }));
+    dispatch(fetchProducts({ pageSize: 500 }));
+    dispatch(fetchRoutes({ pageSize: 500 }));
+    dispatch(fetchSuppliers({ pageSize: 500 }));
+    dispatch(fetchTransporters({ pageSize: 500 }));
     dispatch(fetchWeighbridges({ pageSize: 100 }));
     dispatch(fetchTransactions({ isCompleted: false, pageSize: 50 }));
     dispatch(fetchSimulatedWeight());
   }, [dispatch]);
 
-  useEffect(() => { 
-    if (error) message.error(error); 
+  useEffect(() => {
+    if (error) message.error(error);
   }, [error]);
+
+  // Keep settings in sync whenever System Settings are saved
+  useEffect(() => {
+    const onSettingsChanged = (e) => {
+      const sys = e.detail || readSystemSettings();
+      setManualWeighingEnabled(sys.manualWeighingEnabled === true);
+      setFormData((prev) => ({
+        ...prev,
+        weighBridgeName: sys.weighbridgeName || "",
+        scaleName: sys.selectedScaleName || "",
+      }));
+    };
+    window.addEventListener("systemSettingsChanged", onSettingsChanged);
+    return () => window.removeEventListener("systemSettingsChanged", onSettingsChanged);
+  }, []);
 
   // Debug: Log weighbridges when they change
   useEffect(() => {
@@ -99,9 +133,8 @@ export default function WeighingDashboard() {
   };
 
   const handleTransactionCreated = () => {
-    // 1. Reset Dashboard Local State
     setCapturedWeight(null);
-    setFormData(INITIAL_FORM_DATA);
+    setFormData(buildFormData());
     
     // 2. Trigger Queue Table Refresh via refreshKey
     setRefreshKey((k) => k + 1);
@@ -133,6 +166,7 @@ export default function WeighingDashboard() {
               setFormData={setFormData}
               capturedWeight={capturedWeight}
               onTransactionCreated={handleTransactionCreated}
+              manualWeighingEnabled={manualWeighingEnabled}
             />
           </Card>
         </div>
