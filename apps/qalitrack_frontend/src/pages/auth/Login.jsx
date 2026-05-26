@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import qalitrackLogoFull from '/src/assets/qalitrack_logo_full.png';
-import { Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Eye, EyeOff, ChevronLeft, ChevronRight, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../api/helpers/auth'; // Adjust path as needed
+import useAuth from '../../api/helpers/auth';
 
 export default function Login() {
     const [email, setEmail] = useState('');
@@ -89,12 +89,11 @@ export default function Login() {
         e.preventDefault();
 
         if (!currentPassword || !newPassword || !confirmPassword) {
-            return; // Let the browser handle required field validation
+            return;
         }
 
         if (newPassword !== confirmPassword) {
-            // You might want to handle this validation in the useAuth hook instead
-            return;
+            return; // disabled button already prevents this; inline hint shown below
         }
 
         const result = await updatePassword(currentPassword, newPassword, confirmPassword);
@@ -152,8 +151,16 @@ export default function Login() {
                         </div>
 
                         {error && (
-                            <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
-                                {error}
+                            <div className="mb-4 p-3 bg-red-50 border border-red-300 text-red-700 rounded-lg text-sm flex items-start gap-2">
+                                <AlertCircle size={16} className="mt-0.5 shrink-0 text-red-500" />
+                                <div>
+                                    <p className="font-medium">{error}</p>
+                                    {!requiresPasswordChange && (
+                                        <p className="text-red-500 text-xs mt-0.5">
+                                            Check your email and password and try again.
+                                        </p>
+                                    )}
+                                </div>
                             </div>
                         )}
 

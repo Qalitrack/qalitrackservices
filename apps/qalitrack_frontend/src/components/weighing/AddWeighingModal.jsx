@@ -24,6 +24,7 @@ export default function AddWeighingModal({
   });
 
   const [loading, setLoading] = useState(false);
+  const [manualWeighingEnabled, setManualWeighingEnabled] = useState(false);
 
   // Initialize form when modal opens
   useEffect(() => {
@@ -34,6 +35,10 @@ export default function AddWeighingModal({
         scaleName: transaction.scaleName || "Scale-01",
         notes: "",
       });
+      try {
+        const sys = JSON.parse(localStorage.getItem("systemSettings") || "{}");
+        setManualWeighingEnabled(sys.manualWeighingEnabled === true);
+      } catch (_) {}
     }
   }, [visible, transaction, capturedWeight, currentUser]);
 
@@ -188,6 +193,12 @@ export default function AddWeighingModal({
           <div className="space-y-4 px-1">
             <div>
               <FieldLabel>Current Reading (Second Weight)</FieldLabel>
+              {!manualWeighingEnabled && (
+                <div className="mb-2 flex items-center gap-2 p-2 rounded-lg bg-amber-50 border border-amber-300 text-amber-800 text-xs font-semibold">
+                  <InfoCircleOutlined />
+                  Manual weight entry is disabled. Enable it in System Settings → Weighbridge, or use the scale sync button.
+                </div>
+              )}
               <div className="flex gap-2">
                 <Input
                   type="number"
@@ -195,13 +206,14 @@ export default function AddWeighingModal({
                   onChange={(e) => handleChange("weight", e.target.value)}
                   placeholder="0.00"
                   size="large"
-                  autoFocus
+                  autoFocus={manualWeighingEnabled}
+                  disabled={!manualWeighingEnabled}
                   className={`font-mono text-2xl font-black flex-1 ${!isValid && formData.weight ? 'border-red-500 bg-red-50' : 'border-amber-200'}`}
                   suffix={<span className="text-gray-400 text-sm">KG</span>}
                 />
                 <Tooltip title="Pull from Scale">
-                  <Button 
-                    icon={<SyncOutlined />} 
+                  <Button
+                    icon={<SyncOutlined />}
                     onClick={handleSyncWeight}
                     size="large"
                     className="h-auto px-4 border-amber-300 text-amber-600"

@@ -1,8 +1,9 @@
 import { useState, useCallback } from "react";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import UnifiedSidebar from "../components/Sidebar"; // ← Use the new unified sidebar
+import UnifiedSidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 export default function MainLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -26,7 +27,9 @@ export default function MainLayout() {
 
         <main className="flex-1 bg-gray-50 overflow-hidden relative">
           <div className="absolute inset-0 p-2">
-            <Outlet />
+            <ErrorBoundary variant="inline">
+              <Outlet />
+            </ErrorBoundary>
           </div>
         </main>
       </div>

@@ -5,14 +5,8 @@
 import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Input, Select, AutoComplete, Button, message, Row, Col, Typography, Space, Alert, Modal } from "antd";
-import { debounce } from "lodash";
 import { Scale } from "lucide-react";
 import {
-  fetchVehiclesByRegNumber,
-  fetchDriversByName,
-  fetchProductsByName,
-  fetchSuppliersByName,
-  fetchTransportersByName,
   fetchWeighbridges,
   addTransaction,
   addSecondWeight,
@@ -28,6 +22,7 @@ export default function CreateTransactionForm({
   setFormData,
   capturedWeight,
   onTransactionCreated,
+  manualWeighingEnabled = false,
 }) {
   const dispatch = useDispatch();
   const {
@@ -47,23 +42,16 @@ export default function CreateTransactionForm({
   useEffect(() => {
     if (!reduxCurrentUser && !authUser) {
       try {
-        const authSession = sessionStorage.getItem("authSession");
+        const authSession = localStorage.getItem("authSession");
         if (authSession) {
           const parsed = JSON.parse(authSession);
           const user = parsed.userData || parsed.user || parsed;
           setSessionUser(user);
         } else {
-          const fallbackSession = sessionStorage.getItem("user");
-          if (fallbackSession) {
-            const parsed = JSON.parse(fallbackSession);
-            const user = parsed.user || parsed;
-            setSessionUser(user);
-          } else {
-            dispatch(fetchCurrentUser());
-          }
+          dispatch(fetchCurrentUser());
         }
       } catch (err) {
-        console.warn("⚠️ Could not read session storage:", err);
+        console.warn("⚠️ Could not read session:", err);
         dispatch(fetchCurrentUser());
       }
     }
@@ -73,7 +61,6 @@ export default function CreateTransactionForm({
   const [submitError, setSubmitError] = useState(null);
   const [showFinalizePreview, setShowFinalizePreview] = useState(false);
   const [previewEditData, setPreviewEditData] = useState({});
-  const [activeWeighbridge, setActiveWeighbridge] = useState({ name: "", scale: "" });
 
   const isSecondWeighing = !!(formData.id || formData.ticketID);
   const [manualPlate, setManualPlate] = useState(false);
@@ -84,22 +71,6 @@ export default function CreateTransactionForm({
     }
   }, [dispatch, weighbridges.length]);
 
-  // Read active weighbridge + scale from system settings
-  useEffect(() => {
-    try {
-      const sys = JSON.parse(localStorage.getItem("systemSettings") || "{}");
-      const wb = sys.weighbridgeName || "";
-      const sc = sys.selectedScaleName || "";
-      setActiveWeighbridge({ name: wb, scale: sc });
-      if (!isSecondWeighing && (wb || sc)) {
-        setFormData((prev) => ({
-          ...prev,
-          weighBridgeName: wb,
-          scaleName: sc,
-        }));
-      }
-    } catch (_) {}
-  }, [isSecondWeighing, setFormData]);
 
   // ✅ Automatically set operator information (still sent to backend)
   useEffect(() => {
@@ -134,16 +105,12 @@ export default function CreateTransactionForm({
     }
   }, [currentUser, setFormData]);
 
-  const debounced = useMemo(
-    () => ({
-      vehicles: debounce((q) => dispatch(fetchVehiclesByRegNumber(q)), 400),
-      drivers: debounce((q) => dispatch(fetchDriversByName(q)), 400),
-      products: debounce((q) => dispatch(fetchProductsByName(q)), 400),
-      suppliers: debounce((q) => dispatch(fetchSuppliersByName(q)), 400),
-      transporters: debounce((q) => dispatch(fetchTransportersByName(q)), 400),
-    }),
-    [dispatch]
-  );
+  const filterOptions = (list, input, labelFn) => {
+    const q = (input || "").toLowerCase();
+    return list
+      .filter((it) => labelFn(it).toLowerCase().includes(q))
+      .map((it) => ({ value: labelFn(it), label: labelFn(it), id: it.id }));
+  };
 
   const handleChange = (field, value) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -431,14 +398,14 @@ export default function CreateTransactionForm({
         <div className="flex items-center gap-1">
           <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Weighbridge:</span>
           <span className="text-[10px] font-bold text-white uppercase tracking-wide">
-            {activeWeighbridge.name || "—"}
+            {formData.weighBridgeName || "—"}
           </span>
         </div>
         <span className="text-gray-600 text-[10px]">|</span>
         <div className="flex items-center gap-1">
           <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Scale:</span>
           <span className="text-[10px] font-semibold text-amber-400">
-            {activeWeighbridge.scale || "—"}
+            {formData.scaleName || "—"}
           </span>
         </div>
       </div>
@@ -462,7 +429,7 @@ export default function CreateTransactionForm({
           </div>
         </div>
         <Space size="small">
-          {!isSecondWeighing && (
+          {!isSecondWeighing && manualWeighingEnabled && (
             <div className="text-right">
               <FieldLabel>Manual W1</FieldLabel>
               <Input
@@ -486,17 +453,19 @@ export default function CreateTransactionForm({
                   readOnly
                 />
               </div>
-              <div className="text-right">
-                <FieldLabel>Manual W2</FieldLabel>
-                <Input
-                  size="small"
-                  className="w-20 font-bold"
-                  value={formData.secondWeight}
-                  onChange={(e) => handleChange("secondWeight", e.target.value)}
-                  placeholder="0"
-                  type="number"
-                />
-              </div>
+              {manualWeighingEnabled && (
+                <div className="text-right">
+                  <FieldLabel>Manual W2</FieldLabel>
+                  <Input
+                    size="small"
+                    className="w-20 font-bold"
+                    value={formData.secondWeight}
+                    onChange={(e) => handleChange("secondWeight", e.target.value)}
+                    placeholder="0"
+                    type="number"
+                  />
+                </div>
+              )}
             </>
           )}
         </Space>
@@ -598,8 +567,7 @@ export default function CreateTransactionForm({
                 size="middle"
                 className="w-full"
                 value={formData.noPlate}
-                options={vehicles.map((it) => ({ value: it.registrationNumber || it.plateNumber, label: it.registrationNumber || it.plateNumber, id: it.id }))}
-                onSearch={debounced.vehicles}
+                options={filterOptions(vehicles, formData.noPlate, (it) => it.registrationNumber || it.plateNumber || "")}
                 onChange={(val) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: null }))}
                 onSelect={(val, opt) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: opt.id }))}
                 disabled={isSecondWeighing}
@@ -615,8 +583,7 @@ export default function CreateTransactionForm({
               size="middle"
               className="w-full"
               value={formData.driverName}
-              options={drivers.map((it) => ({ value: it.fullName || it.name, label: it.fullName || it.name, id: it.id }))}
-              onSearch={debounced.drivers}
+              options={filterOptions(drivers, formData.driverName, (it) => it.fullName || it.name || "")}
               onChange={(val) => setFormData((prev) => ({ ...prev, driverName: val, driverID: null }))}
               onSelect={(val, opt) => setFormData((prev) => ({ ...prev, driverName: val, driverID: opt.id }))}
               disabled={isSecondWeighing}
@@ -631,8 +598,7 @@ export default function CreateTransactionForm({
               size="middle"
               className="w-full"
               value={formData.transporterName}
-              options={transporters.map((it) => ({ value: it.name, label: it.name, id: it.id }))}
-              onSearch={debounced.transporters}
+              options={filterOptions(transporters, formData.transporterName, (it) => it.name || "")}
               onChange={(val) => setFormData((prev) => ({ ...prev, transporterName: val, transporterID: null }))}
               onSelect={(val, opt) => setFormData((prev) => ({ ...prev, transporterName: val, transporterID: opt.id }))}
               disabled={isSecondWeighing}
@@ -647,8 +613,7 @@ export default function CreateTransactionForm({
               size="middle"
               className="w-full"
               value={formData.commodityName}
-              options={products.map((it) => ({ value: it.name, label: it.name, id: it.id }))}
-              onSearch={debounced.products}
+              options={filterOptions(products, formData.commodityName, (it) => it.name || "")}
               onChange={(val) => setFormData((prev) => ({ ...prev, commodityName: val, commodityID: null }))}
               onSelect={(val, opt) => setFormData((prev) => ({ ...prev, commodityName: val, commodityID: opt.id }))}
               disabled={isSecondWeighing}
@@ -663,8 +628,7 @@ export default function CreateTransactionForm({
               size="middle"
               className="w-full"
               value={formData.supplierName}
-              options={suppliers.map((it) => ({ value: it.name, label: it.name, id: it.id }))}
-              onSearch={debounced.suppliers}
+              options={filterOptions(suppliers, formData.supplierName, (it) => it.name || "")}
               onChange={(val) => setFormData((prev) => ({ ...prev, supplierName: val, supplierID: null }))}
               onSelect={(val, opt) => setFormData((prev) => ({ ...prev, supplierName: val, supplierID: opt.id }))}
               disabled={isSecondWeighing}

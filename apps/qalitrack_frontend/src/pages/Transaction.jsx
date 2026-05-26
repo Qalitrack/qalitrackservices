@@ -322,45 +322,8 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.setLineWidth(0.4);
   doc.roundedRect(L, wmY, TW, doc.lastAutoTable.finalY - wmY, 3, 3, "S");
 
-  // ── "VEHICLE SNAPSHOT" ────────────────────────────────────────────────────
-  y = drawTitle("VEHICLE SNAPSHOT", doc.lastAutoTable.finalY + 6);
-
-  const snapH   = 42;
-  const snapGap = 3;
-  const snapW   = (TW - snapGap) / 2;
-
-  doc.setFillColor(25, 25, 30);
-  doc.roundedRect(L, y, snapW, snapH, 3, 3, "F");
-  doc.setDrawColor(...amberBdr);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(L, y, snapW, snapH, 3, 3, "S");
-  doc.setFontSize(fontSize.body);
-  doc.setFont("helvetica", "italic");
-  doc.setTextColor(160, 160, 160);
-  doc.text(`[ Entry: ${record.noPlate || "N/A"} ]`, L + snapW / 2, y + snapH / 2, { align: "center" });
-
-  doc.setFillColor(25, 25, 30);
-  doc.roundedRect(L + snapW + snapGap, y, snapW, snapH, 3, 3, "F");
-  doc.setDrawColor(...amberBdr);
-  doc.setLineWidth(0.3);
-  doc.roundedRect(L + snapW + snapGap, y, snapW, snapH, 3, 3, "S");
-  doc.setFontSize(fontSize.body);
-  doc.setFont("helvetica", "italic");
-  doc.setTextColor(160, 160, 160);
-  doc.text(`[ Exit: ${record.noPlate || "N/A"} ]`, L + snapW + snapGap + snapW / 2, y + snapH / 2, { align: "center" });
-
-  doc.setFontSize(fontSize.body - 1);
-  doc.setFont("helvetica", "italic");
-  doc.setTextColor(...gray);
-  doc.text(
-    `Captured: ${dayjs(record.firstWeightDate || new Date()).format("DD/MM/YYYY HH:mm:ss")}`,
-    W / 2, y + snapH + 5, { align: "center" }
-  );
-
-  // Advance y past snapshot + caption
-  y += snapH + 10;
-
   // ── REMARKS (optional) ───────────────────────────────────────────────────
+  y = doc.lastAutoTable.finalY + 6;
   if (record.remarks || record.notes) {
     y += 2;
     doc.setFillColor(...palette.headerBg);

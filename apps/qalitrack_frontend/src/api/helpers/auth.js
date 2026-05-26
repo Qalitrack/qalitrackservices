@@ -28,14 +28,7 @@ const useAuth = () => {
                 setupActivityTracking();
             }
 
-            // Cleanup on page unload
-            const handleBeforeUnload = () => {
-                logout();
-            };
-            window.addEventListener('beforeunload', handleBeforeUnload);
-            
             return () => {
-                window.removeEventListener('beforeunload', handleBeforeUnload);
                 stopSessionMonitoring();
                 clearActivityTimeout();
             };
@@ -53,17 +46,25 @@ const useAuth = () => {
             lastActivity: now
         };
         
-        sessionStorage.setItem('authSession', JSON.stringify(session));
+        localStorage.setItem('authSession', JSON.stringify(session));
         startSessionMonitoring();
         setupActivityTracking();
     };
 
     const getSession = () => {
-        const sessionData = sessionStorage.getItem('authSession');
+        const sessionData = localStorage.getItem('authSession');
         if (!sessionData) return null;
-        
+
         try {
-            return JSON.parse(sessionData);
+            const session = JSON.parse(sessionData);
+            // Refresh lastActivity on load so the inactivity timer
+            // doesn't expire immediately after the app is reopened.
+            const now = new Date().getTime();
+            if (session && now < session.expiresAt) {
+                session.lastActivity = now;
+                localStorage.setItem('authSession', JSON.stringify(session));
+            }
+            return session;
         } catch (e) {
             console.error('Failed to parse session data:', e);
             return null;
@@ -82,7 +83,7 @@ const useAuth = () => {
             session.expiresAt = now + SESSION_DURATION;
         }
         
-        sessionStorage.setItem('authSession', JSON.stringify(session));
+        localStorage.setItem('authSession', JSON.stringify(session));
     };
 
     const isSessionValid = () => {
@@ -301,7 +302,7 @@ const useAuth = () => {
     };
 
     const logout = () => {
-        sessionStorage.removeItem('authSession');
+        localStorage.removeItem('authSession');
         stopSessionMonitoring();
         clearActivityTimeout();
         setRequiresPasswordChange(false);

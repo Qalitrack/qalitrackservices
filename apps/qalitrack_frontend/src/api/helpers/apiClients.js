@@ -25,7 +25,7 @@ console.log('🔧 API Client Configuration:', {
 
 const getSessionData = () => {
   try {
-    const sessionData = sessionStorage.getItem("authSession");
+    const sessionData = localStorage.getItem("authSession");
     return sessionData ? JSON.parse(sessionData) : null;
   } catch (err) {
     console.error("❌ Error retrieving session token:", err);
@@ -34,9 +34,7 @@ const getSessionData = () => {
 };
 
 const clearSession = () => {
-  sessionStorage.removeItem("authSession");
-  localStorage.removeItem("authToken");
-  localStorage.removeItem("user");
+  localStorage.removeItem("authSession");
 };
 
 const getSessionToken = () => {
@@ -178,9 +176,9 @@ const setupResponseInterceptor = (client) => {
       if (error.response?.status === 401) {
         console.warn("⚠️ 401 Unauthorized — clearing session");
         clearSession();
-        if (window.location.pathname !== "/login") {
+        if (!window.location.hash.includes("/login")) {
           console.log('🔄 Redirecting to login...');
-          window.location.href = "/login";
+          window.location.hash = "#/login";
         }
         return Promise.reject(new Error('Session expired. Please log in again.'));
       }
@@ -278,7 +276,7 @@ class ApiClient {
       expiresAt: Date.now() + expiresIn * 1000, // default 1 hour
     };
     console.log('💾 Setting session:', { expiresAt: new Date(session.expiresAt) });
-    sessionStorage.setItem("authSession", JSON.stringify(session));
+    localStorage.setItem("authSession", JSON.stringify(session));
   }
   
   getSessionToken = getSessionToken;
