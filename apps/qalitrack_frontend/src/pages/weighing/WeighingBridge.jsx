@@ -23,7 +23,9 @@ export default function WeighbridgesPortal() {
     location: "",
     description: "",
     status: "Active",
+    scales: [],
   });
+  const [scaleInput, setScaleInput] = useState("");
 
   const fetchWeighbridges = async () => {
     try {
@@ -49,7 +51,8 @@ export default function WeighbridgesPortal() {
       (wb) =>
         wb.location?.toLowerCase().includes(t) ||
         wb.description?.toLowerCase().includes(t) ||
-        wb.status?.toLowerCase().includes(t)
+        wb.status?.toLowerCase().includes(t) ||
+        (Array.isArray(wb.scales) && wb.scales.some((s) => s.toLowerCase().includes(t)))
     );
   }, [weighbridges, search]);
 
@@ -91,8 +94,22 @@ export default function WeighbridgesPortal() {
       location: wb.location || "",
       description: wb.description || "",
       status: wb.status ? (wb.status.charAt(0).toUpperCase() + wb.status.slice(1).toLowerCase()) : "Active",
+      scales: Array.isArray(wb.scales) ? wb.scales : [],
     });
+    setScaleInput("");
     setEditing(wb);
+  };
+
+  const addScale = () => {
+    const name = scaleInput.trim();
+    if (!name) return;
+    if (form.scales.includes(name)) { message.warning("Scale already added"); return; }
+    setForm((prev) => ({ ...prev, scales: [...prev.scales, name] }));
+    setScaleInput("");
+  };
+
+  const removeScale = (name) => {
+    setForm((prev) => ({ ...prev, scales: prev.scales.filter((s) => s !== name) }));
   };
 
   const handleDelete = async (id) => {
@@ -120,7 +137,8 @@ export default function WeighbridgesPortal() {
   };
 
   const resetForm = () => {
-    setForm({ location: "", description: "", status: "Active" });
+    setForm({ location: "", description: "", status: "Active", scales: [] });
+    setScaleInput("");
     setEditing(null);
   };
 
@@ -169,35 +187,72 @@ export default function WeighbridgesPortal() {
             {editing ? "Edit Weighbridge" : "Add New Weighbridge"}
           </h3>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-2">
-            <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                <span className="w-1 h-1 bg-blue-500 rounded-full"></span>Location *
-              </label>
-              <input name="location" value={form.location} onChange={handleChange} required placeholder="e.g., Nairobi Main Gate"
-                className="w-full h-6 text-[10px] rounded border border-blue-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 focus:outline-none" />
+          <form onSubmit={handleSubmit} className="space-y-2">
+            {/* Row 1: Location, Status, Description */}
+            <div className="grid grid-cols-3 gap-2">
+              <div>
+                <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                  <span className="w-1 h-1 bg-blue-500 rounded-full"></span>Location *
+                </label>
+                <input name="location" value={form.location} onChange={handleChange} required placeholder="e.g., Nairobi Main Gate"
+                  className="w-full h-6 text-[10px] rounded border border-blue-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 focus:outline-none" />
+              </div>
+
+              <div>
+                <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                  <span className="w-1 h-1 bg-emerald-500 rounded-full"></span>Status
+                </label>
+                <select name="status" value={form.status} onChange={handleChange}
+                  className="w-full h-6 text-[10px] rounded border border-emerald-300 px-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 focus:outline-none">
+                  <option value="Active">Active</option>
+                  <option value="Inactive">Inactive</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                  <span className="w-1 h-1 bg-amber-500 rounded-full"></span>Description
+                </label>
+                <input name="description" value={form.description} onChange={handleChange} placeholder="Brief description"
+                  className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
+              </div>
             </div>
 
+            {/* Row 2: Scales */}
             <div>
               <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                <span className="w-1 h-1 bg-emerald-500 rounded-full"></span>Status
+                <span className="w-1 h-1 bg-violet-500 rounded-full"></span>Scales
+                <span className="text-[8px] font-normal text-gray-400 ml-1">(one weighbridge can have multiple scales)</span>
               </label>
-              <select name="status" value={form.status} onChange={handleChange}
-                className="w-full h-6 text-[10px] rounded border border-emerald-300 px-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 focus:outline-none">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-              </select>
+              <div className="flex gap-1.5 items-center">
+                <input
+                  value={scaleInput}
+                  onChange={(e) => setScaleInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addScale(); } }}
+                  placeholder="e.g., Scale A, Platform 1..."
+                  className="flex-1 h-6 text-[10px] rounded border border-violet-300 px-2 focus:border-violet-500 focus:ring-1 focus:ring-violet-200 focus:outline-none"
+                />
+                <button type="button" onClick={addScale}
+                  className="h-6 px-2 text-[10px] font-semibold bg-violet-100 hover:bg-violet-200 text-violet-700 border border-violet-300 rounded transition-all flex items-center gap-1">
+                  <Plus className="w-3 h-3" /> Add
+                </button>
+              </div>
+              {form.scales.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {form.scales.map((s) => (
+                    <span key={s} className="inline-flex items-center gap-1 bg-violet-100 text-violet-800 text-[9px] font-semibold px-2 py-0.5 rounded-full border border-violet-200">
+                      {s}
+                      <button type="button" onClick={() => removeScale(s)} className="text-violet-500 hover:text-red-500 transition-colors">
+                        <X className="w-2.5 h-2.5" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
-            <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>Description
-              </label>
-              <input name="description" value={form.description} onChange={handleChange} placeholder="Brief description"
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
-            </div>
-
-            <div className="col-span-3 flex gap-2 justify-end mt-0.5">
+            {/* Actions */}
+            <div className="flex gap-2 justify-end pt-0.5">
               {editing && (
                 <button type="button" onClick={resetForm}
                   className="h-6 px-3 text-[10px] font-semibold bg-gray-200 hover:bg-gray-300 text-gray-800 rounded transition-all flex items-center gap-1">
@@ -233,6 +288,7 @@ export default function WeighbridgesPortal() {
                       {[
                         { label: "Location", align: "text-left" },
                         { label: "Description", align: "text-left" },
+                        { label: "Scales", align: "text-left" },
                         { label: "Status", align: "text-left" },
                         { label: "Actions", align: "text-center" },
                       ].map((h) => (
@@ -256,6 +312,17 @@ export default function WeighbridgesPortal() {
                             </span>
                           </td>
                           <td className="px-4 py-2.5 text-[10px] text-gray-600 max-w-xs truncate">{wb.description || "—"}</td>
+                          <td className="px-4 py-2.5">
+                            {Array.isArray(wb.scales) && wb.scales.length > 0 ? (
+                              <div className="flex flex-wrap gap-1">
+                                {wb.scales.map((s) => (
+                                  <span key={s} className="bg-violet-100 text-violet-800 text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-violet-200">{s}</span>
+                                ))}
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 text-[10px]">—</span>
+                            )}
+                          </td>
                           <td className="px-4 py-2.5">
                             <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase shadow-sm border ${
                               isActive

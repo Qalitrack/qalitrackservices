@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
 import DriverReport from "./reportFiles/DriverReport";
+import ReweighedTransactionsReport from "./reportFiles/ReweighedTransactionsReport";
 import CustomerReport from "./reportFiles/CustomerReport";
 import CommodityReport from "./reportFiles/CommodityReport";
 import SupplierReport from "./reportFiles/SupplierReport";
@@ -31,6 +32,7 @@ export default function Reports() {
 
   const REPORT_TABS = [
     { id: "transactions", label: "Transactions", icon: null },
+    { id: "reweighed", label: "Reweighed Transactions", icon: null },
     { id: "drivers", label: "Drivers", icon: null },
     { id: "customers", label: "Customers", icon: null },
     { id: "commodities", label: "Commodities", icon: null },
@@ -468,6 +470,12 @@ export default function Reports() {
     //   return <ReportScheduler transactions={filteredTransactions} />;
     // }
 
+    // REWEIGHED TRANSACTIONS REPORT — pass ALL unfiltered transactions so parent
+    // date/status filters don't accidentally exclude ReweighRequested records
+    if (activeTab === "reweighed") {
+      return <ReweighedTransactionsReport transactions={transactions} loading={loading} />;
+    }
+
     // EXISTING REPORTS
     if (activeTab !== "transactions") {
       const ComponentMap = {
@@ -534,7 +542,7 @@ export default function Reports() {
     );
   };
 
-  // Don't show filters for advanced tabs
+  // Don't show filters for advanced tabs or reweighed (has its own filter UI)
   const showFiltersPanel = [
     "transactions", "drivers", "customers", "commodities", "suppliers"
   ].includes(activeTab);

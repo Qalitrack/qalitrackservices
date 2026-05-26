@@ -23,6 +23,18 @@
       "Lsn": null,
       "Timeline": 0,
       "lastLsn": null
+    },
+    {
+      "Id": 3,
+      "MicroserviceId": 0,
+      "MicroserviceName": "UserService",
+      "FullBackupFile": "UserService_full_20260415_062454.dump",
+      "Timestamp": "2026-04-15T06:24:54.8747427Z",
+      "Incrementals": [],
+      "ChainId": "UserService_20260415062454",
+      "Lsn": null,
+      "Timeline": 0,
+      "lastLsn": null
     }
   ],
   "CreatedAt": "0001-01-01T00:00:00",

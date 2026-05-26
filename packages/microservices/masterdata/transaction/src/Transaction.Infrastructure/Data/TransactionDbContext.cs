@@ -195,6 +195,11 @@ public class TransactionDbContext : DbContext
                   .HasMaxLength(10)
                   .HasColumnName("npr_source");
 
+            // Reweigh flag
+            entity.Property(e => e.IsReweighed)
+                  .HasDefaultValue(false)
+                  .HasColumnName("is_reweighed");
+
             // Indexes
             entity.HasIndex(e => e.ReceiptNo);
             entity.HasIndex(e => e.NoPlate);

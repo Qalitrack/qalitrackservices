@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Masterdata.Core.DTOs.Weighbridge;
@@ -13,4 +14,6 @@ public class CreateWeighbridgeDto
 
     [StringLength(50, ErrorMessage = "Status cannot be longer than 50 characters")]
     public string? Status { get; set; } = "active";
+
+    public List<string> Scales { get; set; } = [];
 }

@@ -3,7 +3,7 @@ namespace Transaction.Core.DTOs;
 public class ReweighRecordDto
 {
     public int Id { get; set; }
-    public int WeighbridgeTransactionId { get; set; }
+    public string WeighbridgeTransactionId { get; set; } = string.Empty;
     public int AttemptNumber { get; set; }
     public DateTime StartedAt { get; set; }
     public DateTime? CompletedAt { get; set; }

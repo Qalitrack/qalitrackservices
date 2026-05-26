@@ -221,6 +221,35 @@ export const getReweighRecords = async (ticketId) => {
 };
 
 /**
+ * POST /api/Transaction/Transaction/approve-reweigh
+ * Clears second weight data and resets transaction to Active for re-weighing
+ */
+export const approveReweigh = async (payload) => {
+  const mapped = {
+    ticketID: payload.ticketID || payload.transactionId,
+    approvedBy: payload.approvedBy || "",
+    notes: payload.notes || ""
+  };
+  console.log("📤 POST Approve reweigh:", mapped);
+  return handleRequest(transactionsClient.post(`${BASE}/approve-reweigh`, mapped));
+};
+
+/**
+ * POST /api/Transaction/Transaction/reject-reweigh
+ * Keeps original weights and restores transaction to Completed
+ */
+export const rejectReweigh = async (payload) => {
+  const mapped = {
+    ticketID: payload.ticketID || payload.transactionId,
+    rejectionReason: payload.rejectionReason || payload.reason || "",
+    rejectedBy: payload.rejectedBy || "",
+    notes: payload.notes || ""
+  };
+  console.log("📤 POST Reject reweigh:", mapped);
+  return handleRequest(transactionsClient.post(`${BASE}/reject-reweigh`, mapped));
+};
+
+/**
  * GET /api/Transaction/Transaction/{transactionId}/weighing-records
  */
 export const getWeighingRecords = async (transactionId) => {

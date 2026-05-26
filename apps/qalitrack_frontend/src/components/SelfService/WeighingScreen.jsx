@@ -14,6 +14,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { message, Select } from "antd";
 import { useHardwareConfig } from "../../hooks/useHardwareConfig";
+import logo from "../../assets/qalitrack_logo_full.png";
 const { Option } = Select;
 
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
@@ -363,15 +364,11 @@ export default function WeighingScreen({
       <header className="shrink-0 px-6 py-3 flex items-center justify-between"
         style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center"
-            style={{ background: isSecondWeigh ? "linear-gradient(135deg,#d97706,#ea580c)" : "linear-gradient(135deg,#d97706,#f59e0b)" }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5">
-              <path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /><path d="M2 12l10 5 10-5" />
-            </svg>
-          </div>
+          <img src={logo} alt="Qalitrack" className="h-12 w-auto" />
+          <div className="w-px h-7 bg-gray-200" />
           <div>
             <h1 className="text-base font-bold" style={{ color: "#111827" }}>
-              {isSecondWeigh ? "Second (Tare) Weight" : "Weighing"}
+              {isSecondWeigh ? "Second (Tare) Weight" : "Self-Service Weighing"}
             </h1>
             <p className="text-xs" style={{ color: "#6b7280" }}>
               {isSecondWeigh

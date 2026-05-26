@@ -75,6 +75,9 @@ public class TransactionReadDto
     // NPR capture source: "auto" = camera detected, "manual" = operator typed
     public string? NprSource { get; set; }
 
+    // Reweigh flag — true if a reweigh was ever requested on this transaction
+    public bool IsReweighed { get; set; }
+
     // Base properties
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }

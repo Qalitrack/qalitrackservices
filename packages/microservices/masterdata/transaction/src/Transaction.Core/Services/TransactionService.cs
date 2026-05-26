@@ -381,6 +381,7 @@ public class TransactionService(
         // Update reweigh permission
         transaction.ReweighPermission = dto.Reason;
         transaction.Status = "ReweighRequested";
+        transaction.IsReweighed = true;
         transaction.UpdatedAt = utcNow;
         transaction.ChangeDate = utcNow;
         transaction.ChangeDesc = $"Reweigh requested: {dto.Reason}";

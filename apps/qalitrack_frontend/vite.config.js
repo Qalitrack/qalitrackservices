@@ -106,9 +106,9 @@ return {
         ],
       },
     }),
-    electron({
+    ...(process.env.WEB_ONLY ? [] : [electron({
       entry: 'electron/main.cjs',
-    }),
+    })]),
   ],
 
   base: './',

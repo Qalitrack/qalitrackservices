@@ -1,16 +1,9 @@
-// ✅ FIXED: Enhanced transaction fetching with better logging + Column Visibility Toggle
-// Changes:
-// 1. Added detailed console logging for debugging empty data
-// 2. Improved Redux state reading
-// 3. Better error handling for empty responses
-// 4. Enhanced filtering with completion status checks
-// 5. ✨ NEW: Collapsible columns with a column visibility panel
-
 import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Table, Tag, Button, Input, Typography, Space, Pagination, message, Spin, Tooltip, Popover, Badge } from "antd";
-import { ReloadOutlined, SearchOutlined, CheckOutlined, CloseOutlined, EditOutlined, UserOutlined, ClockCircleOutlined, EyeOutlined } from "@ant-design/icons";
+import { ReloadOutlined, SearchOutlined, CheckOutlined, CloseOutlined, EditOutlined, UserOutlined, ClockCircleOutlined, EyeOutlined, RetweetOutlined } from "@ant-design/icons";
 import { fetchTransactions, updateTransactionApi } from "../../store/weighingSlice";
+import ReweighModal from "./ReweighModal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
@@ -33,6 +26,8 @@ const COLUMN_DEFINITIONS = [
   { key: "originName",      label: "Origin",      defaultVisible: false, alwaysVisible: false },
   { key: "destinationName", label: "Destination", defaultVisible: false, alwaysVisible: false },
   { key: "operatorName",    label: "Operator",    defaultVisible: true,  alwaysVisible: false },
+  { key: "weighBridgeName", label: "Weighbridge", defaultVisible: true,  alwaysVisible: false },
+  { key: "scaleName",       label: "Scale",       defaultVisible: true,  alwaysVisible: false },
   { key: "firstWeight",     label: "1st Weight",  defaultVisible: true,  alwaysVisible: false },
   { key: "wait",            label: "Wait",        defaultVisible: true,  alwaysVisible: false },
   { key: "tat",             label: "TAT",         defaultVisible: true,  alwaysVisible: false },
@@ -64,7 +59,6 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   const dispatch = useDispatch();
 
   const { transactions = [], loading } = useSelector((state) => {
-    console.log("📊 Redux State - Full weighing state:", state.weighing);
     return {
       transactions: state.weighing?.transactions || [],
       loading: state.weighing?.loading || false
@@ -79,6 +73,9 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   const [editedData, setEditedData] = useState({});
   const [saving, setSaving] = useState(false);
   const [localLoading, setLocalLoading] = useState(false);
+
+  // Reweigh modal state
+  const [reweighModal, setReweighModal] = useState({ visible: false, transaction: null });
 
   // ✨ Column visibility state — persisted to localStorage
   const [columnVisibility, setColumnVisibility] = useState(loadColumnVisibility);
@@ -115,25 +112,14 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   };
 
   const loadTransactions = useCallback(() => {
-    console.log("🔄 ========== LOADING INCOMPLETE TRANSACTIONS ==========");
     setLocalLoading(true);
-    const params = { isCompleted: false, pageNumber: pagination.current, pageSize: pagination.pageSize };
-    console.log("📤 Fetching with params:", params);
+    const params = { pageNumber: pagination.current, pageSize: pagination.pageSize, isCompleted: false };
     dispatch(fetchTransactions(params))
       .unwrap()
       .then((data) => {
-        console.log("✅ Fetch success. Count:", data?.length);
-        const incompleteCount = (data || []).filter(tx => {
-          const done = tx.isCompleted === true || tx.completed === true ||
-            tx.status === 'Completed' || tx.status === 'completed';
-          return !done;
-        }).length;
-        if (incompleteCount === 0) console.warn("⚠️ No incomplete transactions returned from API");
-        message.success(`Loaded ${incompleteCount} incomplete transactions`);
         setLocalLoading(false);
       })
       .catch((error) => {
-        console.error("❌ Fetch failed:", error);
         message.error("Failed to load transactions: " + error);
         setLocalLoading(false);
       });
@@ -166,11 +152,12 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   };
 
   const filteredData = useMemo(() => {
+    // Always exclude completed transactions from the active queue
     let data = transactions.filter(tx => {
-      const isCompleted = tx.isCompleted === true || tx.completed === true ||
-        tx.status === 'Completed' || tx.status === 'completed';
-      return !isCompleted;
+      const s = tx.status?.toLowerCase();
+      return !tx.isCompleted && !tx.completed && s !== 'completed';
     });
+
     if (searchText?.trim()) {
       const q = searchText.toLowerCase().trim();
       data = data.filter(tx =>
@@ -306,6 +293,21 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       },
     },
     {
+      key: "weighBridgeName", title: 'Weighbridge', dataIndex: 'weighBridgeName', width: 95, editable: true,
+      render: (text) => (
+        <Text className="text-[10px] font-medium text-gray-700">{text || '-'}</Text>
+      ),
+    },
+    {
+      key: "scaleName", title: 'Scale', dataIndex: 'scaleName', width: 80, editable: true,
+      render: (text) => (
+        <span className="inline-flex items-center gap-1">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+          <Text className="text-[10px] font-medium text-amber-700">{text || '-'}</Text>
+        </span>
+      ),
+    },
+    {
       key: "firstWeight", title: '1st Weight', dataIndex: 'firstWeight', width: 80, align: 'right',
       render: (weight) => (
         <div className="flex flex-col items-end leading-tight">
@@ -342,28 +344,85 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       },
     },
     {
-      key: "status", title: 'Status', dataIndex: 'status', width: 75,
+      key: "status", title: 'Status', dataIndex: 'status', width: 95,
       render: (status, record) => {
         if (isEditing(record)) {
           return <Input value={editedData.status} onChange={(e) => handleFieldChange('status', e.target.value)}
             size="small" className="h-6 text-[10px] rounded border-amber-300" />;
         }
-        return <Tag style={{ backgroundColor: 'var(--cs-500)', borderColor: 'var(--cs-500)', color: 'white' }} className="text-[9px] font-semibold px-2 py-0 rounded-full border-0 m-0">{status || 'PENDING'}</Tag>;
+        const s = status?.toLowerCase();
+        if (s === 'reweighrequested') {
+          return <Tag color="blue" className="text-[9px] font-semibold px-2 py-0 rounded-full border-0 m-0">Reweigh Req.</Tag>;
+        }
+        if (s === 'completed') {
+          return <Tag color="green" className="text-[9px] font-semibold px-2 py-0 rounded-full border-0 m-0">Completed</Tag>;
+        }
+        return (
+          <Tag
+            style={{ backgroundColor: 'var(--cs-500)', borderColor: 'var(--cs-500)', color: 'white' }}
+            className="text-[9px] font-semibold px-2 py-0 rounded-full border-0 m-0"
+          >
+            {status || 'Active'}
+          </Tag>
+        );
       },
     },
     {
-      key: "action", title: 'Actions', dataIndex: 'action', width: 140, fixed: 'right',
+      key: "action", title: 'Actions', dataIndex: 'action', width: 165, fixed: 'right',
       render: (_, record) => {
         const editable = isEditing(record);
         const recordId = record.ticketID || record.id;
-        return editable ? (
-          <Space size={4}>
-            <Button type="text" size="small" icon={<CheckOutlined className="text-[10px]" />} onClick={() => save(recordId)} loading={saving}
-              className="text-green-600 hover:text-green-700 hover:bg-green-50 h-6 px-2 text-[10px] font-medium">Save</Button>
-            <Button type="text" size="small" icon={<CloseOutlined className="text-[10px]" />} onClick={cancel}
-              className="text-gray-600 hover:text-gray-700 hover:bg-gray-100 h-6 px-2 text-[10px]">Cancel</Button>
-          </Space>
-        ) : (
+        const txStatus = record.status?.toLowerCase();
+        const isReweighRequested = txStatus === 'reweighrequested';
+        const isCompleted =
+          record.isCompleted === true || record.completed === true ||
+          txStatus === 'completed';
+
+        if (editable) {
+          return (
+            <Space size={4}>
+              <Button type="text" size="small" icon={<CheckOutlined className="text-[10px]" />} onClick={() => save(recordId)} loading={saving}
+                className="text-green-600 hover:text-green-700 hover:bg-green-50 h-6 px-2 text-[10px] font-medium">Save</Button>
+              <Button type="text" size="small" icon={<CloseOutlined className="text-[10px]" />} onClick={cancel}
+                className="text-gray-600 hover:text-gray-700 hover:bg-gray-100 h-6 px-2 text-[10px]">Cancel</Button>
+            </Space>
+          );
+        }
+
+        // ReweighRequested — Approve / Reject
+        if (isReweighRequested) {
+          return (
+            <Space size={4}>
+              <Button
+                size="small"
+                icon={<RetweetOutlined className="text-[9px]" />}
+                onClick={() => setReweighModal({ visible: true, transaction: record })}
+                className="bg-blue-500 hover:bg-blue-600 border-0 text-white text-[10px] font-semibold h-6 px-2 shadow-sm"
+              >
+                Review
+              </Button>
+            </Space>
+          );
+        }
+
+        // Completed — Request Reweigh
+        if (isCompleted) {
+          return (
+            <Space size={4}>
+              <Button
+                size="small"
+                icon={<RetweetOutlined className="text-[9px]" />}
+                onClick={() => setReweighModal({ visible: true, transaction: record })}
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-200 h-6 px-2 text-[10px] font-medium"
+              >
+                Reweigh
+              </Button>
+            </Space>
+          );
+        }
+
+        // Active / Pending — normal weighing flow
+        return (
           <Space size={4}>
             <Button type="text" size="small" icon={<EditOutlined className="text-[9px]" />} onClick={() => edit(record)}
               className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 h-6 px-1.5 text-[10px] font-medium">Edit</Button>
@@ -457,14 +516,15 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       {/* Header */}
       <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
         <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
               <span className="text-white text-sm font-bold">{filteredData.length}</span>
             </div>
             <div>
-              <Text className="text-[11px] font-bold text-gray-900 block leading-tight">Incomplete Transactions</Text>
-              <Text className="text-[9px] text-amber-700 font-medium">Awaiting second weighing • TAT = Turnaround Time</Text>
+              <Text className="text-[11px] font-bold text-gray-900 block leading-tight">Transaction Queue</Text>
+              <Text className="text-[9px] text-amber-700 font-medium">TAT = Turnaround Time</Text>
             </div>
+
           </div>
 
           <Space size="small">
@@ -473,7 +533,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
               prefix={<SearchOutlined className="text-gray-400 text-[10px]" />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              className="w-52 h-7 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+              className="w-44 h-7 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
               allowClear
             />
 
@@ -565,11 +625,12 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
             <>
               <span className="font-semibold text-amber-600">{filteredData.length}</span> found
               <span className="text-gray-400 mx-1">·</span>
-              <span className="text-gray-500">filtered from {transactions.filter(tx => !tx.isCompleted && !tx.completed && tx.status !== 'Completed').length}</span>
+              <span className="text-gray-500">filtered</span>
             </>
           ) : (
             <>
-              <span className="font-semibold text-amber-600">{filteredData.length}</span> incomplete
+              <span className="font-semibold text-amber-600">{filteredData.length}</span>
+              {' active'}
               <span className="text-gray-400 mx-2">•</span>
               <span className="text-green-600">🟢 &lt;30m</span>
               <span className="text-gray-400 mx-1">•</span>
@@ -598,6 +659,17 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
           className="compact-pagination"
         />
       </div>
+
+      {/* Reweigh Modal */}
+      <ReweighModal
+        visible={reweighModal.visible}
+        transaction={reweighModal.transaction}
+        onClose={() => setReweighModal({ visible: false, transaction: null })}
+        onSuccess={() => {
+          setReweighModal({ visible: false, transaction: null });
+          loadTransactions();
+        }}
+      />
 
       <style>{`
         .compact-table .ant-table { background: white; font-size: 10px; }

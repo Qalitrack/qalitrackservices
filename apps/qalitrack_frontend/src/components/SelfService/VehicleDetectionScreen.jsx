@@ -19,6 +19,7 @@ import { getVehicleByRfid } from "../../api/MasterData/Vehicles";
 import { apiClient } from "../../api/helpers/apiClients";
 import { useHardwareConfig } from "../../hooks/useHardwareConfig";
 import { usePendingTransaction } from "../../hooks/usePendingTransaction";
+import logo from "../../assets/qalitrack_logo_full.png";
 
 const CONTROL_TYPES = new Set(["connected", "heartbeat", "ping", "pong", "keepalive"]);
 
@@ -309,11 +310,10 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       <header className={`${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"} border-b px-8 py-5 shadow-sm`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <span className="text-white text-xl font-black">KW</span>
-            </div>
+            <img src={logo} alt="Qalitrack" className="h-14 w-auto" />
+            <div className={`w-px h-8 ${isDark ? "bg-gray-700" : "bg-gray-200"}`} />
             <div>
-              <h1 className={`text-2xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>Unmanned Weighing</h1>
+              <h1 className={`text-xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>Self-Service Weighing</h1>
               <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>
                 RFID: <span className="font-mono">{rfidStreamUrl}</span>
               </p>
@@ -342,7 +342,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-start justify-center p-6 lg:p-10">
+      <main className="flex-1 flex items-center justify-center p-6 lg:p-10">
         <div className="w-full max-w-4xl space-y-5">
 
           {externalError && (
@@ -356,7 +356,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
               streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? "bg-red-500"
               : vehicleStatus === "found"   ? "bg-gradient-to-r from-green-400 to-emerald-500"
               : vehicleStatus === "loading" ? "bg-gradient-to-r from-amber-400 to-orange-500"
-              : "bg-gradient-to-r from-purple-500 to-indigo-500"
+              : "bg-gradient-to-r from-amber-400 to-orange-500"
             }`} />
 
             <div className="p-8 flex flex-col sm:flex-row items-center gap-8">
@@ -366,13 +366,13 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
                 {isListening && [0,1,2].map(i => {
                   const ph = (pulsePhase + i) % 3;
                   return <span key={i} className="absolute inset-0 rounded-full border-2 transition-all duration-700"
-                    style={{ borderColor: "rgba(109,40,217,0.2)", transform: `scale(${1 + (ph / 3) * 0.65})`, opacity: 1 - (ph / 3) * 0.9 }} />;
+                    style={{ borderColor: "rgba(217,119,6,0.25)", transform: `scale(${1 + (ph / 3) * 0.65})`, opacity: 1 - (ph / 3) * 0.9 }} />;
                 })}
                 <div className={`w-32 h-32 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 ${
                   streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? "bg-red-600"
                   : vehicleStatus === "found"   ? "bg-gradient-to-br from-green-400 to-emerald-600"
                   : vehicleStatus === "loading" ? "bg-gradient-to-br from-amber-400 to-orange-500"
-                  : "bg-gradient-to-br from-purple-600 to-indigo-600"
+                  : "bg-gradient-to-br from-amber-500 to-orange-600"
                 }`}>
                   {vehicleStatus === "loading" ? (
                     <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
@@ -395,14 +395,14 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
               {/* Status text */}
               <div className="flex-1 min-w-0">
                 {streamStatus === "connecting" && (
-                  <Blurb label="Initialising" color="purple" isDark={isDark} title="Connecting to RFID Reader…" sub={rfidStreamUrl} />
+                  <Blurb label="Initialising" color="amber" isDark={isDark} title="Connecting to RFID Reader…" sub={rfidStreamUrl} />
                 )}
                 {streamStatus === "listening" && vehicleStatus === "idle" && (
-                  <Blurb label="Ready" color="purple" isDark={isDark} title="Awaiting Vehicle RFID Tag" sub="Drive into the reader zone. The tag will be detected automatically.">
+                  <Blurb label="Ready" color="amber" isDark={isDark} title="Awaiting Vehicle RFID Tag" sub="Drive into the reader zone. The tag will be detected automatically.">
                     <div className="flex flex-wrap gap-2 mt-4">
                       {["Drive into zone","Auto-detected","Details populated"].map((s, i) => (
                         <span key={i} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-slate-100 text-gray-500">
-                          <span className="w-4 h-4 rounded-full flex items-center justify-center bg-purple-500 text-white text-xs font-black">{i + 1}</span>{s}
+                          <span className="w-4 h-4 rounded-full flex items-center justify-center bg-amber-500 text-white text-xs font-black">{i + 1}</span>{s}
                         </span>
                       ))}
                     </div>
@@ -591,7 +591,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
 }
 
 function Blurb({ label, color, title, sub, isDark, children }) {
-  const cls = { purple: isDark ? "text-purple-400" : "text-purple-600", amber: isDark ? "text-amber-400" : "text-amber-600", green: "text-green-500", red: "text-red-500" };
+  const cls = { amber: isDark ? "text-amber-400" : "text-amber-600", green: "text-green-500", red: "text-red-500" };
   return (
     <div>
       <p className={`text-xs font-bold uppercase tracking-widest mb-1 ${cls[color]}`}>{label}</p>

@@ -86,6 +86,9 @@ public class WeighbridgeTransaction : BaseEntity
 
     // NPR (Number Plate Recognition) capture source: "auto" = camera detected, "manual" = operator typed
     public string? NprSource { get; set; }
+
+    // Reweigh flag — set to true when a reweigh is first requested; never reset
+    public bool IsReweighed { get; set; } = false;
 }
 
 // If you still need the ReweighRecord and enum, keep them separate or remove them

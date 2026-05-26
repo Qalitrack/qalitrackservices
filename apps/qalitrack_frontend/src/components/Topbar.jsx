@@ -2,10 +2,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Bell, User, LogOut, Menu } from "lucide-react";
 import useAuth from "../api/helpers/auth";
 import { useState, useRef, useEffect } from "react";
+import { useSidebarSettings } from "../components/Context/Sidebarsettingscontext";
 
 export default function Topbar({ onToggleSidebar }) {
   const location = useLocation();
   const { getCurrentUser, logout } = useAuth();
+  const { sidebarSettings } = useSidebarSettings();
   const user = getCurrentUser ? getCurrentUser() : null;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -86,6 +88,15 @@ export default function Topbar({ onToggleSidebar }) {
 
       {/* Right: search, bell, profile */}
       <div className="flex items-center gap-3 md:gap-4">
+        {/* Company logo from system settings */}
+        {sidebarSettings?.companyLogo && (
+          <img
+            src={sidebarSettings.companyLogo}
+            alt={sidebarSettings.companyName || "Company"}
+            className="h-8 w-auto max-w-[120px] object-contain rounded"
+          />
+        )}
+
         {/* Notifications */}
         <button className="relative h-9 w-9 flex items-center justify-center border rounded hover:bg-gray-50">
           <Bell size={18} className="text-gray-600" />

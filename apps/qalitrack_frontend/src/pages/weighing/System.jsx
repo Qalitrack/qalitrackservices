@@ -77,6 +77,9 @@ import FeatureLicenseGate from "../../components/FeatureLicenseGate";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import { getLicenseStatus, deactivateLicense } from "../../utils/licenseUtils";
 
+// ── Weighbridges ──────────────────────────────────────────────────────────────
+import WeighbridgesPortal from "./WeighingBridge";
+
 const { Option } = Select;
 
 
@@ -135,6 +138,10 @@ const DEFAULT_SETTINGS = {
   anprConfidenceThreshold: 85,
   anprCameraPosition: "entry",
   anprFallbackToManual: true,
+
+  // Weighbridge
+  weighbridgeName: "Syokimau",
+  selectedScaleName: "Katani",
 
   // Hardware — Scale
   scaleEnabled: true,
@@ -334,6 +341,15 @@ export default function SystemSettings() {
         </span>
       ),
       children: <LicenseTab />,
+    },
+    {
+      key: "weighbridges",
+      label: (
+        <span className="flex items-center gap-1.5 text-xs">
+          <Scale className="w-3.5 h-3.5" /> Weighbridges
+        </span>
+      ),
+      children: <WeighbridgesPortal />,
     },
   ];
 
@@ -621,7 +637,84 @@ function GeneralTab({ settings, setField, isDark }) {
           </Field>
         </div>
       </Section>
+
+      {/* ── Weighbridge ───────────────────────────────────────────────────── */}
+      <WeighbridgeSection settings={settings} setField={setField} />
     </div>
+  );
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// HARDCODED WEIGHBRIDGE + SCALE CONFIGURATION
+// Update this list to add/rename weighbridges and their scales.
+// ═════════════════════════════════════════════════════════════════════════════
+const WEIGHBRIDGE_CONFIG = [
+  { name: "Syokimau", scales: ["Katani", "Embu"] },
+  { name: "Athi River", scales: ["Mlolongo", "Kitengela", "Isinya"] },
+];
+
+// ═════════════════════════════════════════════════════════════════════════════
+// WEIGHBRIDGE SECTION (used inside GeneralTab)
+// ═════════════════════════════════════════════════════════════════════════════
+function WeighbridgeSection({ settings, setField }) {
+  const selectedWb = WEIGHBRIDGE_CONFIG.find((wb) => wb.name === settings.weighbridgeName);
+  const scaleOptions = selectedWb?.scales || [];
+
+  const handleWeighbridgeChange = (name) => {
+    setField("weighbridgeName", name);
+    const wb = WEIGHBRIDGE_CONFIG.find((w) => w.name === name);
+    setField("selectedScaleName", wb?.scales[0] || "");
+  };
+
+  return (
+    <Section title="Weighbridge" icon={<Scale className="w-4 h-4 text-amber-600" />}>
+      <p className="text-xs text-gray-400 mb-4">
+        Select the active weighbridge and scale. The selection is shown on the New Transaction form.
+      </p>
+      <div className="space-y-4">
+        <Field label="Weighbridge Name">
+          <Select
+            value={settings.weighbridgeName}
+            onChange={handleWeighbridgeChange}
+            style={{ width: "100%" }}
+            placeholder="Select weighbridge"
+          >
+            {WEIGHBRIDGE_CONFIG.map((wb) => (
+              <Option key={wb.name} value={wb.name}>
+                {wb.name}
+              </Option>
+            ))}
+          </Select>
+        </Field>
+
+        <Field label="Scale Name">
+          <Select
+            value={settings.selectedScaleName}
+            onChange={(v) => setField("selectedScaleName", v)}
+            style={{ width: "100%" }}
+            placeholder="Select scale"
+            disabled={scaleOptions.length === 0}
+          >
+            {scaleOptions.map((scale) => (
+              <Option key={scale} value={scale}>
+                {scale}
+              </Option>
+            ))}
+          </Select>
+        </Field>
+
+        {/* Active selection summary */}
+        <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
+          <p className="text-[10px] font-bold text-amber-700 uppercase tracking-wide mb-1">
+            Currently Active on New Transaction Form
+          </p>
+          <p className="text-sm font-semibold text-amber-900">
+            {settings.weighbridgeName || "—"} &nbsp;·&nbsp;{" "}
+            <span className="text-amber-600">{settings.selectedScaleName || "—"}</span>
+          </p>
+        </div>
+      </div>
+    </Section>
   );
 }
 

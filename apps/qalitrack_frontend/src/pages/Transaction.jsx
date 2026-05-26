@@ -7,7 +7,11 @@ import {
   SaveOutlined,
   CloseOutlined,
   ClockCircleOutlined,
+  RetweetOutlined,
 } from "@ant-design/icons";
+import ReweighModal from "../components/weighing/ReweighModal";
+import AddWeighingModal from "../components/weighing/AddWeighingModal";
+import ReweighFirstWeightModal from "../components/weighing/ReweighFirstWeightModal";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import duration from "dayjs/plugin/duration";
@@ -15,6 +19,7 @@ import {
   fetchTransactions,
   fetchUserById,
   updateTransactionApi,
+  fetchReweighRecords,
 } from "../store/weighingSlice";
 import { Printer, Eye, Search, Filter, X } from "lucide-react";
 import jsPDF from "jspdf";
@@ -129,10 +134,27 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.setTextColor(...white);
   doc.text(statusText, R - badgeW / 2, 17.5, { align: "center" });
 
-  // Divider – amber accent
+  // REWEIGHED badge (below status badge, top-right)
+  // Uses violet — distinct from every theme's own colors
+  // (amber=yellow, blue=blue, green=green, monochrome=grey — none use violet)
+  const showReweighed = record.isReweighed || (record.reweighCount > 0);
+  if (showReweighed) {
+    const rwBadgeW = 32;
+    const violet = [124, 58, 237]; // violet-600 — theme-neutral reweigh colour
+    doc.setFillColor(...violet);
+    doc.roundedRect(R - rwBadgeW, 21, rwBadgeW, 6, 1.5, 1.5, "F");
+    doc.setFontSize(fontSize.sub - 1);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...white);
+    const rwLabel = record.reweighCount > 1 ? `REWEIGHED x${record.reweighCount}` : "REWEIGHED";
+    doc.text(rwLabel, R - rwBadgeW / 2, 25, { align: "center" });
+  }
+
+  // Divider – amber accent (pushed down when REWEIGHED badge is present)
+  const dividerY = showReweighed ? 31 : 29;
   doc.setDrawColor(...amberBdr);
   doc.setLineWidth(0.5);
-  doc.line(L, 29, R, 29);
+  doc.line(L, dividerY, R, dividerY);
 
   // ── Helper: centred section title in Times bold with amber underline ───────
   const drawTitle = (text, yPos) => {
@@ -434,6 +456,10 @@ export default function Transactions() {
   const [editedRecord, setEditedRecord] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
+  const [reweighRecordsForDrawer, setReweighRecordsForDrawer] = useState([]);
+  const [reweighModal, setReweighModal] = useState({ visible: false, transaction: null });
+  const [weighingModal, setWeighingModal] = useState({ visible: false, transaction: null });
+  const [firstWeightModal, setFirstWeightModal] = useState({ visible: false, transaction: null });
   const [pdfTheme, setPdfTheme] = useState(() => getTicketSettings().ticketTheme || "modern");
   const [isExportPreviewOpen, setIsExportPreviewOpen] = useState(false);
   const [previewBlobUrl, setPreviewBlobUrl] = useState(null);
@@ -626,8 +652,17 @@ export default function Transactions() {
     }
     setSelectedRecord(enriched);
     setEditedRecord(enriched);
+    setReweighRecordsForDrawer([]);
     setIsEditing(false);
     setIsDrawerOpen(true);
+    // Fetch reweigh history (non-blocking)
+    const ticketId = record.ticketID || record.id;
+    if (ticketId) {
+      dispatch(fetchReweighRecords(ticketId))
+        .unwrap()
+        .then((records) => setReweighRecordsForDrawer(Array.isArray(records) ? records : []))
+        .catch(() => {});
+    }
   };
 
   const handleSave = async () => {
@@ -931,17 +966,36 @@ export default function Transactions() {
     },
     {
       title: "",
-      width: 50,
+      width: 80,
       fixed: "right",
-      render: (_, r) => (
-        <Button
-          size="small"
-          type="text"
-          icon={<Eye size={12} />}
-          onClick={() => openViewDrawer(r)}
-          className="text-amber-600 hover:bg-amber-50 hover:text-amber-700 h-6 px-1.5 text-[10px] font-semibold transition-all"
-        />
-      ),
+      render: (_, r) => {
+        const status = r.status?.toLowerCase();
+        const isReweighable =
+          status === "completed" ||
+          status === "reweighrequested" ||
+          (r.secondWeight && parseFloat(r.secondWeight) > 0);
+        return (
+          <div className="flex items-center gap-1">
+            <Button
+              size="small"
+              type="text"
+              icon={<Eye size={12} />}
+              onClick={() => openViewDrawer(r)}
+              className="text-amber-600 hover:bg-amber-50 hover:text-amber-700 h-6 px-1.5 text-[10px] font-semibold transition-all"
+            />
+            {isReweighable && (
+              <Button
+                size="small"
+                type="text"
+                icon={<RetweetOutlined style={{ fontSize: 11 }} />}
+                onClick={() => setReweighModal({ visible: true, transaction: r })}
+                className="text-blue-500 hover:bg-blue-50 hover:text-blue-700 h-6 px-1.5 text-[10px] font-semibold transition-all"
+                title="Reweigh"
+              />
+            )}
+          </div>
+        );
+      },
     },
   ];
 
@@ -1277,7 +1331,7 @@ export default function Transactions() {
                     onClick={async () => {
                       setIsExportPreviewOpen(true);
                       setPreviewLoading(true);
-                      const url = await generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple, true);
+                      const url = await generateThemedPDF({ ...selectedRecord, isReweighed: reweighRecordsForDrawer.length > 0, reweighCount: reweighRecordsForDrawer.length }, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple, true);
                       setPreviewBlobUrl(url);
                       setPreviewLoading(false);
                     }}
@@ -1450,6 +1504,20 @@ export default function Transactions() {
                   <div className="text-[9px] text-amber-800 font-bold">KILOGRAMS</div>
                 </div>
               </div>
+              {reweighRecordsForDrawer.length > 0 && (
+                <div className="flex items-center gap-2 mb-2.5 px-3 py-2 bg-violet-50 border-2 border-violet-300 rounded-lg shadow-sm">
+                  <span className="text-violet-600 text-base">🔄</span>
+                  <span className="text-[11px] font-black text-violet-800 uppercase tracking-wide">REWEIGHED</span>
+                  {reweighRecordsForDrawer.length > 1 && (
+                    <span className="text-[9px] font-bold text-violet-600 bg-violet-100 border border-violet-300 px-1.5 py-0.5 rounded-full">
+                      ×{reweighRecordsForDrawer.length}
+                    </span>
+                  )}
+                  <span className="ml-auto text-[9px] text-violet-500 font-semibold">
+                    {reweighRecordsForDrawer.length} reweigh record{reweighRecordsForDrawer.length !== 1 ? "s" : ""}
+                  </span>
+                </div>
+              )}
               <div className="bg-white rounded-lg px-3 py-2.5 border-2 border-amber-300 flex items-center justify-between">
                 <span className="text-[11px] text-amber-800 font-bold">⏱️ TURNAROUND TIME:</span>
                 <span className="text-sm font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
@@ -1468,20 +1536,30 @@ export default function Transactions() {
               </div>
               <div className="mb-3">
                 <div className="text-amber-700 text-[10px] mb-1.5 font-bold uppercase">Status</div>
-                <Tag
-                  color={
-                    (selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) ||
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Tag
+                    color={
+                      (selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) ||
+                      selectedRecord.status === "Completed"
+                        ? "success"
+                        : "warning"
+                    }
+                    className="text-xs font-bold px-3 py-1 shadow-sm m-0"
+                  >
+                    {(selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) ||
                     selectedRecord.status === "Completed"
-                      ? "success"
-                      : "warning"
-                  }
-                  className="text-xs font-bold px-3 py-1 shadow-sm"
-                >
-                  {(selectedRecord.secondWeight && parseFloat(selectedRecord.secondWeight) > 0) ||
-                  selectedRecord.status === "Completed"
-                    ? "✅ COMPLETED"
-                    : "⏳ IN PROGRESS"}
-                </Tag>
+                      ? "✅ COMPLETED"
+                      : "⏳ IN PROGRESS"}
+                  </Tag>
+                  {reweighRecordsForDrawer.length > 0 && (
+                    <Tag
+                      color="purple"
+                      className="text-xs font-bold px-3 py-1 shadow-sm m-0 uppercase tracking-wide"
+                    >
+                      🔄 REWEIGHED ×{reweighRecordsForDrawer.length}
+                    </Tag>
+                  )}
+                </div>
               </div>
               <div>
                 <div className="text-amber-700 text-[10px] mb-1.5 font-bold uppercase">Remarks / Notes</div>
@@ -1546,7 +1624,7 @@ export default function Transactions() {
                     onClick={async () => {
                       setPdfTheme("modern");
                       setPreviewLoading(true);
-                      const url = await generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: "modern" }, formatTurnaroundTimeSimple, true);
+                      const url = await generateThemedPDF({ ...selectedRecord, isReweighed: reweighRecordsForDrawer.length > 0, reweighCount: reweighRecordsForDrawer.length }, { ...ticketSettings, ticketTheme: "modern" }, formatTurnaroundTimeSimple, true);
                       setPreviewBlobUrl(url);
                       setPreviewLoading(false);
                     }}
@@ -1562,7 +1640,7 @@ export default function Transactions() {
                     onClick={async () => {
                       setPdfTheme("classic");
                       setPreviewLoading(true);
-                      const url = await generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: "classic" }, formatTurnaroundTimeSimple, true);
+                      const url = await generateThemedPDF({ ...selectedRecord, isReweighed: reweighRecordsForDrawer.length > 0, reweighCount: reweighRecordsForDrawer.length }, { ...ticketSettings, ticketTheme: "classic" }, formatTurnaroundTimeSimple, true);
                       setPreviewBlobUrl(url);
                       setPreviewLoading(false);
                     }}
@@ -1582,7 +1660,7 @@ export default function Transactions() {
                 block
                 icon={<Printer size={14} />}
                 onClick={() => {
-                  generateThemedPDF(selectedRecord, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple);
+                  generateThemedPDF({ ...selectedRecord, isReweighed: reweighRecordsForDrawer.length > 0, reweighCount: reweighRecordsForDrawer.length }, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple);
                   setIsExportPreviewOpen(false);
                   setPreviewBlobUrl(null);
                 }}
@@ -1612,6 +1690,45 @@ export default function Transactions() {
           </div>
         </Modal>
       )}
+
+      {/* ── Reweigh wizard modal ──────────────────────────────────────────── */}
+      <ReweighModal
+        visible={reweighModal.visible}
+        transaction={reweighModal.transaction}
+        onClose={() => setReweighModal({ visible: false, transaction: null })}
+        onSuccess={() => dispatch(fetchTransactions({}))}
+        onApproved={(approvedTx, reweighType) => {
+          setReweighModal({ visible: false, transaction: null });
+          if (reweighType === "secondWeight") {
+            setWeighingModal({ visible: true, transaction: approvedTx });
+          } else {
+            // First weight or all — capture new first weight, then second weight
+            setFirstWeightModal({ visible: true, transaction: approvedTx });
+          }
+        }}
+      />
+
+      {/* ── Re-enter first weight (first-weight reweigh approval) ──────── */}
+      <ReweighFirstWeightModal
+        visible={firstWeightModal.visible}
+        transaction={firstWeightModal.transaction}
+        onClose={() => setFirstWeightModal({ visible: false, transaction: null })}
+        onSuccess={(updatedTx) => {
+          setFirstWeightModal({ visible: false, transaction: null });
+          setWeighingModal({ visible: true, transaction: updatedTx });
+        }}
+      />
+
+      {/* ── Add second weight modal (opened after reweigh approval) ─────── */}
+      <AddWeighingModal
+        visible={weighingModal.visible}
+        transaction={weighingModal.transaction}
+        onClose={() => setWeighingModal({ visible: false, transaction: null })}
+        onSuccess={() => {
+          setWeighingModal({ visible: false, transaction: null });
+          dispatch(fetchTransactions({}));
+        }}
+      />
 
       <style>{`
         .compact-table .ant-table { font-size: 10px; }

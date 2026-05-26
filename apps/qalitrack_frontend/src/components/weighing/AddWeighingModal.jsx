@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, Input, Button, message, Tag, Typography, Tooltip, Divider } from "antd";
 import { SyncOutlined, MonitorOutlined, ArrowRightOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { addWeighing as addWeighingThunk } from "../../store/weighingSlice";
+import { addSecondWeight as addWeighingThunk, completeTransactionThunk } from "../../store/weighingSlice";
 
 const { Text } = Typography;
 
@@ -85,7 +85,8 @@ export default function AddWeighingModal({
     setLoading(true);
     try {
       const payload = {
-        transactionId: transaction.id,
+        transactionId: transaction.ticketID || transaction.id,
+        ticketID: transaction.ticketID || transaction.id,
         weight: parseFloat(formData.weight),
         weighBridgeId: transaction.weighBridgeId,
         weighBridgeName: transaction.weighBridgeName,
@@ -97,6 +98,15 @@ export default function AddWeighingModal({
       };
 
       await dispatch(addWeighingThunk(payload)).unwrap();
+      // Explicitly complete the transaction so it leaves the active queue
+      try {
+        await dispatch(
+          completeTransactionThunk({
+            ticketID: transaction.ticketID || transaction.id,
+            transactionId: transaction.ticketID || transaction.id,
+          })
+        ).unwrap();
+      } catch (_) { /* non-fatal — second weight already saved */ }
       message.success(`Transaction Finalized! Net: ${netWeight} KG`);
       onSuccess();
       onClose();

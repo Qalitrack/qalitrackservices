@@ -6,6 +6,7 @@ import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Input, Select, AutoComplete, Button, message, Row, Col, Typography, Space, Alert, Modal } from "antd";
 import { debounce } from "lodash";
+import { Scale } from "lucide-react";
 import {
   fetchVehiclesByRegNumber,
   fetchDriversByName,
@@ -72,6 +73,7 @@ export default function CreateTransactionForm({
   const [submitError, setSubmitError] = useState(null);
   const [showFinalizePreview, setShowFinalizePreview] = useState(false);
   const [previewEditData, setPreviewEditData] = useState({});
+  const [activeWeighbridge, setActiveWeighbridge] = useState({ name: "", scale: "" });
 
   const isSecondWeighing = !!(formData.id || formData.ticketID);
   const [manualPlate, setManualPlate] = useState(false);
@@ -81,6 +83,23 @@ export default function CreateTransactionForm({
       dispatch(fetchWeighbridges({ pageNumber: 1, pageSize: 100 }));
     }
   }, [dispatch, weighbridges.length]);
+
+  // Read active weighbridge + scale from system settings
+  useEffect(() => {
+    try {
+      const sys = JSON.parse(localStorage.getItem("systemSettings") || "{}");
+      const wb = sys.weighbridgeName || "";
+      const sc = sys.selectedScaleName || "";
+      setActiveWeighbridge({ name: wb, scale: sc });
+      if (!isSecondWeighing && (wb || sc)) {
+        setFormData((prev) => ({
+          ...prev,
+          weighBridgeName: wb,
+          scaleName: sc,
+        }));
+      }
+    } catch (_) {}
+  }, [isSecondWeighing, setFormData]);
 
   // ✅ Automatically set operator information (still sent to backend)
   useEffect(() => {
@@ -147,7 +166,6 @@ export default function CreateTransactionForm({
     const errors = [];
 
     if (!formData.noPlate?.trim()) errors.push("Vehicle plate is required");
-    if (!formData.weighBridgeID && !formData.scaleName?.trim()) errors.push("Scale / Weighbridge is required");
     if (!formData.transporterID && !formData.transporterName?.trim()) errors.push("Transporter is required");
 
     const weight = parseFloat(formData.firstWeight || capturedWeight || 0);
@@ -407,6 +425,24 @@ export default function CreateTransactionForm({
   return (
     <>
     <div className="flex flex-col h-full bg-white">
+      {/* WEIGHBRIDGE INFO BAR */}
+      <div className="mb-2 px-3 py-2 bg-slate-800 rounded-lg flex items-center gap-3 shrink-0">
+        <Scale className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+        <div className="flex items-center gap-1">
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Weighbridge:</span>
+          <span className="text-[10px] font-bold text-white uppercase tracking-wide">
+            {activeWeighbridge.name || "—"}
+          </span>
+        </div>
+        <span className="text-gray-600 text-[10px]">|</span>
+        <div className="flex items-center gap-1">
+          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Scale:</span>
+          <span className="text-[10px] font-semibold text-amber-400">
+            {activeWeighbridge.scale || "—"}
+          </span>
+        </div>
+      </div>
+
       {/* LIVE WEIGHT HEADER */}
       <div
         className={`mb-3 p-2 rounded-lg border flex justify-between items-center shrink-0 ${
@@ -533,21 +569,6 @@ export default function CreateTransactionForm({
       {/* FORM FIELDS - Operator column removed */}
       <div className="flex-1 overflow-y-auto pr-1">
         <Row gutter={[8, 10]}>
-          {/* Scale Name */}
-          <Col span={12}>
-            <FieldLabel required>Scale Name</FieldLabel>
-            <AutoComplete
-              size="middle"
-              className="w-full"
-              value={formData.scaleName}
-              options={weighbridges.map((wb) => ({ value: wb.location || wb.name, label: wb.location || wb.name, id: wb.id }))}
-              filterOption={(input, option) => option.value.toLowerCase().includes(input.toLowerCase())}
-              onChange={(val) => setFormData((prev) => ({ ...prev, scaleName: val, weighBridgeName: val, weighBridgeID: null }))}
-              onSelect={(val, opt) => setFormData((prev) => ({ ...prev, scaleName: val, weighBridgeName: val, weighBridgeID: opt.id }))}
-              placeholder="Type or select scale"
-            />
-          </Col>
-
           {/* Vehicle Plate */}
           <Col span={12}>
             <div className="flex items-center justify-between mb-0.5">

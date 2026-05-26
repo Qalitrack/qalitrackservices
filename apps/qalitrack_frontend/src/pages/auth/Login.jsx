@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import qalitrackLogoFull from '/src/assets/qalitrack_logo_full.png';
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../api/helpers/auth'; // Adjust path as needed
@@ -30,18 +31,18 @@ export default function Login() {
 
     const slides = [
         {
-            title: 'Accurate Weighing, Every Time',
+            title: 'Next-Level Weighing, Simplified',
             subtitle:
-                'Capture first and second weights with precision and generate tickets instantly.',
+                'Capture accurate first and second weights without delay and generate tickets on demand.',
             description:
-                'Real-time scale integration ensures every reading is recorded accurately and tamper-proof.',
+                'With real-time scale integration, every reading is reliably recorded and fully protected.',
         },
         {
-            title: 'Full Transaction Visibility',
+            title: 'Engineered for Precise Weighing',
             subtitle:
-                'Track every vehicle, commodity, transporter, and weight record from one dashboard.',
+                'Capture every weigh-in accurately and issue tickets instantly.',
             description:
-                'Monitor incomplete transactions, review history, and export reports with ease.',
+                'Real-time integration ensures each record is consistent, secure, and safeguarded from tampering.',
         },
         {
             title: 'Smart Number Plate Recognition',
@@ -132,9 +133,11 @@ export default function Login() {
                 <div className="flex-1 flex items-center justify-center px-4 py-8 sm:px-8 sm:py-12 bg-gray-50">
                     <div className="w-full max-w-md">
                         <div className="mb-6 sm:mb-8">
-                            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                                Qalitrack
-                            </h1>
+                            <img
+                                src={qalitrackLogoFull}
+                                alt="QaliTrack"
+                                className="h-12 w-auto object-contain"
+                            />
                         </div>
 
                         <div className="mb-6 sm:mb-8">

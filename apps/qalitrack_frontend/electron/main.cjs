@@ -7,16 +7,34 @@ const isDev = !app.isPackaged;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MACHINE ID
-// Derived from hostname + primary MAC address, persisted to userData/machine-id.
-// userData is NOT deleted by Windows NSIS uninstall — survives reinstalls.
-// New OS install = new hardware derivation = new ID = customer needs new license.
+// Read from HKLM\SOFTWARE\Microsoft\Cryptography\MachineGuid — assigned once
+// by Windows at OS install, unaffected by network adapters, Docker, VPNs, or
+// app reinstalls. New OS install = new GUID = customer needs new license.
+// Falls back to hostname+MAC only if the registry read fails (non-Windows).
 // ─────────────────────────────────────────────────────────────────────────────
+const { execSync } = require('child_process');
+
 function deriveMachineId() {
+  // Primary: Windows Registry MachineGuid (stable across reboots/reinstalls)
+  try {
+    const out = execSync(
+      'reg query "HKLM\\SOFTWARE\\Microsoft\\Cryptography" /v MachineGuid',
+      { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
+    );
+    const match = out.match(/MachineGuid\s+REG_SZ\s+([^\r\n]+)/);
+    if (match && match[1]) {
+      return match[1].trim().replace(/[^a-zA-Z0-9\-]/g, '').slice(0, 36);
+    }
+  } catch (_) {
+    // Not Windows or registry unavailable — fall through to MAC fallback
+  }
+
+  // Fallback: hostname + first physical (non-virtual) MAC address
   const ifaces = os.networkInterfaces();
   const mac = Object.values(ifaces)
     .flat()
-    .find(n => n && !n.internal && n.mac && n.mac !== '00:00:00:00:00:00')
-    ?.mac ?? 'nomac';
+    .filter(n => n && !n.internal && n.mac && n.mac !== '00:00:00:00:00:00')
+    .sort((a, b) => a.mac.localeCompare(b.mac))[0]?.mac ?? 'nomac';
   return Buffer.from(`${os.hostname()}:${mac}`)
     .toString('base64')
     .replace(/[^a-zA-Z0-9]/g, '')
@@ -24,16 +42,7 @@ function deriveMachineId() {
 }
 
 function getMachineId() {
-  const dir  = app.getPath('userData');
-  const file = path.join(dir, 'machine-id');
-  if (fs.existsSync(file)) {
-    const cached = fs.readFileSync(file, 'utf8').trim();
-    if (cached) return cached;
-  }
-  const id = deriveMachineId();
-  fs.mkdirSync(dir, { recursive: true });
-  fs.writeFileSync(file, id, 'utf8');
-  return id;
+  return deriveMachineId();
 }
 
 ipcMain.handle('get-machine-id', () => getMachineId());
@@ -53,7 +62,7 @@ function createWindow() {
   });
 
   if (isDev) {
-    win.loadURL('http://localhost:5173');
+    win.loadURL('http://localhost:4000');
     win.webContents.openDevTools();
   } else {
     win.loadFile(path.join(__dirname, '../dist/index.html'));

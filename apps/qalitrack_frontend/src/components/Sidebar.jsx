@@ -32,7 +32,8 @@ import {
   Database,
 } from "lucide-react";
 import useAuth from "../api/helpers/auth";
-import staticLogo from "/src/assets/logorange.svg";
+import qalitrackLogoIcon from "/src/assets/qalitrack_logo.png";
+import qalitrackLogoFull from "/src/assets/qalitrack_logo_full.png";
 import { useSidebarSettings } from "../components/Context/Sidebarsettingscontext";
 
 export default function UnifiedSidebar({ isCollapsed, onToggle }) {
@@ -42,7 +43,6 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
 
   // ── Live sidebar settings from Context ─────────────────────────────────────
   const { sidebarSettings, resolvedTheme } = useSidebarSettings();
-  const logoSrc = sidebarSettings.companyLogo || staticLogo;
 
   const user = getCurrentUser();
   const userRoles = user?.userRoles || [];
@@ -82,8 +82,7 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
         { key: "weighing-owners",      label: "Owners",            icon: <Users size={16} />,           path: `${basePath}/weighing/owners`,     roles: null },
         { key: "suppliers",            label: "Suppliers",         icon: <Satellite size={16} />,       path: `${basePath}/suppliers`,           roles: null },
         { key: "weighing-products",    label: "Products",          icon: <BarChart3 size={16} />,       path: `${basePath}/weighing/products`,   roles: null },
-        { key: "weighing-weighbridges",label: "Weighbridges",      icon: <Scale size={16} />,           path: `${basePath}/weighbridges`,        roles: ["Admin"] },
-        { key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,           path: `${basePath}/weighing/axle-config`,roles: ["Admin"] },
+{ key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,           path: `${basePath}/weighing/axle-config`,roles: ["Admin"] },
         { key: "weighing-saccos",      label: "Saccos",            icon: <User2 size={16} />,           path: `${basePath}/saccos`,              roles: null },
       ],
     },
@@ -150,34 +149,24 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
     >
       {/* ── Branding + Collapse ─────────────────────────────────────────────── */}
       <div
-        className={`flex items-center relative py-6 ${
-          isCollapsed ? "justify-center px-0" : "justify-between px-6"
+        className={`flex items-center relative py-1 ${
+          isCollapsed ? "justify-center px-0" : "justify-between px-3"
         }`}
       >
-        <div className="flex items-center gap-3">
+        {isCollapsed ? (
           <img
-            src={logoSrc}
-            alt="Logo"
-            className={`transition-all duration-300 object-contain ${
-              isCollapsed ? "h-8 w-8" : "h-12"
-            }`}
-            style={{
-              // If it's a base64 upload, give it a white bg pill so it reads on dark sidebar
-              borderRadius: sidebarSettings.companyLogo ? "6px" : undefined,
-              background: sidebarSettings.companyLogo ? "rgba(255,255,255,0.9)" : undefined,
-              padding: sidebarSettings.companyLogo ? "2px" : undefined,
-            }}
+            src={qalitrackLogoIcon}
+            alt="QaliTrack"
+            className="h-8 w-8 object-contain transition-all duration-300"
           />
-          {!isCollapsed && sidebarSettings.companyLogo && (
-            <span
-              className="text-[11px] font-semibold leading-tight max-w-[120px] truncate"
-              style={{ color: resolvedTheme.text, opacity: 0.85 }}
-              title={sidebarSettings.companyName}
-            >
-              {sidebarSettings.companyName}
-            </span>
-          )}
-        </div>
+        ) : (
+          <img
+            src={qalitrackLogoFull}
+            alt="QaliTrack"
+            className="w-full h-auto object-contain transition-all duration-300"
+            style={{ maxWidth: "calc(100% - 16px)" }}
+          />
+        )}
 
         <button
           onClick={onToggle}
@@ -295,16 +284,23 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <div
         className="px-3 py-3 text-xs"
-        style={{ borderTop: `1px solid ${resolvedTheme.border}`, color: resolvedTheme.text, opacity: 0.6 }}
+        style={{ borderTop: `1px solid ${resolvedTheme.border}`, opacity: 0.75 }}
       >
         {!isCollapsed ? (
-          <div className="flex items-center justify-between">
-            <span>v0.1</span>
-            <span style={accentStyle} className="font-semibold">QSL</span>
+          <div className="text-center space-y-0.5">
+            <p style={{ color: resolvedTheme.text }} className="text-[10px]">
+              Powered by{" "}
+              <span style={accentStyle} className="font-semibold">
+                Qalibrated Systems
+              </span>
+            </p>
+            <p style={{ color: resolvedTheme.text }} className="text-[10px] opacity-60">
+              &copy; {new Date().getFullYear()} All rights reserved.
+            </p>
           </div>
         ) : (
           <div className="flex justify-center">
-            <span style={accentStyle}>v0.1</span>
+            <span style={accentStyle} className="text-[10px] font-bold">Q</span>
           </div>
         )}
       </div>
