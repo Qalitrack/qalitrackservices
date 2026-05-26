@@ -45,7 +45,6 @@ public class DriverProfile : BaseEntity
     public string? RejectionReason { get; set; }
 
     // Navigation properties
-    public virtual Driver Driver { get; set; } = null!;
     public virtual ICollection<LicenseClass> LicenseClasses { get; set; } = new List<LicenseClass>();
     public virtual ICollection<DriverProfileChange> Changes { get; set; } = new List<DriverProfileChange>();
 

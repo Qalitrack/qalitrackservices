@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/technician-api
   pullPolicy: Always
-  tag: "main-5461564"
+  tag: "main-428cc57"
 imagePullSecrets:
   - name: ghcr-credentials
 nameOverride: ""
@@ -33,7 +33,7 @@ resources:
 autoscaling:
   enabled: true
   minReplicas: 1
-  maxReplicas: 5
+  maxReplicas: 1
   targetCPUUtilizationPercentage: 80
   targetMemoryUtilizationPercentage: 80
 startupProbe:
@@ -224,12 +224,13 @@ userService:
           name: qalitrack-secrets
           key: EMAIL_ENABLE_SSL
 postgresql:
-  enabled: false
+  enabled: true
+  fullnameOverride: "technician-service-postgresql"
   auth:
     existingSecret: "qalitrack-secrets"
     secretKeys:
       adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
-    database: "qalitrack_techniciandb"
+    database: "techniciandb"
   primary:
     resources:
       requests:

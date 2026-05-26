@@ -184,45 +184,6 @@ backup:
   schedule: "0 2 * * *" # Daily at 2 AM
   retention: 30 # Keep backups for 30 days
 # ============================================================================
-# TECHNICIAN SERVICE - Technician Management
-# ============================================================================
-technicianService:
-  enabled: true
-  replicaCount: 2
-  fullnameOverride: "technician-service"
-  image:
-    repository: technician-api
-    tag: main-ff13374
-    pullPolicy: Always
-  resources:
-    requests:
-      memory: "512Mi"
-      cpu: "250m"
-    limits:
-      memory: "2Gi"
-      cpu: "1000m"
-  service:
-    type: ClusterIP
-    port: 7006
-    targetPort: 80
-  postgresql:
-    enabled: true
-    fullnameOverride: "technician-service-postgresql"
-    auth:
-      existingSecret: "qalitrack-secrets"
-      secretKeys:
-        adminPasswordKey: "TECHNICIAN_DB_PASSWORD"
-    primary:
-      resources:
-        requests:
-          memory: "1Gi"
-          cpu: "250m"
-        limits:
-          memory: "3Gi"
-          cpu: "1000m"
-      persistence:
-        size: 20Gi
-# ============================================================================
 # QTRUCK SERVICE - Drivers & Fleet Management
 # ============================================================================
 qtruckService:
@@ -731,6 +692,7 @@ prometheus:
               namespaces:
                 names:
                   - qalitrack-prod
+                  - lante-erp-prod
           relabel_configs:
             - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
               action: keep

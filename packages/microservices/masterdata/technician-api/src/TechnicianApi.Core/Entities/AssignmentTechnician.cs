@@ -10,7 +10,6 @@ public class AssignmentTechnician : BaseEntity
 
     // Navigation properties
     public virtual Assignment Assignment { get; set; } = null!;
-    public virtual Technician Technician { get; set; } = null!;
 
     // Additional fields for the relationship (optional)
     public DateTime AssignedAt { get; set; } = DateTime.UtcNow;

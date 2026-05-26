@@ -59,7 +59,6 @@ public class FleetProfile : Profile
             .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
-            .ForMember(dest => dest.Driver, opt => opt.Ignore())
             .ForMember(dest => dest.Trips, opt => opt.Ignore())
             .ForMember(dest => dest.VehicleMileages, opt => opt.Ignore());
 
