@@ -171,7 +171,7 @@ public class NfcReaderBackgroundService : BackgroundService
 
 public class NfcSettings
 {
-    public bool   Enabled  { get; set; } = true;
+    public bool   Enabled  { get; set; } = false;
     public string Port     { get; set; } = "COM7";
     public int    BaudRate { get; set; } = 38400;
 }

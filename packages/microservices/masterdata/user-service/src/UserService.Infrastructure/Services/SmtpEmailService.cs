@@ -1,7 +1,8 @@
-using System.Net;
-using System.Net.Mail;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using MimeKit;
 using UserService.Core.Interfaces.Emails;
 
 namespace UserService.Infrastructure.Services;
@@ -11,35 +12,42 @@ public class SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailSer
 {
     public async Task SendEmailAsync(string to, string subject, string body)
     {
+        var smtpHost     = configuration["Email:SmtpHost"];
+        var smtpPort     = int.Parse(configuration["Email:SmtpPort"] ?? "587");
+        var smtpUsername = configuration["Email:SmtpUsername"];
+        var smtpPassword = configuration["Email:SmtpPassword"];
+        var fromEmail    = configuration["Email:FromEmail"] ?? smtpUsername;
+        var fromName     = configuration["Email:FromName"] ?? "QaliTrack";
+        var enableSsl    = bool.Parse(configuration["Email:EnableSsl"] ?? "true");
+
+        if (string.IsNullOrEmpty(smtpHost) || string.IsNullOrEmpty(smtpUsername))
+        {
+            logger.LogWarning("SMTP configuration incomplete. Email not sent to {To}", to);
+            return;
+        }
+
+        // Gmail App Passwords are sometimes stored with spaces — strip them
+        var password = smtpPassword?.Replace(" ", "") ?? string.Empty;
+
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(fromName, fromEmail));
+        message.To.Add(MailboxAddress.Parse(to));
+        message.Subject = subject;
+        message.Body = new TextPart("html") { Text = body };
+
+        using var client = new SmtpClient();
         try
         {
-            var smtpHost = configuration["Email:SmtpHost"];
-            var smtpPort = int.Parse(configuration["Email:SmtpPort"] ?? "587");
-            var smtpUsername = configuration["Email:SmtpUsername"];
-            var smtpPassword = configuration["Email:SmtpPassword"];
-            var fromEmail = configuration["Email:FromEmail"];
-            var fromName = configuration["Email:FromName"];
-            var enableSsl = bool.Parse(configuration["Email:EnableSsl"] ?? "true");
-            if (string.IsNullOrEmpty(smtpHost) || string.IsNullOrEmpty(smtpUsername))
-            {
-                logger.LogWarning("SMTP configuration incomplete. Email not sent to {To}", to);
-                return;
-            }
+            var secureOption = enableSsl
+                ? SecureSocketOptions.StartTls
+                : SecureSocketOptions.None;
 
-            using var client = new SmtpClient(smtpHost, smtpPort)
-            {
-                EnableSsl = enableSsl,
-                Credentials = new NetworkCredential(smtpUsername, smtpPassword)
-            };
+            await client.ConnectAsync(smtpHost, smtpPort, secureOption);
+            await client.AuthenticateAsync(smtpUsername, password);
+            await client.SendAsync(message);
+            await client.DisconnectAsync(true);
 
-            var mailMessage = new MailMessage(new MailAddress(fromEmail ?? smtpUsername, fromName), new MailAddress(to))
-            {
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = true
-            };
-
-            await client.SendMailAsync(mailMessage);
+            logger.LogInformation("Email sent to {To} with subject '{Subject}'", to, subject);
         }
         catch (Exception ex)
         {

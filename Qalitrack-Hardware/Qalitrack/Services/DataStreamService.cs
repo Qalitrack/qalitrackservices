@@ -28,6 +28,26 @@ public class DataStreamService
         _logger.LogInformation("🔧 DataStreamService initialized");
     }
 
+    public async Task PublishRawAsync(string raw, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrEmpty(raw)) return;
+        var tasks = new List<Task>();
+        foreach (var (clientId, channel) in _streams)
+        {
+            try
+            {
+                tasks.Add(channel.Writer.WriteAsync(raw, cancellationToken).AsTask()
+                    .ContinueWith(t =>
+                    {
+                        if (t.IsFaulted) _streams.TryRemove(clientId, out _);
+                        else Interlocked.Increment(ref _totalMessagesPublished);
+                    }, cancellationToken));
+            }
+            catch { _streams.TryRemove(clientId, out _); }
+        }
+        if (tasks.Count > 0) await Task.WhenAll(tasks);
+    }
+
     public async Task PublishAsync<T>(T data, CancellationToken cancellationToken = default) where T : class
     {
         if (data == null)

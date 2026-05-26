@@ -25,79 +25,105 @@ public class PlateStreamController : ControllerBase
     }
 
     public PlateStreamController(
-        PlateDataStreamService plateDataStreamService,
+        [FromKeyedServices("lane1")] PlateDataStreamService plateDataStreamService,
         ILogger<PlateStreamController> logger)
     {
         _plateDataStreamService = plateDataStreamService;
         _logger = logger;
     }
 
+    /// <summary>
+    /// Stream all plate data from all cameras
+    /// GET /api/plates/stream
+    /// </summary>
     [HttpGet("stream")]
-[Produces("text/event-stream")]
-public async Task StreamPlates(CancellationToken cancellationToken)
-{
-    var clientId = $"sse_{Guid.NewGuid():N}";
-    var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-
-    Console.WriteLine($"\n=== New Client Connected ===");
-    Console.WriteLine($"Client ID: {clientId}");
-    Console.WriteLine($"IP: {ip}");
-    Console.WriteLine($"Time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff}");
-
-    Response.Headers.Append("Content-Type", "text/event-stream");
-    Response.Headers.Append("Cache-Control", "no-cache");
-    Response.Headers.Append("Connection", "keep-alive");
-    Response.Headers.Append("X-Accel-Buffering", "no");
-
-    int messagesSent = 0;
-    var sw = Stopwatch.StartNew();
-
-    try
+    [Produces("text/event-stream")]
+    public async Task StreamPlates(CancellationToken cancellationToken)
     {
-        await foreach (var plateJson in _plateDataStreamService.SubscribeAsync(clientId, cancellationToken))
+        await StreamPlatesInternal(null, cancellationToken);
+    }
+
+    /// <summary>
+    /// Stream plate data from a specific camera
+    /// GET /api/plates/stream/{cameraId}
+    /// Examples:
+    ///   - /api/plates/stream/front (front camera only)
+    ///   - /api/plates/stream/back (back camera only)
+    ///   - /api/plates/stream/cameraA (camera A only)
+    ///   - /api/plates/stream/cameraB (camera B only)
+    /// </summary>
+    [HttpGet("stream/{cameraId}")]
+    [Produces("text/event-stream")]
+    public async Task StreamPlatesFromCamera(string cameraId, CancellationToken cancellationToken)
+    {
+        await StreamPlatesInternal(cameraId, cancellationToken);
+    }
+
+    private async Task StreamPlatesInternal(string? cameraId, CancellationToken cancellationToken)
+    {
+        var clientId = $"sse_{Guid.NewGuid():N}";
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        var cameraInfo = cameraId != null ? $" (Camera: {cameraId})" : " (All Cameras)";
+
+        Console.WriteLine($"\n=== New Client Connected{cameraInfo} ===");
+        Console.WriteLine($"Client ID: {clientId}");
+        Console.WriteLine($"IP: {ip}");
+        Console.WriteLine($"Time: {DateTime.UtcNow:yyyy-MM-dd HH:mm:ss.fff}");
+
+        Response.Headers.Append("Content-Type", "text/event-stream");
+        Response.Headers.Append("Cache-Control", "no-cache");
+        Response.Headers.Append("Connection", "keep-alive");
+        Response.Headers.Append("X-Accel-Buffering", "no");
+
+        int messagesSent = 0;
+        var sw = Stopwatch.StartNew();
+
+        try
         {
-            messagesSent++;
-            
-            // Log the raw JSON to console
-            Console.WriteLine($"\n=== New Plate Data (Client: {clientId}) ===");
-            Console.WriteLine($"Time: {DateTime.UtcNow:HH:mm:ss.fff}");
-            Console.WriteLine($"Raw JSON: {plateJson}");
-            
-            // Try to parse and pretty print the JSON
-            try
+            await foreach (var plateJson in _plateDataStreamService.SubscribeAsync(clientId, cameraId, cancellationToken))
             {
-                using var doc = JsonDocument.Parse(plateJson);
-                var formattedJson = JsonSerializer.Serialize(doc.RootElement, new JsonSerializerOptions { WriteIndented = true });
-                Console.WriteLine("Formatted JSON:");
-                Console.WriteLine(formattedJson);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Could not format JSON: {ex.Message}");
-            }
+                messagesSent++;
 
-            // Update global latest plate
-            LastPlate = (plateJson, DateTime.UtcNow);
+                // Log the raw JSON to console
+                Console.WriteLine($"\n=== New Plate Data{cameraInfo} (Client: {clientId}) ===");
+                Console.WriteLine($"Time: {DateTime.UtcNow:HH:mm:ss.fff}");
+                Console.WriteLine($"Raw JSON: {plateJson}");
 
-            // Send to client
-            await Response.WriteAsync($"data: {plateJson}\n\n", cancellationToken);
-            await Response.Body.FlushAsync(cancellationToken);
+                // Try to parse and pretty print the JSON
+                try
+                {
+                    using var doc = JsonDocument.Parse(plateJson);
+                    var formattedJson = JsonSerializer.Serialize(doc.RootElement, new JsonSerializerOptions { WriteIndented = true });
+                    Console.WriteLine("Formatted JSON:");
+                    Console.WriteLine(formattedJson);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Could not format JSON: {ex.Message}");
+                }
+
+                // Update global latest plate
+                LastPlate = (plateJson, DateTime.UtcNow);
+
+                // Send to client
+                await Response.WriteAsync($"data: {plateJson}\n\n", cancellationToken);
+                await Response.Body.FlushAsync(cancellationToken);
+            }
+        }
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            Console.WriteLine($"[ERROR] {DateTime.UtcNow:HH:mm:ss.fff} - Error in stream for {clientId}: {ex.Message}");
+            _logger.LogError(ex, "[STREAM] Error in stream for {ClientId}", clientId);
+        }
+        finally
+        {
+            _plateDataStreamService.Unsubscribe(clientId);
+            sw.Stop();
+            Console.WriteLine($"\n=== Client Disconnected{cameraInfo} ===");
+            Console.WriteLine($"Client ID: {clientId}");
+            Console.WriteLine($"Messages Sent: {messagesSent}");
+            Console.WriteLine($"Duration: {sw.Elapsed.TotalSeconds:F1}s");
+            Console.WriteLine($"Time: {DateTime.UtcNow:HH:mm:ss.fff}\n");
         }
     }
-    catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
-    {
-        Console.WriteLine($"[ERROR] {DateTime.UtcNow:HH:mm:ss.fff} - Error in stream for {clientId}: {ex.Message}");
-        _logger.LogError(ex, "[STREAM] Error in stream for {ClientId}", clientId);
-    }
-    finally
-    {
-        _plateDataStreamService.Unsubscribe(clientId);
-        sw.Stop();
-        Console.WriteLine($"\n=== Client Disconnected ===");
-        Console.WriteLine($"Client ID: {clientId}");
-        Console.WriteLine($"Messages Sent: {messagesSent}");
-        Console.WriteLine($"Duration: {sw.Elapsed.TotalSeconds:F1}s");
-        Console.WriteLine($"Time: {DateTime.UtcNow:HH:mm:ss.fff}\n");
-    }
-}
 }

@@ -39,9 +39,49 @@ public class MappingProfile : Profile
         CreateMap<Vehicle, VehicleReadDto>();
         
         // Supplier mappings
-        CreateMap<CreateSupplierDto, Supplier>();
-        CreateMap<UpdateSupplierDto, Supplier>();
-        CreateMap<Supplier, SupplierReadDto>();
+        CreateMap<CreateSupplierDto, Supplier>()
+            .ForMember(dest => dest.ContactInfo, opt => opt.MapFrom((src, dest) =>
+                JsonSerializer.Serialize(new
+                {
+                    ContactPerson = src.ContactPerson,
+                    Email = src.Email,
+                    Phone = src.Phone,
+                    Address = src.Address,
+                    City = src.City,
+                    Country = src.Country,
+                    TaxNumber = src.TaxNumber,
+                    RegistrationNumber = src.RegistrationNumber
+                })));
+        CreateMap<UpdateSupplierDto, Supplier>()
+            .ForMember(dest => dest.ContactInfo, opt => opt.MapFrom((src, dest) =>
+                JsonSerializer.Serialize(new
+                {
+                    ContactPerson = src.ContactPerson,
+                    Email = src.Email,
+                    Phone = src.Phone,
+                    Address = src.Address,
+                    City = src.City,
+                    Country = src.Country,
+                    TaxNumber = src.TaxNumber,
+                    RegistrationNumber = src.RegistrationNumber
+                })));
+        CreateMap<Supplier, SupplierReadDto>()
+            .ForMember(dest => dest.ContactPerson, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "ContactPerson")))
+            .ForMember(dest => dest.Email, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "Email")))
+            .ForMember(dest => dest.Phone, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "Phone")))
+            .ForMember(dest => dest.Address, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "Address")))
+            .ForMember(dest => dest.City, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "City")))
+            .ForMember(dest => dest.Country, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "Country")))
+            .ForMember(dest => dest.TaxNumber, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "TaxNumber")))
+            .ForMember(dest => dest.RegistrationNumber, opt => opt.MapFrom((src, dest) =>
+                GetContactField(src.ContactInfo, "RegistrationNumber")));
         
         // Product mappings
         CreateMap<CreateProductDto, Product>();
@@ -92,29 +132,9 @@ public class MappingProfile : Profile
                 opt.MapFrom(src => src.Organisation != null ? src.Organisation.Name : null));
         
         // Sacco mappings
-        CreateMap<CreateSaccoDto, Sacco>()
-            .ForMember(dest => dest.ContactInfo, opt => 
-                opt.MapFrom(src => string.IsNullOrEmpty(src.ContactInfo) ? null : src.ContactInfo))
-            .ForMember(dest => dest.OtherDetails, opt => 
-                opt.MapFrom(src => string.IsNullOrEmpty(src.OtherDetails) ? null : src.OtherDetails));
-            
-        CreateMap<UpdateSaccoDto, Sacco>()
-            .ForMember(dest => dest.ContactInfo, opt => 
-                opt.MapFrom(src => string.IsNullOrEmpty(src.ContactInfo) ? null : src.ContactInfo))
-            .ForMember(dest => dest.OtherDetails, opt => 
-                opt.MapFrom(src => string.IsNullOrEmpty(src.OtherDetails) ? null : src.OtherDetails));
-            
-        CreateMap<Sacco, SaccoDto>()
-            .ForMember(dest => dest.ContactInfo, opt => 
-                opt.MapFrom((src, dest) => 
-                    !string.IsNullOrEmpty(src.ContactInfo) ? 
-                    JsonDocument.Parse(src.ContactInfo) : 
-                    null))
-            .ForMember(dest => dest.OtherDetails, opt => 
-                opt.MapFrom((src, dest) => 
-                    !string.IsNullOrEmpty(src.OtherDetails) ? 
-                    JsonDocument.Parse(src.OtherDetails) : 
-                    null));
+        CreateMap<CreateSaccoDto, Sacco>();
+        CreateMap<UpdateSaccoDto, Sacco>();
+        CreateMap<Sacco, SaccoDto>();
         
         
         // AuditLog mappings
@@ -146,5 +166,21 @@ public class MappingProfile : Profile
 
         // AuditLogFilterDto to AuditLogFilterParams mapping
         CreateMap<AuditLogFilterDto, AuditLogFilterParams>();
+    }
+
+    private static string? GetContactField(string? json, string fieldName)
+    {
+        if (string.IsNullOrEmpty(json)) return null;
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            foreach (var prop in doc.RootElement.EnumerateObject())
+            {
+                if (string.Equals(prop.Name, fieldName, StringComparison.OrdinalIgnoreCase))
+                    return prop.Value.ValueKind == JsonValueKind.String ? prop.Value.GetString() : null;
+            }
+        }
+        catch { }
+        return null;
     }
 }

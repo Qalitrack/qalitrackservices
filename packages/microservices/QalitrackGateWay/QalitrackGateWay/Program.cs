@@ -52,15 +52,13 @@ builder.Services
         };
     });
 
-// Add Authorization with a default policy that requires authentication
+// All routes are open - no JWT required at the gateway
 builder.Services.AddAuthorization(options =>
 {
     options.DefaultPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAssertion(_ => true)
         .Build();
-    
-    // Add a policy for public endpoints (renamed from Anonymous to avoid conflict)
+
     options.AddPolicy("Public", policy => policy.RequireAssertion(_ => true));
 });
 

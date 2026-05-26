@@ -125,7 +125,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }

@@ -102,7 +102,8 @@ builder.Services.AddSingleton(runtimeConfig);
 builder.Services.AddSingleton<StreamingMetrics>();
 builder.Services.AddSingleton<DataStreamService>();
 builder.Services.AddSingleton<CameraDataStreamService>();
-builder.Services.AddSingleton<PlateDataStreamService>();
+builder.Services.AddKeyedSingleton<PlateDataStreamService>("lane1");
+builder.Services.AddKeyedSingleton<PlateDataStreamService>("lane2");
 builder.Services.AddSingleton<RfidTagStreamService>();
 builder.Services.AddSingleton<NfcTagStreamService>();
 
@@ -128,7 +129,14 @@ else
 
 builder.Services.AddSingleton<IHostedService>(serviceProvider =>
 {
-    var service = serviceProvider.GetRequiredService<PlateDataStreamService>();
+    var service = serviceProvider.GetRequiredKeyedService<PlateDataStreamService>("lane1");
+    var logger  = serviceProvider.GetService<ILogger<BackgroundServiceWrapper<PlateDataStreamService>>>();
+    return new BackgroundServiceWrapper<PlateDataStreamService>(service, logger);
+});
+
+builder.Services.AddSingleton<IHostedService>(serviceProvider =>
+{
+    var service = serviceProvider.GetRequiredKeyedService<PlateDataStreamService>("lane2");
     var logger  = serviceProvider.GetService<ILogger<BackgroundServiceWrapper<PlateDataStreamService>>>();
     return new BackgroundServiceWrapper<PlateDataStreamService>(service, logger);
 });
@@ -302,7 +310,25 @@ app.MapGet("/", async (HttpContext context) =>
     sb.AppendLine("                      AVAILABLE ENDPOINTS");
     sb.AppendLine("═══════════════════════════════════════════════════════════════");
     sb.AppendLine($"📊 Weight SSE:   {baseUrl}/api/PlatformData/stream");
-    sb.AppendLine($"📡 Plate SSE:    {baseUrl}/api/plates/stream");
+    sb.AppendLine($"📡 Plate SSE (Lane 1):          {baseUrl}/api/plates/stream");
+    sb.AppendLine($"📡 Plate SSE (Lane 2):          {baseUrl}/api/plates/lane2/stream");
+    sb.AppendLine("─── Camera Webhook URLs (configure in camera settings) ───────");
+    sb.AppendLine("  Lane 1:");
+    sb.AppendLine("    Plate Result:   /devicemanagement/php/plateresult.php");
+    sb.AppendLine("    Quick Plate:    /devicemanagement/php/quickplateresult.php");
+    sb.AppendLine("    Device Info:    /devicemanagement/php/receivedeviceinfo.php");
+    sb.AppendLine("    GPIO:           /devicemanagement/php/gio.php");
+    sb.AppendLine("    Port Trigger:   /devicemanagement/php/porttrigger.php");
+    sb.AppendLine("    Gate:           /devicemanagement/php/gate.php");
+    sb.AppendLine("    Serial:         /devicemanagement/php/serial.php");
+    sb.AppendLine("  Lane 2:");
+    sb.AppendLine("    Plate Result:   /devicemanagement/php/lane2/plateresult.php");
+    sb.AppendLine("    Quick Plate:    /devicemanagement/php/lane2/quickplateresult.php");
+    sb.AppendLine("    Device Info:    /devicemanagement/php/lane2/receivedeviceinfo.php");
+    sb.AppendLine("    GPIO:           /devicemanagement/php/lane2/gio.php");
+    sb.AppendLine("    Port Trigger:   /devicemanagement/php/lane2/porttrigger.php");
+    sb.AppendLine("    Gate:           /devicemanagement/php/lane2/gate.php");
+    sb.AppendLine("    Serial:         /devicemanagement/php/lane2/serial.php");
     sb.AppendLine($"📹 Cameras List:     {baseUrl}/api/Camera/cameras");
     sb.AppendLine($"📸 Snapshot:         {baseUrl}/api/Camera/YOUR-ID/snapshot");
     sb.AppendLine($"📡 Status:           {baseUrl}/api/Camera/YOUR-ID/status");

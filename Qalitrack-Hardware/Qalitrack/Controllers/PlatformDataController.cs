@@ -19,7 +19,7 @@ public class PlatformDataController : ControllerBase
         ILogger<PlatformDataController> logger,
         PlatformDataService platformDataService,
         DataStreamService dataStreamService,
-        PlateDataStreamService plateDataStreamService)
+        [FromKeyedServices("lane1")] PlateDataStreamService plateDataStreamService)
     {
         _logger = logger;
         _platformDataService = platformDataService;

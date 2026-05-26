@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import qalitrackLogoFull from '/src/assets/qalitrack_logo_full.png';
 import { Eye, EyeOff, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../api/helpers/auth'; // Adjust path as needed
@@ -8,8 +9,6 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [verificationCode, setVerificationCode] = useState('');
-
     // Password change form states
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
@@ -21,40 +20,36 @@ export default function Login() {
     const navigate = useNavigate();
     const {
         login,
-        verify2FA,
         updatePassword,
         loading,
         error,
-        requires2FA,
         requiresPasswordChange,
-        maskedEmail,
         clearError,
-        reset2FAState,
         resetPasswordChangeState,
         getCurrentUser,
     } = useAuth();
 
     const slides = [
         {
-            title: 'Unlock a world of Weighing and Construction opportunities',
+            title: 'Next-Level Weighing, Simplified',
             subtitle:
-                'Access your dashboard to manage bids, track tender submissions, and connect with potential clients.',
+                'Capture accurate first and second weights without delay and generate tickets on demand.',
             description:
-                'Upload your documents and bid for tenders that match your expertise to impress potential clients.',
+                'With real-time scale integration, every reading is reliably recorded and fully protected.',
         },
         {
-            title: 'Streamline Your Construction Projects',
+            title: 'Engineered for Precise Weighing',
             subtitle:
-                'Manage all your weighing and construction projects from one centralized platform.',
+                'Capture every weigh-in accurately and issue tickets instantly.',
             description:
-                'Track progress, monitor deadlines, and collaborate with your team effectively.',
+                'Real-time integration ensures each record is consistent, secure, and safeguarded from tampering.',
         },
         {
-            title: 'Connect with Industry Leaders',
+            title: 'Smart Number Plate Recognition',
             subtitle:
-                'Network with top construction professionals and expand your business reach.',
+                'Automatically capture vehicle plates with integrated camera support.',
             description:
-                'Build lasting relationships and discover new partnership opportunities.',
+                'Speed up weighbridge operations and reduce manual entry errors with NPR technology.',
         },
     ];
 
@@ -65,10 +60,9 @@ export default function Login() {
 
         if (primaryRole === 'Admin') {
             navigate('/admin', { replace: true });
-        } else if (primaryRole === 'Operator') {
-            navigate('/operator', { replace: true });
         } else {
-            navigate('/login', { replace: true }); // Fallback if no valid role
+            // Operator and all other authenticated roles land on factory weighing
+            navigate('/operator', { replace: true });
         }
     };
 
@@ -82,29 +76,11 @@ export default function Login() {
         const result = await login(email, password);
 
         if (result.success) {
-            if (result.requires2FA) {
-                console.log('2FA required, showing verification form');
-            } else if (result.requiresPasswordChange) {
+            if (result.requiresPasswordChange) {
                 console.log('Password change required, showing password change form');
             } else {
-                // Direct login success (no 2FA or password change required)
                 handleRedirect();
             }
-        }
-        // Errors are handled by the useAuth hook and displayed via the error state
-    };
-
-    const handle2FASubmit = async (e) => {
-        e.preventDefault();
-
-        if (!verificationCode) {
-            return; // Let the browser handle required field validation
-        }
-
-        const result = await verify2FA(verificationCode);
-
-        if (result.success) {
-            handleRedirect();
         }
         // Errors are handled by the useAuth hook and displayed via the error state
     };
@@ -129,11 +105,6 @@ export default function Login() {
         // Errors are handled by the useAuth hook and displayed via the error state
     };
 
-    const handleBackToLogin = () => {
-        reset2FAState();
-        setVerificationCode('');
-    };
-
     const handleBackToLoginFromPasswordChange = () => {
         resetPasswordChangeState();
         setCurrentPassword('');
@@ -146,13 +117,11 @@ export default function Login() {
         setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
 
     const getFormTitle = () => {
-        if (requires2FA) return 'Enter Verification Code';
         if (requiresPasswordChange) return 'Update Your Password';
         return 'Welcome Back';
     };
 
     const getFormSubtitle = () => {
-        if (requires2FA) return `We've sent a verification code to ${maskedEmail}`;
         if (requiresPasswordChange) return 'Please update your password to continue';
         return null;
     };
@@ -164,9 +133,11 @@ export default function Login() {
                 <div className="flex-1 flex items-center justify-center px-4 py-8 sm:px-8 sm:py-12 bg-gray-50">
                     <div className="w-full max-w-md">
                         <div className="mb-6 sm:mb-8">
-                            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                                Qalitrack
-                            </h1>
+                            <img
+                                src={qalitrackLogoFull}
+                                alt="QaliTrack"
+                                className="h-12 w-auto object-contain"
+                            />
                         </div>
 
                         <div className="mb-6 sm:mb-8">
@@ -186,7 +157,7 @@ export default function Login() {
                             </div>
                         )}
 
-                        {!requires2FA && !requiresPasswordChange ? (
+                        {!requiresPasswordChange ? (
                             // Regular login form
                             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                                 <div>
@@ -236,44 +207,6 @@ export default function Login() {
                                     className="w-full py-2.5 px-4 rounded-lg font-medium bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
                                     {loading ? 'Logging in...' : 'Login'}
-                                </button>
-                            </form>
-                        ) : requires2FA ? (
-                            // 2FA verification form
-                            <form onSubmit={handle2FASubmit} className="space-y-4 sm:space-y-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Verification Code
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={verificationCode}
-                                        onChange={(e) => {
-                                            const value = e.target.value.replace(/\D/g, '').slice(0, 6);
-                                            setVerificationCode(value);
-                                            clearError();
-                                        }}
-                                        maxLength="6"
-                                        required
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 text-center text-2xl tracking-widest font-mono"
-                                        placeholder="000000"
-                                    />
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    disabled={loading || verificationCode.length !== 6}
-                                    className="w-full py-2.5 px-4 rounded-lg font-medium bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {loading ? 'Verifying...' : 'Verify Code'}
-                                </button>
-
-                                <button
-                                    type="button"
-                                    onClick={handleBackToLogin}
-                                    className="w-full py-2 px-4 text-sm text-gray-600 hover:text-gray-800 transition-colors"
-                                >
-                                    ← Back to Login
                                 </button>
                             </form>
                         ) : (
@@ -374,6 +307,14 @@ export default function Login() {
                                 </button>
                             </form>
                         )}
+                        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+                            <p className="text-xs text-gray-400">
+                                Powered by <span className="font-semibold text-gray-500">Qalibrated Systems</span>
+                            </p>
+                            <p className="text-xs text-gray-400 mt-0.5">
+                                &copy; {new Date().getFullYear()} Qalibrated Systems. All rights reserved.
+                            </p>
+                        </div>
                     </div>
                 </div>
 

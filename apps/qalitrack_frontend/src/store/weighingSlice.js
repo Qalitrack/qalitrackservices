@@ -1,5 +1,6 @@
 // src/store/weighingSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { REHYDRATE } from "redux-persist";
 import { apiClient } from "../api/helpers/apiClients";
 
 // ✅ CORRECTED: Import from the right path
@@ -18,6 +19,8 @@ import {
     checkReceipt,
     requestReweigh,
     getReweighRecords,
+    approveReweigh,
+    rejectReweigh,
 } from "../api/Transaction/Transaction";
 // ─────────────────────────────────────────────────────────────────────────────
 // SIMULATED WEIGHT
@@ -731,6 +734,49 @@ export const fetchReweighRecords = createAsyncThunk(
 );
 
 /**
+ * Approve reweigh - POST /Transaction/approve-reweigh
+ * Clears second weight, resets transaction status to Active
+ */
+export const approveReweighThunk = createAsyncThunk(
+    "weighing/approveReweigh",
+    async (payload, { rejectWithValue }) => {
+        try {
+            const data = {
+                ticketID: payload.ticketID || payload.transactionId,
+                approvedBy: payload.approvedBy || "",
+                notes: payload.notes || ""
+            };
+            const response = await approveReweigh(data);
+            return { response, ticketID: data.ticketID };
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
+ * Reject reweigh - POST /Transaction/reject-reweigh
+ * Keeps original weights, restores transaction to Completed
+ */
+export const rejectReweighThunk = createAsyncThunk(
+    "weighing/rejectReweigh",
+    async (payload, { rejectWithValue }) => {
+        try {
+            const data = {
+                ticketID: payload.ticketID || payload.transactionId,
+                rejectionReason: payload.rejectionReason || payload.reason || "",
+                rejectedBy: payload.rejectedBy || "",
+                notes: payload.notes || ""
+            };
+            const response = await rejectReweigh(data);
+            return { response, ticketID: data.ticketID };
+        } catch (err) {
+            return rejectWithValue(err.message);
+        }
+    }
+);
+
+/**
  * Check receipt - GET /Transaction/check-receipt/{receiptNo}
  */
 export const checkReceiptThunk = createAsyncThunk(
@@ -798,6 +844,13 @@ const weighingSlice = createSlice({
         };
 
         builder
+            // Always reset loading/error on rehydration so a persisted
+            // loading:true can never lock the UI on next app start
+            .addCase(REHYDRATE, (state) => {
+                state.loading = false;
+                state.error = null;
+            })
+
             // Simulated weight
             .addCase(fetchSimulatedWeight.pending, pending)
             .addCase(fetchSimulatedWeight.fulfilled, (state, action) => {
@@ -1072,23 +1125,78 @@ const weighingSlice = createSlice({
             .addCase(requestReweighThunk.pending, pending)
             .addCase(requestReweighThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                // Update transaction status if needed
+                // Mark the transaction as ReweighRequested in local state
+                const ticketID = action.meta?.arg?.ticketID || action.meta?.arg?.transactionId;
+                if (ticketID) {
+                    const idx = state.transactions.findIndex(
+                        t => t.ticketID === ticketID || t.id === ticketID
+                    );
+                    if (idx !== -1) {
+                        state.transactions[idx] = {
+                            ...state.transactions[idx],
+                            status: 'ReweighRequested'
+                        };
+                    }
+                }
             })
             .addCase(requestReweighThunk.rejected, rejected)
 
             .addCase(fetchReweighRecords.pending, pending)
             .addCase(fetchReweighRecords.fulfilled, (state, action) => {
                 state.loading = false;
-                state.reweighRecords = Array.isArray(action.payload) 
-                    ? action.payload 
+                state.reweighRecords = Array.isArray(action.payload)
+                    ? action.payload
                     : action.payload?.data || [];
             })
             .addCase(fetchReweighRecords.rejected, rejected)
 
+            .addCase(approveReweighThunk.pending, pending)
+            .addCase(approveReweighThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                // Reset transaction to Active (backend clears second weight)
+                const { ticketID, response } = action.payload;
+                const updated = response?.data || response;
+                const idx = state.transactions.findIndex(
+                    t => t.ticketID === ticketID || t.id === ticketID
+                );
+                if (idx !== -1) {
+                    state.transactions[idx] = {
+                        ...state.transactions[idx],
+                        ...(updated && typeof updated === 'object' ? updated : {}),
+                        status: 'Active',
+                        isCompleted: false,
+                        completed: false,
+                        secondWeight: null,
+                        netWeight: null
+                    };
+                }
+            })
+            .addCase(approveReweighThunk.rejected, rejected)
+
+            .addCase(rejectReweighThunk.pending, pending)
+            .addCase(rejectReweighThunk.fulfilled, (state, action) => {
+                state.loading = false;
+                // Restore transaction to Completed (backend keeps original weights)
+                const { ticketID, response } = action.payload;
+                const updated = response?.data || response;
+                const idx = state.transactions.findIndex(
+                    t => t.ticketID === ticketID || t.id === ticketID
+                );
+                if (idx !== -1) {
+                    state.transactions[idx] = {
+                        ...state.transactions[idx],
+                        ...(updated && typeof updated === 'object' ? updated : {}),
+                        status: 'Completed',
+                        isCompleted: true,
+                        completed: true
+                    };
+                }
+            })
+            .addCase(rejectReweighThunk.rejected, rejected)
+
             .addCase(checkReceiptThunk.pending, pending)
             .addCase(checkReceiptThunk.fulfilled, (state, action) => {
                 state.loading = false;
-                // Store check result if needed
             })
             .addCase(checkReceiptThunk.rejected, rejected);
     },

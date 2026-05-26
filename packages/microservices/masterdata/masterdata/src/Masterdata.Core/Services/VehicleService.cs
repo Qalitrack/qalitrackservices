@@ -146,6 +146,8 @@ public class VehicleService : IVehicleService
         }
 
         var vehicle = _mapper.Map<Vehicle>(dto);
+        if (!string.IsNullOrWhiteSpace(vehicle.Status))
+            vehicle.Status = char.ToUpper(vehicle.Status[0]) + vehicle.Status.Substring(1).ToLower();
         var createdVehicle = await _vehicleRepository.CreateAsync(vehicle);
         
         return await GetByIdAsync(createdVehicle.Id) ?? 
@@ -179,7 +181,9 @@ public class VehicleService : IVehicleService
         }
 
         _mapper.Map(dto, vehicle);
-        
+        if (!string.IsNullOrWhiteSpace(vehicle.Status))
+            vehicle.Status = char.ToUpper(vehicle.Status[0]) + vehicle.Status.Substring(1).ToLower();
+
         // Repository will handle UpdatedAt and audit logging automatically
         var updatedVehicle = await _vehicleRepository.UpdateAsync(vehicle);
         return updatedVehicle == null ? null : await GetByIdAsync(id);
@@ -271,7 +275,8 @@ public class VehicleService : IVehicleService
             return false;
         }
 
-        vehicle.Status = status;
+        vehicle.Status = string.IsNullOrWhiteSpace(status) ? "Active"
+            : char.ToUpper(status[0]) + status.Substring(1).ToLower();
         
         // Repository will handle UpdatedAt and audit logging automatically
         var result = await _vehicleRepository.UpdateAsync(vehicle);

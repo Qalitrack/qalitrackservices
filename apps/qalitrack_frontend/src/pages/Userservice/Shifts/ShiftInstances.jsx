@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { fetchShiftInstances } from '../../../api/helpers/UserService/Shifts/Shifts';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import jsPDF from 'jspdf';
+import { getTicketSettings, resolveReportColors } from '../../../utils/ticketThemeConfig';
 
 const ShiftInstances = ({ shiftId }) => {
     const navigate = useNavigate();
@@ -104,6 +105,7 @@ const ShiftInstances = ({ shiftId }) => {
             return;
         }
 
+        const { primary: accent, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(getTicketSettings());
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
         const margin = 10;
@@ -132,22 +134,22 @@ const ShiftInstances = ({ shiftId }) => {
         doc.setFontSize(12);
         doc.setFont(undefined, 'bold');
 
-        // Date column header (blue background)
-        doc.setFillColor(52, 152, 219);
+        // Date column header
+        doc.setFillColor(...accent);
         doc.rect(margin, headerY, colWidths[0], rowHeight + 2, 'F');
-        doc.setTextColor(255, 255, 255);
+        doc.setTextColor(...accentHeaderText);
         doc.text('Date', margin + 2, headerY + 6);
 
-        // Shift Time column header (green background)
-        doc.setFillColor(46, 204, 113);
+        // Shift Time column header
+        doc.setFillColor(...accent);
         doc.rect(margin + colWidths[0], headerY, colWidths[1], rowHeight + 2, 'F');
-        doc.setTextColor(255, 255, 255);
+        doc.setTextColor(...accentHeaderText);
         doc.text('Shift Time', margin + colWidths[0] + 2, headerY + 6);
 
-        // Status column header (orange background)
-        doc.setFillColor(230, 126, 34);
+        // Status column header
+        doc.setFillColor(...accent);
         doc.rect(margin + colWidths[0] + colWidths[1], headerY, colWidths[2], rowHeight + 2, 'F');
-        doc.setTextColor(255, 255, 255);
+        doc.setTextColor(...accentHeaderText);
         doc.text('Status', margin + colWidths[0] + colWidths[1] + 2, headerY + 6);
 
         // Vertical lines for headers

@@ -22,6 +22,7 @@ namespace UserService.Api.Controllers
         private readonly IUserStatusService _userStatusService;
         private readonly ITwoFactorService _twoFactorService;
         private readonly IShiftLoginRestrictionService _shiftLoginRestrictionService;
+        private readonly IConfiguration _configuration;
 
         public AuthController(
             ITokenService tokenService,
@@ -31,7 +32,8 @@ namespace UserService.Api.Controllers
             IMapper mapper,
             IUserStatusService userStatusService,
             ITwoFactorService twoFactorService,
-            IShiftLoginRestrictionService shiftLoginRestrictionService)
+            IShiftLoginRestrictionService shiftLoginRestrictionService,
+            IConfiguration configuration)
         {
             _tokenService = tokenService;
             _userService = userService;
@@ -41,6 +43,7 @@ namespace UserService.Api.Controllers
             _userStatusService = userStatusService;
             _twoFactorService = twoFactorService;
             _shiftLoginRestrictionService = shiftLoginRestrictionService;
+            _configuration = configuration;
         }
 
         [HttpPost("login")]
@@ -90,30 +93,74 @@ namespace UserService.Api.Controllers
                     });
                 }
 
-                // 2FA is mandatory for all users - create session and send code
-                var sessionId = await _twoFactorService.CreateTwoFactorSessionAsync(user.Id.ToString());
-                var codeResult = await _twoFactorService.GenerateAndSendCodeAsync(user.Id.ToString(), user.Email);
+                // Check if 2FA is enabled
+                var is2FAEnabled = _configuration.GetValue<bool>("TwoFactorAuthentication:Enabled", true);
 
-                if (!codeResult.Success)
+                if (is2FAEnabled)
                 {
-                    return BadRequest(new
+                    // 2FA is enabled - create session and send code
+                    var sessionId = await _twoFactorService.CreateTwoFactorSessionAsync(user.Id.ToString());
+                    var codeResult = await _twoFactorService.GenerateAndSendCodeAsync(user.Id.ToString(), user.Email);
+
+                    if (!codeResult.Success)
                     {
-                        Success = false,
-                        Message = codeResult.Message,
-                        Errors = (string[])null,
-                        StatusCode = 400
+                        return BadRequest(new
+                        {
+                            Success = false,
+                            Message = codeResult.Message,
+                            Errors = (string[]?)null,
+                            StatusCode = 400
+                        });
+                    }
+
+                    var response = new TwoFactorResponseDto
+                    {
+                        Requires2FA = true,
+                        SessionId = sessionId,
+                        Message = "Verification code sent to your email address. Please enter the code to complete login.",
+                        Email = MaskEmail(user.Email)
+                    };
+
+                    return Ok(response);
+                }
+                else
+                {
+                    // 2FA is disabled - generate token directly
+                    var userDto = _mapper.Map<UserReadDto>(user);
+                    var token = await _tokenService.GenerateTokenForAuthenticatedUserAsync(userDto);
+
+                    // Update user active status
+                    await _userService.UpdateUserActiveStatusAsync(user.Id.ToString(), true);
+
+                    // Handle attendance after successful login
+                    var attendanceHandled = await _shiftLoginRestrictionService.HandleLoginAttendanceAsync(user.Id.ToString());
+
+                    _logger.LogInformation(
+                        "User {UserId} successfully logged in without 2FA. Attendance handled: {AttendanceHandled}",
+                        user.Id, attendanceHandled
+                    );
+
+                    var loginResponse = new LoginResponseDto
+                    {
+                        Token = token.Token,
+                        Id = userDto.Id.ToString(),
+                        Email = userDto.Email,
+                        FirstName = userDto.FirstName,
+                        LastName = userDto.LastName,
+                        UserRoles = userDto.Roles?.ToList() ?? new List<string>()
+                    };
+
+                    var loginMessage = attendanceHandled
+                        ? "Successfully logged in and auto clocked-in to assigned shift"
+                        : "Successfully logged in";
+
+                    return Ok(new
+                    {
+                        data = loginResponse,
+                        message = loginMessage,
+                        attendanceHandled = attendanceHandled
                     });
                 }
-
-                var response = new TwoFactorResponseDto
-                {
-                    Requires2FA = true,
-                    SessionId = sessionId,
-                    Message = "Verification code sent to your email address. Please enter the code to complete login.",
-                    Email = MaskEmail(user.Email)
-                };
-
-                return Ok(response);
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
@@ -122,7 +169,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -139,7 +186,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -150,7 +197,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred during login",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -163,7 +210,7 @@ namespace UserService.Api.Controllers
             {
                 // Log incoming request
                 _logger.LogInformation(
-                    "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid} | RequestBodyRaw={Body}",
+                    "VERIFY-2FA RECEIVED | SessionId='{Sid}' | Code='{Code}' | ModelStateValid={Valid}",
                     request?.SessionId ?? "(null)",
                     request?.Code ?? "(null)",
                     ModelState.IsValid
@@ -185,7 +232,7 @@ namespace UserService.Api.Controllers
                     {
                         Success = false,
                         Message = "Invalid or expired session",
-                        Errors = (string[])null,
+                        Errors = (string[]?)null,
                         StatusCode = 400
                     });
                 }
@@ -201,7 +248,7 @@ namespace UserService.Api.Controllers
                     {
                         Success = false,
                         Message = verifyResult.Message,
-                        Errors = (string[])null,
+                        Errors = (string[]?)null,
                         StatusCode = 400
                     });
                 }
@@ -215,7 +262,7 @@ namespace UserService.Api.Controllers
                     {
                         Success = false,
                         Message = "User not found",
-                        Errors = (string[])null,
+                        Errors = (string[]?)null,
                         StatusCode = 400
                     });
                 }
@@ -262,7 +309,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred during verification",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -331,7 +378,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -348,7 +395,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -363,7 +410,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while updating password",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -446,7 +493,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -457,7 +504,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred during logout",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }

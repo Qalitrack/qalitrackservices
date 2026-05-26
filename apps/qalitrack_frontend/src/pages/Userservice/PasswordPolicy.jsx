@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
+import { Lock, Edit2, X, Check } from 'lucide-react';
 import { fetchPasswordPolicy, updatePasswordPolicy } from '../../api/helpers/UserService/PasswordPolicy/passwordpolicy';
 
 const PasswordPolicy = () => {
@@ -43,12 +44,10 @@ const PasswordPolicy = () => {
         setUpdateMessage({ text: 'Updating policy...', type: 'info' });
         try {
             const updatedData = await updatePasswordPolicy(policy);
-            // Ensure the response has data before updating the state
             if (updatedData && typeof updatedData === 'object') {
                 setPolicy(updatedData);
                 setOriginalPolicy(updatedData);
             } else {
-                // If the response is not as expected, re-fetch the data to be safe
                 await loadPolicy();
             }
             setUpdateMessage({ text: 'Password policy updated successfully!', type: 'success' });
@@ -67,89 +66,147 @@ const PasswordPolicy = () => {
     };
 
     if (loading) {
-        return <div className="flex justify-center items-center h-32"><div>Loading...</div></div>;
+        return (
+            <div className="h-full flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+            </div>
+        );
     }
 
     if (error) {
-        return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md" role="alert">{error}</div>;
+        return (
+            <div className="h-full p-4">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">{error}</div>
+            </div>
+        );
     }
 
+    const HIDDEN_KEYS = ['id', 'policyId', 'createdAt', 'updatedBy', 'createdBy', 'isDeleted'];
+
     return (
-        <div className="bg-white shadow-lg md:shadow-xl rounded-xl p-6 md:p-8 max-w-full md:max-w-2xl mx-auto my-4 md:my-10 transition-all duration-300 md:hover:shadow-2xl md:hover:-translate-y-1">
-            <h2 className="text-xl md:text-2xl font-bold text-amber-600 mb-6">Password Policy</h2>
-
-            {isEditing ? (
-                <form onSubmit={handleUpdate} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label htmlFor="minimumLength" className="block text-sm font-medium text-gray-700 mb-1">Minimum Length</label>
-                            <input id="minimumLength" name="minimumLength" type="number" value={policy.minimumLength} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500" min={0} required />
-                        </div>
-                        <div>
-                            <label htmlFor="maxAgeDays" className="block text-sm font-medium text-gray-700 mb-1">Max Age (Days)</label>
-                            <input id="maxAgeDays" name="maxAgeDays" type="number" value={policy.maxAgeDays} onChange={handleChange} className="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-amber-500 focus:border-amber-500" min={0} required />
-                        </div>
+        <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            {/* Header */}
+            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+                        <Lock className="w-4 h-4 text-white" />
                     </div>
-
-                    <div className="space-y-4">
-                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                            <label htmlFor="requireUppercase" className="font-medium text-gray-700">Require Uppercase</label>
-                            <input id="requireUppercase" name="requireUppercase" type="checkbox" checked={policy.requireUppercase} onChange={handleChange} className="h-5 w-5 text-amber-600 border-gray-300 rounded focus:ring-amber-500" />
-                        </div>
-                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                            <label htmlFor="requireLowercase" className="font-medium text-gray-700">Require Lowercase</label>
-                            <input id="requireLowercase" name="requireLowercase" type="checkbox" checked={policy.requireLowercase} onChange={handleChange} className="h-5 w-5 text-amber-600 border-gray-300 rounded focus:ring-amber-500" />
-                        </div>
-                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                            <label htmlFor="requireDigit" className="font-medium text-gray-700">Require Digit</label>
-                            <input id="requireDigit" name="requireDigit" type="checkbox" checked={policy.requireDigit} onChange={handleChange} className="h-5 w-5 text-amber-600 border-gray-300 rounded focus:ring-amber-500" />
-                        </div>
-                        <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                            <label htmlFor="requireSpecialCharacter" className="font-medium text-gray-700">Require Special Character</label>
-                            <input id="requireSpecialCharacter" name="requireSpecialCharacter" type="checkbox" checked={policy.requireSpecialCharacter} onChange={handleChange} className="h-5 w-5 text-amber-600 border-gray-300 rounded focus:ring-amber-500" />
-                        </div>
-                    </div>
-
-                    <div className="flex justify-end space-x-4 pt-4">
-                        <button type="button" onClick={handleCancel} className="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">Cancel</button>
-                        <button type="submit" className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:bg-gray-300" disabled={isUpdating}>
-                            {isUpdating ? 'Saving...' : 'Save Changes'}
-                        </button>
-                    </div>
-                </form>
-            ) : (
-                <div className="space-y-4">
-                    {policy && Object.entries(policy)
-                        .filter(([key]) => !['id', 'policyId', 'createdAt', 'updatedBy', 'createdBy','isDeleted'].includes(key))
-                        .map(([key, value]) => {
-                            if (key === 'updatedAt') {
-                                return (
-                                    <div key={key} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-                                        <span className="font-medium text-gray-700">Updated At</span>
-                                        <span className="text-gray-900 font-semibold">
-                                            {format(parseISO(value), "PPPp")}
-                                        </span>
-                                    </div>
-                                );
-                            }
-                            return (
-                                <div key={key} className="flex justify-between items-center bg-gray-50 p-4 rounded-lg hover:bg-gray-100 transition-colors">
-                                    <span className="font-medium text-gray-700">{key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}</span>
-                                    <span className="text-gray-900 font-semibold">{value != null ? value.toString() : 'N/A'}</span>
-                                </div>
-                            );
-                        })}
-                    <div className="flex justify-end pt-4">
-                        <button onClick={() => setIsEditing(true)} className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500">Update Policy</button>
+                    <div>
+                        <span className="text-sm font-bold text-gray-900 block leading-tight">Password Policy</span>
+                        <span className="text-xs text-amber-800 font-medium">Configure system-wide password requirements</span>
                     </div>
                 </div>
-            )}
+                {!isEditing && (
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all"
+                    >
+                        <Edit2 className="w-3 h-3" />
+                        Edit Policy
+                    </button>
+                )}
+            </div>
 
+            {/* Feedback */}
             {updateMessage.text && (
-                <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${updateMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <div className={`mx-4 mt-3 px-4 py-2 rounded-md text-sm font-medium border ${
+                    updateMessage.type === 'success'
+                        ? 'bg-green-50 border-green-200 text-green-700'
+                        : updateMessage.type === 'error'
+                        ? 'bg-red-50 border-red-200 text-red-700'
+                        : 'bg-blue-50 border-blue-200 text-blue-700'
+                }`}>
                     {updateMessage.text}
                 </div>
             )}
+
+            {/* Content */}
+            <div className="flex-1 overflow-auto p-4">
+                <div className="max-w-2xl mx-auto">
+                    {isEditing ? (
+                        <form onSubmit={handleUpdate} className="space-y-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="minimumLength" className="block text-sm font-semibold text-gray-800 mb-1">Minimum Length</label>
+                                    <input
+                                        id="minimumLength" name="minimumLength" type="number"
+                                        value={policy.minimumLength} onChange={handleChange}
+                                        className="w-full px-3 py-2 text-sm border border-amber-200 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                                        min={0} required
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="maxAgeDays" className="block text-sm font-semibold text-gray-800 mb-1">Max Age (Days)</label>
+                                    <input
+                                        id="maxAgeDays" name="maxAgeDays" type="number"
+                                        value={policy.maxAgeDays} onChange={handleChange}
+                                        className="w-full px-3 py-2 text-sm border border-amber-200 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                                        min={0} required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                {[
+                                    { key: 'requireUppercase', label: 'Require Uppercase Letter' },
+                                    { key: 'requireLowercase', label: 'Require Lowercase Letter' },
+                                    { key: 'requireDigit', label: 'Require Digit' },
+                                    { key: 'requireSpecialCharacter', label: 'Require Special Character' },
+                                ].map(({ key, label }) => (
+                                    <div key={key} className="flex items-center justify-between bg-amber-50 border border-amber-100 px-4 py-3 rounded-md">
+                                        <label htmlFor={key} className="text-sm font-medium text-gray-700">{label}</label>
+                                        <input
+                                            id={key} name={key} type="checkbox"
+                                            checked={policy[key]} onChange={handleChange}
+                                            className="h-4 w-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="flex justify-end gap-2 pt-2">
+                                <button
+                                    type="button" onClick={handleCancel}
+                                    className="flex items-center gap-1.5 px-4 py-2 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                                >
+                                    <X className="w-3.5 h-3.5" /> Cancel
+                                </button>
+                                <button
+                                    type="submit" disabled={isUpdating}
+                                    className="flex items-center gap-1.5 px-4 py-2 text-sm bg-amber-500 hover:bg-amber-600 text-white rounded-md font-medium disabled:opacity-50 transition-colors"
+                                >
+                                    <Check className="w-3.5 h-3.5" />
+                                    {isUpdating ? 'Saving...' : 'Save Changes'}
+                                </button>
+                            </div>
+                        </form>
+                    ) : (
+                        <div className="space-y-2">
+                            {policy && Object.entries(policy)
+                                .filter(([key]) => !HIDDEN_KEYS.includes(key))
+                                .map(([key, value]) => {
+                                    const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+                                    let displayValue;
+                                    if (key === 'updatedAt') {
+                                        displayValue = format(parseISO(value), 'PPPp');
+                                    } else if (typeof value === 'boolean') {
+                                        displayValue = value
+                                            ? <span className="inline-flex items-center gap-1 text-green-700 font-semibold"><Check className="w-3.5 h-3.5" /> Yes</span>
+                                            : <span className="text-gray-600 font-medium">No</span>;
+                                    } else {
+                                        displayValue = <span className="font-semibold text-gray-900">{value != null ? value.toString() : 'N/A'}</span>;
+                                    }
+                                    return (
+                                        <div key={key} className="flex items-center justify-between bg-gray-50 hover:bg-amber-50 border border-gray-100 px-4 py-3 rounded-md transition-colors">
+                                            <span className="text-sm font-medium text-gray-800">{label}</span>
+                                            <span className="text-sm">{displayValue}</span>
+                                        </div>
+                                    );
+                                })}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };

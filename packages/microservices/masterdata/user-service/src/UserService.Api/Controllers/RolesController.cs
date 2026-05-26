@@ -103,7 +103,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -126,7 +126,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -141,7 +141,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while creating the role",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -174,7 +174,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -197,7 +197,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -207,7 +207,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 404
                 });
             }
@@ -222,7 +222,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while updating the role",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -269,7 +269,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = errorMessage,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -284,13 +284,45 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while deleting the role",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
         }
 
 
+
+        [HttpPatch("{id}/restore")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Restore(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                    return BadRequest("Role ID is required");
+
+                var restored = await _roleService.RestoreAsync(id);
+                if (!restored)
+                    return NotFound(new { message = $"Deleted role with ID {id} not found" });
+
+                _logger.LogInformation("Successfully restored role with ID {RoleId}", id);
+                return Ok(new { message = "Role restored successfully" });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error restoring role with ID: {RoleId}", id);
+                return StatusCode(500, new { message = "An error occurred while restoring the role" });
+            }
+        }
 
         [HttpPost("{roleId}/permissions/{permissionId}")]
         [Authorize(Policy = "roles.manage")]
@@ -326,7 +358,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -376,7 +408,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }

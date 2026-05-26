@@ -8,6 +8,8 @@ import dayjs from "dayjs"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 import * as XLSX from "xlsx"
+import logoSrc from "../../../assets/logo.jpeg"
+import { getTicketSettings, resolveReportColors } from "../../../utils/ticketThemeConfig"
 
 export default function DriverReport({ transactions = [], loading }) {
   const [selectedDriver, setSelectedDriver] = useState(null)
@@ -91,40 +93,117 @@ export default function DriverReport({ transactions = [], loading }) {
   const totalWeight = driverSummary.reduce((s, d) => s + d.totalNetWeight, 0)
 
   /* EXPORT FUNCTIONS */
-  const exportPDF = () => {
-    const doc = new jsPDF()
-    
-    doc.setFillColor(245, 158, 11)
-    doc.rect(0, 0, doc.internal.pageSize.getWidth(), 20, "F")
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(16)
-    doc.setFont("helvetica", "bold")
-    doc.text("DRIVER REPORT", doc.internal.pageSize.getWidth() / 2, 10, { align: "center" })
-    doc.setFontSize(10)
-    doc.setFont("helvetica", "normal")
-    doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, doc.internal.pageSize.getWidth() / 2, 15, { align: "center" })
+  const exportPDF = async () => {
+    const settings    = getTicketSettings()
+    const companyName = settings.companyName    || "QALIBRATED SYSTEMS LTD"
+    const companyAddr = settings.companyAddress || "PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996"
 
-    doc.setTextColor(0, 0, 0)
-    doc.setFontSize(9)
-    doc.text(`Total Drivers: ${totalDrivers}`, 14, 25)
-    doc.text(`Total Trips: ${totalTrips}`, 14, 30)
-    doc.text(`Total Weight: ${totalWeight.toLocaleString()} kg`, 14, 35)
+    const doc = new jsPDF("landscape", "mm", "a4")
+    const PW = doc.internal.pageSize.getWidth()
+    const L = 14, R = PW - 14, TW = R - L
 
+    const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings)
+    const black      = [0, 0, 0]
+    const gray       = [107, 114, 128]
+    const borderCol  = [229, 231, 235]
+
+    let circularLogo = null
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = settings.companyLogo || logoSrc
+      })
+      const sz = Math.min(img.naturalWidth, img.naturalHeight)
+      const cv = document.createElement("canvas")
+      cv.width = sz; cv.height = sz
+      const ctx = cv.getContext("2d")
+      ctx.beginPath(); ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); ctx.clip()
+      const srcX = (img.naturalWidth - sz) / 2
+      const srcY = (img.naturalHeight - sz) / 2
+      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz)
+      circularLogo = cv.toDataURL("image/png")
+    } catch (_) {}
+
+    // ── HEADER ──────────────────────────────────────────────────────────
+    if (circularLogo) doc.addImage(circularLogo, "PNG", L, 5, 17, 17)
+    doc.setFontSize(14); doc.setFont("helvetica", "bold"); doc.setTextColor(...black)
+    doc.text(companyName, PW / 2, 11, { align: "center" })
+    doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...gray)
+    doc.text(companyAddr, PW / 2, 16, { align: "center" })
+
+    const badgeW = 40
+    doc.setFillColor(...accent); doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, "F")
+    doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(...accentHeaderText)
+    doc.text("DRIVER REPORT", R - badgeW / 2, 9.5, { align: "center" })
+    doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(...gray)
+    doc.text(`Generated: ${dayjs().format("DD MMM YYYY HH:mm")}`, R, 16, { align: "right" })
+
+    doc.setDrawColor(...accent); doc.setLineWidth(0.8); doc.line(L, 23, R, 23)
+
+    // ── STATS ───────────────────────────────────────────────────────────
+    let y = 27
+    const statW = (TW - 8) / 3
+    const stats = [
+      { label: "TOTAL DRIVERS",    value: `${totalDrivers}` },
+      { label: "TOTAL TRIPS",      value: `${totalTrips}` },
+      { label: "TOTAL NET WEIGHT", value: `${totalWeight.toLocaleString()} kg` },
+    ]
+    stats.forEach((s, i) => {
+      const bx = L + i * (statW + 4)
+      doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3)
+      doc.roundedRect(bx, y, statW, 10, 2, 2, "FD")
+      doc.setFontSize(6.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...gray)
+      doc.text(s.label, bx + statW / 2, y + 3.8, { align: "center" })
+      doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(...black)
+      doc.text(s.value, bx + statW / 2, y + 8.2, { align: "center" })
+    })
+    y += 14
+
+    // ── TABLE ───────────────────────────────────────────────────────────
     autoTable(doc, {
-      startY: 40,
+      startY: y,
+      margin: { left: L, right: L },
       head: [["Driver Name", "Trips", "Vehicles", "Net Weight (kg)"]],
-      body: driverSummary.map((d) => [
-        d.driverName,
-        d.trips,
-        d.vehicles,
-        d.totalNetWeight.toLocaleString(),
-      ]),
-      styles: { fontSize: 9, cellPadding: 2 },
-      headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0], fontStyle: 'bold' },
-      alternateRowStyles: { fillColor: [250, 250, 250] },
+      body: driverSummary.map((d) => [d.driverName, d.trips, d.vehicles, d.totalNetWeight.toLocaleString()]),
+      styles: { fontSize: 8, cellPadding: 2, textColor: black, lineColor: borderCol },
+      headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 8.5, halign: "center", lineColor: accentDark },
+      alternateRowStyles: { fillColor: [252, 252, 252] },
+      columnStyles: { 1: { halign: "center" }, 2: { halign: "center" }, 3: { halign: "right", fontStyle: "bold" } },
     })
 
-    doc.save(`driver-report-${dayjs().format('YYYY-MM-DD')}.pdf`)
+    // ── FOOTER ──────────────────────────────────────────────────────────
+    const footerY = doc.lastAutoTable.finalY + 4
+    doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3)
+    doc.roundedRect(L, footerY, TW, 10, 2, 2, "FD")
+    if (circularLogo) doc.addImage(circularLogo, "PNG", L + 2, footerY + 1, 8, 8)
+    doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); doc.setTextColor(...black)
+    doc.text("Powered by Qalibrated Systems  |  www.qalibrated.co.ke", PW / 2, footerY + 5, { align: "center" })
+    doc.setFontSize(6.5); doc.setFont("helvetica", "normal"); doc.setTextColor(...gray)
+    doc.text("Inventing and Making Happen", PW / 2, footerY + 8.5, { align: "center" })
+
+    // Watermark on all pages
+    if (circularLogo) {
+      try {
+        const wmSize = 90
+        const PH = doc.internal.pageSize.getHeight()
+        const wmCanvas = document.createElement("canvas")
+        wmCanvas.width = 200; wmCanvas.height = 200
+        const wmCtx = wmCanvas.getContext("2d")
+        const wmImg = await new Promise((resolve, reject) => {
+          const i = new Image(); i.onload = () => resolve(i); i.onerror = reject
+          i.src = circularLogo
+        })
+        wmCtx.globalAlpha = 0.07
+        wmCtx.drawImage(wmImg, 0, 0, 200, 200)
+        const wmData = wmCanvas.toDataURL("image/png")
+        const totalPages = doc.internal.getNumberOfPages()
+        for (let p = 1; p <= totalPages; p++) {
+          doc.setPage(p)
+          doc.addImage(wmData, "PNG", PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize)
+        }
+      } catch (_) {}
+    }
+
+    doc.save(`driver-report-${dayjs().format("YYYY-MM-DD")}.pdf`)
   }
 
   const exportExcel = () => {

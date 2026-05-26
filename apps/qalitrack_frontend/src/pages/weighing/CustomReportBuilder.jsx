@@ -3,10 +3,13 @@ import {
   Plus, X, Save, Eye, Download, Settings,
   GripVertical, ChevronDown, ChevronUp
 } from "lucide-react";
+import { message } from "antd";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
+import logoSrc from "../../assets/logo.jpeg";
+import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
 
 export default function CustomReportBuilder({ transactions = [] }) {
   const [reportName, setReportName] = useState("Custom Report");
@@ -238,7 +241,7 @@ export default function CustomReportBuilder({ transactions = [] }) {
       createdAt: new Date().toISOString(),
     };
     setSavedReports([...savedReports, config]);
-    alert("Report saved successfully!");
+    message.success("Report saved successfully!");
   };
 
   // Load report configuration
@@ -252,67 +255,235 @@ export default function CustomReportBuilder({ transactions = [] }) {
   };
 
   // Export functions
-  const exportPDF = () => {
-    const doc = new jsPDF("landscape");
-    const dataArray = Array.isArray(reportData) ? reportData : Object.values(reportData).flat();
-    
-    doc.setFillColor(245, 158, 11);
-    doc.rect(0, 0, doc.internal.pageSize.getWidth(), 20, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
-    doc.text(reportName.toUpperCase(), doc.internal.pageSize.getWidth() / 2, 12, { align: "center" });
+  const exportPDF = async () => {
+    const settings    = getTicketSettings();
+    const companyName = settings.companyName    || "QALIBRATED SYSTEMS LTD";
+    const companyAddr = settings.companyAddress || "PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996";
 
+    const dataArray = Array.isArray(reportData) ? reportData : Object.values(reportData).flat();
+
+    const doc = new jsPDF("landscape", "mm", "a4");
+    const PW  = doc.internal.pageSize.getWidth();
+    const L   = 14;
+    const R   = PW - 14;
+    const TW  = R - L;
+
+    const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings);
+    const black      = [0,   0,   0];
+    const gray       = [107, 114, 128];
+    const borderCol  = [229, 231, 235];
+    const green      = [21,  128, 61];
+
+    // Circular logo
+    let circularLogo = null;
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = settings.companyLogo || logoSrc;
+      });
+      const sz = Math.min(img.naturalWidth, img.naturalHeight);
+      const cv = document.createElement("canvas");
+      cv.width = sz; cv.height = sz;
+      const ctx = cv.getContext("2d");
+      ctx.beginPath();
+      ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
+      ctx.clip();
+      const srcX = (img.naturalWidth - sz) / 2;
+      const srcY = (img.naturalHeight - sz) / 2;
+      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+      circularLogo = cv.toDataURL("image/png");
+    } catch (_) { /* logo unavailable */ }
+
+    // Header
+    if (circularLogo) doc.addImage(circularLogo, "PNG", L, 5, 17, 17);
+
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...black);
+    doc.text(companyName, PW / 2, 11, { align: "center" });
+
+    doc.setFontSize(7.5);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...gray);
+    doc.text(companyAddr, PW / 2, 16, { align: "center" });
+
+    // Report badge
+    const badgeW = 52;
+    doc.setFillColor(...accent);
+    doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, "F");
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...accentHeaderText);
+    doc.text(reportName.toUpperCase(), R - badgeW / 2, 9.5, { align: "center" });
+
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...gray);
+    doc.text(`Generated: ${dayjs().format("DD MMM YYYY HH:mm")}`, R, 16, { align: "right" });
+
+    // Amber divider
+    doc.setDrawColor(...accent);
+    doc.setLineWidth(0.8);
+    doc.line(L, 23, R, 23);
+
+    // Summary stats
+    let y = 27;
+    const statW = (TW - 8) / 3;
+    const netTotal = dataArray.reduce((s, r) => s + (parseFloat(r.netWeight) || 0), 0);
+    const stats = [
+      { label: "TOTAL RECORDS",    value: `${dataArray.length}` },
+      { label: "TOTAL NET WEIGHT", value: `${netTotal.toLocaleString()} kg` },
+      { label: "REPORT DATE",      value: dayjs().format("DD MMM YYYY") },
+    ];
+
+    stats.forEach((s, i) => {
+      const bx = L + i * (statW + 4);
+      doc.setFillColor(...accentLight);
+      doc.setDrawColor(...accentDark);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(bx, y, statW, 10, 2, 2, "FD");
+      doc.setFontSize(6.5);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...gray);
+      doc.text(s.label, bx + statW / 2, y + 3.8, { align: "center" });
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...black);
+      doc.text(s.value, bx + statW / 2, y + 8.2, { align: "center" });
+    });
+
+    y += 14;
+
+    // Data table
     const headers = selectedFields.map(fieldKey => {
       const field = availableFields.find(f => f.key === fieldKey);
       return field ? field.label : fieldKey;
     });
 
-    const body = dataArray.map(row => 
+    const body = dataArray.map((row, idx) =>
       selectedFields.map(fieldKey => {
         const value = row[fieldKey];
-        if (fieldKey === "createdAt") {
-          return dayjs(value).format("DD MMM YY HH:mm");
-        }
-        if (fieldKey.includes("Weight")) {
-          return value ? parseFloat(value).toLocaleString() : "-";
-        }
+        if (fieldKey === "createdAt") return dayjs(value).format("DD MMM YY HH:mm");
+        if (fieldKey.includes("Weight")) return value ? parseFloat(value).toLocaleString() : "-";
         return value || "-";
       })
     );
 
+    const statusColIdx = selectedFields.indexOf("status");
+
     autoTable(doc, {
-      startY: 25,
+      startY: y,
+      margin: { left: L, right: L },
       head: [headers],
       body,
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [245, 158, 11] },
+      styles: {
+        fontSize: 6.5,
+        cellPadding: 1.5,
+        textColor: black,
+        lineColor: borderCol,
+      },
+      headStyles: {
+        fillColor: accent,
+        textColor: accentHeaderText,
+        fontStyle: "bold",
+        fontSize: 7,
+        halign: "center",
+        lineColor: accentDark,
+      },
+      alternateRowStyles: { fillColor: [252, 252, 252] },
+      didParseCell: (data) => {
+        if (statusColIdx >= 0 && data.column.index === statusColIdx && data.section === "body") {
+          const raw = String(data.cell.raw || "").toLowerCase();
+          if (raw === "completed") {
+            data.cell.styles.textColor = green;
+            data.cell.styles.fontStyle = "bold";
+          } else if (raw === "in progress") {
+            data.cell.styles.textColor = amberDark;
+            data.cell.styles.fontStyle = "bold";
+          }
+        }
+      },
     });
 
-    doc.save(`${reportName.replace(/\s+/g, "-")}.pdf`);
+    // Footer
+    const footerY = doc.lastAutoTable.finalY + 4;
+    doc.setFillColor(...accentLight);
+    doc.setDrawColor(...accentDark);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(L, footerY, TW, 10, 2, 2, "FD");
+
+    if (circularLogo) doc.addImage(circularLogo, "PNG", L + 2, footerY + 1, 8, 8);
+
+    doc.setFontSize(7.5);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...black);
+    doc.text("Powered by Qalibrated Systems  |  www.qalibrated.co.ke", PW / 2, footerY + 5, { align: "center" });
+    doc.setFontSize(6.5);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...gray);
+    doc.text("Inventing and Making Happen", PW / 2, footerY + 8.5, { align: "center" });
+
+    // Watermark on all pages
+    if (circularLogo) {
+      try {
+        const wmSize = 90;
+        const PH = doc.internal.pageSize.getHeight();
+        const wmCanvas = document.createElement("canvas");
+        wmCanvas.width = 200; wmCanvas.height = 200;
+        const wmCtx = wmCanvas.getContext("2d");
+        const wmImg = await new Promise((resolve, reject) => {
+          const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+          i.src = circularLogo;
+        });
+        wmCtx.globalAlpha = 0.07;
+        wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+        const wmData = wmCanvas.toDataURL("image/png");
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let p = 1; p <= totalPages; p++) {
+          doc.setPage(p);
+          doc.addImage(wmData, "PNG", PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+        }
+      } catch (_) {}
+    }
+
+    doc.save(`${reportName.replace(/\s+/g, "-")}-${dayjs().format("YYYY-MM-DD")}.pdf`);
   };
 
   const exportExcel = () => {
     const dataArray = Array.isArray(reportData) ? reportData : Object.values(reportData).flat();
-    
+
     const ws = XLSX.utils.json_to_sheet(
-      dataArray.map(row => {
-        const obj = {};
+      dataArray.map((row, idx) => {
+        const obj = { "#": idx + 1 };
         selectedFields.forEach(fieldKey => {
           const field = availableFields.find(f => f.key === fieldKey);
           const label = field ? field.label : fieldKey;
-          obj[label] = row[fieldKey] || "-";
+          if (fieldKey === "createdAt") {
+            obj[label] = row[fieldKey] ? dayjs(row[fieldKey]).format("DD MMM YYYY HH:mm:ss") : "-";
+          } else if (fieldKey.includes("Weight")) {
+            obj[label] = row[fieldKey] ? parseFloat(row[fieldKey]) : 0;
+          } else {
+            obj[label] = row[fieldKey] || "-";
+          }
         });
         return obj;
       })
     );
 
+    // Column widths
+    const colCount = selectedFields.length + 1;
+    ws["!cols"] = Array.from({ length: colCount }, (_, i) => ({ wch: i === 0 ? 5 : 18 }));
+
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, reportName);
-    XLSX.writeFile(wb, `${reportName.replace(/\s+/g, "-")}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, ws, reportName.substring(0, 31));
+    XLSX.writeFile(wb, `${reportName.replace(/\s+/g, "-")}-${dayjs().format("YYYY-MM-DD")}.xlsx`);
   };
 
   return (
-    <div className="space-y-4">
+    <div className="h-full overflow-y-auto px-1">
+    <div className="space-y-4 pb-8">
       {/* HEADER - STICKY */}
       <div className="bg-white border border-amber-200 rounded-lg p-4 sticky top-0 z-10 shadow-sm backdrop-blur-sm bg-white/95">
         <div className="flex items-center justify-between mb-3">
@@ -627,6 +798,7 @@ export default function CustomReportBuilder({ transactions = [] }) {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 }

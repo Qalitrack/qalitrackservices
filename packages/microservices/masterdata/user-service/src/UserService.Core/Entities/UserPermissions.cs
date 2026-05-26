@@ -2,10 +2,10 @@ namespace UserService.Core.Entities;
 
 public class UserPermissions:BaseEntity
 {
-    public string UserId { get; set; }
-    public string PermissionName { get; set; }  
-    
-    public User User { get; set; }
-    public Permission Permission { get; set; }
+    public required string UserId { get; set; }
+    public required string PermissionName { get; set; }
+
+    public User User { get; set; } = null!;
+    public Permission Permission { get; set; } = null!;
     
 }

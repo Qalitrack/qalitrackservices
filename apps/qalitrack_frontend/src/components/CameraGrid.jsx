@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import clsx from "clsx";
 import { useCameraRealtime } from "../hooks/useCameraRealtime";
 
-export default function CameraGrid({ type, cameraId = "npr1" }) {
+export default function CameraGrid({ type, cameraId = "npr1", onPlateConfirmed }) {
   if (type === "live") return <LiveStreamCard cameraId={cameraId} />;
   if (type === "snapshot") return <SnapshotCard cameraId={cameraId} />;
-  if (type === "plate") return <PlateCard cameraId={cameraId} />;
+  if (type === "plate") return <PlateCard cameraId={cameraId} onPlateConfirmed={onPlateConfirmed} />;
   return null;
 }
 
@@ -72,24 +72,73 @@ function SnapshotCard({ cameraId }) {
 /* -------------------------------------------------------------------------- */
 /*                             PLATE CARD                                      */
 /* -------------------------------------------------------------------------- */
-function PlateCard({ cameraId }) {
+function PlateCard({ cameraId, onPlateConfirmed }) {
   const { plateData, isOnline } = useCameraRealtime(cameraId);
+  const [editing, setEditing] = useState(false);
+  const [editedPlate, setEditedPlate] = useState("");
+
+  // When a new plate is auto-detected, update the edit field
+  useEffect(() => {
+    if (plateData?.plateNumber && !editing) {
+      setEditedPlate(plateData.plateNumber);
+    }
+  }, [plateData?.plateNumber, editing]);
+
+  const handleUse = (source) => {
+    const plate = editedPlate.trim().toUpperCase();
+    if (!plate) return;
+    if (typeof onPlateConfirmed === "function") onPlateConfirmed(plate, source);
+    setEditing(false);
+  };
 
   return (
     <div className="bg-black rounded-xl overflow-hidden shadow-lg h-full flex flex-col">
       <div className="relative aspect-[16/8.5] flex-1 flex items-center justify-center bg-gradient-to-br from-yellow-900 to-black">
-        {plateData ? (
+        {editing ? (
+          <div className="text-center px-4 w-full">
+            <input
+              autoFocus
+              value={editedPlate}
+              onChange={(e) => setEditedPlate(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === "Enter" && handleUse("manual")}
+              className="w-full text-center text-3xl font-mono font-black tracking-widest bg-transparent border-b-2 border-amber-500 text-amber-400 outline-none pb-1"
+              placeholder="KXX 000X"
+            />
+            <div className="flex justify-center gap-2 mt-3">
+              <button onClick={() => handleUse("manual")}
+                className="bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold px-3 py-1 rounded">
+                Use
+              </button>
+              <button onClick={() => setEditing(false)}
+                className="bg-neutral-700 hover:bg-neutral-600 text-white text-xs px-3 py-1 rounded">
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : editedPlate ? (
           <div className="text-center">
             <div className="text-4xl md:text-5xl font-mono font-black tracking-widest text-amber-500">
-              {plateData.plateNumber}
+              {editedPlate}
             </div>
-            <div className="mt-1 text-xs text-amber-300">
-              {(plateData.confidence * 100).toFixed(1)}% confidence
+            {plateData?.confidence && (
+              <div className="mt-1 text-xs text-amber-300">
+                {(plateData.confidence * 100).toFixed(1)}% confidence
+              </div>
+            )}
+            <div className="flex justify-center gap-2 mt-3">
+              <button onClick={() => handleUse("auto")}
+                className="bg-amber-500 hover:bg-amber-600 text-black text-xs font-bold px-3 py-1 rounded">
+                Use Plate
+              </button>
+              <button onClick={() => setEditing(true)}
+                className="bg-neutral-700 hover:bg-neutral-600 text-white text-xs px-3 py-1 rounded">
+                Edit
+              </button>
             </div>
           </div>
         ) : (
-          <div className="text-gray-600 text-sm">
-            Waiting for vehicle…
+          <div className="text-center">
+            <div className="text-gray-600 text-sm">Waiting for vehicle…</div>
           </div>
         )}
 
@@ -98,12 +147,8 @@ function PlateCard({ cameraId }) {
 
       <div className="p-2 text-center text-[11px] text-gray-400">
         {plateData
-          ? `Detected at ${new Date(
-              plateData.timestamp
-            ).toLocaleTimeString()}`
-          : isOnline
-          ? "Real-time ANPR"
-          : "Camera offline"}
+          ? `Detected at ${new Date(plateData.timestamp).toLocaleTimeString()}`
+          : isOnline ? "Real-time ANPR" : "Camera offline"}
       </div>
     </div>
   );

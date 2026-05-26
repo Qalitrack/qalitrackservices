@@ -18,9 +18,24 @@ export default function ReportsTable({
   const totalPages = Math.ceil(totalRecords / pageSize);
 
   // ── Time helpers ───────────────────────────────────────────────────────────
-  const calcTAT = (a, b) => {
-    if (!a || !b) return { display: "N/A", minutes: 0 };
-    const diff = dayjs(b).diff(dayjs(a), "minute");
+  const calcTAT = (a, b, turnaroundTime) => {
+    // Use pre-calculated turnaroundTime from API if available (format: "HH:MM:SS.fffffff")
+    if (turnaroundTime) {
+      const parts = turnaroundTime.split(":");
+      if (parts.length >= 2) {
+        const h = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const totalMinutes = h * 60 + m;
+        if (totalMinutes < 1) return { display: "< 1m", minutes: 0 };
+        if (h > 0) return { display: m ? `${h}h ${m}m` : `${h}h`, minutes: totalMinutes };
+        return { display: `${m}m`, minutes: totalMinutes };
+      }
+    }
+    // Fallback: calculate from timestamps using API field names
+    const start = a || null;
+    const end = b || null;
+    if (!start || !end) return { display: "N/A", minutes: 0 };
+    const diff = dayjs(end).diff(dayjs(start), "minute");
     if (diff < 1) return { display: "< 1m", minutes: 0 };
     if (diff < 60) return { display: `${diff}m`, minutes: diff };
     const h = Math.floor(diff / 60), m = diff % 60;
@@ -222,7 +237,7 @@ export default function ReportsTable({
       case "turnaround": {
         const done = isCompleted(record);
         const td = done
-          ? calcTAT(record.firstWeightTime, record.secondWeightTime)
+          ? calcTAT(record.firstWeightDate, record.secondWeightDate, record.turnaroundTime)
           : calcWait(record.createdAt);
         let cls;
         if (done) {

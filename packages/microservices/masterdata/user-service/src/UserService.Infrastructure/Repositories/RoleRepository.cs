@@ -109,6 +109,23 @@ namespace UserService.Infrastructure.Repositories
             return true;
         }
 
+        public async Task<bool> RestoreAsync(string id)
+        {
+            var role = await _context.Roles
+                .AsTracking()
+                .FirstOrDefaultAsync(r => r.Id == id && r.IsDeleted);
+
+            if (role == null)
+                return false;
+
+            role.IsDeleted = false;
+            role.UpdatedAt = DateTime.UtcNow;
+            role.UpdatedBy = AuthUtils.GetUserIdFromClaims(_httpContextAccessor.HttpContext?.User);
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<Role?> GetByNameAsync(string roleName)
         {
             if (string.IsNullOrWhiteSpace(roleName))

@@ -21,6 +21,9 @@ import {
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import dayjs from 'dayjs';
+import logoSrc from '../../assets/logo.jpeg';
+import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 import ShiftInstances from './Shifts/ShiftInstances';
 import AddShift from './Shifts/AddShift';
 import ShiftEdit from './Shifts/ShiftEdit';
@@ -452,120 +455,160 @@ const Shifts = () => {
     const generatePDF = async () => {
         setLoading(true);
         try {
-            // Fetch all shifts with pagination
             const allShifts = await fetchAllShifts(showDeleted);
+            const settings    = getTicketSettings();
+            const companyName = settings.companyName    || 'QALIBRATED SYSTEMS LTD';
+            const companyAddr = settings.companyAddress || 'PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996';
 
-            const doc = new jsPDF({
-                orientation: 'landscape'  // Use landscape for better table display
-            });
+            const doc  = new jsPDF('landscape', 'mm', 'a4');
+            const PW   = doc.internal.pageSize.getWidth();
+            const L    = 14;
+            const R    = PW - 14;
+            const TW   = R - L;
 
-            // Add title and metadata
-            doc.setFontSize(18);
-            doc.text('Shifts Report', 14, 22);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
-            doc.text(`Total Shifts: ${allShifts.length}`, 14, 38);
+            const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings);
+            const black      = [0,   0,   0];
+            const gray       = [107, 114, 128];
+            const borderCol  = [229, 231, 235];
+            const green      = [21,  128, 61];
 
-            // Define the columns for the table
-            const columns = [
-                { header: 'Name', dataKey: 'name', width: 20 },
-                { header: 'Description', dataKey: 'description', width: 45 },
-                { header: 'Start Time', dataKey: 'startTime', width: 20 },
-                { header: 'End Time', dataKey: 'endTime', width: 20 },
-                { header: 'Type', dataKey: 'type', width: 15 },
-                { header: 'Status', dataKey: 'status', width: 20 },
-                { header: 'Req Staff', dataKey: 'requiredStaff', width: 10 },
-                { header: 'Assigned', dataKey: 'assignedUsers', width: 10 },
-                { header: 'Created', dataKey: 'createdAt', width: 30 }
+            // Circular logo
+            let circularLogo = null;
+            try {
+                const img = await new Promise((resolve, reject) => {
+                    const i = new Image();
+                    i.onload = () => resolve(i);
+                    i.onerror = reject;
+                    i.src = settings.companyLogo || logoSrc;
+                });
+                const sz = Math.min(img.naturalWidth, img.naturalHeight);
+                const cv = document.createElement('canvas');
+                cv.width = sz; cv.height = sz;
+                const ctx = cv.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
+                ctx.clip();
+                const srcX = (img.naturalWidth - sz) / 2;
+                const srcY = (img.naturalHeight - sz) / 2;
+                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+                circularLogo = cv.toDataURL('image/png');
+            } catch (_) {}
+
+            // Header
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L, 5, 17, 17);
+            doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text(companyName, PW / 2, 11, { align: 'center' });
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(companyAddr, PW / 2, 16, { align: 'center' });
+
+            // Badge
+            const badgeW = 44;
+            doc.setFillColor(...accent);
+            doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, 'F');
+            doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...accentHeaderText);
+            doc.text('SHIFTS REPORT', R - badgeW / 2, 9.5, { align: 'center' });
+            doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, R, 16, { align: 'right' });
+
+            // Amber divider
+            doc.setDrawColor(...accent); doc.setLineWidth(0.8);
+            doc.line(L, 23, R, 23);
+
+            // Summary stats
+            let y = 27;
+            const statW = (TW - 8) / 3;
+            const activeCount = allShifts.filter(s => s.status === 3).length;
+            const stats = [
+                { label: 'TOTAL SHIFTS',  value: `${allShifts.length}` },
+                { label: 'ACTIVE SHIFTS', value: `${activeCount}` },
+                { label: 'REPORT DATE',   value: dayjs().format('DD MMM YYYY') },
             ];
+            stats.forEach((s, i) => {
+                const bx = L + i * (statW + 4);
+                doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
+                doc.roundedRect(bx, y, statW, 10, 2, 2, 'FD');
+                doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+                doc.text(s.label, bx + statW / 2, y + 3.8, { align: 'center' });
+                doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+                doc.text(s.value, bx + statW / 2, y + 8.2, { align: 'center' });
+            });
+            y += 14;
 
-            // Prepare the data for the table
-            const data = allShifts.map(shift => ({
-                name: shift.name || 'N/A',
-                description: shift.description || 'N/A',
-                startTime: formatTimeOnlyString(shift.startTime) || 'N/A',
-                endTime: formatTimeOnlyString(shift.endTime) || 'N/A',
-                type: shift.recurrenceType === 1 ? 'Daily' : shift.recurrenceType === 2 ? 'Weekly' : shift.recurrenceType === 3 ? 'Monthly' : 'Single',
-                status: shift.status === 3 ? 'Active' : shift.status === 2 ? 'Published' : shift.status === 1 ? 'Completed' : 'Draft',
-                requiredStaff: shift.requiredStaffCount || 0,
-                assignedUsers: shift.assignedUsers || 0,
-                createdAt: format(parseISO(shift.createdAt), 'PPpp')
-            }));
-            const totalWidth = columns.reduce((sum, col) => sum + col.width, 0);
-            const pageWidth = doc.internal.pageSize.getWidth() - 30;
-            const columnStyles = {};
-            // Calculate column widths based on content
-            columns.forEach((col, index) => {
-                columnStyles[index] = {
-                    cellWidth: (col.width / totalWidth) * pageWidth,
-                    cellPadding: 2,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    fontSize: 7,
-                    fontStyle: 'normal',
-                    halign: 'left',
-                    valign: 'middle'
-                };
+            // Table
+            const body = allShifts.map((shift, idx) => {
+                const type   = shift.recurrenceType === 1 ? 'Daily' : shift.recurrenceType === 2 ? 'Weekly' : shift.recurrenceType === 3 ? 'Monthly' : 'Single';
+                const status = shift.status === 3 ? 'ACTIVE' : shift.status === 2 ? 'PUBLISHED' : shift.status === 1 ? 'COMPLETED' : 'DRAFT';
+                return [
+                    idx + 1,
+                    shift.name || 'N/A',
+                    shift.description || 'N/A',
+                    formatTimeOnlyString(shift.startTime) || 'N/A',
+                    formatTimeOnlyString(shift.endTime) || 'N/A',
+                    type,
+                    status,
+                    shift.requiredStaffCount || 0,
+                    shift.assignedUsers || 0,
+                    shift.createdAt ? dayjs(shift.createdAt).format('DD MMM YY HH:mm') : 'N/A',
+                ];
             });
 
-            // Add the table with proper pagination
             autoTable(doc, {
-                head: [columns.map(col => col.header)],
-                body: data.map(row => columns.map(col => row[col.dataKey])),
-                startY: 40,
-                styles: {
-                    fontSize: 8,  // Slightly smaller font to fit more content
-                    cellPadding: 1,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    textColor: [0, 0, 0],
-                    fontStyle: 'normal'
+                startY: y,
+                margin: { left: L, right: L },
+                head: [['#', 'Name', 'Description', 'Start', 'End', 'Type', 'Status', 'Req.', 'Assigned', 'Created']],
+                body,
+                styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
+                headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: accentDark },
+                alternateRowStyles: { fillColor: [252, 252, 252] },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 8 },
+                    6: { halign: 'center' },
+                    7: { halign: 'center', cellWidth: 12 },
+                    8: { halign: 'center', cellWidth: 16 },
                 },
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                    lineWidth: 0.1,
-                    fontSize: 9
-                },
-                columnStyles,
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
-                margin: {
-                    top: 40,
-                    right: 10,
-                    bottom: 20,
-                    left: 10
-                },
-                tableWidth: 'wrap',
-                showHead: 'everyPage',
-                didDrawPage: function(data) {
-                    // This is where we can add content after the table is drawn
-                },
-                willDrawPage: function(data) {
-                    // Add page number to bottom of each page
-                    const pageSize = doc.internal.pageSize;
-                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-                    const pageNumber = data.pageNumber || 1;
-                    const pageCount = data.pageCount || 1;
-
-                    // Only add page numbers if we have valid values
-                    if (pageNumber && pageCount) {
-                        doc.setFontSize(10);
-                        doc.text(
-                            `Page ${pageNumber} of ${pageCount}`,
-                            data.settings.margin.left,
-                            pageHeight - 10
-                        );
+                didParseCell: (data) => {
+                    if (data.column.index === 6 && data.section === 'body') {
+                        const raw = String(data.cell.raw || '');
+                        if (raw === 'ACTIVE')    { data.cell.styles.textColor = green;      data.cell.styles.fontStyle = 'bold'; }
+                        else if (raw === 'PUBLISHED') { data.cell.styles.textColor = amberDark; data.cell.styles.fontStyle = 'bold'; }
                     }
-                }
+                },
             });
 
-            // Save the PDF with a timestamp in the filename
-            doc.save(`shifts-report-${new Date().toISOString().split('T')[0]}.pdf`);
+            // Footer
+            const footerY = doc.lastAutoTable.finalY + 4;
+            doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
+            doc.roundedRect(L, footerY, TW, 10, 2, 2, 'FD');
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L + 2, footerY + 1, 8, 8);
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW / 2, footerY + 5, { align: 'center' });
+            doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text('Inventing and Making Happen', PW / 2, footerY + 8.5, { align: 'center' });
 
+            // Watermark on all pages
+            if (circularLogo) {
+                try {
+                    const wmSize = 90;
+                    const PH = doc.internal.pageSize.getHeight();
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = 200; wmCanvas.height = 200;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    const wmImg = await new Promise((resolve, reject) => {
+                        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+                        i.src = circularLogo;
+                    });
+                    wmCtx.globalAlpha = 0.07;
+                    wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+                    const wmData = wmCanvas.toDataURL('image/png');
+                    const totalPages = doc.internal.getNumberOfPages();
+                    for (let p = 1; p <= totalPages; p++) {
+                        doc.setPage(p);
+                        doc.addImage(wmData, 'PNG', PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+                    }
+                } catch (_) {}
+            }
+
+            doc.save(`shifts-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -584,114 +627,75 @@ const Shifts = () => {
     };
 
     if (loading) {
-        return (
-            <div className="flex justify-center items-center h-32">
-                <div>Loading shifts...</div>
-            </div>
-        );
+        return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
 
     if (error) {
-        return (
-            <div
-                className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md"
-                role="alert"
-            >
-                {error}
-            </div>
-        );
+        return <div className="m-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">{error}</div>;
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800">Shifts</h2>
-                <div className="flex items-center gap-4 w-full sm:w-auto justify-end mt-2 sm:mt-0">
+        <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
+                <h2 className="text-base font-bold text-gray-900">Shifts</h2>
+                <div className="flex items-center gap-2">
+                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
+                        <input
+                            id="show-deleted"
+                            type="checkbox"
+                            checked={showDeleted}
+                            onChange={(e) => {
+                                setShowDeleted(e.target.checked);
+                                setPagination((p) => ({ ...p, page: 1 }));
+                            }}
+                            className="h-3.5 w-3.5 rounded border-gray-300"
+                        />
+                        Show Deleted
+                    </label>
                     <button
                         onClick={handleDownloadPDF}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
-                        title="Download Shifts as PDF"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 rounded transition-colors"
                     >
-                        <Download size={18} />
-                        <span className="hidden md:inline">Download PDF</span>
+                        <Download size={13} />
+                        <span>PDF</span>
                     </button>
                     <button
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all"
                         onClick={() => setAddModalOpen(true)}
                     >
-                        <PlusCircle size={18} />
+                        <PlusCircle size={13} />
                         <span>Add Shift</span>
                     </button>
                 </div>
             </div>
 
             {feedbackMessage.text && (
-                <div
-                    className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${
-                        feedbackMessage.type === 'success'
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                    }`}
-                >
+                <div className={`mx-4 mt-2 px-3 py-2 rounded-md text-xs font-medium border ${feedbackMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                     {feedbackMessage.text}
                 </div>
             )}
 
-            <div className="flex items-center gap-2 mb-4">
-                <input
-                    id="show-deleted"
-                    type="checkbox"
-                    checked={showDeleted}
-                    onChange={(e) => {
-                        setShowDeleted(e.target.checked);
-                        setPagination((p) => ({ ...p, page: 1 }));
-                    }}
-                    className="mr-2"
-                />
-                <label
-                    htmlFor="show-deleted"
-                    className="text-sm font-medium text-gray-700"
-                >
-                    Show Deleted
-                </label>
-            </div>
-
-            {/* Responsive table */}
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-800">
+            <div className="flex-1 overflow-auto">
+                <table className="min-w-full">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Name
-                        </th>
-                        <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Time
-                        </th>
-                        <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Date Range
-                        </th>
-                        <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Type
-                        </th>
-                        <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Status
-                        </th>
-                        <th scope="col" className="pl-4 pr-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider w-48">
-                            Staff
-                        </th>
-                        <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">
-                            Actions
-                        </th>
+                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Time</th>
+                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Date Range</th>
+                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Type</th>
+                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Status</th>
+                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider w-48">Staff</th>
+                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-100">
                     {shifts.map((shift) => {
                         const startDate = new Date(shift.startDate);
                         const endDate = new Date(shift.endDate);
                         const isRecurring = shift.recurrenceType !== 0;
 
                         return (
-                            <tr key={shift.id} className="hover:bg-gray-50">
+                            <tr key={shift.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
                                 <td
                                     className="px-3 py-4 whitespace-nowrap relative"
                                     onMouseEnter={() => setHoveredShiftId(shift.id)}
@@ -727,7 +731,7 @@ const Shifts = () => {
                                 <td className="px-3 py-4 whitespace-nowrap">
                                     <div className="text-sm">
                                         <div className="font-medium">{formatTimeOnlyString(shift.startTime) || '--:--'}</div>
-                                        <div className="font-medium text-gray-500">to {formatTimeOnlyString(shift.endTime) || '--:--'}</div>
+                                        <div className="font-medium text-gray-700">to {formatTimeOnlyString(shift.endTime) || '--:--'}</div>
                                     </div>
                                 </td>
 
@@ -735,7 +739,7 @@ const Shifts = () => {
                                     <div className="text-sm">
                                         <div>{startDate.toLocaleDateString()}</div>
                                         {isRecurring && (
-                                            <div className="text-medium text-gray-500">
+                                            <div className="text-sm text-gray-600">
                                                 to {endDate.toLocaleDateString()}
                                             </div>
                                         )}
@@ -744,11 +748,11 @@ const Shifts = () => {
 
                                 <td className="px-3 py-4 whitespace-nowrap">
                                     <div className="flex flex-col space-y-1">
-                      <span className="text-medium  text-gray-900">
+                      <span className="text-sm text-gray-900">
                         {shift.type === 1 ? 'Single' : shift.type === 2 ? 'Recurring' : ''}
                       </span>
                                         {isRecurring && (
-                                            <span className="font-medium text-gray-500">
+                                            <span className="font-medium text-gray-700">
                           {shift.recurrenceType === 1 ? 'Daily' :
                               shift.recurrenceType === 2 ? 'Weekly' :
                                   shift.recurrenceType === 3 ? 'Monthly' : 'Custom'}
@@ -770,7 +774,7 @@ const Shifts = () => {
                         {shift.status === 3 ? 'Active' : shift.status === 1 ? 'completed' : 'Draft'}
                       </span>
                                         {shift.totalInstances > 0 && (
-                                            <span className="text-xs text-gray-500">
+                                            <span className="text-xs text-gray-600">
                           {shift.totalInstances} instance{shift.totalInstances !== 1 ? 's' : ''}
                         </span>
                                         )}
@@ -933,57 +937,35 @@ const Shifts = () => {
             </div>
 
             {/* Pagination */}
-            <div className="flex flex-wrap justify-center md:justify-between items-center mt-4 text-sm text-gray-700 gap-2">
-                <div>
-                    <p>
-            <span className="font-medium">
-              {pagination.page * pagination.pageSize - pagination.pageSize + 1}
-            </span>{' '}
-                        to{' '}
-                        <span className="font-medium">
-              {Math.min(pagination.page * pagination.pageSize, pagination.totalCount)}
-            </span>{' '}
-                        of <span className="font-medium">{pagination.totalCount}</span> rows
-                    </p>
-                </div>
-                <div className="flex items-center gap-1 flex-wrap">
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={!pagination.hasPreviousPage || loading}
-                        className="p-2 border rounded-md text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                    >
-                        <ChevronLeft size={16} />
+            <div className="px-4 py-2.5 border-t border-amber-100 bg-white flex flex-wrap justify-between items-center gap-2 text-xs text-gray-600">
+                <p>
+                    <span className="font-medium">{pagination.page * pagination.pageSize - pagination.pageSize + 1}</span>{' '}
+                    to{' '}
+                    <span className="font-medium">{Math.min(pagination.page * pagination.pageSize, pagination.totalCount)}</span>{' '}
+                    of <span className="font-medium">{pagination.totalCount}</span> rows
+                </p>
+                <div className="flex items-center gap-1">
+                    <button onClick={handlePreviousPage} disabled={!pagination.hasPreviousPage || loading} className="p-1.5 border rounded text-gray-500 hover:bg-amber-50 disabled:opacity-50">
+                        <ChevronLeft size={14} />
                     </button>
                     {[...Array(pagination.totalPages).keys()].map((index) => (
-                        <button
-                            key={index}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                                pagination.page === index + 1
-                                    ? 'bg-amber-500 text-white'
-                                    : 'bg-white text-gray-700 hover:bg-gray-100'
-                            }`}
-                            onClick={() => handlePageClick(index + 1)}
-                        >
+                        <button key={index} onClick={() => handlePageClick(index + 1)}
+                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${pagination.page === index + 1 ? 'bg-amber-500 text-white' : 'text-gray-700 hover:bg-amber-100'}`}>
                             {index + 1}
                         </button>
                     ))}
-                    <button
-                        onClick={handleNextPage}
-                        disabled={!pagination.hasNextPage || loading}
-                        className="p-2 border rounded-md text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                    >
-                        <ChevronRight size={16} />
+                    <button onClick={handleNextPage} disabled={!pagination.hasNextPage || loading} className="p-1.5 border rounded text-gray-500 hover:bg-amber-50 disabled:opacity-50">
+                        <ChevronRight size={14} />
                     </button>
                 </div>
             </div>
 
-            {/* Modals (unchanged except responsive width already applied in <Modal>) */}
             <Modal isOpen={isViewUsersModalOpen}>
-                <h3 className="text-lg font-bold mb-4">Users Assigned to Shift "{selectedShift?.name}"</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Users — {selectedShift?.name}</h3>
                 {selectedShiftUsers.length > 0 ? (
                     <ul className="space-y-2">
                         {selectedShiftUsers.map(user => (
-                            <li key={user.id} className="bg-gray-100 p-3 rounded-md text-sm font-medium">
+                            <li key={user.id} className="bg-amber-50 border border-amber-100 px-3 py-2 rounded-md text-sm font-medium text-gray-700">
                                 {user.firstName} {user.lastName} ({user.email})
                             </li>
                         ))}

@@ -104,16 +104,10 @@ const Microservices = () => {
         return new Date(dateString).toLocaleString();
     };
 
-    const maskConnectionString = (connectionString) => {
-        const dbMatch = connectionString.match(/database=([^;]+)/i);
-        const hostMatch = connectionString.match(/host=([^;]+)/i) || connectionString.match(/(?:postgres|mysql):\/\/([^:]+):/i);
-        const passwordMatch = connectionString.match(/password=([^;]+)/i) || connectionString.match(/:([^@]+)@/);
-
-        const db = dbMatch ? dbMatch[1] : 'N/A';
-        const host = hostMatch ? hostMatch[1] : 'N/A';
-        const password = passwordMatch ? '***' + (passwordMatch[1].length > 3 ? passwordMatch[1].slice(-3) : '') : 'N/A';
-
-        return `host: ${host}, db: ${db}, password: ${password}`;
+    const parseConnectionString = (cs) => {
+        const host = cs.match(/host=([^;]+)/i)?.[1] ?? cs.match(/(?:postgres|mysql):\/\/[^:]+:[^@]+@([^:/]+)/i)?.[1] ?? 'N/A';
+        const db   = cs.match(/database=([^;]+)/i)?.[1] ?? 'N/A';
+        return { host, db };
     };
 
     const fetchData = async () => {
@@ -122,8 +116,9 @@ const Microservices = () => {
             setError(null);
             const data = await fetchMicroserviceData();
 
-            if (data) {
-                setMicroservices(data);
+            const list = data?.data ?? data?.items ?? data;
+            if (Array.isArray(list)) {
+                setMicroservices(list);
                 setLastUpdated(new Date());
             } else {
                 setError('Failed to fetch microservices data');
@@ -261,8 +256,23 @@ const Microservices = () => {
                                             {service.status === 0 ? 'Active' : service.status === 1 ? 'Inactive' : 'Paused'}
                                         </span>
                                 </td>
-                                <td className="px-6 py-4 text-sm text-gray-600 font-mono break-all">
-                                    {maskConnectionString(service.connectionString)}
+                                <td className="px-6 py-4">
+                                    {(() => { const { host, db } = parseConnectionString(service.connectionString); return (
+                                        <div className="flex flex-col gap-1">
+                                            <span className="flex items-center gap-1.5 text-xs">
+                                                <span className="text-gray-400 uppercase tracking-wide font-medium w-7">host</span>
+                                                <span className="font-mono text-gray-700 truncate max-w-[180px]" title={host}>{host}</span>
+                                            </span>
+                                            <span className="flex items-center gap-1.5 text-xs">
+                                                <span className="text-gray-400 uppercase tracking-wide font-medium w-7">db</span>
+                                                <span className="font-mono text-gray-700">{db}</span>
+                                            </span>
+                                            <span className="flex items-center gap-1.5 text-xs">
+                                                <span className="text-gray-400 uppercase tracking-wide font-medium w-7">pwd</span>
+                                                <span className="text-gray-400 tracking-widest">••••••</span>
+                                            </span>
+                                        </div>
+                                    ); })()}
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{formatDate(service.lastBackupAt)}</td>
                                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

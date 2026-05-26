@@ -7,6 +7,9 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { ChevronsLeft as ChevronDoubleLeft, ChevronsRight as ChevronDoubleRight } from 'lucide-react';
 import { format, parseISO, formatDistanceToNow } from 'date-fns';
+import dayjs from 'dayjs';
+import logoSrc from '../../assets/logo.jpeg';
+import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 
 const Modal = ({ children, isOpen, onClose, size = "md" }) => {
     if (!isOpen) return null;
@@ -491,110 +494,153 @@ const Users = () => {
     const generatePDF = async () => {
         setLoading(true);
         try {
-            // Fetch all users with pagination
             const allUsers = await fetchAllUsers(showDeleted);
+            const settings    = getTicketSettings();
+            const companyName = settings.companyName    || 'QALIBRATED SYSTEMS LTD';
+            const companyAddr = settings.companyAddress || 'PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996';
 
-            const doc = new jsPDF({
-                orientation: 'landscape'  // Use landscape for better table display
-            });
+            const doc  = new jsPDF('landscape', 'mm', 'a4');
+            const PW   = doc.internal.pageSize.getWidth();
+            const L    = 14;
+            const R    = PW - 14;
+            const TW   = R - L;
 
-            // Add title and metadata
-            doc.setFontSize(18);
-            doc.text('Users Report', 14, 22);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
-            doc.text(`Total Users: ${allUsers.length}`, 14, 38);
+            const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings);
+            const black      = [0,   0,   0];
+            const gray       = [107, 114, 128];
+            const borderCol  = [229, 231, 235];
+            const green      = [21,  128, 61];
+            const red        = [185,  28, 28];
 
-            // Define the columns for the table
-            const columns = [
-                { header: 'Name', dataKey: 'name', cellWidth: 'auto' },
-                { header: 'Email', dataKey: 'email', cellWidth: 'wrap' },
-                { header: 'Mobile', dataKey: 'mobile', cellWidth: 'wrap' },
-                { header: 'Status', dataKey: 'status', cellWidth: 'wrap' },
-                { header: 'Roles', dataKey: 'roles', cellWidth: 'wrap' },
-                { header: 'Last Updated', dataKey: 'updated', cellWidth: 'wrap' }
+            // Circular logo
+            let circularLogo = null;
+            try {
+                const img = await new Promise((resolve, reject) => {
+                    const i = new Image();
+                    i.onload = () => resolve(i);
+                    i.onerror = reject;
+                    i.src = settings.companyLogo || logoSrc;
+                });
+                const sz = Math.min(img.naturalWidth, img.naturalHeight);
+                const cv = document.createElement('canvas');
+                cv.width = sz; cv.height = sz;
+                const ctx = cv.getContext('2d');
+                ctx.beginPath();
+                ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
+                ctx.clip();
+                const srcX = (img.naturalWidth - sz) / 2;
+                const srcY = (img.naturalHeight - sz) / 2;
+                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+                circularLogo = cv.toDataURL('image/png');
+            } catch (_) {}
+
+            // Header
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L, 5, 17, 17);
+            doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text(companyName, PW / 2, 11, { align: 'center' });
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(companyAddr, PW / 2, 16, { align: 'center' });
+
+            // Badge
+            const badgeW = 44;
+            doc.setFillColor(...accent);
+            doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, 'F');
+            doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...accentHeaderText);
+            doc.text('USERS REPORT', R - badgeW / 2, 9.5, { align: 'center' });
+            doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, R, 16, { align: 'right' });
+
+            // Amber divider
+            doc.setDrawColor(...accent); doc.setLineWidth(0.8);
+            doc.line(L, 23, R, 23);
+
+            // Summary stats
+            let y = 27;
+            const statW = (TW - 8) / 3;
+            const activeCount = allUsers.filter(u => !u.isDeleted && u.isActive).length;
+            const stats = [
+                { label: 'TOTAL USERS',  value: `${allUsers.length}` },
+                { label: 'ACTIVE USERS', value: `${activeCount}` },
+                { label: 'REPORT DATE',  value: dayjs().format('DD MMM YYYY') },
             ];
+            stats.forEach((s, i) => {
+                const bx = L + i * (statW + 4);
+                doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
+                doc.roundedRect(bx, y, statW, 10, 2, 2, 'FD');
+                doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+                doc.text(s.label, bx + statW / 2, y + 3.8, { align: 'center' });
+                doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+                doc.text(s.value, bx + statW / 2, y + 8.2, { align: 'center' });
+            });
+            y += 14;
 
-            // Prepare the data for the table
-            const data = allUsers.map(user => ({
-                name: `${user.firstName} ${user.lastName}`,
-                email: user.email || 'N/A',
-                mobile: user.mobileNumber || 'N/A',
-                status: user.isDeleted ? 'Deleted' : (user.isActive ? 'Active' : 'Inactive'),
-                roles: user.roles ? user.roles.map(r => r.name || r).join(', ') : 'None',
-                updated: format(parseISO(user.updatedAt), 'PPpp')
-            }));
-
-            // Calculate column widths based on content
-            const columnStyles = {};
-            columns.forEach((col, index) => {
-                columnStyles[index] = {
-                    cellWidth: col.cellWidth === 'auto' ? 'auto' : undefined,
-                    minCellWidth: col.cellWidth === 'wrap' ? 40 : undefined,
-                    cellPadding: 3,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1
-                };
+            // Table
+            const body = allUsers.map((user, idx) => {
+                const status = user.isDeleted ? 'DELETED' : (user.isActive ? 'ACTIVE' : 'INACTIVE');
+                return [
+                    idx + 1,
+                    `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'N/A',
+                    user.email || 'N/A',
+                    user.mobileNumber || 'N/A',
+                    status,
+                    user.roles ? user.roles.map(r => r.name || r).join(', ') : 'None',
+                    user.updatedAt ? dayjs(user.updatedAt).format('DD MMM YY HH:mm') : 'N/A',
+                ];
             });
 
-            // Add the table with proper pagination
             autoTable(doc, {
-                head: [columns.map(col => col.header)],
-                body: data.map(row => columns.map(col => row[col.dataKey])),
-                startY: 40,
-                styles: {
-                    fontSize: 8,  // Slightly smaller font to fit more content
-                    cellPadding: 1,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    textColor: [0, 0, 0],
-                    fontStyle: 'normal'
-                },
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                    lineWidth: 0.1,
-                    fontSize: 9
-                },
-                columnStyles,
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
-                margin: {
-                    top: 40,
-                    right: 10,
-                    bottom: 20,
-                    left: 10
-                },
-                tableWidth: 'wrap',
-                showHead: 'everyPage',
-                didDrawPage: function(data) {
-                    // This is where we can add content after the table is drawn
-                },
-                willDrawPage: function(data) {
-                    // Add page number to bottom of each page
-                    const pageSize = doc.internal.pageSize;
-                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-                    const pageNumber = data.pageNumber || 1;
-                    const pageCount = data.pageCount || 1;
-
-                    // Only add page numbers if we have valid values
-                    if (pageNumber && pageCount) {
-                        doc.setFontSize(10);
-                        doc.text(
-                            `Page ${pageNumber} of ${pageCount}`,
-                            data.settings.margin.left,
-                            pageHeight - 10
-                        );
+                startY: y,
+                margin: { left: L, right: L },
+                head: [['#', 'Name', 'Email', 'Mobile', 'Status', 'Roles', 'Last Updated']],
+                body,
+                styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
+                headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: accentDark },
+                alternateRowStyles: { fillColor: [252, 252, 252] },
+                columnStyles: { 0: { halign: 'center', cellWidth: 8 }, 4: { halign: 'center' } },
+                didParseCell: (data) => {
+                    if (data.column.index === 4 && data.section === 'body') {
+                        const raw = String(data.cell.raw || '');
+                        if (raw === 'ACTIVE')   { data.cell.styles.textColor = green; data.cell.styles.fontStyle = 'bold'; }
+                        else if (raw === 'INACTIVE') { data.cell.styles.textColor = [217, 119, 6]; data.cell.styles.fontStyle = 'bold'; }
+                        else if (raw === 'DELETED')  { data.cell.styles.textColor = red;  data.cell.styles.fontStyle = 'bold'; }
                     }
-                }
+                },
             });
 
-            // Save the PDF with a timestamp in the filename
-            doc.save(`users-report-${new Date().toISOString().split('T')[0]}.pdf`);
+            // Footer
+            const footerY = doc.lastAutoTable.finalY + 4;
+            doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
+            doc.roundedRect(L, footerY, TW, 10, 2, 2, 'FD');
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L + 2, footerY + 1, 8, 8);
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW / 2, footerY + 5, { align: 'center' });
+            doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text('Inventing and Making Happen', PW / 2, footerY + 8.5, { align: 'center' });
 
+            // Watermark on all pages
+            if (circularLogo) {
+                try {
+                    const wmSize = 90;
+                    const PH = doc.internal.pageSize.getHeight();
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = 200; wmCanvas.height = 200;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    const wmImg = await new Promise((resolve, reject) => {
+                        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+                        i.src = circularLogo;
+                    });
+                    wmCtx.globalAlpha = 0.07;
+                    wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+                    const wmData = wmCanvas.toDataURL('image/png');
+                    const totalPages = doc.internal.getNumberOfPages();
+                    for (let p = 1; p <= totalPages; p++) {
+                        doc.setPage(p);
+                        doc.addImage(wmData, 'PNG', PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+                    }
+                } catch (_) {}
+            }
+
+            doc.save(`users-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -723,9 +769,9 @@ const Users = () => {
         <div className="bg-white shadow-lg rounded-xl p-5 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
             <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 md:gap-0">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-800">Users</h2>
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">Users</h2>
                     <div className="flex items-center gap-2 ml-4">
-                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-700">Show Deleted</label>
+                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-800">Show Deleted</label>
                         <input
                             type="checkbox"
                             id="show-deleted"
@@ -763,23 +809,23 @@ const Users = () => {
 
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-800">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Email</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Roles</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Shifts</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-3 py-3 md:px-6 md:py-4 text-left text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Email</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Roles</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Shifts</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Status</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Last Updated</th>
+                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-white divide-y divide-gray-100">
                     {users.map((user) => (
                         <tr key={user.id} className={`hover:bg-gray-50 ${user.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.email}</td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">{user.firstName} {user.lastName}</td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{user.email}</td>
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-800">{user.firstName} {user.lastName}</td>
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
                                 <button
                                     onClick={() => handleViewRolesClick(user)}
                                     className="flex items-center text-amber-500 hover:text-amber-600 transition-colors"
@@ -789,7 +835,7 @@ const Users = () => {
                                     <span>{user.roles ? user.roles.length : '0'}</span>
                                 </button>
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
                                 <button
                                     onClick={() => handleViewShiftsClick(user)}
                                     className="flex items-center text-purple-500 hover:text-purple-600 transition-colors"
@@ -804,7 +850,7 @@ const Users = () => {
                                         {getStatusText(user)}
                                     </span>
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-500">
+                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
                                 {formatDistanceToNow(parseISO(user.updatedAt), { addSuffix: true })}
                             </td>
                             <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-left text-sm font-medium flex flex-wrap gap-2">
@@ -903,7 +949,7 @@ const Users = () => {
                 <form onSubmit={handleCreateUser} className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name *</label>
+                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-800">First Name *</label>
                             <input
                                 type="text"
                                 name="firstName"
@@ -915,7 +961,7 @@ const Users = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name *</label>
+                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">Last Name *</label>
                             <input
                                 type="text"
                                 name="lastName"
@@ -929,7 +975,7 @@ const Users = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email *</label>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email *</label>
                         <input
                             type="email"
                             name="email"
@@ -942,7 +988,7 @@ const Users = () => {
                     </div>
 
                     <div>
-                        <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                        <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-800">Mobile Number</label>
                         <input
                             type="tel"
                             name="mobileNumber"
@@ -987,7 +1033,7 @@ const Users = () => {
                     <form onSubmit={handleUpdate} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">First Name</label>
+                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-800">First Name</label>
                                 <input
                                     type="text"
                                     name="firstName"
@@ -998,7 +1044,7 @@ const Users = () => {
                                 />
                             </div>
                             <div>
-                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">Last Name</label>
+                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">Last Name</label>
                                 <input
                                     type="text"
                                     name="lastName"
@@ -1010,7 +1056,7 @@ const Users = () => {
                             </div>
                         </div>
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email</label>
                             <input
                                 type="email"
                                 name="email"
@@ -1021,7 +1067,7 @@ const Users = () => {
                             />
                         </div>
                         <div>
-                            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-800">Mobile Number</label>
                             <input
                                 type="tel"
                                 name="mobileNumber"
@@ -1287,9 +1333,9 @@ const Users = () => {
                             {selectedUserShifts.map(shift => (
                                 <tr key={shift.id}>
                                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900">{format(parseISO(shift.startTime), 'PP')}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.startTime), 'p')}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{format(parseISO(shift.endTime), 'p')}</td>
-                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{format(parseISO(shift.startTime), 'p')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">{format(parseISO(shift.endTime), 'p')}</td>
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-700">
                                         {formatDistanceToNow(parseISO(shift.startTime), { addSuffix: false })}
                                     </td>
                                 </tr>

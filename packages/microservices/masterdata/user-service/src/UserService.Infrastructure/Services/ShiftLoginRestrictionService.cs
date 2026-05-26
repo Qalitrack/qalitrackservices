@@ -328,21 +328,14 @@ namespace UserService.Infrastructure.Services
                                 activeShiftIds.Contains(us.ShiftId))
                     .ToListAsync();
 
-                bool logoutHandled = false;
-
                 foreach (var assignment in userAssignments)
                 {
                     var shift = assignment.Shift;
-                    
+
                     // Process clock-out for all shift types
                     var handled = await _shiftAttendanceHandlerService.HandleLogoutAttendanceAsync(userId, shift, currentDateTime);
-                    
-                    if (handled)
-                    {
-                        logoutHandled = true;
-                    }
-                    
-                    _logger.LogInformation("User {UserId} logout attendance handled for shift {ShiftName} (Mode: {ShiftMode}): {Handled}", 
+
+                    _logger.LogInformation("User {UserId} logout attendance handled for shift {ShiftName} (Mode: {ShiftMode}): {Handled}",
                         userId, shift.Name, shift.Mode, handled);
                 }
 

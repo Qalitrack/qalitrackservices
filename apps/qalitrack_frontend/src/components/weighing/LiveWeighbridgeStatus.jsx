@@ -1,4 +1,21 @@
 import React, { useEffect, useState, useRef } from "react";
+import { getHardwareConfig } from "../../hooks/useHardwareConfig";
+import { message } from "antd";
+
+/**
+ * Normalize raw weight from the stream.
+ *
+ * The scale indicator streams values divided by 1000 in some firmware versions
+ * (e.g. indicator reads 10 kg → stream sends 0.010000).
+ * Detection rule: if the parsed value is > 0 and < 1, multiply by 1000.
+ * Values of 0 (tare/zero) or ≥ 1 (already correct units) pass through unchanged.
+ */
+function normalizeWeight(raw) {
+  const val = typeof raw === "number" ? raw : parseFloat(String(raw).replace(/[^0-9.-]/g, ""));
+  if (isNaN(val)) return null;
+  if (val > 0 && val < 1) return Math.round(val * 1000 * 100) / 100; // reversed — fix it
+  return val; // 0 or ≥ 1 — already correct
+}
 
 export default function LiveWeighbridgeStatus({ onManualCapture }) {
   const [totalWeight, setTotalWeight] = useState("---");
@@ -8,23 +25,30 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
   const lastStableRef = useRef(null);
   const stabilityCounterRef = useRef(0);
 
-  const STABILITY_CYCLES = 3;
-  const UPDATE_INTERVAL_MS = 2000;
+  const STABILITY_CYCLES = 2;
+  const STABILITY_CHECK_MS = 200;
 
   /* ----------------------------- STREAM ----------------------------- */
   useEffect(() => {
-    const source = new EventSource(
-      "http://172.16.0.219:5000/api/PlatformData/stream"
-    );
+    const source = new EventSource(getHardwareConfig().scaleStreamUrl);
 
     source.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data?.type === "total" && data?.weight !== undefined) {
-          bufferRef.current = data.weight;
+        const raw = data?.weight !== undefined ? data.weight : (typeof data === "number" ? data : null);
+        if (raw !== null) {
+          const w = normalizeWeight(raw);
+          if (w !== null) {
+            bufferRef.current = w;
+            setTotalWeight(w);
+          }
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
+        const w = normalizeWeight(event.data);
+        if (w !== null) {
+          bufferRef.current = w;
+          setTotalWeight(w);
+        }
       }
     };
 
@@ -37,8 +61,6 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
       const current = bufferRef.current;
       if (current === null || current === undefined) return;
 
-      setTotalWeight(current);
-
       if (current === lastStableRef.current) {
         stabilityCounterRef.current += 1;
       } else {
@@ -50,7 +72,7 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
       if (stabilityCounterRef.current >= STABILITY_CYCLES) {
         setIsStable(true);
       }
-    }, UPDATE_INTERVAL_MS);
+    }, STABILITY_CHECK_MS);
 
     return () => clearInterval(interval);
   }, []);
@@ -58,12 +80,12 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
   /* ----------------------------- ACTION ------------------------------ */
   const handleCapture = () => {
     if (!isStable || typeof onManualCapture !== "function") return;
-
-    let val = bufferRef.current;
-    if (typeof val === "string") {
-      val = Number(val.replace(/[^0-9.-]/g, ""));
+    const val = normalizeWeight(bufferRef.current);
+    if (val === null) return;
+    if (val < 500) {
+      message.warning(`Invalid weight: ${val} kg — minimum valid weight is 500 kg`);
+      return;
     }
-
     onManualCapture(val);
   };
 
@@ -89,11 +111,11 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
       </div>
 
       {/* WEIGHT */}
-      <div className="text-center my-3">
-        <span className="text-3xl font-mono font-semibold text-amber-500">
+      <div className="text-center flex-1 flex items-center justify-center">
+        <span className="font-mono font-black text-amber-500 leading-none"
+          style={{ fontSize: "clamp(3rem, 10vw, 7rem)" }}>
           {totalWeight}
         </span>
-        
       </div>
 
       {/* ACTION */}

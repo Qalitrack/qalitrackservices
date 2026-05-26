@@ -20,7 +20,7 @@ namespace UserService.Core.DTOs.Roles
         public DateTime? UpdatedAt { get; set; }
         public string? CreatedBy { get; set; }
         public string? UpdatedBy { get; set; }
-        public string? IsDeleted { get; set; }
+        public bool IsDeleted { get; set; }
         public List<UserBasicInfoDto> Users { get; set; } = new List<UserBasicInfoDto>();
         public int TotalUsers { get; set; }
     }

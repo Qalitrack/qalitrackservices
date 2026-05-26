@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { getHardwareConfig } from "../hooks/useHardwareConfig";
 
 // Accept a callback function from the parent via props
 export default function LiveWeighbridgeStatus({ onWeightStable }) {
@@ -11,23 +12,24 @@ export default function LiveWeighbridgeStatus({ onWeightStable }) {
   const stabilizationCounterRef = useRef(0);
   
   // Configuration
-  const STABILITY_CYCLES = 3; // Weight must be unchanged for 3 intervals (3 * 2s = 6 seconds)
-  const UPDATE_INTERVAL_MS = 2000; // UI update frequency
+  const STABILITY_CYCLES = 1; // Report immediately on first stable reading
+  const UPDATE_INTERVAL_MS = 1000; // UI update frequency
 
   // --- 1. LISTEN TO SSE STREAM (High Frequency) ---
   useEffect(() => {
-    const source = new EventSource("http://172.16.0.215:5000/api/PlatformData/stream");
+    const source = new EventSource(getHardwareConfig().scaleStreamUrl);
 
     source.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-
-        if (data?.type === "total" && data?.weight !== undefined) {
-          // Store latest raw value in buffer, this prevents excessive re-renders
+        if (data?.weight !== undefined) {
           bufferRef.current = data.weight;
+        } else if (typeof data === "number") {
+          bufferRef.current = data;
         }
-      } catch (err) {
-        console.error("SSE parse error:", err);
+      } catch {
+        const num = parseFloat(String(event.data).replace(/[^0-9.-]/g, ""));
+        if (!isNaN(num)) bufferRef.current = num;
       }
     };
 

@@ -16,5 +16,7 @@ namespace UserService.Core.Interfaces.Services
         Task<bool> RemovePermissionFromRoleAsync(string roleId, string permissionId);
         Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId);
         Task<PagedResult<RoleDto>> GetDeletedPagedAsync(PaginationParameters parameters);
-        Task<PagedResult<RolePermissionDto>> GetDeletedRolePermissionsPagedAsync(PaginationParameters parameters);    }
+        Task<PagedResult<RolePermissionDto>> GetDeletedRolePermissionsPagedAsync(PaginationParameters parameters);
+        Task<bool> RestoreAsync(string id);
+    }
 }

@@ -5,6 +5,8 @@ import CreateTransactionForm from "./CreateTransactionForm";
 import IncompleteTransactionsTable from "./IncompleteTransactionsTable";
 import LiveWeighbridgeStatus from "./LiveWeighbridgeStatus";
 import CameraGrid from "../CameraGrid";
+import { useLicenseFeature } from "../../hooks/useLicenseFeature";
+import { LicenseFeatures } from "../../utils/LicenseFeatures";
 
 import {
   fetchVehicles, fetchDrivers, fetchProducts, fetchRoutes,
@@ -13,38 +15,52 @@ import {
 } from "../../store/weighingSlice";
 
 const INITIAL_FORM_DATA = {
-  receiptNo: "", 
-  expectedWeighings: 2, 
-  noPlate: "", 
+  // Transaction identity — must be explicitly null so isSecondWeighing = false after reset
+  id: null,
+  ticketID: null,
+  receiptNo: "",
+  expectedWeighings: 2,
+  noPlate: "",
   driverName: "",
-  vehicleId: null, 
-  driverId: null, 
-  commodityId: null, 
+  vehicleId: null,
+  vehicleID: null,
+  driverId: null,
+  driverID: null,
+  commodityId: null,
+  commodityID: null,
   commodityName: "",
-  transporterId: null, 
-  transporterName: "", 
-  supplierId: null, 
+  transporterId: null,
+  transporterID: null,
+  transporterName: "",
+  supplierId: null,
+  supplierID: null,
   supplierName: "",
-  customerId: null, 
-  customerName: "", 
-  originId: null, 
+  customerId: null,
+  customerID: null,
+  customerName: "",
+  originId: null,
+  originID: null,
   originName: "",
-  destinationId: null, 
-  destinationName: "", 
-  operation: "Inbound Product Receipt", 
+  destinationId: null,
+  destinationID: null,
+  destinationName: "",
+  operation: "Inbound Product Receipt",
   weighMode: "Gross/Tare",
-  firstWeight: "", 
-  secondWeight: "", 
-  scaleName: "", 
-  operatorName: "", 
+  firstWeight: "",
+  secondWeight: "",
+  scaleName: "Katani Simple",
+  operatorName: "",
   operatorId: null,
-  weighBridgeId: null, 
-  weighBridgeName: "",
+  operatorID: null,
+  weighBridgeId: null,
+  weighBridgeID: null,
+  weighBridgeName: "Katani Simple",
 };
 
 export default function WeighingDashboard() {
   const dispatch = useDispatch();
   const { error, weighbridges = [] } = useSelector((state) => state.weighing);
+  const anprLicensed = useLicenseFeature(LicenseFeatures.ANPR);
   const [capturedWeight, setCapturedWeight] = useState(null);
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -75,6 +91,11 @@ export default function WeighingDashboard() {
     if (!weight || weight <= 0) return message.error("Invalid weight");
     setCapturedWeight(weight);
     message.success(`Captured: ${weight} kg`);
+  };
+
+  const handlePlateConfirmed = (plate, source) => {
+    setFormData((prev) => ({ ...prev, noPlate: plate, nprSource: source }));
+    message.success(`Plate set: ${plate} (${source === "auto" ? "Auto NPR" : "Manual"})`);
   };
 
   const handleTransactionCreated = () => {
@@ -119,11 +140,19 @@ export default function WeighingDashboard() {
         <div className="w-[62%] flex flex-col gap-2 h-full">
           <div className="grid grid-cols-2 gap-2 h-1/2">
             <LiveWeighbridgeStatus onManualCapture={handleManualCapture} />
-            <div className="bg-black rounded overflow-hidden"><CameraGrid type="live" /></div>
+            <div className="bg-black rounded overflow-hidden">
+              {anprLicensed ? <CameraGrid type="live" /> : <AnprLockedTile label="Live Feed" />}
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-2 h-1/2">
-            <div className="bg-black rounded overflow-hidden"><CameraGrid type="snapshot" /></div>
-            <div className="bg-black rounded overflow-hidden"><CameraGrid type="plate" /></div>
+            <div className="bg-black rounded overflow-hidden">
+              {anprLicensed ? <CameraGrid type="snapshot" /> : <AnprLockedTile label="Snapshot" />}
+            </div>
+            <div className="bg-black rounded overflow-hidden">
+              {anprLicensed
+                ? <CameraGrid type="plate" onPlateConfirmed={handlePlateConfirmed} />
+                : <AnprLockedTile label="Plate Recognition" />}
+            </div>
           </div>
         </div>
       </div>
@@ -154,6 +183,18 @@ export default function WeighingDashboard() {
           />
         </Card>
       </div>
+    </div>
+  );
+}
+
+function AnprLockedTile({ label }) {
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-gray-950 text-gray-600">
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+      </svg>
+      <p className="text-[10px] font-medium">{label}</p>
+      <p className="text-[9px] text-gray-700">ANPR not licensed</p>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, Input, Button, message, Tag, Typography, Tooltip, Divider } from "antd";
 import { SyncOutlined, MonitorOutlined, ArrowRightOutlined, InfoCircleOutlined } from "@ant-design/icons";
-import { addWeighing as addWeighingThunk } from "../../store/weighingSlice";
+import { addSecondWeight as addWeighingThunk, completeTransactionThunk } from "../../store/weighingSlice";
 
 const { Text } = Typography;
 
@@ -85,7 +85,8 @@ export default function AddWeighingModal({
     setLoading(true);
     try {
       const payload = {
-        transactionId: transaction.id,
+        transactionId: transaction.ticketID || transaction.id,
+        ticketID: transaction.ticketID || transaction.id,
         weight: parseFloat(formData.weight),
         weighBridgeId: transaction.weighBridgeId,
         weighBridgeName: transaction.weighBridgeName,
@@ -97,6 +98,15 @@ export default function AddWeighingModal({
       };
 
       await dispatch(addWeighingThunk(payload)).unwrap();
+      // Explicitly complete the transaction so it leaves the active queue
+      try {
+        await dispatch(
+          completeTransactionThunk({
+            ticketID: transaction.ticketID || transaction.id,
+            transactionId: transaction.ticketID || transaction.id,
+          })
+        ).unwrap();
+      } catch (_) { /* non-fatal — second weight already saved */ }
       message.success(`Transaction Finalized! Net: ${netWeight} KG`);
       onSuccess();
       onClose();
@@ -117,7 +127,7 @@ export default function AddWeighingModal({
     <Modal
       title={
         <div className="flex items-center gap-2">
-          <MonitorOutlined className="text-blue-600" />
+          <MonitorOutlined className="text-amber-600" />
           <span className="text-sm font-black uppercase tracking-tight">Finalize Transaction</span>
         </div>
       }
@@ -141,7 +151,7 @@ export default function AddWeighingModal({
               </div>
               <div className="text-right">
                 <FieldLabel>Operation</FieldLabel>
-                <Tag color={transaction.operation.includes('Inbound') ? 'green' : 'blue'} className="mr-0 border-none font-bold">
+                <Tag color={transaction.operation.includes('Inbound') ? 'green' : 'orange'} className="mr-0 border-none font-bold">
                   {transaction.operation.includes('Inbound') ? 'INBOUND' : 'OUTBOUND'}
                 </Tag>
               </div>
@@ -157,7 +167,7 @@ export default function AddWeighingModal({
               </div>
               <div className="text-center border-l border-white/10">
                 <div className="text-[9px] text-gray-400 font-bold">W2 (KG)</div>
-                <div className="font-mono text-sm font-bold text-blue-400">
+                <div className="font-mono text-sm font-bold text-amber-400">
                    {formData.weight ? parseFloat(formData.weight).toLocaleString() : '---'}
                 </div>
               </div>
@@ -186,7 +196,7 @@ export default function AddWeighingModal({
                   placeholder="0.00"
                   size="large"
                   autoFocus
-                  className={`font-mono text-2xl font-black flex-1 ${!isValid && formData.weight ? 'border-red-500 bg-red-50' : 'border-blue-200'}`}
+                  className={`font-mono text-2xl font-black flex-1 ${!isValid && formData.weight ? 'border-red-500 bg-red-50' : 'border-amber-200'}`}
                   suffix={<span className="text-gray-400 text-sm">KG</span>}
                 />
                 <Tooltip title="Pull from Scale">
@@ -194,7 +204,7 @@ export default function AddWeighingModal({
                     icon={<SyncOutlined />} 
                     onClick={handleSyncWeight}
                     size="large"
-                    className="h-auto px-4 border-blue-200 text-blue-600"
+                    className="h-auto px-4 border-amber-300 text-amber-600"
                   />
                 </Tooltip>
               </div>
@@ -236,7 +246,7 @@ export default function AddWeighingModal({
               onClick={handleSubmit}
               loading={loading}
               disabled={!isValid}
-              className={`rounded-lg font-bold shadow-lg border-none ${isValid ? 'bg-blue-600' : 'bg-gray-300'}`}
+              className={`rounded-lg font-bold shadow-lg border-none ${isValid ? 'bg-amber-500 hover:bg-amber-600' : 'bg-gray-300'}`}
             >
               FINALIZE & PRINT
             </Button>

@@ -682,12 +682,8 @@ public class InstallerWizard : Form
         Thread.Sleep(1500);
 
         Directory.CreateDirectory(InstallPath);
+        CopyDirectory(Path.GetDirectoryName(exePath)!, InstallPath);
         var dest = Path.Combine(InstallPath, "Qalitrack.exe");
-        File.Copy(exePath, dest, overwrite: true);
-
-        var wwwroot = Path.Combine(Path.GetDirectoryName(exePath)!, "wwwroot");
-        if (Directory.Exists(wwwroot))
-            CopyDirectory(wwwroot, Path.Combine(InstallPath, "wwwroot"));
 
         Run("sc.exe", $"create \"{ServiceName}\" binPath= \"\\\"{dest}\\\"\" DisplayName= \"{DisplayName}\" start= auto");
         Run("sc.exe", $"description \"{ServiceName}\" \"{Description}\"");

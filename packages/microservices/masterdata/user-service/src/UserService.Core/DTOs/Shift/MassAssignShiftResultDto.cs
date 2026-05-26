@@ -6,7 +6,7 @@ namespace UserService.Core.DTOs.Shift
     public class MassAssignShiftResultDto
     {
         public bool Success { get; set; }
-        public string Message { get; set; }
+        public required string Message { get; set; }
         public int TotalUsersProcessed { get; set; }
         public int UsersAssigned { get; set; }
         public int UsersFailed { get; set; }

@@ -11,5 +11,7 @@ public class UpdateProductDto
     public string Name { get; set; } = null!;
 
     public string? Description { get; set; }
+    public string? Unit { get; set; }
+    public string Status { get; set; } = "Active";
     public string? Image { get; set; }
 }

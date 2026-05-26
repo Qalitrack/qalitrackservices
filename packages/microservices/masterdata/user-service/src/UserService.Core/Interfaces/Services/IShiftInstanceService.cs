@@ -18,6 +18,8 @@ public interface IShiftInstanceService
     Task<IEnumerable<ShiftInstanceResponse>> GetUpcomingInstancesAsync(int days = 7);
     Task<bool> CancelInstanceAsync(string shiftInstanceId, string reason);
     Task<IEnumerable<ShiftInstanceResponse>> UpdateShiftInstancesAsync(string shiftId, ShiftInstanceGenerateRequest request);
+    Task<int> CleanupInstancesOnExceptionDatesAsync(string shiftId);
+    Task<int> CancelPastExceptionInstancesAsync(string shiftId, string reason = "Exception date added retroactively");
     // Status management
     Task<ShiftInstanceResponse?> GetCurrentActiveInstanceAsync(string shiftId);
 }

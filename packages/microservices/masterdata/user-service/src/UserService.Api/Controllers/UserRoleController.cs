@@ -42,7 +42,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -65,7 +65,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -75,7 +75,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while assigning role to user", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -107,7 +107,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -129,7 +129,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -139,7 +139,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while removing role from user", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }

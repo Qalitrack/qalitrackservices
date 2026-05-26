@@ -125,10 +125,13 @@ namespace Masterdata.Infrastructure.Data
                 entity.Property(e => e.EndPoint).IsRequired().HasMaxLength(200);
             });
 
+            modelBuilder.Entity<Weighbridge>(entity => {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Scales).HasColumnType("jsonb");
+            });
+
             modelBuilder.Entity<Sacco>(entity => {
                 entity.HasKey(e => e.Id);
-                entity.Property(e => e.ContactInfo).HasColumnType("jsonb"); // ✅ Restored JSONB
-                entity.Property(e => e.OtherDetails).HasColumnType("jsonb");
             });
 
             modelBuilder.Entity<Organisation>(entity => {

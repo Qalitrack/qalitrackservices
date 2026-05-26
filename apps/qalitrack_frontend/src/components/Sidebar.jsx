@@ -32,7 +32,8 @@ import {
   Database,
 } from "lucide-react";
 import useAuth from "../api/helpers/auth";
-import staticLogo from "/src/assets/logorange.svg";
+import qalitrackLogoIcon from "/src/assets/qalitrack_logo.png";
+import qalitrackLogoFull from "/src/assets/qalitrack_logo_full.png";
 import { useSidebarSettings } from "../components/Context/Sidebarsettingscontext";
 
 export default function UnifiedSidebar({ isCollapsed, onToggle }) {
@@ -42,7 +43,6 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
 
   // ── Live sidebar settings from Context ─────────────────────────────────────
   const { sidebarSettings, resolvedTheme } = useSidebarSettings();
-  const logoSrc = sidebarSettings.companyLogo || staticLogo;
 
   const user = getCurrentUser();
   const userRoles = user?.userRoles || [];
@@ -65,32 +65,33 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
 
   // ── Menu items (unchanged from original) ──────────────────────────────────
   const allMenuItems = [
-    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: `${basePath}/dashboard`, roles: ["Admin", "Operator"] },
+    // Dashboard — all roles except Operator
+    { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: `${basePath}/dashboard`, roles: null, excludeRoles: ["Operator"] },
     {
+      // Weighing group — visible to all authenticated users
       key: "weighing",
       label: "Weighing",
       icon: <Scale size={18} />,
-      roles: ["Admin", "Operator"],
+      roles: null,
       children: [
-        { key: "weighing-factory",     label: "Factory Weighing",  icon: <Factory size={16} />,       path: `${basePath}/weighing/factory`,    roles: ["Admin", "Operator"] },
-        { key: "transactions",         label: "Transactions",      icon: <LayoutDashboard size={16} />,path: `${basePath}/transactions`,        roles: ["Admin", "Operator"] },
-        { key: "weighing-vehicles",    label: "Vehicles",          icon: <Truck size={16} />,          path: `${basePath}/weighing/vehicle`,    roles: ["Admin", "Operator"] },
-        { key: "weighing-drivers",     label: "Drivers",           icon: <User size={16} />,           path: `${basePath}/weighing/drivers`,    roles: ["Admin", "Operator"] },
-        { key: "weighing-transporters",label: "Transporters",      icon: <Tractor size={16} />,        path: `${basePath}/transporters`,        roles: ["Admin", "Operator"] },
-        { key: "weighing-owners",      label: "Owners",            icon: <Users size={16} />,          path: `${basePath}/weighing/owners`,     roles: ["Admin", "Operator"] },
-        { key: "suppliers",            label: "Suppliers",         icon: <Satellite size={16} />,      path: `${basePath}/suppliers`,           roles: ["Admin", "Operator"] },
-        { key: "weighing-products",    label: "Products",          icon: <BarChart3 size={16} />,      path: `${basePath}/weighing/products`,   roles: ["Admin", "Operator"] },
-        { key: "weighing-weighbridges",label: "Weighbridges",      icon: <Scale size={16} />,          path: `${basePath}/weighbridges`,        roles: ["Admin"] },
-        { key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,          path: `${basePath}/weighing/axle-config`,roles: ["Admin"] },
-        { key: "weighing-saccos",      label: "Saccos",            icon: <User2 size={16} />,          path: `${basePath}/saccos`,              roles: ["Admin", "Operator"] },
+        { key: "weighing-factory",     label: "Factory Weighing",  icon: <Factory size={16} />,        path: `${basePath}/weighing/factory`,    roles: null },
+        { key: "transactions",         label: "Transactions",      icon: <LayoutDashboard size={16} />, path: `${basePath}/transactions`,        roles: null },
+        { key: "weighing-vehicles",    label: "Vehicles",          icon: <Truck size={16} />,           path: `${basePath}/weighing/vehicle`,    roles: null },
+        { key: "weighing-drivers",     label: "Drivers",           icon: <User size={16} />,            path: `${basePath}/weighing/drivers`,    roles: null },
+        { key: "weighing-transporters",label: "Transporters",      icon: <Tractor size={16} />,         path: `${basePath}/transporters`,        roles: null },
+        { key: "weighing-owners",      label: "Owners",            icon: <Users size={16} />,           path: `${basePath}/weighing/owners`,     roles: null },
+        { key: "suppliers",            label: "Suppliers",         icon: <Satellite size={16} />,       path: `${basePath}/suppliers`,           roles: null },
+        { key: "weighing-products",    label: "Products",          icon: <BarChart3 size={16} />,       path: `${basePath}/weighing/products`,   roles: null },
+{ key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,           path: `${basePath}/weighing/axle-config`,roles: ["Admin"] },
+        { key: "weighing-saccos",      label: "Saccos",            icon: <User2 size={16} />,           path: `${basePath}/saccos`,              roles: null },
       ],
     },
-    { key: "user-management",  label: "User Management",  icon: <Users size={18} />,    path: `${basePath}/user-management`,       roles: ["Admin"] },
-    { key: "analytics",        label: "Analytics",         icon: <BarChart3 size={18} />,path: `${basePath}/analytics`,            roles: ["Admin"] },
-    { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,              roles: ["Admin"] },
-    { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,               roles: ["Admin"] },
-    { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`,     roles: ["Admin"] },
-    { key: "attendance",       label: "Attendance",        icon: <User2 size={18} />,    path: `${basePath}/attendance`,           roles: ["Admin"] },
+    { key: "user-management",  label: "User Management",  icon: <Users size={18} />,    path: `${basePath}/user-management`,   roles: ["Admin"] },
+    // Analytics, Reports — visible to all authenticated users; System — all except Operator
+    { key: "analytics",        label: "Analytics",         icon: <BarChart3 size={18} />,path: `${basePath}/analytics`,        roles: null },
+    { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,          roles: null },
+    { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,           roles: ["Admin"] },
+    { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`, roles: ["Admin"] },
     {
       key: "security",
       label: "Security",
@@ -102,20 +103,23 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
         { key: "password-policy", label: "Password Policy",icon: <Lock size={16} />,   path: `${basePath}/security/password-policy`,roles: ["Admin"] },
       ],
     },
-    { key: "backup",      label: "Backup Service", icon: <Database size={18} />, path: `${basePath}/backup/microservice`, roles: ["Admin"] },
-    { key: "system",      label: "System",         icon: <Cog size={18} />,      path: `${basePath}/system`,              roles: ["Admin"] },
-    { key: "automation",  label: "Automation",     icon: <Cog size={18} />,      path: `${basePath}/automation`,          roles: ["Admin"] },
-    { key: "calibrations",label: "Calibrations",   icon: <Wrench size={18} />,   path: `${basePath}/calibrations`,        roles: ["Admin"] },
+    { key: "system",      label: "System",         icon: <Cog size={18} />,      path: `${basePath}/system`,              roles: null, excludeRoles: ["Operator"] },
+    { key: "backup",      label: "Backup",         icon: <Database size={18} />, path: `${basePath}/backup/microservice`, roles: ["Admin"] },
+    // { key: "automation",  label: "Automation",     icon: <Cog size={18} />,  path: `${basePath}/automation`, roles: ["Admin"] },
   ];
 
   const filterMenuByRole = (items) => {
     return items.filter((item) => {
-      const hasAccess = item.roles?.some((role) => userRoles.includes(role));
+      // excludeRoles: hide from specific roles even if they'd otherwise have access
+      if (item.excludeRoles?.some((role) => userRoles.includes(role))) return false;
+      // null/undefined roles = visible to all authenticated users
+      const hasAccess = !item.roles || item.roles.some((role) => userRoles.includes(role));
       if (!hasAccess) return false;
       if (item.children) {
-        item.children = item.children.filter((child) =>
-          child.roles?.some((role) => userRoles.includes(role))
-        );
+        item.children = item.children.filter((child) => {
+          if (child.excludeRoles?.some((role) => userRoles.includes(role))) return false;
+          return !child.roles || child.roles.some((role) => userRoles.includes(role));
+        });
         return item.children.length > 0;
       }
       return true;
@@ -145,34 +149,24 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
     >
       {/* ── Branding + Collapse ─────────────────────────────────────────────── */}
       <div
-        className={`flex items-center relative py-6 ${
-          isCollapsed ? "justify-center px-0" : "justify-between px-6"
+        className={`flex items-center relative py-1 ${
+          isCollapsed ? "justify-center px-0" : "justify-between px-3"
         }`}
       >
-        <div className="flex items-center gap-3">
+        {isCollapsed ? (
           <img
-            src={logoSrc}
-            alt="Logo"
-            className={`transition-all duration-300 object-contain ${
-              isCollapsed ? "h-8 w-8" : "h-12"
-            }`}
-            style={{
-              // If it's a base64 upload, give it a white bg pill so it reads on dark sidebar
-              borderRadius: sidebarSettings.companyLogo ? "6px" : undefined,
-              background: sidebarSettings.companyLogo ? "rgba(255,255,255,0.9)" : undefined,
-              padding: sidebarSettings.companyLogo ? "2px" : undefined,
-            }}
+            src={qalitrackLogoIcon}
+            alt="QaliTrack"
+            className="h-8 w-8 object-contain transition-all duration-300"
           />
-          {!isCollapsed && sidebarSettings.companyLogo && (
-            <span
-              className="text-[11px] font-semibold leading-tight max-w-[120px] truncate"
-              style={{ color: resolvedTheme.text, opacity: 0.85 }}
-              title={sidebarSettings.companyName}
-            >
-              {sidebarSettings.companyName}
-            </span>
-          )}
-        </div>
+        ) : (
+          <img
+            src={qalitrackLogoFull}
+            alt="QaliTrack"
+            className="w-full h-auto object-contain transition-all duration-300"
+            style={{ maxWidth: "calc(100% - 16px)" }}
+          />
+        )}
 
         <button
           onClick={onToggle}
@@ -290,16 +284,23 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <div
         className="px-3 py-3 text-xs"
-        style={{ borderTop: `1px solid ${resolvedTheme.border}`, color: resolvedTheme.text, opacity: 0.6 }}
+        style={{ borderTop: `1px solid ${resolvedTheme.border}`, opacity: 0.75 }}
       >
         {!isCollapsed ? (
-          <div className="flex items-center justify-between">
-            <span>v0.1</span>
-            <span style={accentStyle} className="font-semibold">QSL</span>
+          <div className="text-center space-y-0.5">
+            <p style={{ color: resolvedTheme.text }} className="text-[10px]">
+              Powered by{" "}
+              <span style={accentStyle} className="font-semibold">
+                Qalibrated Systems
+              </span>
+            </p>
+            <p style={{ color: resolvedTheme.text }} className="text-[10px] opacity-60">
+              &copy; {new Date().getFullYear()} All rights reserved.
+            </p>
           </div>
         ) : (
           <div className="flex justify-center">
-            <span style={accentStyle}>v0.1</span>
+            <span style={accentStyle} className="text-[10px] font-bold">Q</span>
           </div>
         )}
       </div>

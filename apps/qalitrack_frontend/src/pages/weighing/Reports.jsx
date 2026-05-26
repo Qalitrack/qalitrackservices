@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
 import DriverReport from "./reportFiles/DriverReport";
+import ReweighedTransactionsReport from "./reportFiles/ReweighedTransactionsReport";
 import CustomerReport from "./reportFiles/CustomerReport";
 import CommodityReport from "./reportFiles/CommodityReport";
 import SupplierReport from "./reportFiles/SupplierReport";
@@ -9,7 +10,7 @@ import SupplierReport from "./reportFiles/SupplierReport";
 // NEW ADVANCED REPORT COMPONENTS
 import ReportAnalytics from "./ReportAnalytics";
 import CustomReportBuilder from "./CustomReportBuilder";
-import ReportScheduler from "./ReportScheduler";
+// import ReportScheduler from "./ReportScheduler"; // TODO: backend not implemented yet
 import CrossEntityComparison from "./CrossEntityComparison";
 
 import { fetchTransactions } from "../../store/weighingSlice";
@@ -22,6 +23,8 @@ import dayjs from "dayjs";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
+import logoSrc from "../../assets/logo.jpeg";
+import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
 
 export default function Reports() {
   const dispatch = useDispatch();
@@ -29,6 +32,7 @@ export default function Reports() {
 
   const REPORT_TABS = [
     { id: "transactions", label: "Transactions", icon: null },
+    { id: "reweighed", label: "Reweighed Transactions", icon: null },
     { id: "drivers", label: "Drivers", icon: null },
     { id: "customers", label: "Customers", icon: null },
     { id: "commodities", label: "Commodities", icon: null },
@@ -36,7 +40,7 @@ export default function Reports() {
     { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} />, badge: "NEW" },
     { id: "comparison", label: "Comparison", icon: <GitCompare size={14} />, badge: "NEW" },
     { id: "custom", label: "Custom Builder", icon: <Settings size={14} />, badge: "NEW" },
-    { id: "scheduler", label: "Scheduler", icon: <Calendar size={14} />, badge: "NEW" },
+    // { id: "scheduler", label: "Scheduler", icon: <Calendar size={14} />, badge: "NEW" }, // TODO: backend not implemented yet
   ];
 
   const [activeTab, setActiveTab] = useState("transactions");
@@ -73,11 +77,19 @@ export default function Reports() {
   // =========================
   // Turnaround Calculation
   // =========================
-  const calculateTurnaroundTime = (firstWeightTime, secondWeightTime) => {
-    if (!firstWeightTime || !secondWeightTime) return "N/A";
-    const first = dayjs(firstWeightTime);
-    const second = dayjs(secondWeightTime);
-    const diffMinutes = second.diff(first, "minute");
+  const calculateTurnaroundTime = (firstWeightDate, secondWeightDate, turnaroundTime) => {
+    if (turnaroundTime) {
+      const parts = turnaroundTime.split(":");
+      if (parts.length >= 2) {
+        const h = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const total = h * 60 + m;
+        if (total < 1) return "< 1m";
+        return h > 0 ? (m ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+      }
+    }
+    if (!firstWeightDate || !secondWeightDate) return "N/A";
+    const diffMinutes = dayjs(secondWeightDate).diff(dayjs(firstWeightDate), "minute");
     if (diffMinutes < 1) return "< 1m";
     if (diffMinutes < 60) return `${diffMinutes}m`;
     const hours = Math.floor(diffMinutes / 60);
@@ -155,32 +167,109 @@ export default function Reports() {
   // =========================
   // EXPORTS
   // =========================
-  const exportPDF = () => {
+  const exportPDF = async () => {
+    const settings     = getTicketSettings();
+    const companyName  = settings.companyName    || "QALIBRATED SYSTEMS LTD";
+    const companyAddr  = settings.companyAddress || "PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996";
+
     const doc = new jsPDF("landscape", "mm", "a4");
-    const pageWidth = doc.internal.pageSize.getWidth();
+    const PW  = doc.internal.pageSize.getWidth();   // 297
+    const L   = 14;
+    const R   = PW - 14;
+    const TW  = R - L;
 
-    doc.setFillColor(245, 158, 11);
-    doc.rect(0, 0, pageWidth, 20, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(16);
+    // ── Palette ───────────────────────────────────────────────────────────
+    const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings);
+    const black      = [0,   0,   0];
+    const gray       = [107, 114, 128];
+    const borderCol  = [229, 231, 235];
+    const green      = [21,  128, 61];
+
+    // ── Pre-load logo (circular crop via canvas) ──────────────────────────
+    let circularLogo = null;
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const i = new Image();
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = settings.companyLogo || logoSrc;
+      });
+      const sz = Math.min(img.naturalWidth, img.naturalHeight);
+      const cv = document.createElement("canvas");
+      cv.width = sz; cv.height = sz;
+      const ctx = cv.getContext("2d");
+      ctx.beginPath();
+      ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
+      ctx.clip();
+      const srcX = (img.naturalWidth - sz) / 2;
+      const srcY = (img.naturalHeight - sz) / 2;
+      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+      circularLogo = cv.toDataURL("image/png");
+    } catch (_) { /* logo unavailable */ }
+
+    // ── HEADER ────────────────────────────────────────────────────────────
+    if (circularLogo) doc.addImage(circularLogo, "PNG", L, 5, 17, 17);
+
+    doc.setFontSize(14);
     doc.setFont("helvetica", "bold");
-    doc.text("TRANSACTIONS REPORT", pageWidth / 2, 10, { align: "center" });
-    doc.setFontSize(10);
+    doc.setTextColor(...black);
+    doc.text(companyName, PW / 2, 11, { align: "center" });
+
+    doc.setFontSize(7.5);
     doc.setFont("helvetica", "normal");
-    doc.text(
-      `Generated: ${dayjs().format("DD MMM YYYY HH:mm")}`,
-      pageWidth / 2,
-      15,
-      { align: "center" }
-    );
+    doc.setTextColor(...gray);
+    doc.text(companyAddr, PW / 2, 16, { align: "center" });
 
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(9);
-    doc.text(`Total Records: ${filteredTransactions.length}`, 14, 25);
-    doc.text(`Total Net Weight: ${totals.net.toLocaleString()} kg`, 14, 30);
+    // Report badge (right)
+    const badgeW = 52;
+    doc.setFillColor(...accent);
+    doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, "F");
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...accentHeaderText);
+    doc.text("TRANSACTIONS REPORT", R - badgeW / 2, 9.5, { align: "center" });
 
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...gray);
+    doc.text(`Generated: ${dayjs().format("DD MMM YYYY HH:mm")}`, R, 16, { align: "right" });
+
+    // Amber divider
+    doc.setDrawColor(...accent);
+    doc.setLineWidth(0.8);
+    doc.line(L, 23, R, 23);
+
+    // ── SUMMARY STATS ─────────────────────────────────────────────────────
+    let y = 27;
+    const statW = (TW - 8) / 3;
+    const stats = [
+      { label: "TOTAL RECORDS",    value: `${filteredTransactions.length}` },
+      { label: "TOTAL NET WEIGHT", value: `${totals.net.toLocaleString()} kg` },
+      { label: "REPORT DATE",      value: dayjs().format("DD MMM YYYY") },
+    ];
+
+    stats.forEach((s, i) => {
+      const bx = L + i * (statW + 4);
+      doc.setFillColor(...accentLight);
+      doc.setDrawColor(...accentDark);
+      doc.setLineWidth(0.3);
+      doc.roundedRect(bx, y, statW, 10, 2, 2, "FD");
+      doc.setFontSize(6.5);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...gray);
+      doc.text(s.label, bx + statW / 2, y + 3.8, { align: "center" });
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...black);
+      doc.text(s.value, bx + statW / 2, y + 8.2, { align: "center" });
+    });
+
+    y += 14;
+
+    // ── DATA TABLE ────────────────────────────────────────────────────────
     autoTable(doc, {
-      startY: 35,
+      startY: y,
+      margin: { left: L, right: L },
       head: [[
         "#", "Date & Time", "Receipt", "Vehicle", "Driver", "Commodity",
         "Supplier", "Transporter", "Customer", "Origin", "Destination",
@@ -194,41 +283,102 @@ export default function Reports() {
         return [
           idx + 1,
           dayjs(t.createdAt).format("DD MMM YY HH:mm"),
-          t.receiptNo || "-",
-          t.noPlate || "-",
-          t.driverName || "-",
-          t.commodityName || "-",
-          t.supplierName || "-",
-          t.transporterName || "-",
-          t.customerName || "-",
-          t.originName || "-",
-          t.destinationName || "-",
-          t.weighBridgeName || "-",
-          t.scaleName || "-",
-          t.weighMode || "-",
-          t.operation || "-",
+          t.receiptNo          || "-",
+          t.noPlate            || "-",
+          t.driverName         || "-",
+          t.commodityName      || "-",
+          t.supplierName       || "-",
+          t.transporterName    || "-",
+          t.customerName       || "-",
+          t.originName         || "-",
+          t.destinationName    || "-",
+          t.weighBridgeName    || "-",
+          t.scaleName          || "-",
+          t.weighMode          || "-",
+          t.operation          || "-",
           t.operatorName || t.firstWeightOperator || "-",
-          t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-",
+          t.firstWeight  ? parseFloat(t.firstWeight).toLocaleString()  : "-",
           t.secondWeight ? parseFloat(t.secondWeight).toLocaleString() : "-",
-          t.netWeight ? parseFloat(t.netWeight).toLocaleString() : "-",
-          calculateTurnaroundTime(t.firstWeightTime, t.secondWeightTime),
+          t.netWeight    ? parseFloat(t.netWeight).toLocaleString()    : "-",
+          calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime),
           isCompleted ? "COMPLETED" : "IN PROGRESS",
         ];
       }),
-      styles: { fontSize: 7, cellPadding: 1.5 },
+      styles: {
+        fontSize: 6.5,
+        cellPadding: 1.5,
+        textColor: black,
+        lineColor: borderCol,
+      },
       headStyles: {
-        fillColor: [245, 158, 11],
-        textColor: [0, 0, 0],
+        fillColor: accent,
+        textColor: accentHeaderText,
         fontStyle: "bold",
         fontSize: 7,
+        halign: "center",
+        lineColor: accentDark,
       },
-      alternateRowStyles: { fillColor: [250, 250, 250] },
+      alternateRowStyles: { fillColor: [252, 252, 252] },
       columnStyles: {
+        0:  { halign: "center", cellWidth: 6 },
         16: { halign: "right" },
         17: { halign: "right" },
-        18: { halign: "right" },
+        18: { halign: "right", fontStyle: "bold" },
+        20: { halign: "center", cellWidth: 18 },
+      },
+      didParseCell: (data) => {
+        if (data.column.index === 20 && data.section === "body") {
+          if (data.cell.raw === "COMPLETED") {
+            data.cell.styles.textColor = green;
+            data.cell.styles.fontStyle = "bold";
+          } else {
+            data.cell.styles.textColor = accentDark;
+            data.cell.styles.fontStyle = "bold";
+          }
+        }
       },
     });
+
+    // ── FOOTER ────────────────────────────────────────────────────────────
+    const footerY = doc.lastAutoTable.finalY + 4;
+    doc.setFillColor(...accentLight);
+    doc.setDrawColor(...accentDark);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(L, footerY, TW, 10, 2, 2, "FD");
+
+    if (circularLogo) doc.addImage(circularLogo, "PNG", L + 2, footerY + 1, 8, 8);
+
+    doc.setFontSize(7.5);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(...black);
+    doc.text("Powered by Qalibrated Systems  |  www.qalibrated.co.ke", PW / 2, footerY + 5, { align: "center" });
+    doc.setFontSize(6.5);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...gray);
+    doc.text("Inventing and Making Happen", PW / 2, footerY + 8.5, { align: "center" });
+
+    // Watermark on all pages
+    if (circularLogo) {
+      try {
+        const wmSize = 90;
+        const PH = doc.internal.pageSize.getHeight();
+        const wmCanvas = document.createElement("canvas");
+        wmCanvas.width = 200; wmCanvas.height = 200;
+        const wmCtx = wmCanvas.getContext("2d");
+        const wmImg = await new Promise((resolve, reject) => {
+          const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+          i.src = circularLogo;
+        });
+        wmCtx.globalAlpha = 0.07;
+        wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+        const wmData = wmCanvas.toDataURL("image/png");
+        const totalPages = doc.internal.getNumberOfPages();
+        for (let p = 1; p <= totalPages; p++) {
+          doc.setPage(p);
+          doc.addImage(wmData, "PNG", PW / 2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+        }
+      } catch (_) {}
+    }
 
     doc.save(`transaction-report-${dayjs().format("YYYY-MM-DD")}.pdf`);
   };
@@ -263,15 +413,16 @@ export default function Reports() {
           "First Weight (kg)": t.firstWeight ? parseFloat(t.firstWeight) : 0,
           "Second Weight (kg)": t.secondWeight ? parseFloat(t.secondWeight) : 0,
           "Net Weight (kg)": t.netWeight ? parseFloat(t.netWeight) : 0,
-          "First Weight Time": t.firstWeightTime
-            ? dayjs(t.firstWeightTime).format("DD MMM YYYY HH:mm:ss")
+          "First Weight Time": t.firstWeightDate
+            ? dayjs(t.firstWeightDate).format("DD MMM YYYY HH:mm:ss")
             : "-",
-          "Second Weight Time": t.secondWeightTime
-            ? dayjs(t.secondWeightTime).format("DD MMM YYYY HH:mm:ss")
+          "Second Weight Time": t.secondWeightDate
+            ? dayjs(t.secondWeightDate).format("DD MMM YYYY HH:mm:ss")
             : "-",
           "Turnaround Time": calculateTurnaroundTime(
-            t.firstWeightTime,
-            t.secondWeightTime
+            t.firstWeightDate,
+            t.secondWeightDate,
+            t.turnaroundTime
           ),
           Status: isCompleted ? "COMPLETED" : "IN PROGRESS",
           Remarks: t.remarks || t.notes || "-",
@@ -315,8 +466,14 @@ export default function Reports() {
       return <CustomReportBuilder transactions={filteredTransactions} />;
     }
     
-    if (activeTab === "scheduler") {
-      return <ReportScheduler transactions={filteredTransactions} />;
+    // if (activeTab === "scheduler") { // TODO: backend not implemented yet
+    //   return <ReportScheduler transactions={filteredTransactions} />;
+    // }
+
+    // REWEIGHED TRANSACTIONS REPORT — pass ALL unfiltered transactions so parent
+    // date/status filters don't accidentally exclude ReweighRequested records
+    if (activeTab === "reweighed") {
+      return <ReweighedTransactionsReport transactions={transactions} loading={loading} />;
     }
 
     // EXISTING REPORTS
@@ -385,7 +542,7 @@ export default function Reports() {
     );
   };
 
-  // Don't show filters for advanced tabs
+  // Don't show filters for advanced tabs or reweighed (has its own filter UI)
   const showFiltersPanel = [
     "transactions", "drivers", "customers", "commodities", "suppliers"
   ].includes(activeTab);
@@ -476,6 +633,17 @@ export default function Reports() {
                 />
               </div>
 
+              {/* Status filter — always visible */}
+              <select
+                value={filters.status}
+                onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                className="h-7 px-2 border border-gray-300 rounded-md text-[11px] focus:outline-none focus:ring-1 focus:ring-amber-300 focus:border-amber-300 bg-white"
+              >
+                <option value="">All Status</option>
+                <option value="Completed">Completed</option>
+                <option value="In Progress">In Progress</option>
+              </select>
+
               {activeFilterCount > 0 && (
                 <span className="text-[9px] text-amber-900 font-bold bg-gradient-to-r from-amber-100 to-amber-200 px-2 py-0.5 rounded-full border border-amber-300 shadow-sm">
                   🎯 {activeFilterCount} active
@@ -536,7 +704,7 @@ export default function Reports() {
           {/* Collapsible filter panel */}
           {showFilters && (
             <div className="px-3 py-3 bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20">
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {/* Start Date */}
                 <div className="space-y-1">
                   <label className="flex items-center gap-1 text-[9px] font-semibold text-gray-700 uppercase tracking-wider">
@@ -601,24 +769,6 @@ export default function Reports() {
                   />
                 </div>
 
-                {/* Status */}
-                <div className="space-y-1">
-                  <label className="flex items-center gap-1 text-[9px] font-semibold text-gray-700 uppercase tracking-wider">
-                    <span className="w-1 h-1 bg-amber-500 rounded-full" />
-                    Status
-                  </label>
-                  <select
-                    value={filters.status}
-                    onChange={(e) =>
-                      setFilters({ ...filters, status: e.target.value })
-                    }
-                    className="w-full border border-amber-300 px-2 rounded-md text-[10px] focus:outline-none focus:ring-1 focus:ring-amber-300 focus:border-amber-400 bg-white h-6"
-                  >
-                    <option value="">All Status</option>
-                    <option value="Completed">Completed</option>
-                    <option value="In Progress">In Progress</option>
-                  </select>
-                </div>
               </div>
             </div>
           )}
@@ -731,7 +881,7 @@ export default function Reports() {
                             {t.netWeight ? parseFloat(t.netWeight).toLocaleString() : "-"}
                           </td>
                           <td className="p-2 font-semibold text-gray-700">
-                            {calculateTurnaroundTime(t.firstWeightTime, t.secondWeightTime)}
+                            {calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime)}
                           </td>
                           <td className="p-2">
                             <span

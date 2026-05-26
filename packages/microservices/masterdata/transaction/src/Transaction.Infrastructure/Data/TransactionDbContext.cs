@@ -190,6 +190,16 @@ public class TransactionDbContext : DbContext
                   .HasMaxLength(50)
                   .HasColumnName("api_id");
 
+            // NPR capture source
+            entity.Property(e => e.NprSource)
+                  .HasMaxLength(10)
+                  .HasColumnName("npr_source");
+
+            // Reweigh flag
+            entity.Property(e => e.IsReweighed)
+                  .HasDefaultValue(false)
+                  .HasColumnName("is_reweighed");
+
             // Indexes
             entity.HasIndex(e => e.ReceiptNo);
             entity.HasIndex(e => e.NoPlate);

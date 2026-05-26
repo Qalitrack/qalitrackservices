@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { getHardwareConfig } from "../hooks/useHardwareConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { Form, Input, Select, Button, message, Card, Tabs, Table, Tag, Modal } from "antd";
 import {
@@ -33,19 +34,22 @@ function LiveWeighbridgeStatus({ onManualCapture }) {
   const lastStableRef = React.useRef(null);
   const stabilityCounterRef = React.useRef(0);
 
-  const STABILITY_CYCLES = 3;
-  const UPDATE_INTERVAL_MS = 2000;
+  const STABILITY_CYCLES = 1;
+  const UPDATE_INTERVAL_MS = 1000;
 
   useEffect(() => {
-    const source = new EventSource("http://172.16.0.215:5000/api/PlatformData/stream");
+    const source = new EventSource(getHardwareConfig().scaleStreamUrl);
     source.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data?.type === "total" && data?.weight !== undefined) {
+        if (data?.weight !== undefined) {
           bufferRef.current = data.weight;
+        } else if (typeof data === "number") {
+          bufferRef.current = data;
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
+        const num = parseFloat(String(event.data).replace(/[^0-9.-]/g, ""));
+        if (!isNaN(num)) bufferRef.current = num;
       }
     };
     return () => source.close();

@@ -71,7 +71,13 @@ public class TransactionReadDto
     
     // API Integration
     public string? ApiId { get; set; }
-    
+
+    // NPR capture source: "auto" = camera detected, "manual" = operator typed
+    public string? NprSource { get; set; }
+
+    // Reweigh flag — true if a reweigh was ever requested on this transaction
+    public bool IsReweighed { get; set; }
+
     // Base properties
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
@@ -126,7 +132,10 @@ public class CreateTransactionDto
     public string? Operation { get; set; }
     
     public string? Notes { get; set; }
-    
+
+    // NPR capture source: "auto" = camera detected, "manual" = operator typed
+    public string? NprSource { get; set; }
+
     // NOTE: ReceiptNo is auto-generated and should NOT be provided by the client
     // NOTE: TicketID is auto-generated as a GUID and should NOT be provided by the client
 }
@@ -178,7 +187,8 @@ public class UpdateTransactionDto
     public string? Operation { get; set; }
     
     public string? ChangeDesc { get; set; }
-    
+    public string? NprSource { get; set; }
+
     // NOTE: ReceiptNo cannot be changed after creation
 }
 

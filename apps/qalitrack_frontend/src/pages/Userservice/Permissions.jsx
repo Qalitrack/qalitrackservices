@@ -6,6 +6,9 @@ import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText, RefreshCw, Down
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import dayjs from 'dayjs';
+import logoSrc from '../../assets/logo.jpeg';
+import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 
 // A reusable Modal component
 const Modal = ({ children, isOpen, onClose }) => {
@@ -84,130 +87,138 @@ const Permissions = () => {
                 allPermissions.map(async (permission) => {
                     try {
                         const roles = await fetchRolesForPermission(permission.id);
-                        const formattedRoles = roles.map(role => role.name || 'Unknown').join('\n');
-                        return {
-                            ...permission,
-                            assignedRolesList: formattedRoles || 'None'
-                        };
-                    } catch (err) {
-                        console.warn(`Failed to fetch roles for permission ${permission.id}:`, err);
-                        return {
-                            ...permission,
-                            assignedRolesList: 'Error fetching roles'
-                        };
+                        return { ...permission, assignedRolesList: roles.map(r => r.name || 'Unknown').join(', ') || 'None' };
+                    } catch {
+                        return { ...permission, assignedRolesList: 'N/A' };
                     }
                 })
             );
 
-            const doc = new jsPDF({
-                orientation: 'landscape'
-            });
+            const settings    = getTicketSettings();
+            const companyName = settings.companyName    || 'QALIBRATED SYSTEMS LTD';
+            const companyAddr = settings.companyAddress || 'PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996';
 
-            doc.setFontSize(18);
-            doc.text('Permissions Report', 14, 22);
-            doc.setFontSize(11);
-            doc.setTextColor(100);
-            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 30);
-            doc.text(`Total Permissions: ${permissionsWithRoles.length}`, 14, 38);
+            const doc = new jsPDF('landscape', 'mm', 'a4');
+            const PW  = doc.internal.pageSize.getWidth();
+            const L   = 14, R = PW - 14, TW = R - L;
 
-            const columns = [
-                { header: 'Name', dataKey: 'name', cellWidth: 'auto' },
-                { header: 'Description', dataKey: 'description', cellWidth: 'wrap' },
-                { header: 'Created At', dataKey: 'createdAt', cellWidth: 'wrap' },
-                { header: 'Last Updated', dataKey: 'updatedAt', cellWidth: 'wrap' },
-                { header: 'Assigned Roles', dataKey: 'assignedRolesList', cellWidth: 'wrap' }
+            const { primary: accent, primaryDark: accentDark, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(settings);
+            const black      = [0,   0,   0];
+            const gray       = [107, 114, 128];
+            const borderCol  = [229, 231, 235];
+
+            // Circular logo
+            let circularLogo = null;
+            try {
+                const img = await new Promise((resolve, reject) => {
+                    const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = settings.companyLogo || logoSrc;
+                });
+                const sz = Math.min(img.naturalWidth, img.naturalHeight);
+                const cv = document.createElement('canvas'); cv.width = sz; cv.height = sz;
+                const ctx = cv.getContext('2d');
+                ctx.beginPath(); ctx.arc(sz/2, sz/2, sz/2, 0, Math.PI*2); ctx.clip();
+                const srcX = (img.naturalWidth - sz) / 2;
+                const srcY = (img.naturalHeight - sz) / 2;
+                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+                circularLogo = cv.toDataURL('image/png');
+            } catch (_) {}
+
+            // Header
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L, 5, 17, 17);
+            doc.setFontSize(14); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text(companyName, PW/2, 11, { align: 'center' });
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(companyAddr, PW/2, 16, { align: 'center' });
+
+            // Badge
+            const badgeW = 52;
+            doc.setFillColor(...accent);
+            doc.roundedRect(R - badgeW, 4, badgeW, 9, 2, 2, 'F');
+            doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...accentHeaderText);
+            doc.text('PERMISSIONS REPORT', R - badgeW/2, 9.5, { align: 'center' });
+            doc.setFontSize(7); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text(`Generated: ${dayjs().format('DD MMM YYYY HH:mm')}`, R, 16, { align: 'right' });
+
+            // Amber divider
+            doc.setDrawColor(...accent); doc.setLineWidth(0.8); doc.line(L, 23, R, 23);
+
+            // Summary stats
+            let y = 27;
+            const statW = (TW - 8) / 3;
+            const stats = [
+                { label: 'TOTAL PERMISSIONS', value: `${permissionsWithRoles.length}` },
+                { label: 'WITH ROLES',         value: `${permissionsWithRoles.filter(p => p.assignedRolesList !== 'None' && p.assignedRolesList !== 'N/A').length}` },
+                { label: 'REPORT DATE',         value: dayjs().format('DD MMM YYYY') },
             ];
-
-            const data = permissionsWithRoles.map(permission => ({
-                name: permission.name || 'N/A',
-                description: permission.description || 'N/A',
-                createdAt: permission.createdAt ? format(parseISO(permission.createdAt), "PPpp") : 'N/A',
-                updatedAt: permission.updatedAt ? format(parseISO(permission.updatedAt), "PPpp") : 'N/A',
-                assignedRolesList: permission.assignedRolesList !== 'None' ? { content: permission.assignedRolesList } : 'None'
-            }));
-
-            const columnStyles = {
-                // Default styles for all columns
-                default: {
-                    cellPadding: 3,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    valign: 'top'
-                },
-                // Smaller font size for date columns (index 2 and 3)
-                2: { 
-                    fontSize: 8,
-                    minCellWidth: 40
-                },
-                3: { 
-                    fontSize: 8,
-                    minCellWidth: 40
-                },
-            };
-            
-            // Apply cell width settings
-            columns.forEach((col, index) => {
-                if (!columnStyles[index]) columnStyles[index] = {};
-                columnStyles[index] = {
-                    ...columnStyles[index],
-                    cellWidth: col.cellWidth === 'auto' ? 'auto' : undefined,
-                    minCellWidth: col.cellWidth === 'wrap' ? 50 : columnStyles[index].minCellWidth || 30,
-                };
-                
-                if (col.dataKey === 'assignedRolesList') {
-                    columnStyles[index].cellWidth = 100;
-                }
+            stats.forEach((s, i) => {
+                const bx = L + i * (statW + 4);
+                doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
+                doc.roundedRect(bx, y, statW, 10, 2, 2, 'FD');
+                doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+                doc.text(s.label, bx + statW/2, y + 3.8, { align: 'center' });
+                doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+                doc.text(s.value, bx + statW/2, y + 8.2, { align: 'center' });
             });
+            y += 14;
+
+            // Table
+            const body = permissionsWithRoles.map((p, idx) => [
+                idx + 1,
+                p.name || 'N/A',
+                p.description || 'N/A',
+                p.createdAt ? dayjs(p.createdAt).format('DD MMM YY HH:mm') : 'N/A',
+                p.updatedAt ? dayjs(p.updatedAt).format('DD MMM YY HH:mm') : 'N/A',
+                p.assignedRolesList || 'None',
+            ]);
 
             autoTable(doc, {
-                head: [columns.map(col => col.header)],
-                body: data.map(row => columns.map(col => row[col.dataKey])),
-                startY: 40,
-                styles: {
-                    fontSize: 8,
-                    cellPadding: 1,
-                    overflow: 'linebreak',
-                    lineWidth: 0.1,
-                    textColor: [0, 0, 0],
-                    fontStyle: 'normal'
+                startY: y,
+                margin: { left: L, right: L },
+                head: [['#', 'Name', 'Description', 'Created', 'Updated', 'Assigned Roles']],
+                body,
+                styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
+                headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: accentDark },
+                alternateRowStyles: { fillColor: [252, 252, 252] },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 8 },
+                    5: { cellWidth: 70 },
                 },
-                headStyles: {
-                    fillColor: [41, 128, 185],
-                    textColor: 255,
-                    fontStyle: 'bold',
-                    lineWidth: 0.1,
-                    fontSize: 9
-                },
-                columnStyles,
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
-                margin: {
-                    top: 40,
-                    right: 10,
-                    bottom: 20,
-                    left: 10
-                },
-                tableWidth: 'wrap',
-                showHead: 'everyPage',
-                willDrawPage: function(data) {
-                    const pageSize = doc.internal.pageSize;
-                    const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
-                    const pageNumber = data.pageNumber || 1;
-                    const pageCount = data.pageCount || 1;
-                    if (pageNumber && pageCount) {
-                        doc.setFontSize(10);
-                        doc.text(
-                            `Page ${pageNumber} of ${pageCount}`,
-                            data.settings.margin.left,
-                            pageHeight - 10
-                        );
-                    }
-                }
             });
 
-            doc.save(`permissions-report-${new Date().toISOString().split('T')[0]}.pdf`);
+            // Footer
+            const footerY = doc.lastAutoTable.finalY + 4;
+            doc.setFillColor(...accentLight); doc.setDrawColor(...accentDark); doc.setLineWidth(0.3);
+            doc.roundedRect(L, footerY, TW, 10, 2, 2, 'FD');
+            if (circularLogo) doc.addImage(circularLogo, 'PNG', L+2, footerY+1, 8, 8);
+            doc.setFontSize(7.5); doc.setFont('helvetica', 'bold'); doc.setTextColor(...black);
+            doc.text('Powered by Qalibrated Systems  |  www.qalibrated.co.ke', PW/2, footerY+5, { align: 'center' });
+            doc.setFontSize(6.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(...gray);
+            doc.text('Inventing and Making Happen', PW/2, footerY+8.5, { align: 'center' });
 
+            // Watermark on all pages
+            if (circularLogo) {
+                try {
+                    const wmSize = 90;
+                    const PH = doc.internal.pageSize.getHeight();
+                    const wmCanvas = document.createElement('canvas');
+                    wmCanvas.width = 200; wmCanvas.height = 200;
+                    const wmCtx = wmCanvas.getContext('2d');
+                    const wmImg = await new Promise((resolve, reject) => {
+                        const i = new Image(); i.onload = () => resolve(i); i.onerror = reject;
+                        i.src = circularLogo;
+                    });
+                    wmCtx.globalAlpha = 0.07;
+                    wmCtx.drawImage(wmImg, 0, 0, 200, 200);
+                    const wmData = wmCanvas.toDataURL('image/png');
+                    const totalPages = doc.internal.getNumberOfPages();
+                    for (let p = 1; p <= totalPages; p++) {
+                        doc.setPage(p);
+                        doc.addImage(wmData, 'PNG', PW/2 - wmSize / 2, PH / 2 - wmSize / 2, wmSize, wmSize);
+                    }
+                } catch (_) {}
+            }
+
+            doc.save(`permissions-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -300,11 +311,9 @@ const Permissions = () => {
         setModalFeedback({ text: '', type: '' });
         try {
             await updatePermission(selectedPermission);
-            await loadPermissions(); // Refresh the list
-            setModalFeedback({ text: 'Permission updated successfully!', type: 'success' });
-            setTimeout(() => {
-                setEditModalOpen(false);
-            }, 3000);
+            await loadPermissions(showDeleted);
+            setEditModalOpen(false);
+            showMessage('Permission updated successfully!', 'success');
         } catch (err) {
             console.error("Failed to update permission:", err);
             setModalFeedback({ text: err.message || 'Failed to update permission.', type: 'error' });
@@ -320,12 +329,10 @@ const Permissions = () => {
         setModalFeedback({ text: '', type: '' });
         try {
             await createPermission(newPermission);
-            setNewPermission({ name: '', description: '' }); // Clear form
-            await loadPermissions(); // Refresh the list
-            setModalFeedback({ text: 'Permission created successfully!', type: 'success' });
-            setTimeout(() => {
-                setAddModalOpen(false);
-            }, 3000);
+            setNewPermission({ name: '', description: '' });
+            await loadPermissions(showDeleted);
+            setAddModalOpen(false);
+            showMessage('Permission created successfully!', 'success');
         } catch (err) {
             console.error("Failed to create permission:", err);
             setModalFeedback({ text: err.message || 'Failed to create permission.', type: 'error' });
@@ -347,13 +354,9 @@ const Permissions = () => {
             } else {
                 await deletePermission(permission.id);
             }
-            setModalFeedback({ text: `Permission successfully ${actionVerb}.`, type: 'success' });
-            loadPermissions(showDeleted);
-            // Don't close the modal immediately to show success message
-            setTimeout(() => {
-                setDeleteModalOpen(false);
-                showMessage(`Permission successfully ${actionVerb}.`, 'success');
-            }, 1500);
+            await loadPermissions(showDeleted);
+            setDeleteModalOpen(false);
+            showMessage(`Permission successfully ${actionVerb}.`, 'success');
         } catch (err) {
             console.error(`Failed to ${action} permission:`, err);
             setModalFeedback({ text: err.message || `Failed to ${action} permission.`, type: 'error' });
@@ -362,71 +365,70 @@ const Permissions = () => {
     };
 
     if (loading) {
-        return <div className="flex justify-center items-center h-32"><div>Loading permissions...</div></div>;
+        return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
 
     if (error) {
-        return <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md" role="alert">{error}</div>;
+        return <div className="m-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm" role="alert">{error}</div>;
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-4 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
-            <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-800">Manage Permissions</h2>
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-700">Show Deleted</label>
+        <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
+                <h2 className="text-sm font-bold text-gray-800">Manage Permissions</h2>
+                <div className="flex items-center gap-2">
+                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
                         <input
                             type="checkbox"
                             id="show-deleted"
                             checked={showDeleted}
                             onChange={handleToggleShowDeleted}
-                            className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                            className="h-3.5 w-3.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                         />
-                    </div>
+                        Show Deleted
+                    </label>
                     <button
                         onClick={handleDownloadPDF}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 rounded transition-colors"
                     >
-                        <Download size={18} />
-                        <span>Download PDF</span>
+                        <Download size={13} />
+                        <span>PDF</span>
                     </button>
                     <button
                         onClick={handleAddClick}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all"
                     >
-                        <PlusCircle size={18} />
+                        <PlusCircle size={13} />
                         <span>Add Permission</span>
                     </button>
                 </div>
             </div>
 
             {feedbackMessage.text && (
-                <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <div className={`mx-4 mt-2 px-3 py-2 rounded-md text-xs font-medium border ${feedbackMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                     {feedbackMessage.text}
                 </div>
             )}
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-800">
+            <div className="flex-1 overflow-auto">
+                <table className="min-w-full">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider hidden md:table-cell">Description</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Actions</th>
-
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider hidden md:table-cell">Description</th>
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Last Updated</th>
+                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="divide-y divide-gray-100">
                     {permissions.map((permission) => (
-                        <tr key={permission.id} className={`hover:bg-gray-50 ${permission.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{permission.name}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 hidden md:table-cell">{permission.description}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <tr key={permission.id} className={`border-b border-gray-100 hover:bg-amber-50 transition-all ${permission.isDeleted ? 'opacity-60 bg-gray-50' : ''}`}>
+                            <td className="px-4 py-3 text-sm font-medium text-gray-800">{permission.name}</td>
+                            <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{permission.description}</td>
+                            <td className="px-4 py-3 text-sm text-gray-500">
                                 {format(parseISO(permission.updatedAt), "PPP")}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium space-x-4">
+                            <td className="px-4 py-3 text-sm font-medium space-x-3">
                                 <button onClick={() => handleLogsClick(permission)} className="text-gray-600 hover:text-gray-900 transition-colors" title="View Logs">
                                     <FileText size={18} />
                                 </button>
@@ -459,9 +461,9 @@ const Permissions = () => {
 
             {/* Edit Modal */}
             <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Edit Permission</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Edit Permission</h3>
                 {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <div className={`px-3 py-2 rounded-md mb-4 text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                         {modalFeedback.text}
                     </div>
                 )}
@@ -503,9 +505,9 @@ const Permissions = () => {
 
             {/* Add Modal */}
             <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Add New Permission</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Add New Permission</h3>
                 {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    <div className={`px-3 py-2 rounded-md mb-4 text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                         {modalFeedback.text}
                     </div>
                 )}
@@ -549,12 +551,12 @@ const Permissions = () => {
             <Modal isOpen={isDeleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
                 <div className="text-center">
                     <ShieldAlert className="mx-auto h-12 w-12 text-red-500" />
-                    <h3 className="mt-2 text-lg font-bold text-gray-800">Delete Permission</h3>
+                    <h3 className="mt-2 text-lg font-semibold text-gray-800">Delete Permission</h3>
                     <p className="mt-2 text-sm text-gray-600">
                         Are you sure you want to delete the permission "{selectedPermission?.name}"? This action cannot be undone.
                     </p>
                     {modalFeedback.text && (
-                        <div className={`mt-4 p-3 rounded-lg text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        <div className={`mt-4 px-3 py-2 rounded-md text-sm font-medium border ${modalFeedback.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                             {modalFeedback.text}
                         </div>
                     )}
@@ -579,11 +581,11 @@ const Permissions = () => {
 
             {/* Roles Modal */}
             <Modal isOpen={isRolesModalOpen} onClose={() => setRolesModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Roles with "{selectedPermission?.name}"</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Roles with "{selectedPermission?.name}"</h3>
                 {rolesForPermission.length > 0 ? (
                     <ul className="space-y-2">
                         {rolesForPermission.map(role => (
-                            <li key={role.id} className="bg-gray-100 p-3 rounded-md text-sm font-medium">{role.name}</li>
+                            <li key={role.id} className="bg-amber-50 border border-amber-100 px-3 py-2 rounded-md text-sm font-medium text-gray-700">{role.name}</li>
                         ))}
                     </ul>
                 ) : (
@@ -598,8 +600,8 @@ const Permissions = () => {
 
             {/* Logs Modal */}
             <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
-                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-                    <h3 className="text-lg font-bold mb-4">Audit Logs for "{selectedPermission?.name}"</h3>
+                <div className="bg-amber-50 border border-amber-100 p-5 rounded-lg">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Audit Logs — {selectedPermission?.name}</h3>
                     {selectedPermission && (
                         <div className="space-y-4">
                             <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">

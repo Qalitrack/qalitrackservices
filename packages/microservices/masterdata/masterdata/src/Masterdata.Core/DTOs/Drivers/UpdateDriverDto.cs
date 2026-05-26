@@ -24,8 +24,6 @@ namespace Masterdata.Core.DTOs.Drivers
             get => _licenseExpiryDate;
             set
             {
-                if (value.HasValue && value.Value < DateTime.UtcNow)
-                    throw new ValidationException("License expiry date cannot be in the past.");
                 _licenseExpiryDate = value?.ToUniversalTime();
             }
         }

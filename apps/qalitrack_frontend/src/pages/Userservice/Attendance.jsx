@@ -4,6 +4,7 @@ import { getAttendanceByInstanceId } from '../../api/helpers/UserService/Shifts/
 import { format } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/20/solid';
 import jsPDF from 'jspdf';
+import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 
 const Attendance = () => {
     const location = useLocation();
@@ -138,6 +139,7 @@ const Attendance = () => {
                 return;
             }
 
+        const { primary: accent, primaryLight: accentLight, headerText: accentHeaderText } = resolveReportColors(getTicketSettings());
         const doc = new jsPDF('landscape');
         const pageWidth = doc.internal.pageSize.getWidth();
         const margin = 10;
@@ -169,9 +171,9 @@ const Attendance = () => {
         // Headers
         doc.setFontSize(10);
         doc.setFont(undefined, 'bold');
-        doc.setFillColor(52, 152, 219);
+        doc.setFillColor(...accent);
         doc.rect(margin, headerY, totalWidth, rowHeight + 2, 'F');
-        doc.setTextColor(255, 255, 255);
+        doc.setTextColor(...accentHeaderText);
 
         let xPos = margin + 2;
         const headers = ['Employee Name', 'Employee Email', 'Clock In', 'Clock Out', 'Status', 'Late', 'Created At'];
@@ -199,7 +201,7 @@ const Attendance = () => {
 
             // Row background (alternating)
             if (isEvenRow) {
-                doc.setFillColor(248, 249, 250);
+                doc.setFillColor(...accentLight);
                 doc.rect(margin, rowY, totalWidth, rowHeight, 'F');
             }
 

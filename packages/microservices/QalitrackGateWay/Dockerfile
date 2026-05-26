@@ -18,6 +18,10 @@ RUN dotnet publish "QalitrackGateWay.csproj" -c Release -o /app/publish /p:UseAp
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+
+# Install curl for healthchecks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 EXPOSE 80
 
 # Copy the published app

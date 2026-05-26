@@ -1,11 +1,13 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Bell, Search, User, LogOut, Menu } from "lucide-react";
+import { Bell, User, LogOut, Menu } from "lucide-react";
 import useAuth from "../api/helpers/auth";
 import { useState, useRef, useEffect } from "react";
+import { useSidebarSettings } from "../components/Context/Sidebarsettingscontext";
 
 export default function Topbar({ onToggleSidebar }) {
   const location = useLocation();
   const { getCurrentUser, logout } = useAuth();
+  const { sidebarSettings } = useSidebarSettings();
   const user = getCurrentUser ? getCurrentUser() : null;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -24,6 +26,7 @@ export default function Topbar({ onToggleSidebar }) {
 
   const userRole = getUserRole();
   const userName = user?.firstName ? `${user.firstName} ${user.lastName ?? ""}` : user?.email || "User";
+  const profilePath = userRole === "Admin" ? "/admin/profile" : "/operator/profile";
 
   // Click outside to close dropdown
   useEffect(() => {
@@ -85,15 +88,14 @@ export default function Topbar({ onToggleSidebar }) {
 
       {/* Right: search, bell, profile */}
       <div className="flex items-center gap-3 md:gap-4">
-        {/* Search */}
-        <div className="relative hidden md:block">
-          <Search className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-          <input
-            type="text"
-            placeholder="Search"
-            className="pl-8 pr-3 py-1.5 h-9 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 text-sm"
+        {/* Company logo from system settings */}
+        {sidebarSettings?.companyLogo && (
+          <img
+            src={sidebarSettings.companyLogo}
+            alt={sidebarSettings.companyName || "Company"}
+            className="h-8 w-auto max-w-[120px] object-contain rounded"
           />
-        </div>
+        )}
 
         {/* Notifications */}
         <button className="relative h-9 w-9 flex items-center justify-center border rounded hover:bg-gray-50">
@@ -128,7 +130,7 @@ export default function Topbar({ onToggleSidebar }) {
 
               <div className="p-2">
                 <Link
-                  to="/profile"
+                  to={profilePath}
                   onClick={() => setDropdownOpen(false)}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-md"
                 >

@@ -18,5 +18,8 @@ namespace UserService.Core.Interfaces.Repositories
         // Get deleted roles with pagination
         Task<PagedResult<Role>> GetDeletedPagedAsync(PaginationParameters parameters);
         Task<IEnumerable<Permission>> GetPermissionsForRoleAsync(string roleId);
+
+        // Restore a soft-deleted role
+        Task<bool> RestoreAsync(string id);
     }
 }

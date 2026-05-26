@@ -284,4 +284,12 @@ public async Task<PagedResult<RolePermissionDto>> GetDeletedRolePermissionsPaged
         TotalCount = pagedRolePermissions.TotalCount
     };
 }
+
+public async Task<bool> RestoreAsync(string id)
+{
+    if (string.IsNullOrWhiteSpace(id))
+        throw new ArgumentException("Role ID is required", nameof(id));
+
+    return await _roleRepository.RestoreAsync(id);
+}
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, PackagePlus, Search, X } from "lucide-react";
+import { message } from "antd";
 import {
   getProducts,
   createProduct,
@@ -71,7 +72,7 @@ export default function ProductsPortal() {
       resetForm();
     } catch (err) {
       console.error("❌ Save failed:", err.message);
-      alert(`Error: ${err.message}`);
+      message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -137,7 +138,7 @@ export default function ProductsPortal() {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />

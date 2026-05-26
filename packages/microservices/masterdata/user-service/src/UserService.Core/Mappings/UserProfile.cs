@@ -24,9 +24,9 @@ namespace UserService.Core.Mappings
             // Add reverse mapping (from UserReadDto to User)
             CreateMap<UserReadDto, User>()
                 .ForMember(dest => dest.UserRoles, opt => 
-                    opt.MapFrom(src => src.Roles.Select(roleName => new UserRole 
-                    { 
-                        Role = new Role { Name = roleName } 
+                    opt.MapFrom(src => (src.Roles ?? Enumerable.Empty<string>()).Select(roleName => new UserRole
+                    {
+                        Role = new Role { Name = roleName }
                     }).ToList()));
 
             // Map from UpdateUserDto to User

@@ -191,6 +191,12 @@ namespace Transaction.Infrastructure.Data.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsReweighed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_reweighed");
+
                     b.Property<string>("NetWeight")
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
@@ -201,6 +207,11 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("NoPlate");
+
+                    b.Property<string>("NprSource")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("npr_source");
 
                     b.Property<string>("Operation")
                         .HasMaxLength(100)

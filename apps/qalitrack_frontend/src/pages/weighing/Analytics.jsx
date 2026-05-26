@@ -120,8 +120,12 @@ export default function Analytics() {
     
     // Calculate average TAT
     const avgTAT = completedTx.reduce((sum, t) => {
-      if (!t.firstWeightTime || !t.secondWeightTime) return sum;
-      return sum + dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute");
+      if (t.turnaroundTime) {
+        const parts = t.turnaroundTime.split(":");
+        if (parts.length >= 2) return sum + parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      }
+      if (!t.firstWeightDate || !t.secondWeightDate) return sum;
+      return sum + dayjs(t.secondWeightDate).diff(dayjs(t.firstWeightDate), "minute");
     }, 0) / (completedTx.length || 1);
 
     // NEW: Efficiency score (completed / total * 100)
@@ -271,10 +275,14 @@ export default function Analytics() {
   const tatTrend = useMemo(() => {
     const map = {};
     completedTx.forEach((t) => {
-      if (!t.firstWeightTime || !t.secondWeightTime) return;
-      
       const day = dayjs(t.createdAt).format("DD MMM");
-      const tat = dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute");
+      let tat = 0;
+      if (t.turnaroundTime) {
+        const parts = t.turnaroundTime.split(":");
+        if (parts.length >= 2) tat = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      } else if (t.firstWeightDate && t.secondWeightDate) {
+        tat = dayjs(t.secondWeightDate).diff(dayjs(t.firstWeightDate), "minute");
+      } else return;
       
       if (!map[day]) map[day] = { day, totalTAT: 0, count: 0 };
       map[day].totalTAT += tat;
@@ -302,8 +310,14 @@ export default function Analytics() {
         map[hour].total += 1;
         
         // Calculate TAT for this transaction
-        if (t.firstWeightTime && t.secondWeightTime) {
-          const tat = dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute");
+        let tat = 0;
+        if (t.turnaroundTime) {
+          const parts = t.turnaroundTime.split(":");
+          if (parts.length >= 2) tat = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+        } else if (t.firstWeightDate && t.secondWeightDate) {
+          tat = dayjs(t.secondWeightDate).diff(dayjs(t.firstWeightDate), "minute");
+        }
+        if (tat > 0) {
           map[hour].tatSum += tat;
           map[hour].tatCount += 1;
         }
@@ -347,8 +361,14 @@ export default function Analytics() {
       map[driver].trips += 1;
       map[driver].weight += parseFloat(t.netWeight) || 0;
       
-      if (t.firstWeightTime && t.secondWeightTime) {
-        const tat = dayjs(t.secondWeightTime).diff(dayjs(t.firstWeightTime), "minute");
+      let tat = 0;
+      if (t.turnaroundTime) {
+        const parts = t.turnaroundTime.split(":");
+        if (parts.length >= 2) tat = parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+      } else if (t.firstWeightDate && t.secondWeightDate) {
+        tat = dayjs(t.secondWeightDate).diff(dayjs(t.firstWeightDate), "minute");
+      }
+      if (tat > 0) {
         map[driver].tatSum += tat;
         map[driver].tatCount += 1;
       }

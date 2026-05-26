@@ -75,7 +75,7 @@ namespace UserService.Api.Controllers
                 return NotFound(new { 
                     Success = false, 
                     Message = $"Shift with ID {id} not found", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 404 
                 });
             }
@@ -108,7 +108,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -130,7 +130,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -140,7 +140,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while creating the shift", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -166,7 +166,7 @@ namespace UserService.Api.Controllers
                     return NotFound(new { 
                         Success = false, 
                         Message = $"Shift with ID {id} not found", 
-                        Errors = (string[])null, 
+                        Errors = (string[]?)null, 
                         StatusCode = 404 
                     });
                 }
@@ -178,7 +178,7 @@ namespace UserService.Api.Controllers
                 return NotFound(new { 
                     Success = false, 
                     Message = $"Shift with ID {id} not found", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 404 
                 });
             }
@@ -188,7 +188,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -210,7 +210,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -220,7 +220,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while updating the shift", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -246,7 +246,7 @@ namespace UserService.Api.Controllers
                 return NotFound(new { 
                     Success = false, 
                     Message = $"Shift with ID {id} not found", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 404 
                 });
             }
@@ -256,7 +256,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }

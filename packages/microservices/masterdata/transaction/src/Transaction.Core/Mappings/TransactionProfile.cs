@@ -25,6 +25,7 @@ public class TransactionProfile : Profile
             .ForMember(dest => dest.ChangeDesc, opt => opt.Ignore())
             .ForMember(dest => dest.ReweighPermission, opt => opt.Ignore())
             .ForMember(dest => dest.ApiId, opt => opt.Ignore())
+            .ForMember(dest => dest.IsReweighed, opt => opt.MapFrom(_ => false))
             .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
             .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());

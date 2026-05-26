@@ -8,20 +8,20 @@ public class PersonalAccessToken : BaseEntity
 {
 
     [Required]
-    public string UserId { get; set; }
+    public required string UserId { get; set; }
     [Required]
-    public User User { get; set; }
+    public User User { get; set; } = null!;
 
     [Required]
     [StringLength(1024)]
-    public string Token { get; set; }
-    
+    public required string Token { get; set; }
+
     public DateTime? LastUsedAt { get; set; }
 
     [Required]
     public bool IsRevoked { get; set; } = false;
-    
-    public string Jti { set; get; }
+
+    public required string Jti { set; get; }
         
     public ShiftMode ShiftMode { get; set; }  
 }

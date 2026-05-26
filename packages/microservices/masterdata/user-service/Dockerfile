@@ -48,15 +48,23 @@ COPY src/ .
 # 6️⃣ Build the application in the source directory so DocFX can find assemblies
 RUN dotnet build "UserService.Api/UserService.Api.csproj" -c Release -o /app/build
 
-# Install Node.js (LTS)
+# Install Node.js + Chromium dependencies for Puppeteer PDF generation
 RUN apt-get update && apt-get install -y curl gnupg \
     && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
+        libnss3 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdrm2 \
+        libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 libxrandr2 \
+        libgbm1 libasound2 libpango-1.0-0 libcairo2 libx11-6 libxext6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Generate documentation - DocFX will find the built assemblies in bin/Release
 WORKDIR /src
 RUN docfx docfx.json
+
+# Generate PDF from the built docs site
+COPY generate-pdf.mjs /src/
+RUN cd /src && npm init -y && npm install puppeteer pdf-lib \
+    && node generate-pdf.mjs
 
 # Publish the application
 FROM build AS publish

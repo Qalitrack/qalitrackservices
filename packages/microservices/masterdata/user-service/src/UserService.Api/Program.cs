@@ -47,10 +47,7 @@ try
     // Register Core + Infrastructure + AutoMapper
     services.AddCoreServices();
     services.AddInfrastructureServices(builder.Configuration);
-    services.AddAutoMapper(typeof(UserProfile));
-
-    // Background Services
-    services.AddHostedService<ShiftInstanceBackgroundService>();
+    services.AddAutoMapper(cfg => cfg.AddMaps(typeof(UserProfile).Assembly));
 
     // PostgreSQL
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -227,6 +224,30 @@ try
         });
     }
 
+    // DocFX Static Documentation
+    var docfxPath = app.Environment.IsDevelopment()
+        ? Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "_site"))
+        : Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "docs");
+
+    if (Directory.Exists(docfxPath))
+    {
+        app.UseFileServer(new FileServerOptions
+        {
+            FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(docfxPath),
+            RequestPath = "/docs",
+            EnableDirectoryBrowsing = false
+        });
+
+        // Download documentation as PDF
+        app.MapGet("/docs/download", () =>
+        {
+            var pdfPath = Path.Combine(docfxPath, "UserService-Docs.pdf");
+            if (!File.Exists(pdfPath))
+                return Results.NotFound("Documentation PDF not yet generated.");
+            return Results.File(pdfPath, "application/pdf", "UserService-Docs.pdf");
+        }).AllowAnonymous();
+    }
+
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseOutputCache();
@@ -247,7 +268,7 @@ try
             await dbContext.Database.MigrateAsync();
             logger.LogInformation("Database migrations applied successfully.");
 
-            PrepDb.PrepPopulation(app, isProduction: app.Environment.IsProduction());
+            await PrepDb.PrepPopulation(app, isProduction: app.Environment.IsProduction());
         }
         catch (Exception ex)
         {

@@ -54,7 +54,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -77,7 +77,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -87,7 +87,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while creating the user", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -99,13 +99,13 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                UserReadDto result = await _userService.UpdateAsync(id, updateUserDto);
+                UserReadDto? result = await _userService.UpdateAsync(id, updateUserDto);
                 if (result == null)
                 {
                     return NotFound(new { 
                         Success = false, 
                         Message = $"User with ID {id} not found", 
-                        Errors = (string[])null, 
+                        Errors = (string[]?)null, 
                         StatusCode = 404 
                     });
                 }
@@ -117,7 +117,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -140,7 +140,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -150,7 +150,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while updating the user", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -168,7 +168,7 @@ namespace UserService.Api.Controllers
                     return NotFound(new { 
                         Success = false, 
                         Message = $"User with ID {id} not found", 
-                        Errors = (string[])null, 
+                        Errors = (string[]?)null, 
                         StatusCode = 404 
                     });
                 }
@@ -187,7 +187,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -197,7 +197,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while deleting the user", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -295,7 +295,7 @@ namespace UserService.Api.Controllers
                     {
                         Success = false,
                         Message = $"User with ID {userId} not found or password reset failed",
-                        Errors = (string[])null,
+                        Errors = (string[]?)null,
                         StatusCode = 404
                     });
                 }
@@ -312,7 +312,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 404
                 });
             }
@@ -323,7 +323,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -334,7 +334,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while resetting the password",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 500
                 });
             }
@@ -364,7 +364,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 404
                 });
             }
@@ -375,7 +375,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = ex.Message,
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 400
                 });
             }
@@ -386,7 +386,7 @@ namespace UserService.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while retrieving user roles",
-                    Errors = (string[])null,
+                    Errors = (string[]?)null,
                     StatusCode = 500
                 });
             }

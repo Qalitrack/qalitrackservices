@@ -47,7 +47,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -64,7 +64,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -74,7 +74,7 @@ namespace UserService.Api.Controllers
                 return NotFound(new { 
                     Success = false, 
                     Message = "User is not active or does not exist", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 404 
                 });
             }
@@ -84,7 +84,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while retrieving user shifts", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -118,7 +118,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -141,7 +141,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -151,7 +151,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "User is not active or does not exist", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -161,7 +161,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "Shift does not exist", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -171,7 +171,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while assigning shift to user", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -205,7 +205,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -227,7 +227,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -237,7 +237,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "User is not assigned to this shift", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -247,7 +247,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while removing shift from user", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -270,7 +270,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -293,7 +293,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -303,7 +303,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while mass assigning shift to role", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -326,7 +326,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -348,7 +348,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -358,7 +358,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while mass removing shift from role", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -381,7 +381,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -398,7 +398,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -408,7 +408,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while getting users assigned to shift", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -426,7 +426,7 @@ namespace UserService.Api.Controllers
                     return BadRequest(new { 
                         Success = false, 
                         Message = "Pagination parameters are required", 
-                        Errors = (string[])null, 
+                        Errors = (string[]?)null, 
                         StatusCode = 400 
                     });
                 }
@@ -445,7 +445,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = ex.Message, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -462,7 +462,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = errorMessage, 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
@@ -472,7 +472,7 @@ namespace UserService.Api.Controllers
                 return BadRequest(new { 
                     Success = false, 
                     Message = "An error occurred while retrieving deleted user shifts", 
-                    Errors = (string[])null, 
+                    Errors = (string[]?)null, 
                     StatusCode = 400 
                 });
             }
