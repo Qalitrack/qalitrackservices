@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Npgsql;
 using Prometheus;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -106,9 +107,14 @@ if (string.IsNullOrWhiteSpace(dbPass)) throw new Exception("Database password is
 // Build connection string
 var connectionString = $"Host={dbHost};Port={dbPort};Database={dbName};Username={dbUser};Password={dbPass};Pooling=true;";
 
+// Build Npgsql data source with dynamic JSON support for List<string> jsonb columns
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.EnableDynamicJson();
+var dataSource = dataSourceBuilder.Build();
+
 // Configure DbContext with the connection string
 builder.Services.AddDbContext<MasterdataDbContext>(options =>
-    options.UseNpgsql(connectionString, 
+    options.UseNpgsql(dataSource,
         npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
             maxRetryDelay: TimeSpan.FromSeconds(30),

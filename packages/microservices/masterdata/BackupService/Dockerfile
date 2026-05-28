@@ -20,41 +20,19 @@ RUN apt-get update && \
     which pg_isready && \
     pg_dump --version
 
-# SDK build image with DocFX for documentation generation
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-
-# Install DocFX for documentation generation
-RUN dotnet tool install -g docfx
-ENV PATH="$PATH:/root/.dotnet/tools"
 
 # Copy project files
 COPY BackupService.API/ BackupService.API/
 COPY BackupService.Core/ BackupService.Core/
 COPY BackupService.Infrastructure/ BackupService.Infrastructure/
 
-# Copy documentation configuration files
-COPY docfx.json /src/
-COPY index.md /src/
-COPY toc.yml /src/
-# Copy docs directory if it exists
-COPY docs/ /src/docs/
-
 # Restore dependencies
 RUN dotnet restore "BackupService.API/BackupService.API.csproj"
 
-# Build the application in the source directory so DocFX can find assemblies
+# Build the application
 RUN dotnet build "BackupService.API/BackupService.API.csproj" -c Release
-
-# Install Node.js (LTS)
-RUN apt-get update && apt-get install -y curl gnupg \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
-
-# Generate documentation - DocFX will find the built assemblies in bin/Release
-WORKDIR /src
-RUN docfx docfx.json
 
 # Publish stage
 FROM build AS publish
@@ -67,9 +45,6 @@ WORKDIR /app
 
 # Copy the published application
 COPY --from=publish /app/publish .
-
-# Copy the generated documentation to wwwroot for serving via ASP.NET Core
-COPY --from=publish /src/_site ./wwwroot/docs
 
 # Set environment variables
 ENV ASPNETCORE_ENVIRONMENT=Production

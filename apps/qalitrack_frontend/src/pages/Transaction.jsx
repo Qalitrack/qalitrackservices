@@ -50,8 +50,10 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   const palette  = resolvePdfTheme(ticketSettings);
   const fontSize = resolveFontSize(ticketSettings.ticketFontSize);
 
-  const companyName    = ticketSettings.companyName    || "QALIBRATED SYSTEMS LTD";
-  const companyAddress = ticketSettings.companyAddress || "PO BOX 34463-00100, NAIROBI | TEL: +254 714 999 996";
+  const companyName    = String(ticketSettings.companyName    || "");
+  const companyAddress = String(ticketSettings.companyAddress || "");
+  const companyPhone   = String(ticketSettings.companyPhone   || "");
+  const companyEmail   = String(ticketSettings.companyEmail   || "");
 
   // ── Fixed accent / status colours ────────────────────────────────────────
   const white     = [255, 255, 255];
@@ -108,16 +110,29 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   }
 
   // Company name – centred
-  doc.setFontSize(fontSize.title);
-  doc.setFont("times", "bold");
-  doc.setTextColor(...palette.bodyText);
-  doc.text(companyName, W / 2, 13, { align: "center" });
+  if (companyName) {
+    doc.setFontSize(fontSize.title);
+    doc.setFont("times", "bold");
+    doc.setTextColor(...palette.bodyText);
+    doc.text(companyName, W / 2, 13, { align: "center" });
+  }
 
   // Address – centred
-  doc.setFontSize(fontSize.sub - 1);
-  doc.setFont("helvetica", "normal");
-  doc.setTextColor(...gray);
-  doc.text(companyAddress, W / 2, 19, { align: "center" });
+  if (companyAddress) {
+    doc.setFontSize(fontSize.sub - 1);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...gray);
+    doc.text(companyAddress, W / 2, 19, { align: "center" });
+  }
+
+  // Phone & Email – centred
+  const contactParts = [companyPhone, companyEmail].filter(Boolean);
+  if (contactParts.length > 0) {
+    doc.setFontSize(fontSize.sub - 1);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(...gray);
+    doc.text(contactParts.join("  |  "), W / 2, 24, { align: "center" });
+  }
 
   // Date – top-right
   doc.setFontSize(fontSize.sub);
@@ -125,22 +140,11 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
   doc.setTextColor(...palette.bodyText);
   doc.text(ticketDate, R, 10, { align: "right" });
 
-  // Status badge – top-right
-  const badgeW = 24;
-  doc.setFillColor(...statusBg);
-  doc.roundedRect(R - badgeW, 13, badgeW, 7, 1.5, 1.5, "F");
-  doc.setFontSize(fontSize.sub - 0.5);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(...white);
-  doc.text(statusText, R - badgeW / 2, 17.5, { align: "center" });
-
-  // REWEIGHED badge (below status badge, top-right)
-  // Uses violet — distinct from every theme's own colors
-  // (amber=yellow, blue=blue, green=green, monochrome=grey — none use violet)
+  // REWEIGHED badge
   const showReweighed = record.isReweighed || (record.reweighCount > 0);
   if (showReweighed) {
     const rwBadgeW = 32;
-    const violet = [124, 58, 237]; // violet-600 — theme-neutral reweigh colour
+    const violet = [124, 58, 237];
     doc.setFillColor(...violet);
     doc.roundedRect(R - rwBadgeW, 21, rwBadgeW, 6, 1.5, 1.5, "F");
     doc.setFontSize(fontSize.sub - 1);
@@ -150,8 +154,8 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     doc.text(rwLabel, R - rwBadgeW / 2, 25, { align: "center" });
   }
 
-  // Divider – amber accent (pushed down when REWEIGHED badge is present)
-  const dividerY = showReweighed ? 31 : 29;
+  // Divider – pushed down to accommodate contact line
+  const dividerY = showReweighed ? 34 : 28;
   doc.setDrawColor(...amberBdr);
   doc.setLineWidth(0.5);
   doc.line(L, dividerY, R, dividerY);
@@ -195,68 +199,17 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
       3: { cellWidth: 66 },
     },
     body: [
-      ["TICKET NO",   `: ${record.receiptNo        || "N/A"}`, "REGISTRATION", `: ${record.noPlate          || "N/A"}`],
-      ["AXLE TYPE",   `: ${record.axleType          || "N/A"}`, "COMMODITY",    `: ${record.commodityName    || "N/A"}`],
-      ["TRANSPORTER", `: ${record.transporterName   || "N/A"}`, "TIMESTAMP",    `: ${timestamp}`],
-      ["SOURCE",      `: ${record.originName        || "N/A"}`, "DESTINATION",  `: ${record.destinationName || "N/A"}`],
-      ["OPERATOR",    `: ${record.operatorName      || "N/A"}`, "DRIVER",       `: ${record.driverName      || "N/A"}`],
-      ["SUPPLIER",    `: ${record.supplierName      || "N/A"}`, "CUSTOMER",     `: ${record.customerName    || "N/A"}`],
-      ["CONTAINER",   `: ${record.containerNo       || "N/A"}`, "SEAL NO",      `: ${record.sealNo          || "N/A"}`],
-      ["WEIGHBRIDGE", `: ${record.weighBridgeName   || "N/A"}`, "WEIGH MODE",   `: ${record.weighMode       || "N/A"}`],
+      ["TICKET NO",   `${record.receiptNo        || "N/A"}`, "REGISTRATION", `${record.noPlate          || "N/A"}`],
+      ["TRANSPORTER", `${record.transporterName   || "N/A"}`, "COMMODITY",    `${record.commodityName    || "N/A"}`],
+      ["SOURCE",      `${record.originName        || "N/A"}`, "DESTINATION",  `${record.destinationName || "N/A"}`],
+      ["OPERATOR",    `${record.operatorName      || "N/A"}`, "DRIVER",       `${record.driverName      || "N/A"}`],
+      ["SUPPLIER",    `${record.supplierName      || "N/A"}`, "CUSTOMER",     `${record.customerName    || "N/A"}`],
+      ["WEIGHBRIDGE", `${record.weighBridgeName   || "N/A"}`, "WEIGH MODE",   `${record.weighMode       || "N/A"}`],
     ],
   });
   doc.setDrawColor(...amberBdr);
   doc.setLineWidth(0.4);
-  doc.roundedRect(L, detailsY, TW, doc.lastAutoTable.finalY - detailsY, 3, 3, "S");
-
-  // ── "AXLE WEIGHT ANALYSIS" ────────────────────────────────────────────────
-  y = drawTitle("AXLE WEIGHT ANALYSIS", doc.lastAutoTable.finalY + 6);
-
-  const axleY = y;
-  autoTable(doc, {
-    startY: axleY,
-    margin: { left: L, right: L },
-    theme: "plain",
-    headStyles: {
-      fillColor: amberFill,
-      textColor: black,
-      fontStyle: "bold",
-      font: "helvetica",
-      fontSize: fontSize.body,
-      halign: "center",
-      lineColor: amberBdr,
-      lineWidth: 0.2,
-    },
-    styles: {
-      fontSize: fontSize.body,
-      font: "helvetica",
-      halign: "center",
-      textColor: black,
-      lineColor: [225, 210, 180],
-      lineWidth: 0.15,
-      cellPadding: { top: 1, right: 1.5, bottom: 1, left: 1.5 },
-      overflow: "linebreak",
-    },
-    columnStyles: {
-      0: { fontStyle: "bold", halign: "left", cellWidth: 28, fillColor: labelTint },
-    },
-    head: [["ITEMS", "GROUP 1", "GROUP 2", "GROUP 3", "GROUP 4", "GVW"]],
-    body: [
-      ["ACTUAL WT",  "N/A", "N/A", "N/A", "N/A", `${record.firstWeight || 0} KG`],
-      ["PDF",        "N/A", "N/A", "N/A", "N/A", "N/A"],
-      ["ALLOWED",    "N/A", "N/A", "N/A", "N/A", "N/A"],
-      ["ALLOWED+5%", "N/A", "N/A", "N/A", "N/A", "N/A"],
-      ["EXCESS",     "N/A", "N/A", "N/A", "N/A", "N/A"],
-      [
-        { content: "RESULT", styles: { fontStyle: "bold" } },
-        "N/A", "N/A", "N/A", "N/A",
-        { content: statusText, styles: { fillColor: statusBg, textColor: white, fontStyle: "bold" } },
-      ],
-    ],
-  });
-  doc.setDrawColor(...amberBdr);
-  doc.setLineWidth(0.4);
-  doc.roundedRect(L, axleY, TW, doc.lastAutoTable.finalY - axleY, 3, 3, "S");
+  doc.rect(L, detailsY, TW, doc.lastAutoTable.finalY - detailsY, "S");
 
   // ── "WEIGHT MEASUREMENTS" ─────────────────────────────────────────────────
   y = drawTitle("WEIGHT MEASUREMENTS", doc.lastAutoTable.finalY + 6);
@@ -302,25 +255,29 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     },
     head: [["MEASUREMENT", "WEIGHT (kg)", "DATE", "OPERATOR", "SCALE", "WEIGHBRIDGE"]],
     body: [
-      ["FIRST WEIGHT",  record.firstWeight  ? `${record.firstWeight} kg`  : "—", grossDate, operator, scale, bridge],
-      ["SECOND WEIGHT", record.secondWeight ? `${record.secondWeight} kg` : "—", tareDate,  operator, scale, bridge],
+      ["GROSS WEIGHT", record.firstWeight  ? `${Number(record.firstWeight).toLocaleString("en-US")} kg`  : "—", grossDate, operator, scale, bridge],
+      ["TARE WEIGHT",  record.secondWeight ? `${Number(record.secondWeight).toLocaleString("en-US")} kg` : "—", tareDate,  operator, scale, bridge],
       [
-        { content: "NET WEIGHT",  styles: { fontStyle: "bold", fillColor: netHl } },
-        { content: record.netWeight ? `${record.netWeight} kg` : "—", styles: { fontStyle: "bold", fillColor: netHl } },
-        { content: grossDate, styles: { fillColor: netHl } },
-        { content: operator,  styles: { fillColor: netHl } },
-        { content: scale,     styles: { fillColor: netHl } },
-        { content: bridge,    styles: { fillColor: netHl } },
+        { content: "NET WEIGHT", styles: { fontStyle: "bold", fillColor: netHl } },
+        { content: record.netWeight ? `${Math.round(Number(record.netWeight)).toLocaleString("en-US")} kg` : "—", styles: { fontStyle: "bold", fillColor: netHl } },
+        { content: "" },
+        { content: "" },
+        { content: "" },
+        { content: "" },
       ],
       [
         { content: "TURNAROUND TIME", styles: { fontStyle: "bold", fillColor: labelTint } },
-        { content: tatText, colSpan: 5, styles: { halign: "center", fontStyle: "bold" } },
+        { content: "", styles: { fillColor: labelTint } },
+        { content: tatText, styles: { fontStyle: "bold", halign: "center" } },
+        { content: "" },
+        { content: "" },
+        { content: "" },
       ],
     ],
   });
   doc.setDrawColor(...amberBdr);
   doc.setLineWidth(0.4);
-  doc.roundedRect(L, wmY, TW, doc.lastAutoTable.finalY - wmY, 3, 3, "S");
+  doc.rect(L, wmY, TW, doc.lastAutoTable.finalY - wmY, "S");
 
   // ── REMARKS (optional) ───────────────────────────────────────────────────
   y = doc.lastAutoTable.finalY + 6;
@@ -403,7 +360,7 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     return URL.createObjectURL(doc.output("blob"));
   }
 
-  doc.save(`Ticket_${record.receiptNo || "unknown"}_${TICKET_THEMES[ticketSettings.ticketTheme]?.name || "PDF"}.pdf`);
+  doc.save(`${record.receiptNo || "Ticket"}.pdf`);
   message.success(`Weighing ticket exported (${TICKET_THEMES[ticketSettings.ticketTheme]?.name || "Default"} theme)!`);
 };
 
@@ -646,7 +603,6 @@ export default function Transactions() {
             destinationName: editedRecord.destinationName,
             weighMode: editedRecord.weighMode,
             status: editedRecord.status,
-            axleType: editedRecord.axleType,
             containerNo: editedRecord.containerNo,
             sealNo: editedRecord.sealNo,
             remarks: editedRecord.remarks,
@@ -1294,9 +1250,15 @@ export default function Transactions() {
                     onClick={async () => {
                       setIsExportPreviewOpen(true);
                       setPreviewLoading(true);
-                      const url = await generateThemedPDF({ ...selectedRecord, isReweighed: reweighRecordsForDrawer.length > 0, reweighCount: reweighRecordsForDrawer.length }, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple, true);
-                      setPreviewBlobUrl(url);
-                      setPreviewLoading(false);
+                      try {
+                        const url = await generateThemedPDF({ ...selectedRecord, isReweighed: reweighRecordsForDrawer.length > 0, reweighCount: reweighRecordsForDrawer.length }, { ...ticketSettings, ticketTheme: pdfTheme }, formatTurnaroundTimeSimple, true);
+                        setPreviewBlobUrl(url);
+                      } catch (err) {
+                        console.error("PDF preview error:", err);
+                        message.error("Preview failed: " + err.message);
+                      } finally {
+                        setPreviewLoading(false);
+                      }
                     }}
                     className="text-xs border-0"
                     style={{
@@ -1350,7 +1312,6 @@ export default function Transactions() {
                   { label: "Vehicle", field: "noPlate", editable: true },
                   { label: "Driver", field: "driverName", editable: true },
                   { label: "Commodity", field: "commodityName", editable: true },
-                  { label: "Axle Type", field: "axleType", editable: true },
                   { label: "Weigh Mode", field: "weighMode", editable: true },
                   { label: "Container", field: "containerNo", editable: true },
                   { label: "Seal No", field: "sealNo", editable: true },
