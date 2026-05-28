@@ -8,7 +8,7 @@ export default function LiveWeighbridgeStatus({ onWeightStable, onLiveWeightChan
 
   useEffect(() => {
     // Example: Replace this with your actual EventSource / WebSocket
-    const es = new EventSource("http://172.16.0.1:5000/weight-stream");
+    const es = new EventSource("http://localhost:5000/weight-stream");
 
     es.onmessage = (event) => {
       const weight = parseFloat(event.data);
@@ -45,9 +45,15 @@ export default function LiveWeighbridgeStatus({ onWeightStable, onLiveWeightChan
           <Spin className="mt-3" />
         ) : (
           <>
-            <div className="mt-2 text-4xl font-bold text-amber-300 font-mono">
-              {currentWeight != null ? currentWeight.toFixed(2) + " kg" : "— — —"}
-            </div>
+            {(() => {
+              const weightText = currentWeight != null ? currentWeight.toFixed(2) + " kg" : "— — —";
+              const sizeClass = weightText.length <= 8 ? "text-4xl" : weightText.length <= 11 ? "text-3xl" : "text-2xl";
+              return (
+                <div className={`mt-2 w-full text-center font-bold text-amber-300 font-mono whitespace-nowrap ${sizeClass}`}>
+                  {weightText}
+                </div>
+              );
+            })()}
             <div className="mt-1 text-sm text-amber-200">
               {stableWeight != null ? `Stable: ${stableWeight.toFixed(2)} kg` : "Detecting..."}
             </div>
