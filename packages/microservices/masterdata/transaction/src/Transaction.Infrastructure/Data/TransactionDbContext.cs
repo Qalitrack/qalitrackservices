@@ -165,8 +165,7 @@ public class TransactionDbContext : DbContext
                   .HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.SecondWeightDate)
                   .HasColumnName("SecondWeightDate")
-                  .HasDefaultValueSql("CURRENT_TIMESTAMP")
-                  .ValueGeneratedOnAddOrUpdate();
+                  .IsRequired(false);
 
             // Transaction Status and Modifications
             entity.Property(e => e.Status)

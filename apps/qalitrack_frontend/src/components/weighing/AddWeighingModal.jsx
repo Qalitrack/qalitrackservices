@@ -29,16 +29,23 @@ export default function AddWeighingModal({
   // Initialize form when modal opens
   useEffect(() => {
     if (visible && transaction) {
-      setFormData({
-        weight: capturedWeight || "",
-        operatorName: currentUser?.fullName || currentUser?.name || transaction.operatorName || "Operator",
-        scaleName: transaction.scaleName || "Scale-01",
-        notes: "",
-      });
       try {
         const sys = JSON.parse(localStorage.getItem("systemSettings") || "{}");
         setManualWeighingEnabled(sys.manualWeighingEnabled === true);
-      } catch (_) {}
+        setFormData({
+          weight: capturedWeight || "",
+          operatorName: currentUser?.fullName || currentUser?.name || transaction.operatorName || "Operator",
+          scaleName: transaction.scaleName || sys.selectedScaleName || "",
+          notes: "",
+        });
+      } catch (_) {
+        setFormData({
+          weight: capturedWeight || "",
+          operatorName: currentUser?.fullName || currentUser?.name || transaction.operatorName || "Operator",
+          scaleName: transaction.scaleName || "",
+          notes: "",
+        });
+      }
     }
   }, [visible, transaction, capturedWeight, currentUser]);
 
@@ -95,7 +102,7 @@ export default function AddWeighingModal({
         weight: parseFloat(formData.weight),
         weighBridgeId: transaction.weighBridgeId,
         weighBridgeName: transaction.weighBridgeName,
-        scaleName: formData.scaleName || "Scale-01",
+        scaleName: formData.scaleName || "",
         operatorId: currentUser?.id,
         operatorName: formData.operatorName,
         notes: formData.notes,

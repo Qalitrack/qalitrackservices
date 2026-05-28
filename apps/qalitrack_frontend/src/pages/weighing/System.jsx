@@ -79,6 +79,7 @@ import { getLicenseStatus, deactivateLicense } from "../../utils/licenseUtils";
 
 // ── Weighbridges ──────────────────────────────────────────────────────────────
 import WeighbridgesPortal from "./WeighingBridge";
+import { getWeighbridges } from "../../api/MasterData/WeighingBridge";
 
 const { Option } = Select;
 
@@ -140,8 +141,8 @@ const DEFAULT_SETTINGS = {
   anprFallbackToManual: true,
 
   // Weighbridge
-  weighbridgeName: "Syokimau",
-  selectedScaleName: "Katani",
+  weighbridgeName: "",
+  selectedScaleName: "",
   manualWeighingEnabled: false,
 
   // Hardware — Scale
@@ -647,24 +648,43 @@ function GeneralTab({ settings, setField, isDark }) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
-// HARDCODED WEIGHBRIDGE + SCALE CONFIGURATION
-// Update this list to add/rename weighbridges and their scales.
-// ═════════════════════════════════════════════════════════════════════════════
-const WEIGHBRIDGE_CONFIG = [
-  { name: "Nandi Coffee Cooperative Union", scales: ["NCCU-1", "NCCU-2"] },
-  { name: "Athi River", scales: ["Mlolongo", "Kitengela", "Isinya"] },
-];
-
-// ═════════════════════════════════════════════════════════════════════════════
 // WEIGHBRIDGE SECTION (used inside GeneralTab)
 // ═════════════════════════════════════════════════════════════════════════════
 function WeighbridgeSection({ settings, setField }) {
-  const selectedWb = WEIGHBRIDGE_CONFIG.find((wb) => wb.name === settings.weighbridgeName);
+  const [weighbridges, setWeighbridges] = useState([]);
+  const [wbLoading, setWbLoading] = useState(true);
+
+  useEffect(() => {
+    getWeighbridges(1, 100)
+      .then((items) => {
+        setWeighbridges(items);
+        if (items.length === 0) return;
+
+        const savedExists = items.some((wb) => wb.location === settings.weighbridgeName);
+
+        if (!settings.weighbridgeName || !savedExists) {
+          // Saved value is empty or stale — reset to first from backend
+          setField("weighbridgeName", items[0].location);
+          setField("selectedScaleName", items[0].scales?.[0] || "");
+        } else {
+          // Saved weighbridge still exists — sync the scale if it's stale/empty
+          const savedWb = items.find((wb) => wb.location === settings.weighbridgeName);
+          const scaleExists = savedWb?.scales?.includes(settings.selectedScaleName);
+          if (!settings.selectedScaleName || !scaleExists) {
+            setField("selectedScaleName", savedWb?.scales?.[0] || "");
+          }
+        }
+      })
+      .catch(() => setWeighbridges([]))
+      .finally(() => setWbLoading(false));
+  }, []);
+
+  const selectedWb = weighbridges.find((wb) => wb.location === settings.weighbridgeName);
   const scaleOptions = selectedWb?.scales || [];
 
-  const handleWeighbridgeChange = (name) => {
-    setField("weighbridgeName", name);
-    const wb = WEIGHBRIDGE_CONFIG.find((w) => w.name === name);
+  const handleWeighbridgeChange = (location) => {
+    setField("weighbridgeName", location);
+    const wb = weighbridges.find((w) => w.location === location);
     setField("selectedScaleName", wb?.scales[0] || "");
   };
 
@@ -679,11 +699,13 @@ function WeighbridgeSection({ settings, setField }) {
             value={settings.weighbridgeName}
             onChange={handleWeighbridgeChange}
             style={{ width: "100%" }}
-            placeholder="Select weighbridge"
+            placeholder={wbLoading ? "Loading…" : "Select weighbridge"}
+            loading={wbLoading}
+            disabled={wbLoading}
           >
-            {WEIGHBRIDGE_CONFIG.map((wb) => (
-              <Option key={wb.name} value={wb.name}>
-                {wb.name}
+            {weighbridges.map((wb) => (
+              <Option key={wb.id} value={wb.location}>
+                {wb.location}
               </Option>
             ))}
           </Select>
@@ -695,7 +717,7 @@ function WeighbridgeSection({ settings, setField }) {
             onChange={(v) => setField("selectedScaleName", v)}
             style={{ width: "100%" }}
             placeholder="Select scale"
-            disabled={scaleOptions.length === 0}
+            disabled={wbLoading || scaleOptions.length === 0}
           >
             {scaleOptions.map((scale) => (
               <Option key={scale} value={scale}>

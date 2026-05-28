@@ -28,32 +28,6 @@ RUN dotnet build "QaliTrack.DataManager.Api.csproj" -c Release -o /app/build
 WORKDIR "/src"
 RUN dotnet test "tests/QaliTrack.DataManager.Tests/QaliTrack.DataManager.Tests.csproj" --no-build --verbosity normal
 
-# Generate DocFX documentation (optional build stage)
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS docfx-build
-WORKDIR /src
-
-# Install Node.js for DocFX
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs
-
-# Install DocFX
-RUN dotnet tool install -g docfx
-
-# Copy documentation files
-COPY ["docfx.json", "."]
-COPY ["index.md", "."]
-COPY ["toc.yml", "."]
-COPY ["docs/", "docs/"]
-COPY ["images/", "images/"]
-
-# Copy source and project files for API documentation
-COPY ["src/", "src/"]
-COPY ["QaliTrack.DataManager.sln", "."]
-
-# Generate documentation
-RUN /root/.dotnet/tools/docfx metadata docfx.json
-RUN /root/.dotnet/tools/docfx build docfx.json
-
 FROM build AS publish
 WORKDIR "/src/src/QaliTrack.DataManager.Api"
 RUN dotnet publish "QaliTrack.DataManager.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
@@ -65,9 +39,6 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
 COPY --from=publish /app/publish .
-
-# Copy generated documentation
-COPY --from=docfx-build /src/_site /app/wwwroot/docs
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
