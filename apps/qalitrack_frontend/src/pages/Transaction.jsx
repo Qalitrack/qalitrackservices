@@ -202,9 +202,8 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
       ["TICKET NO",   `${record.receiptNo        || "N/A"}`, "REGISTRATION", `${record.noPlate          || "N/A"}`],
       ["TRANSPORTER", `${record.transporterName   || "N/A"}`, "COMMODITY",    `${record.commodityName    || "N/A"}`],
       ["SOURCE",      `${record.originName        || "N/A"}`, "DESTINATION",  `${record.destinationName || "N/A"}`],
-      ["OPERATOR",    `${record.operatorName      || "N/A"}`, "DRIVER",       `${record.driverName      || "N/A"}`],
+      ["DRIVER",      `${record.driverName        || "N/A"}`, "WEIGH MODE",   `${record.weighMode       || "N/A"}`],
       ["SUPPLIER",    `${record.supplierName      || "N/A"}`, "CUSTOMER",     `${record.customerName    || "N/A"}`],
-      ["WEIGHBRIDGE", `${record.weighBridgeName   || "N/A"}`, "WEIGH MODE",   `${record.weighMode       || "N/A"}`],
     ],
   });
   doc.setDrawColor(...amberBdr);
