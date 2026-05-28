@@ -13,7 +13,7 @@ public class ReceiptNumberService : IReceiptNumberService
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly ITimeService _timeService;
-    private const string Prefix = "QSL";
+    private const string Prefix = "NCCU";
     private const int SequenceLength = 6;
 
     public ReceiptNumberService(
