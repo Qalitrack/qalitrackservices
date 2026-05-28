@@ -302,8 +302,8 @@ const generateThemedPDF = async (record, ticketSettings, formatTurnaroundTimeSim
     },
     head: [["MEASUREMENT", "WEIGHT (kg)", "DATE", "OPERATOR", "SCALE", "WEIGHBRIDGE"]],
     body: [
-      ["GROSS WEIGHT", record.firstWeight  ? `${record.firstWeight} kg`  : "—", grossDate, operator, scale, bridge],
-      ["TARE WEIGHT",  record.secondWeight ? `${record.secondWeight} kg` : "—", tareDate,  operator, scale, bridge],
+      ["FIRST WEIGHT",  record.firstWeight  ? `${record.firstWeight} kg`  : "—", grossDate, operator, scale, bridge],
+      ["SECOND WEIGHT", record.secondWeight ? `${record.secondWeight} kg` : "—", tareDate,  operator, scale, bridge],
       [
         { content: "NET WEIGHT",  styles: { fontStyle: "bold", fillColor: netHl } },
         { content: record.netWeight ? `${record.netWeight} kg` : "—", styles: { fontStyle: "bold", fillColor: netHl } },

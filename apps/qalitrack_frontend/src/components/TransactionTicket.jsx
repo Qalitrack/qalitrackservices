@@ -43,76 +43,84 @@ export default function Transactions() {
         const doc = new jsPDF();
         const pageWidth = doc.internal.pageSize.getWidth();
 
-        // 1. Vehicle Snapshot Banner
-        doc.setFillColor(255, 193, 7); // Yellow [cite: 13]
-        doc.rect(0, 5, pageWidth, 8, 'F');
-        doc.setFontSize(10);
-        doc.setTextColor(0, 0, 0);
-        doc.text("VEHICLE SNAPSHOT", pageWidth / 2, 10, { align: "center" });
+        // 1. Vehicle Snapshot Banner — disabled
+        // doc.setFillColor(255, 193, 7);
+        // doc.rect(0, 5, pageWidth, 8, 'F');
+        // doc.setFontSize(10);
+        // doc.setTextColor(0, 0, 0);
+        // doc.text("VEHICLE SNAPSHOT", pageWidth / 2, 10, { align: "center" });
 
-        // 2. Snapshot Placeholder (Black Box) [cite: 1]
-        doc.setFillColor(30, 30, 30);
-        doc.rect(14, 15, pageWidth - 28, 45, 'F');
-        doc.setTextColor(255, 255, 255);
-        doc.text(`[ SNAPSHOT: ${record.noPlate} ]`, pageWidth / 2, 40, { align: "center" });
+        // 2. Snapshot Placeholder (Black Box) — disabled
+        // doc.setFillColor(30, 30, 30);
+        // doc.rect(14, 15, pageWidth - 28, 45, 'F');
+        // doc.setTextColor(255, 255, 255);
+        // doc.text(`[ SNAPSHOT: ${record.noPlate} ]`, pageWidth / 2, 40, { align: "center" });
 
-        // 3. Corporate Header [cite: 2]
+        // 3. Corporate Header
         doc.setTextColor(0, 0, 0);
         doc.setFontSize(16);
         doc.setFont("helvetica", "bold");
-        doc.text("KPFC", 14, 70);
+        doc.text("KPFC", 14, 15);
         doc.setFontSize(9);
         doc.setFont("helvetica", "normal");
-        doc.text("KPFC BUSINESS CENTER", 14, 75);
-        doc.text("PO BOX 36-00902/TEL: 07452266677, KIKUYU", 14, 80);
+        doc.text("KPFC BUSINESS CENTER", 14, 21);
+        doc.text("PO BOX 36-00902/TEL: 07452266677, KIKUYU", 14, 27);
 
-        // 4. Ticket Status and Date [cite: 3, 4]
+        // 4. Ticket Status and Date
         doc.setFontSize(14);
         doc.setFont("helvetica", "bold");
-        doc.text("WEIGHING TICKET", pageWidth - 14, 70, { align: "right" });
-        doc.setTextColor(34, 139, 34); // Green for LEGAL
-        doc.text("LEGAL", pageWidth - 14, 78, { align: "right" });
+        doc.text("WEIGHING TICKET", pageWidth - 14, 15, { align: "right" });
+        doc.setTextColor(34, 139, 34);
+        doc.text("LEGAL", pageWidth - 14, 23, { align: "right" });
         doc.setTextColor(0, 0, 0);
         doc.setFontSize(9);
-        doc.text(dayjs(record.createdAt).format("MMM DD, YYYY HH:mm"), pageWidth - 14, 84, { align: "right" });
+        doc.text(dayjs(record.createdAt).format("MMM DD, YYYY HH:mm"), pageWidth - 14, 29, { align: "right" });
 
-        // 5. Ticket Details Grid 
+        // 5. Ticket Details Grid
         autoTable(doc, {
-            startY: 90,
+            startY: 35,
             theme: 'plain',
-            styles: { fontSize: 8, cellPadding: 1 },
-            columnStyles: { 0: { fontStyle: 'bold', width: 30 }, 2: { fontStyle: 'bold', width: 30 } },
+            styles: { fontSize: 8, cellPadding: 2.5 },
+            columnStyles: { 0: { fontStyle: 'bold', cellWidth: 30 }, 2: { fontStyle: 'bold', cellWidth: 30 } },
             body: [
-                ["TICKET NO", `: ${record.receiptNo}`, "REGISTRATION", `: ${record.noPlate}`],
-                ["AXLE TYPE", ": 2A", "COMMODITY", `: ${record.commodityName}`],
-                ["TRANSPORTER", `: ${record.transporterName || 'N/A'}`, "TIMESTAMP", `: ${dayjs(record.createdAt).format("DD-MM-YY hh:mm A")}`],
-                ["SOURCE", `: ${record.originName || 'N/A'}`, "DESTINATION", `: ${record.destinationName || 'N/A'}`],
-                ["OPERATOR", `: ${record.operatorName || 'N/A'}`, "DRIVER", `: ${record.driverName || 'N/A'}`],
+                ["TICKET NO",   `: ${record.receiptNo}`,                               "REGISTRATION", `: ${record.noPlate}`],
+                ["AXLE TYPE",   ": 2A",                                                "COMMODITY",    `: ${record.commodityName}`],
+                ["TRANSPORTER", `: ${record.transporterName || 'N/A'}`,                "TIMESTAMP",    `: ${dayjs(record.createdAt).format("DD-MM-YY hh:mm A")}`],
+                ["SOURCE",      `: ${record.originName || 'N/A'}`,                     "DESTINATION",  `: ${record.destinationName || 'N/A'}`],
+                ["OPERATOR",    `: ${record.operatorName || 'N/A'}`,                   "DRIVER",       `: ${record.driverName || 'N/A'}`],
             ]
         });
 
-        // 6. Axle Weight Analysis 
+        // 6. Axle Weight Analysis — disabled
+        // doc.setFont("helvetica", "bold");
+        // doc.text("AXLE WEIGHT ANALYSIS", 14, doc.lastAutoTable.finalY + 10);
+        // autoTable(doc, {
+        //     startY: doc.lastAutoTable.finalY + 12,
+        //     head: [['ITEMS', 'GROUP 1', 'GROUP 2', 'GROUP 3', 'GVW']],
+        //     styles: { fontSize: 8, halign: 'center', lineWidth: 0.1, lineColor: [0, 0, 0] },
+        //     headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0] },
+        //     body: [
+        //         ['ACTUAL WT', '1400', '0', '0', `${record.firstWeight || 0} KG`],
+        //         ['ALLOWED', '8000', '10000', '0', '18000 KG'],
+        //         ['RESULT', 'LEGAL', 'LEGAL', 'LEGAL', 'LEGAL']
+        //     ]
+        // });
+
+        // 7. Summary Weights
+        const summaryY = doc.lastAutoTable.finalY + 14;
+        doc.setFillColor(255, 193, 7);
+        doc.rect(14, summaryY - 6, pageWidth - 28, 8, 'F');
         doc.setFont("helvetica", "bold");
-        doc.text("AXLE WEIGHT ANALYSIS", 14, doc.lastAutoTable.finalY + 10);
-        autoTable(doc, {
-            startY: doc.lastAutoTable.finalY + 12,
-            head: [['ITEMS', 'GROUP 1', 'GROUP 2', 'GROUP 3', 'GVW']],
-            styles: { fontSize: 8, halign: 'center', lineWidth: 0.1, lineColor: [0, 0, 0] },
-            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0] },
-            body: [
-                ['ACTUAL WT', '1400', '0', '0', `${record.firstWeight || 0} KG`],
-                ['ALLOWED', '8000', '10000', '0', '18000 KG'],
-                ['RESULT', 'LEGAL', 'LEGAL', 'LEGAL', 'LEGAL']
-            ]
-        });
+        doc.setFontSize(9);
+        doc.setTextColor(0, 0, 0);
+        doc.text("WEIGHING SUMMARY", pageWidth / 2, summaryY, { align: "center" });
 
-        // 7. Summary Weights [cite: 10]
-        const finalY = doc.lastAutoTable.finalY + 10;
         doc.autoTable({
-            startY: finalY,
+            startY: summaryY + 4,
             head: [['FIRST WEIGHT', 'SECOND WEIGHT', 'NET WEIGHT']],
             body: [[`${record.firstWeight || 0} Kg`, `${record.secondWeight || 0} Kg`, `${record.netWeight || 0} Kg`]],
-            styles: { halign: 'center', fontSize: 10, fontStyle: 'bold' }
+            headStyles: { fillColor: [240, 240, 240], textColor: [0, 0, 0], fontStyle: 'bold' },
+            styles: { halign: 'center', fontSize: 16, fontStyle: 'bold', cellPadding: 10, lineWidth: 0.1, lineColor: [0, 0, 0] }
         });
 
         // 8. Footer [cite: 15, 16]

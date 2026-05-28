@@ -651,7 +651,7 @@ function GeneralTab({ settings, setField, isDark }) {
 // Update this list to add/rename weighbridges and their scales.
 // ═════════════════════════════════════════════════════════════════════════════
 const WEIGHBRIDGE_CONFIG = [
-  { name: "Syokimau", scales: ["Katani", "Embu"] },
+  { name: "Nandi Coffee Cooperative Union", scales: ["NCCU-1", "NCCU-2"] },
   { name: "Athi River", scales: ["Mlolongo", "Kitengela", "Isinya"] },
 ];
 
