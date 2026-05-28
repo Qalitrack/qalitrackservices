@@ -188,7 +188,8 @@ export async function verifyLicenseToken(token) {
 async function checkWithServer(token) {
   const base =
     localStorage.getItem("licenseServerUrl") ||
-    import.meta.env.VITE_LICENSE_SERVER_URL;
+    import.meta.env.VITE_LICENSE_SERVER_URL ||
+    "https://kmk.support.qalibrated.co.ke";
 
   if (!base) return null; // ERP URL not configured yet — skip server check
 
