@@ -49,10 +49,6 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
-      - RABBITMQ_HOST=rabbitmq-prod
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - Backup__Path=/app/Backups
       - Email__FromEmail=${EMAIL_FROM_EMAIL}
       - Email__FromName=${EMAIL_FROM_NAME}
@@ -70,8 +66,6 @@ services:
         condition: service_healthy
       redis-cache-prod:
         condition: service_healthy
-      rabbitmq-prod:
-        condition: service_started
     networks:
       - qalitrack-proxy
     ports:
@@ -134,22 +128,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
-  rabbitmq-prod:
-    image: rabbitmq:3-management-alpine
-    container_name: qalitrack-rabbitmq-prod
-    restart: always
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-    volumes:
-      - rabbitmq_prod_data:/var/lib/rabbitmq
-    networks:
-      - qalitrack-proxy
-    ports:
-      - "7010:15672"
-    expose:
-      - "5672"
 
   # =================================================================
   # MASTERDATA SERVICE (PROD)
@@ -235,10 +213,6 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
-      - RABBITMQ_HOST=rabbitmq-backup-prod
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - Backup__Path=/app/Backups
       - Backup__MetadataPath=/app/backup-metadata
     volumes:
@@ -250,8 +224,6 @@ services:
       postgres-backupservice-prod:
         condition: service_started
       redis-backup-prod:
-        condition: service_started
-      rabbitmq-backup-prod:
         condition: service_started
     networks:
       - qalitrack-proxy
@@ -305,28 +277,6 @@ services:
           memory: 512M
           cpus: '0.5'
 
-  rabbitmq-backup-prod:
-    image: rabbitmq:3-management-alpine
-    container_name: qalitrack-rabbitmq-backup-prod
-    restart: always
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-      - RABBITMQ_DEFAULT_VHOST=/
-    volumes:
-      - rabbitmq_backup_prod_data:/var/lib/rabbitmq
-    networks:
-      - qalitrack-proxy
-    ports:
-      - "7011:15672"
-    expose:
-      - "5672"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-
   # =================================================================
   # TRANSACTION SERVICE (PROD)
   # =================================================================
@@ -346,10 +296,6 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
-      - RABBITMQ_HOST=rabbitmq-transaction-prod
-      - RABBITMQ_PORT=5672
-      - RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
-      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - Transaction__MetadataPath=/app/transaction-metadata
     volumes:
       - ./transaction-service/data:/app/data
@@ -359,8 +305,6 @@ services:
       postgres-transaction-prod:
         condition: service_started
       redis-transaction-prod:
-        condition: service_started
-      rabbitmq-transaction-prod:
         condition: service_started
     networks:
       - qalitrack-proxy
@@ -414,28 +358,6 @@ services:
           memory: 512M
           cpus: '0.5'
 
-  rabbitmq-transaction-prod:
-    image: rabbitmq:3-management-alpine
-    container_name: qalitrack-rabbitmq-transaction-prod
-    restart: always
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-      - RABBITMQ_DEFAULT_VHOST=/
-    volumes:
-      - rabbitmq_transaction_prod_data:/var/lib/rabbitmq
-    networks:
-      - qalitrack-proxy
-    ports:
-      - "7012:15672"
-    expose:
-      - "5672"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-
 volumes:
   postgres_userservice_prod_data:
     driver: local
@@ -443,9 +365,6 @@ volumes:
   redis_prod_data:
     driver: local
     name: redis_prod_data
-  rabbitmq_prod_data:
-    driver: local
-    name: rabbitmq_prod_data
   postgres_masterdata_prod_data:
     driver: local
     name: postgres_masterdata_prod_data
@@ -455,18 +374,12 @@ volumes:
   redis_backup_prod_data:
     driver: local
     name: redis_backup_prod_data
-  rabbitmq_backup_prod_data:
-    driver: local
-    name: rabbitmq_backup_prod_data
   postgres_transaction_prod_data:
     driver: local
     name: postgres_transaction_prod_data
   redis_transaction_prod_data:
     driver: local
     name: redis_transaction_prod_data
-  rabbitmq_transaction_prod_data:
-    driver: local
-    name: rabbitmq_transaction_prod_data
 
 networks:
   qalitrack-proxy:
