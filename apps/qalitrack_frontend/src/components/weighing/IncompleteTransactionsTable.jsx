@@ -128,7 +128,6 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   useEffect(() => { loadTransactions(); }, [loadTransactions]);
 
   useEffect(() => {
-    console.log("📊 Redux transactions changed. Count:", transactions.length);
   }, [transactions]);
 
   useEffect(() => {

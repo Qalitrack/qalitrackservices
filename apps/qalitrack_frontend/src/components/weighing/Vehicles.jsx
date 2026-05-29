@@ -46,7 +46,7 @@ export default function Vehicles() {
     ownerId: "",
     axleConfigurationId: "",
     driverIds: [],
-    rfiDcode: "", // ✅ Added RFID code field
+    rfiDcode: "",
   });
   const [editingVehicle, setEditingVehicle] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -60,53 +60,28 @@ export default function Vehicles() {
   const fetchVehicles = async () => {
     try {
       setLoading(true);
-      console.log("🚗 Fetching vehicles with params:", { pageNumber, pageSize, searchTerm });
       
       const data = await getVehicles(pageNumber, pageSize, searchTerm);
       
-      console.log("🚗 Vehicles RAW response:", data);
-      console.log("🚗 Response type:", typeof data);
-      console.log("🚗 Response keys:", data ? Object.keys(data) : "null/undefined");
-      console.log("🚗 data.items:", data?.items);
-      console.log("🚗 data.data:", data?.data);
-      console.log("🚗 data.data.items:", data?.data?.items);
       
       // ✅ Extract items from response - try all possible structures
       let items = data?.items || data?.data?.items || (Array.isArray(data?.data) ? data.data : []) || (Array.isArray(data) ? data : []);
       
-      console.log("🚗 Extracted items:", items);
-      console.log("🚗 Items is array?:", Array.isArray(items));
-      console.log("🚗 Items length:", items.length);
       
       // ✅ Extract total items for pagination
       const totalItems = data?.totalItems || data?.data?.totalItems || items.length;
       const pages = Math.ceil(totalItems / pageSize);
       setTotalPages(pages);
-      console.log("📊 Total items:", totalItems, "Total pages:", pages);
       
       if (items.length > 0) {
-        console.log("🚗 First vehicle sample:", items[0]);
-        console.log("🚗 Vehicle fields:", Object.keys(items[0]));
-        console.log("🚗 ownerName field:", items[0].ownerName);
-        console.log("🚗 axleConfigurationName field:", items[0].axleConfigurationName);
         
         // ✅ If backend doesn't provide names, enrich with local data
         if (!items[0].ownerName || !items[0].axleConfigurationName) {
-          console.log("⚠️ Backend not providing names, enriching locally...");
-          console.log("📊 Available owners:", owners.length, owners);
-          console.log("📊 Available axle configs:", axleConfigs.length, axleConfigs);
           
           items = items.map(vehicle => {
-            console.log(`🔍 Processing vehicle ${vehicle.registrationNumber}:`, {
-              ownerId: vehicle.ownerId,
-              axleConfigurationId: vehicle.axleConfigurationId
-            });
-            
             const owner = owners.find(o => o.id === vehicle.ownerId);
             const axleConfig = axleConfigs.find(a => a.id === vehicle.axleConfigurationId);
             
-            console.log(`  - Found owner:`, owner);
-            console.log(`  - Found axle config:`, axleConfig);
             
             return {
               ...vehicle,
@@ -114,16 +89,11 @@ export default function Vehicles() {
               axleConfigurationName: vehicle.axleConfigurationName || axleConfig?.code || axleConfig?.description || axleConfig?.name || null
             };
           });
-          console.log("✅ Enriched first vehicle:", items[0]);
         }
       }
       
       setVehicles(Array.isArray(items) ? items : []);
-      console.log(`✅ Vehicles loaded: ${Array.isArray(items) ? items.length : 0} vehicles`);
     } catch (error) {
-      console.error("❌ Failed to fetch vehicles:", error);
-      console.error("❌ Error message:", error.message);
-      console.error("❌ Error response:", error.response?.data);
       setVehicles([]);
     } finally {
       setLoading(false);
@@ -132,51 +102,27 @@ export default function Vehicles() {
 
   const fetchOwners = async () => {
     try {
-      console.log("👤 Fetching owners...");
       const data = await getOwners(1, 100, "");
-      console.log("👤 Owners RAW response:", data);
-      console.log("👤 Response keys:", data ? Object.keys(data) : "null");
       
       const items = data?.items || data || [];
-      console.log("👤 Extracted owners:", items);
-      console.log("👤 Owners is array?:", Array.isArray(items));
-      console.log("👤 Owners count:", items.length);
       
       if (items.length > 0) {
-        console.log("👤 First owner sample:", items[0]);
-        console.log("👤 Owner fields:", Object.keys(items[0]));
       }
       
       setOwners(Array.isArray(items) ? items : []);
-      console.log("✅ Owners set to state:", Array.isArray(items) ? items.length : 0);
     } catch (error) {
-      console.error("❌ Failed to fetch owners:", error.message);
-      console.error("❌ Error details:", error);
       setOwners([]);
     }
   };
 
   const fetchAxleConfigs = async () => {
     try {
-      console.log("🔧 Starting to fetch axle configs...");
       const data = await getAxleConfigs(1, 100, "");
-      console.log("⚙️ Axle configs RAW response:", data);
-      console.log("⚙️ Response keys:", data ? Object.keys(data) : "null/undefined");
-      console.log("⚙️ data.items:", data?.items);
-      console.log("⚙️ data.data:", data?.data);
-      console.log("⚙️ Is data an array?:", Array.isArray(data));
       
       const items = data?.items || data?.data?.items || data || [];
-      console.log("⚙️ Extracted items:", items);
-      console.log("⚙️ Items is array?:", Array.isArray(items));
-      console.log("⚙️ Items length:", items.length);
       
       setAxleConfigs(Array.isArray(items) ? items : []);
-      console.log("✅ Axle configs set to state:", Array.isArray(items) ? items.length : 0, "items");
     } catch (error) {
-      console.error("❌ Failed to fetch axle configs:", error);
-      console.error("❌ Error message:", error.message);
-      console.error("❌ Error stack:", error.stack);
       setAxleConfigs([]);
     }
   };
@@ -193,7 +139,6 @@ export default function Vehicles() {
   // ✅ Re-enrich vehicles whenever owners or axleConfigs are loaded
   useEffect(() => {
     if (vehicles.length > 0 && (owners.length > 0 || axleConfigs.length > 0)) {
-      console.log("🔄 Re-enriching vehicles with updated owners/axle configs...");
       const enrichedVehicles = vehicles.map(vehicle => {
         const owner = owners.find(o => o.id === vehicle.ownerId);
         const axleConfig = axleConfigs.find(a => a.id === vehicle.axleConfigurationId);
@@ -217,18 +162,15 @@ export default function Vehicles() {
     try {
       setLoading(true);
       const data = await getVehicleByRfid(rfidSearchTerm.trim());
-      console.log("🔍 Vehicle found by RFID:", data);
       
       // API returns a single vehicle, wrap in array for display
       setVehicles(data ? [data] : []);
       
       if (data) {
-        console.log(`✅ Found vehicle: ${data.registrationNumber}`);
       } else {
         message.warning("No vehicle found with this RFID code");
       }
     } catch (error) {
-      console.error("❌ RFID search failed:", error.message);
       message.warning("No vehicle found with RFID: " + rfidSearchTerm);
       setVehicles([]);
     } finally {
@@ -305,12 +247,6 @@ export default function Vehicles() {
         payload.driverIds = form.driverIds;
       }
 
-      console.log("📤 Full payload being sent:");
-      console.log(JSON.stringify(payload, null, 2));
-      console.log("📋 Payload details:");
-      console.log("  - registrationNumber:", payload.registrationNumber);
-      console.log("  - ownerId:", payload.ownerId, "(type:", typeof payload.ownerId, ")");
-      console.log("  - axleConfigurationId:", payload.axleConfigurationId, "(type:", typeof payload.axleConfigurationId, ")");
       
       // Validate required fields before sending
       if (!payload.ownerId || payload.ownerId === "") {
@@ -330,17 +266,14 @@ export default function Vehicles() {
         if (form.rfiDcode?.trim()) {
           payload.rfiDcode = form.rfiDcode;
         }
-        console.log("📝 Updating vehicle with RFID:", payload.rfiDcode);
         await updateVehicle(editingVehicle.id, payload);
       } else {
         // ✅ CREATE: rfiDcode already excluded (not in payload)
-        console.log("➕ Creating new vehicle (no RFID on create)");
         await createVehicle(payload);
       }
       resetForm();
       await fetchVehicles();
     } catch (error) {
-      console.error("❌ Save error:", error);
       message.error("Error saving vehicle: " + error.message);
     } finally {
       setLoading(false);
@@ -375,9 +308,9 @@ export default function Vehicles() {
       ownerId: vehicle.ownerId || "",
       axleConfigurationId: vehicle.axleConfigurationId || "",
       driverIds: vehicle.driverIds || [],
-      rfiDcode: vehicle.rfiDcode || vehicle.nfCcode || "", // ✅ Include RFID code (nfCcode is response field)
+      rfiDcode: vehicle.rfiDcode || vehicle.nfCcode || "",
     });
-    setShowAdvanced(true); // Show advanced fields when editing
+    setShowAdvanced(true);
   };
 
   const handleDelete = async (id) => {
@@ -386,7 +319,6 @@ export default function Vehicles() {
       await deleteVehicle(id);
       await fetchVehicles();
     } catch (error) {
-      console.error("❌ Delete failed:", error.message);
     }
   };
 
@@ -427,7 +359,7 @@ export default function Vehicles() {
       ownerId: "",
       axleConfigurationId: "",
       driverIds: [],
-      rfiDcode: "", // ✅ Reset RFID code
+      rfiDcode: "",
     });
     setEditingVehicle(null);
     setShowAdvanced(false);

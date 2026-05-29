@@ -15,7 +15,6 @@ export const fetchVehicleByPlate = createAsyncThunk(
     "selfService/fetchVehicleByRegNumber",
     async (regNumber, { rejectWithValue }) => {
         try {
-            console.log("🚗 Fetching vehicle by plate:", regNumber);
             
             const response = await apiClient.get(`/MasterData/Vehicles`);
             
@@ -25,10 +24,8 @@ export const fetchVehicleByPlate = createAsyncThunk(
                 throw new Error("Vehicle not found");
             }
             
-            console.log("✅ Vehicle found:", vehicle);
             return vehicle;
         } catch (error) {
-            console.error("❌ Vehicle lookup failed:", error);
             const message = error.response?.data?.message || error.message || "Vehicle not found";
             return rejectWithValue(message);
         }
@@ -42,7 +39,6 @@ export const authenticateDriver = createAsyncThunk(
     "selfService/authenticateDriver",
     async (cardId, { rejectWithValue }) => {
         try {
-            console.log("💳 Authenticating driver with NFC card:", cardId);
             
             const response = await apiClient.post("/MasterData/Drivers/authenticate", {
                 cardId: cardId
@@ -54,10 +50,8 @@ export const authenticateDriver = createAsyncThunk(
                 throw new Error("Driver not found");
             }
             
-            console.log("✅ Driver authenticated:", driver);
             return driver;
         } catch (error) {
-            console.error("❌ Driver authentication failed:", error);
             const message = error.response?.data?.message || error.message || "Driver not recognized";
             return rejectWithValue(message);
         }
@@ -71,7 +65,6 @@ export const createSelfServiceTransaction = createAsyncThunk(
     "selfService/createTransaction",
     async (payload, { rejectWithValue }) => {
         try {
-            console.log("📤 Creating self-service transaction:", payload);
             
             const response = await createTransaction(payload);
             
@@ -88,10 +81,8 @@ export const createSelfServiceTransaction = createAsyncThunk(
                 transaction = response;
             }
             
-            console.log("✅ Self-service transaction created:", transaction);
             return transaction;
         } catch (error) {
-            console.error("❌ Transaction creation failed:", error);
             const message = error.response?.data?.message || error.message || "Failed to create transaction";
             return rejectWithValue(message);
         }
@@ -105,7 +96,6 @@ export const printThermalTicket = createAsyncThunk(
     "selfService/printTicket",
     async ({ content, printerName = "ThermalPrinter01", copies = 1 }, { rejectWithValue }) => {
         try {
-            console.log("🖨️ Sending ticket to thermal printer...");
             
             const response = await apiClient.post("/Printer/thermal/print", {
                 content,
@@ -113,10 +103,8 @@ export const printThermalTicket = createAsyncThunk(
                 copies
             });
             
-            console.log("✅ Ticket printed successfully");
             return response.data;
         } catch (error) {
-            console.error("❌ Print failed:", error);
             // Don't fail the transaction if print fails
             return { success: false, error: error.message };
         }
@@ -133,7 +121,6 @@ export const fetchKioskWeighbridge = createAsyncThunk(
             const response = await apiClient.get(`/MasterData/Weighbridges/${weighbridgeId}`);
             return response.data?.data || response.data;
         } catch (error) {
-            console.error("❌ Weighbridge fetch failed:", error);
             // Return default if not found
             return {
                 id: "KIOSK_WEIGHBRIDGE_01",
@@ -161,18 +148,15 @@ export const connectANPRStream = createAsyncThunk(
                         dispatch(setANPRImage(data.imageUrl || data.snapshot));
                     }
                 } catch (err) {
-                    console.error("ANPR parse error:", err);
                 }
             };
             
             eventSource.onerror = (error) => {
-                console.error("ANPR stream error:", error);
                 eventSource.close();
             };
             
             return { connected: true };
         } catch (error) {
-            console.error("❌ ANPR connection failed:", error);
             return { connected: false, error: error.message };
         }
     }
@@ -194,18 +178,15 @@ export const connectRFIDStream = createAsyncThunk(
                         dispatch(setRFIDTag(data.tagId || data.rfidTag));
                     }
                 } catch (err) {
-                    console.error("RFID parse error:", err);
                 }
             };
             
             eventSource.onerror = (error) => {
-                console.error("RFID stream error:", error);
                 eventSource.close();
             };
             
             return { connected: true };
         } catch (error) {
-            console.error("❌ RFID connection failed:", error);
             return { connected: false, error: error.message };
         }
     }
@@ -227,18 +208,15 @@ export const connectNFCStream = createAsyncThunk(
                         dispatch(setNFCCard(data.cardId || data.nfcId));
                     }
                 } catch (err) {
-                    console.error("NFC parse error:", err);
                 }
             };
             
             eventSource.onerror = (error) => {
-                console.error("NFC stream error:", error);
                 eventSource.close();
             };
             
             return { connected: true };
         } catch (error) {
-            console.error("❌ NFC connection failed:", error);
             return { connected: false, error: error.message };
         }
     }
@@ -289,13 +267,11 @@ const selfServiceSlice = createSlice({
         // Stage management
         setStage: (state, action) => {
             state.currentStage = action.payload;
-            console.log("🔄 Stage changed to:", action.payload);
         },
         
         // Detection setters
         setDetectedPlate: (state, action) => {
             state.detectedPlate = action.payload;
-            console.log("🚗 Plate detected:", action.payload);
         },
         
         setANPRImage: (state, action) => {
@@ -304,12 +280,10 @@ const selfServiceSlice = createSlice({
         
         setRFIDTag: (state, action) => {
             state.rfidTag = action.payload;
-            console.log("📡 RFID detected:", action.payload);
         },
         
         setNFCCard: (state, action) => {
             state.nfcCard = action.payload;
-            console.log("💳 NFC card detected:", action.payload);
         },
         
         // Session management
@@ -317,11 +291,9 @@ const selfServiceSlice = createSlice({
             state.sessionId = `SESSION-${Date.now()}`;
             state.sessionStartTime = new Date().toISOString();
             state.currentStage = 'vehicle_detection';
-            console.log("🎬 Session started:", state.sessionId);
         },
         
         endSession: (state) => {
-            console.log("🏁 Session ended:", state.sessionId);
             // Reset to initial state
             Object.assign(state, initialState);
         },
@@ -356,12 +328,10 @@ const selfServiceSlice = createSlice({
                 state.loading = false;
                 state.vehicleData = action.payload;
                 state.currentStage = 'driver_auth';
-                console.log("✅ Vehicle data loaded, moving to driver auth");
             })
             .addCase(fetchVehicleByPlate.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-                console.error("❌ Vehicle lookup failed");
             });
         
         // Driver authentication
@@ -374,12 +344,10 @@ const selfServiceSlice = createSlice({
                 state.loading = false;
                 state.driverData = action.payload;
                 state.currentStage = 'weighing';
-                console.log("✅ Driver authenticated, moving to weighing");
             })
             .addCase(authenticateDriver.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-                console.error("❌ Driver authentication failed");
             });
         
         // Transaction creation
@@ -397,12 +365,10 @@ const selfServiceSlice = createSlice({
                     weighTime: new Date().toISOString(),
                 };
                 state.currentStage = 'ticket_print';
-                console.log("✅ Transaction created, moving to ticket print");
             })
             .addCase(createSelfServiceTransaction.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
-                console.error("❌ Transaction creation failed");
             });
         
         // Ticket printing
@@ -415,13 +381,11 @@ const selfServiceSlice = createSlice({
                 if (state.printStatus === 'success') {
                     state.currentStage = 'complete';
                 }
-                console.log("🖨️ Print status:", state.printStatus);
             })
             .addCase(printThermalTicket.rejected, (state, action) => {
                 state.printStatus = 'failed';
                 // Still proceed to complete even if print fails
                 state.currentStage = 'complete';
-                console.warn("⚠️ Print failed but continuing:", action.error);
             });
         
         // Weighbridge info
@@ -453,7 +417,6 @@ const selfServiceSlice = createSlice({
                 state.loading = false;
                 state.vehicleData = action.payload;
                 state.currentStage = 'driver_auth';
-                console.log("✅ Vehicle data loaded (manual dispatch)");
             }
         );
         
@@ -464,7 +427,6 @@ const selfServiceSlice = createSlice({
                 state.loading = false;
                 state.driverData = action.payload;
                 state.currentStage = 'weighing';
-                console.log("✅ Driver authenticated (manual dispatch)");
             }
         );
     },

@@ -19,7 +19,6 @@ export default function TransactionsList() {
       const res = await getWeighingTransactions();
       setBackendTransactions(res);
     } catch (error) {
-      console.warn("⚠️ Could not load backend transactions:", error.message);
       toast.error("Backend unavailable, showing local data");
     } finally {
       setLoading(false);

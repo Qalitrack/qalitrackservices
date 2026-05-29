@@ -37,7 +37,6 @@ export default function Products() {
 
       setProducts(filtered);
     } catch (error) {
-      console.error("Failed to fetch products:", error);
     } finally {
       setLoading(false);
     }
@@ -92,7 +91,6 @@ export default function Products() {
       await deleteProduct(id);
       await fetchProducts();
     } catch (error) {
-      console.error("Delete failed:", error);
     }
   };
 

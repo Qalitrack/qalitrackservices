@@ -14,7 +14,6 @@ const Routes = () => {
         const data = await getRoutes();
         setRoutes(data || []);
       } catch (err) {
-        console.error("Error fetching routes:", err);
         setError("Failed to load routes.");
       } finally {
         setLoading(false);

@@ -57,7 +57,6 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
             const minutes = String(date.getMinutes()).padStart(2, '0');
             return `${hours}:${minutes}`;
         } catch (e) {
-            console.error('Error formatting time:', e);
             return '';
         }
     };
@@ -438,7 +437,6 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                     : []
             };
 
-            console.log('Submitting shift data:', submissionData);
 
             // Call the update API
             const response = await updateShift(shift.id, submissionData);
@@ -454,11 +452,6 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                 setError(response?.message || 'Failed to update shift');
             }
         } catch (err) {
-            console.error('Error updating shift:', {
-                message: err.message,
-                response: err.response?.data,
-                status: err.response?.status
-            });
             setError(err.response?.data?.message || 'An error occurred while updating the shift');
         } finally {
             setIsLoading(false);

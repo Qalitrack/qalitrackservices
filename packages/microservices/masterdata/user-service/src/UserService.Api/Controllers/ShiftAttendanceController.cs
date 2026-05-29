@@ -95,12 +95,7 @@ namespace UserService.Api.Controllers
                     pageSize,
                     cancellationToken);
 
-                if (result == null || !result.Items.Any())
-                {
-                    return NotFound($"No attendance records found for shift instance with ID {instanceId}");
-                }
-
-                return Ok(result);
+                return Ok(result ?? new PagedResult<ShiftAttendanceResponse>());
             }
             catch (Exception ex)
             {

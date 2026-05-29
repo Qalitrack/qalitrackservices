@@ -21,10 +21,6 @@ export default function FeatureLicenseGate({ feature, children }) {
 
   // Dev-time guard — catch unknown feature strings before they reach production
   if (import.meta.env.DEV && !LicenseFeatures.isValid(feature)) {
-    console.error(
-      `[FeatureLicenseGate] Unknown feature "${feature}". ` +
-      `Use a LicenseFeatures constant. Valid values: ${LicenseFeatures.ALL.map(f => f.value).join(", ")}`
-    );
   }
 
   // Human-readable label for the locked UI (falls back to the raw value)

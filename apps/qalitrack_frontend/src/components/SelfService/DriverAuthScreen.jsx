@@ -12,7 +12,6 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
   // 🎭 SIMULATED NFC DETECTION (for testing without hardware)
   // ═════════════════════════════════════════════════════════════════════════
   useEffect(() => {
-    console.log("💳 SIMULATION MODE: NFC reader active");
     
     // Simulate NFC card detection after 3 seconds
     const simulateNFC = setTimeout(() => {
@@ -24,7 +23,6 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
       
       const randomCard = testCards[Math.floor(Math.random() * testCards.length)];
       
-      console.log("💳 SIMULATED NFC card detected:", randomCard.cardId);
       setNfcCardData(randomCard);
       setNfcDetected(true);
       
@@ -43,7 +41,6 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
   // ═════════════════════════════════════════════════════════════════════════
   /*
   useEffect(() => {
-    console.log("🔌 REAL MODE: Connecting to NFC reader...");
     
     const eventSource = new EventSource("http://172.16.0.93:5000/api/NFC/stream");
     
@@ -52,7 +49,6 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
         const data = JSON.parse(event.data);
         if (data.cardId || data.nfcId) {
           const cardId = data.cardId || data.nfcId;
-          console.log("💳 REAL NFC card detected:", cardId);
           
           setNfcCardData(data);
           setNfcDetected(true);
@@ -62,17 +58,14 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
           }, 1000);
         }
       } catch (err) {
-        console.error("NFC parse error:", err);
       }
     };
     
     eventSource.onerror = (error) => {
-      console.error("NFC stream error:", error);
       eventSource.close();
     };
     
     return () => {
-      console.log("🛑 Closing NFC stream");
       eventSource.close();
     };
   }, []);
@@ -83,7 +76,6 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
   // ═════════════════════════════════════════════════════════════════════════
   const handleAuthenticate = async (nfcData) => {
     setAuthenticating(true);
-    console.log("🔐 Authenticating driver with NFC:", nfcData.cardId);
     
     try {
       // In production, this would verify against backend database
@@ -110,7 +102,6 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
         verifiedAt: new Date().toISOString()
       };
       
-      console.log("✅ Driver verified from database:", mockDriverData);
       
       // Pass NFC data to parent component
       await onDriverAuthenticated({
@@ -119,7 +110,6 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
       });
       
     } catch (err) {
-      console.error("❌ Authentication error:", err);
       setAuthenticating(false);
     }
   };

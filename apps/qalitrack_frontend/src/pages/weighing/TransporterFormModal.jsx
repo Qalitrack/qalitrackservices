@@ -288,7 +288,7 @@ export default function TransportersPortal() {
                       const ci = parseContact(t.contactInfo);
                       const isActive = t.status === "Active";
                       return (
-                        <tr key={t.id} className={`border-b border-gray-100 transition-all ${
+                        <tr key={t.ticketID || t.id} className={`border-b border-gray-100 transition-all ${
                           isActive 
                             ? 'hover:bg-emerald-50/50 bg-emerald-50/20' 
                             : 'hover:bg-amber-50'

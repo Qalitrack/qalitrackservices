@@ -9,7 +9,6 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
     // ✅ CRITICAL: Allow kiosk routes to bypass authentication
     // This MUST be checked BEFORE any authentication checks
     if (location.pathname.startsWith('/kiosk')) {
-        console.log('✅ Kiosk route detected - bypassing authentication');
         return <Outlet />;
     }
 
@@ -18,7 +17,6 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
 
     // If not authenticated, redirect to login
     if (!isAuth) {
-        console.log('❌ Not authenticated - redirecting to login');
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
@@ -28,7 +26,6 @@ const ProtectedRoute = ({ allowedRoles = [] }) => {
     const hasAccess = allowedRoles.length === 0 || allowedRoles.some((role) => userRoles.includes(role));
 
     if (!hasAccess) {
-        console.log('❌ Access denied - insufficient permissions');
         // Redirect based on user's primary role to their default landing page
         const primaryRole = userRoles[0];
 

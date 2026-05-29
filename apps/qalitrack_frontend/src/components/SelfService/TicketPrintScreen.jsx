@@ -21,13 +21,11 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
   const printThermalTicket = async () => {
     try {
       setPrinting(true);
-      console.log("🖨️ Printing thermal ticket:", formatThermalTicket(ticketData));
       // REAL MODE: uncomment and configure when thermal printer endpoint is ready
       // await fetch("http://172.16.0.93:5000/api/Printer/thermal/print", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ content: formatThermalTicket(ticketData), printerName:"ThermalPrinter01", copies:1 }) });
       setTimeout(() => { setPrintSuccess(true); setPrinting(false); }, 2000);
       setTimeout(() => { onComplete(); }, 9000);
     } catch (error) {
-      console.error("❌ Print error:", error);
       setPrintSuccess(true);
       setPrinting(false);
       setTimeout(() => { onComplete(); }, 9000);

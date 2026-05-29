@@ -31,12 +31,10 @@ export const useCameraRealtime = (cameraId = "npr1") => {
             });
           }
         } catch (err) {
-          console.warn("[PLATES] Bad data", err);
         }
       };
 
       source.onerror = () => {
-        console.warn("[PLATES] SSE disconnected — reconnecting");
         source.close();
         setTimeout(connect, 2000);
       };

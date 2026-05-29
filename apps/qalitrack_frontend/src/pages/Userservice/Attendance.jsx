@@ -42,7 +42,6 @@ const Attendance = () => {
                     setError(null);
                 }
             } catch (err) {
-                console.error('Error fetching attendance:', err);
                 if (err.response && err.response.status === 404) {
                     setError('No attendance records found for this shift instance.');
                 } else {
@@ -248,7 +247,6 @@ const Attendance = () => {
             button.disabled = false;
 
         } catch (error) {
-            console.error('Error generating PDF:', error);
             alert('Failed to generate PDF. Please try again.');
             
             // Reset button state

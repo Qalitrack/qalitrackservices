@@ -31,7 +31,6 @@ export const fetchSimulatedWeight = createAsyncThunk(
         try {
             const weight = Math.floor(Math.random() * 50000) + 10000;
             const position = Math.random() < 0.7 ? "Fully On" : "Partially On";
-            console.log("✅ Simulated weight:", weight, "kg, Position:", position);
             return { weight, position };
         } catch (error) {
             return rejectWithValue("Simulation failed");
@@ -360,7 +359,6 @@ export const fetchWeighbridges = createAsyncThunk(
                 params: { pageNumber, pageSize },
             });
 
-            console.log("🔍 Weighbridges API Response:", response.data);
 
             // Handle different response structures
             let items = [];
@@ -374,7 +372,6 @@ export const fetchWeighbridges = createAsyncThunk(
                 items = response.data;
             }
 
-            console.log("✅ Weighbridges extracted:", items);
 
             const meta = {
                 pageNumber: response.data?.pageNumber || pageNumber,
@@ -386,7 +383,6 @@ export const fetchWeighbridges = createAsyncThunk(
 
             return { items, meta };
         } catch (error) {
-            console.error("❌ Weighbridges fetch error:", error);
             const message =
                 error.response?.data?.message ||
                 error.response?.data?.error ||
@@ -437,12 +433,8 @@ export const fetchTransactions = createAsyncThunk(
     "weighing/fetchTransactions",
     async (filters = {}, { rejectWithValue }) => {
         try {
-            console.log("📤 Fetching transactions with filters:", filters);
             const response = await getTransactions(filters);
             
-            console.log("✅ Raw API Response:", JSON.stringify(response, null, 2));
-            console.log("✅ Response type:", typeof response);
-            console.log("✅ Is array:", Array.isArray(response));
             
             // ✅ COMPREHENSIVE: Try ALL possible response structures
             let items = [];
@@ -450,67 +442,51 @@ export const fetchTransactions = createAsyncThunk(
             // Structure 1: response.data.data.items
             if (response?.data?.data?.items && Array.isArray(response.data.data.items)) {
                 items = response.data.data.items;
-                console.log("✅ Found items at: response.data.data.items");
             }
             // Structure 2: response.data.items
             else if (response?.data?.items && Array.isArray(response.data.items)) {
                 items = response.data.items;
-                console.log("✅ Found items at: response.data.items");
             }
             // Structure 3: response.items
             else if (response?.items && Array.isArray(response.items)) {
                 items = response.items;
-                console.log("✅ Found items at: response.items");
             }
             // Structure 4: response.data as array
             else if (response?.data && Array.isArray(response.data)) {
                 items = response.data;
-                console.log("✅ Found items at: response.data (array)");
             }
             // Structure 5: response as array
             else if (Array.isArray(response)) {
                 items = response;
-                console.log("✅ Found items at: response (array)");
             }
             // Structure 6: response.data.data as array (some APIs use this)
             else if (response?.data?.data && Array.isArray(response.data.data)) {
                 items = response.data.data;
-                console.log("✅ Found items at: response.data.data (array)");
             }
             // Structure 7: Wrapped in result/results
             else if (response?.result && Array.isArray(response.result)) {
                 items = response.result;
-                console.log("✅ Found items at: response.result");
             }
             else if (response?.results && Array.isArray(response.results)) {
                 items = response.results;
-                console.log("✅ Found items at: response.results");
             }
             // Structure 8: Check data.result
             else if (response?.data?.result && Array.isArray(response.data.result)) {
                 items = response.data.result;
-                console.log("✅ Found items at: response.data.result");
             }
             else {
-                console.warn("⚠️ Could not find transaction array in response");
-                console.warn("⚠️ Response structure:", Object.keys(response || {}));
                 if (response?.data) {
-                    console.warn("⚠️ response.data structure:", Object.keys(response.data || {}));
                 }
                 items = [];
             }
             
-            console.log(`✅ Extracted ${items.length} transactions`);
             
             // Log first transaction for debugging
             if (items.length > 0) {
-                console.log("✅ First transaction sample:", items[0]);
             }
             
             return items;
         } catch (error) {
-            console.error("❌ Failed to fetch transactions:", error);
-            console.error("❌ Error response:", error.response?.data);
             return rejectWithValue(error.message || "Failed to load transactions");
         }
     }
@@ -528,13 +504,11 @@ export const addTransaction = createAsyncThunk(
     "weighing/addTransaction",
     async (payload, { rejectWithValue }) => {
         try {
-            console.log("📤 Creating transaction:", payload);
             
             // ✅ Send payload directly - Transaction.js will wrap it
             const response = await createTransaction(payload);  // ← NO WRAPPING HERE
             
             // ✅ Log full response to debug structure
-            console.log("✅ Transaction API Full Response:", JSON.stringify(response, null, 2));
             
             // ✅ Extract transaction from various possible response structures
             let transaction = null;
@@ -549,13 +523,9 @@ export const addTransaction = createAsyncThunk(
                 transaction = response;
             }
             
-            console.log("✅ Extracted transaction for state:", transaction);
-            console.log("✅ Transaction ID:", transaction?.ticketID || transaction?.id);
-            console.log("✅ Is Completed:", transaction?.isCompleted);
             
             return transaction;
         } catch (err) {
-            console.error("❌ Transaction creation failed:", err);
             return rejectWithValue(err.message || "Save failed");
         }
     }
@@ -610,11 +580,9 @@ export const addSecondWeight = createAsyncThunk(
                 notes: payload.notes || "",
             };
             
-            console.log("📤 Sending second weight:", weighingData);
             const response = await addWeighing(weighingData);
             return response;
         } catch (err) {
-            console.error("❌ Second weight failed:", err);
             return rejectWithValue(err.message);
         }
     }
@@ -991,7 +959,6 @@ const weighingSlice = createSlice({
             .addCase(fetchTransactions.fulfilled, (state, action) => {
                 state.loading = false;
                 state.transactions = action.payload;
-                console.log(`✅ Redux: Transactions loaded: ${action.payload.length} items`);
             })
             .addCase(fetchTransactions.rejected, rejected)
 
@@ -1001,7 +968,6 @@ const weighingSlice = createSlice({
                 
                 const newTx = action.payload;
                 
-                console.log("✅ Redux: Adding transaction to state:", newTx);
                 
                 if (newTx) {
                     // Get transaction ID (might be ticketID or id)
@@ -1016,17 +982,14 @@ const weighingSlice = createSlice({
                     if (existingIndex === -1) {
                         // Add to beginning (newest first)
                         state.transactions.unshift(newTx);
-                        console.log(`✅ Redux: Transaction added. Total transactions: ${state.transactions.length}`);
                     } else {
                         // Update existing transaction
                         state.transactions[existingIndex] = { 
                             ...state.transactions[existingIndex], 
                             ...newTx 
                         };
-                        console.log(`✅ Redux: Transaction ${txId} updated in state`);
                     }
                 } else {
-                    console.warn("⚠️ Redux: No transaction data in action.payload");
                 }
             })
             .addCase(addTransaction.rejected, rejected)
@@ -1053,7 +1016,6 @@ const weighingSlice = createSlice({
     state.loading = false;
     
     const updated = action.payload.data || action.payload;
-    console.log("✅ Redux: Second weight added, response:", updated);
     
     // ✅ CRITICAL FIX: Search by ticketID, not id
     const txId = updated.ticketID || updated.id;
@@ -1072,9 +1034,7 @@ const weighingSlice = createSlice({
             status: 'Completed'
         };
         
-        console.log(`✅ Redux: Transaction ${txId} marked as completed`);
     } else {
-        console.warn(`⚠️ Redux: Could not find transaction with ID ${txId}`);
     }
 })
             .addCase(addSecondWeight.rejected, rejected)

@@ -572,7 +572,6 @@ const AddShift = ({ isOpen, onClose, onShiftAdded }) => {
             }, 1500);
 
         } catch (err) {
-            console.error('Error creating shift:', err);
             setError(err.response?.data?.message || 'Failed to create shift. Please try again.');
         } finally {
             setIsLoading(false);

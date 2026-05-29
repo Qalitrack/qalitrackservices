@@ -73,7 +73,6 @@ const Microservices = () => {
             setIsDeleteModalOpen(false);
             setServiceToDelete(null);
         } catch (error) {
-            console.error('Delete error:', error);
             setDeleteStatus({
                 loading: false,
                 error: error.message || 'Failed to delete service. Please try again.',

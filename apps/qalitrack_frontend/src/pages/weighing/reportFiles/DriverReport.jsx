@@ -467,7 +467,7 @@ export default function DriverReport({ transactions = [], loading }) {
 
               <tbody>
                 {driverTrips.map((t, idx) => (
-                  <tr key={t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                  <tr key={t.ticketID || t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                     <td className="p-2 text-[10px]">{t.date}</td>
                     <td className="p-2 text-[10px] font-semibold">{t.vehicle}</td>
                     <td className="p-2 text-[10px]">{t.supplier}</td>

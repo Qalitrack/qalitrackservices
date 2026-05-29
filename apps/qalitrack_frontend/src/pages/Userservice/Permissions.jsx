@@ -73,7 +73,6 @@ const Permissions = () => {
             const data = await fetchPermissions(); // Fetch active permissions for PDF
             return data;
         } catch (error) {
-            console.error('Error fetching all permissions:', error);
             throw error;
         }
     };
@@ -221,7 +220,6 @@ const Permissions = () => {
             doc.save(`permissions-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
-            console.error('Error generating PDF:', error);
             setError('Failed to generate PDF: ' + (error.message || 'Unknown error'));
             return false;
         } finally {
@@ -243,7 +241,6 @@ const Permissions = () => {
             const user = await fetchUserById(userId);
             setUserDetails(prev => ({ ...prev, [userId]: user.email }));
         } catch (error) {
-            console.error(`Failed to fetch user ${userId}`, error);
             setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' })); // Handle error case
         }
     };
@@ -285,7 +282,6 @@ const Permissions = () => {
             const roles = await fetchRolesForPermission(permission.id);
             setRolesForPermission(roles);
         } catch (err) {
-            console.error("Failed to fetch roles:", err);
             setRolesForPermission([]); // Reset on error
         }
     };
@@ -315,7 +311,6 @@ const Permissions = () => {
             setEditModalOpen(false);
             showMessage('Permission updated successfully!', 'success');
         } catch (err) {
-            console.error("Failed to update permission:", err);
             setModalFeedback({ text: err.message || 'Failed to update permission.', type: 'error' });
         } finally {
             setIsUpdating(false);
@@ -334,7 +329,6 @@ const Permissions = () => {
             setAddModalOpen(false);
             showMessage('Permission created successfully!', 'success');
         } catch (err) {
-            console.error("Failed to create permission:", err);
             setModalFeedback({ text: err.message || 'Failed to create permission.', type: 'error' });
         } finally {
             setIsUpdating(false);
@@ -358,7 +352,6 @@ const Permissions = () => {
             setDeleteModalOpen(false);
             showMessage(`Permission successfully ${actionVerb}.`, 'success');
         } catch (err) {
-            console.error(`Failed to ${action} permission:`, err);
             setModalFeedback({ text: err.message || `Failed to ${action} permission.`, type: 'error' });
             setIsUpdating(false);
         }

@@ -294,7 +294,7 @@ export default function ReportsTable({
     ));
 
   const renderEmpty = () => (
-    <tr>
+    <tr key="empty">
       <td colSpan={colCount} className="h-48 text-center text-gray-500">
         <FileDown className="w-10 h-10 mx-auto mb-3 opacity-30" />
         <p className="text-sm font-semibold">No records found</p>
@@ -374,7 +374,7 @@ export default function ReportsTable({
                   const rowNum = getRowNumber(t);
                   return (
                     <tr
-                      key={t.id}
+                      key={t.ticketID || t.id}
                       className={`border-b border-gray-100 transition-colors ${
                         done
                           ? "bg-green-50/30 hover:bg-green-50/60"

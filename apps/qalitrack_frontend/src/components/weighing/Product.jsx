@@ -46,7 +46,6 @@ export default function ProductsPortal() {
       setProducts(productList);
       setTotalPages(pages);
     } catch (err) {
-      console.error("❌ Failed to load products:", err.message);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -71,7 +70,6 @@ export default function ProductsPortal() {
       await fetchProducts();
       resetForm();
     } catch (err) {
-      console.error("❌ Save failed:", err.message);
       message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
@@ -97,7 +95,6 @@ export default function ProductsPortal() {
       await deleteProduct(id);
       await fetchProducts();
     } catch (err) {
-      console.error("❌ Delete failed:", err.message);
     } finally {
       setLoading(false);
     }

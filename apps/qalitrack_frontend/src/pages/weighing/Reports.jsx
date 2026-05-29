@@ -836,7 +836,7 @@ export default function Reports() {
                         t.status === "completed";
                       return (
                         <tr
-                          key={t.id}
+                          key={t.ticketID || t.id}
                           className={`border-t border-gray-100 ${
                             isCompleted
                               ? "bg-green-50/40"

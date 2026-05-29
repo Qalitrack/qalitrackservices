@@ -420,7 +420,7 @@ export default function CustomerReport({ transactions = [], loading }) {
 
               <tbody>
                 {customerTrips.map((t, idx) => (
-                  <tr key={t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                  <tr key={t.ticketID || t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
                     <td className="p-2">{t.date}</td>
                     <td className="p-2">{t.vehicle}</td>
                     <td className="p-2">{t.supplier}</td>

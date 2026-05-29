@@ -152,7 +152,6 @@ const Users = () => {
             const user = await fetchUserById(userId);
             setUserDetails(prev => ({ ...prev, [userId]: user.email }));
         } catch (error) {
-            console.error(`Failed to fetch user ${userId}`, error);
             setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' })); // Handle error case
         }
     };
@@ -248,7 +247,6 @@ const Users = () => {
             }, 2000);
         } catch (err) {
             setModalFeedback({ text: err.message || 'Failed to create user.', type: 'error' });
-            console.error("Failed to create user:", err);
         } finally {
             setIsUpdating(false);
         }
@@ -280,7 +278,6 @@ const Users = () => {
             }));
             setViewRolesModalOpen(true);
         } catch (error) {
-            console.error('Failed to fetch user roles:', error);
             // Still open the modal but with an error message
             setSelectedUser(prev => ({
                 ...prev,
@@ -333,7 +330,6 @@ const Users = () => {
             }, 3000);
         } catch (err) {
             setModalFeedback({ text: err.message || 'Failed to reset password.', type: 'error' });
-            console.error("Failed to reset password:", err);
         } finally {
             setIsUpdating(false);
         }
@@ -430,7 +426,6 @@ const Users = () => {
             }, 3000);
         } catch (err) {
             setModalFeedback({ text: err.message || 'Failed to update user.', type: 'error' });
-            console.error("Failed to update user:", err);
         } finally {
             setIsUpdating(false);
         }
@@ -486,7 +481,6 @@ const Users = () => {
             }
             return allUsers;
         } catch (error) {
-            console.error('Error fetching all users:', error);
             throw error;
         }
     };
@@ -643,7 +637,6 @@ const Users = () => {
             doc.save(`users-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
-            console.error('Error generating PDF:', error);
             showMessage('Failed to generate PDF: ' + (error.message || 'Unknown error'), 'error');
             return false;
         } finally {
@@ -738,7 +731,6 @@ const Users = () => {
                 const shifts = await fetchUserShifts(user.id);
                 shiftCounts[user.id] = shifts.length;
             } catch (error) {
-                console.error(`Failed to fetch shifts for user ${user.id}:`, error);
                 shiftCounts[user.id] = 0;
             }
         });
