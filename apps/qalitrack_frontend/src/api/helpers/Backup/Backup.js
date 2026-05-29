@@ -25,7 +25,6 @@ class BackupAPI {
             const response = await backupApiClient.post(`${this.baseEndpoint}/create`, payload);
             return response.data;
         } catch (error) {
-            console.error('Error creating backup:', error);
             throw this._handleError(error);
         }
     }
@@ -39,7 +38,6 @@ class BackupAPI {
             const response = await backupApiClient.get(`${this.baseEndpoint}/scheduled`);
             return response.data;
         } catch (error) {
-            console.error('Error fetching scheduled backups:', error);
             throw this._handleError(error);
         }
     }
@@ -56,7 +54,6 @@ class BackupAPI {
             });
             return response.data;
         } catch (error) {
-            console.error(`Error fetching available backups for ${microservice}:`, error);
             throw this._handleError(error);
         }
     }
@@ -80,7 +77,6 @@ class BackupAPI {
             const response = await backupApiClient.post(`${this.baseEndpoint}/restore`, payload);
             return response.data;
         } catch (error) {
-            console.error('Error restoring backup:', error);
             throw this._handleError(error);
         }
     }
@@ -112,7 +108,6 @@ class BackupAPI {
 
             return response.data;
         } catch (error) {
-            console.error('Error restoring backup:', error);
             throw this._handleError(error);
         }
     }
@@ -128,7 +123,6 @@ class BackupAPI {
             const response = await backupApiClient.delete(`${this.baseEndpoint}/unschedule/${encodeURIComponent(microservice)}/${backupType}`);
             return response.data;
         } catch (error) {
-            console.error('Error unscheduling backup:', error);
             throw this._handleError(error);
         }
     }

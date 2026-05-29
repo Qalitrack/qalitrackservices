@@ -5,18 +5,10 @@ import { apiClient } from "../helpers/apiClients";
 const BASE_PATH = "/MasterData/Owners";
 
 // Log the API client configuration for debugging
-console.log('API Client base URL:', apiClient.client.defaults.baseURL);
 
 // Fetch all owners with pagination and search
 export const getOwners = async (pageNumber = 1, pageSize = 10, searchTerm = "") => {
   try {
-    console.log(`Fetching owners with params:`, { 
-      pageNumber, 
-      pageSize, 
-      searchTerm,
-      baseURL: apiClient.client.defaults.baseURL,
-      fullPath: `${apiClient.client.defaults.baseURL}${BASE_PATH}`
-    });
     
     // Make the API request with a timeout
     const response = await Promise.race([
@@ -33,12 +25,6 @@ export const getOwners = async (pageNumber = 1, pageSize = 10, searchTerm = "") 
       )
     ]);
     
-    console.log('API Response:', {
-      status: response.status,
-      statusText: response.statusText,
-      data: response.data,
-      headers: response.headers
-    });
     
     // Handle different response statuses
     if (response.status >= 400) {
@@ -64,30 +50,9 @@ export const getOwners = async (pageNumber = 1, pageSize = 10, searchTerm = "") 
     }
     
     // If we get here, the response format is unexpected
-    console.error('Unexpected API response format:', response);
     throw new Error('Unexpected response format from server');
     
   } catch (error) {
-    console.error('Detailed error in getOwners:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-      status: error.status,
-      code: error.code,
-      response: error.response ? {
-        status: error.response.status,
-        statusText: error.response.statusText,
-        data: error.response.data,
-        headers: error.response.headers
-      } : undefined,
-      config: error.config ? {
-        url: error.config.url,
-        method: error.config.method,
-        baseURL: error.config.baseURL,
-        params: error.config.params,
-        headers: error.config.headers
-      } : undefined
-    });
     
     // Create a more descriptive error message
     let errorMessage = 'Failed to fetch owners';

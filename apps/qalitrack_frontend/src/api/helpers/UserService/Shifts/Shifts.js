@@ -79,7 +79,6 @@ export const fetchShifts = async (page = 1, pageSize = 10, signal) => {
         };
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch shifts error:', err);
         }
         throw err;
     }
@@ -101,7 +100,6 @@ export const fetchDeletedShifts = async (page = 1, pageSize = 10, signal) => {
         return response.data.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch deleted shifts error:', err);
         }
         throw err;
     }
@@ -117,7 +115,6 @@ export const getShiftById = async (shiftId) => {
         const response = await apiClient.get(`/shift/${shiftId}`);
         return response.data;
     } catch (err) {
-        console.error('Get shift by ID error:', err);
         throw err;
     }
 };
@@ -134,11 +131,6 @@ export const updateShift = async (shiftId, shiftData) => {
         const response = await apiClient.put(`/shift/${shiftId}`, shiftData);
         return response.data;
     } catch (err) {
-        console.error('Update shift error:', {
-            message: err.message,
-            response: err.response?.data,
-            status: err.response?.status
-        });
         throw err;
     }
 };
@@ -153,7 +145,6 @@ export const deleteShift = async (shiftId) => {
         const response = await apiClient.delete(`/shift/${shiftId}`);
         return response.data;
     } catch (err) {
-        console.error('Delete shift error:', err);
         throw err;
     }
 };
@@ -179,11 +170,6 @@ export const createShift = async (shiftData) => {
         const response = await apiClient.post('/shift', payload);
         return response.data;
     } catch (err) {
-        console.error('Create shift error:', {
-            message: err.message,
-            response: err.response?.data,
-            status: err.response?.status
-        });
         throw err;
     }
 };
@@ -203,10 +189,8 @@ export const fetchShiftInstances = async (shiftId, params = {}, signal) => {
             signal
         });
         return response.data;
-        console.log(response.data);
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch shift instances error:', err);
         }
         throw err;
     }

@@ -34,7 +34,6 @@ export default function WeighbridgesPortal() {
       const data = await getWeighbridges(1, 200, "");
       setWeighbridges(Array.isArray(data) ? data : (data?.items || []));
     } catch (err) {
-      console.error("❌ Failed to load weighbridges:", err);
       setError(err.message || "Failed to fetch weighbridges");
       setWeighbridges([]);
     } finally {
@@ -82,7 +81,6 @@ export default function WeighbridgesPortal() {
       resetForm();
       fetchWeighbridges();
     } catch (err) {
-      console.error("❌ Save failed:", err.message);
       message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
@@ -119,7 +117,6 @@ export default function WeighbridgesPortal() {
       await deleteWeighbridge(id);
       fetchWeighbridges();
     } catch (err) {
-      console.error("❌ Delete failed:", err.message);
       message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);

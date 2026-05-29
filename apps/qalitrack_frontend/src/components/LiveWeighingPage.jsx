@@ -29,7 +29,6 @@ export default function LiveWeighbridgeStatus({ onWeightStable, onLiveWeightChan
     };
 
     es.onerror = () => {
-      console.error("Live weighbridge stream error");
       es.close();
       setLoading(false);
     };

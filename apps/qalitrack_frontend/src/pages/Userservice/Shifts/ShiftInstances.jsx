@@ -70,7 +70,6 @@ const ShiftInstances = ({ shiftId }) => {
                     setShiftName('Unknown Shift');
                 }
             } catch (err) {
-                console.error('Error loading shift instances:', err);
                 setError('Failed to load shift instances');
             } finally {
                 setLoading(false);

@@ -18,14 +18,10 @@ class MicroserviceAPI {
             return response.data;
 
         } catch (error) {
-            console.error('Error fetching microservice data:', error.message);
-            console.error('Full error object:', error);
 
             // You might want to handle specific error cases
             if (error.originalError?.response?.status === 404) {
-                console.error('Microservice endpoint not found');
             } else if (error.originalError?.response?.status === 500) {
-                console.error('Internal server error in microservice');
             }
 
             throw error;
@@ -66,8 +62,6 @@ class MicroserviceAPI {
             return response.data;
             
         } catch (error) {
-            console.error(`Error updating microservice ${name}:`, error.message);
-            console.error('Error details:', error.response?.data || error);
             
             if (error.response?.status === 404) {
                 throw new Error(`Microservice '${name}' not found`);
@@ -97,7 +91,6 @@ class MicroserviceAPI {
             return response.data;
             
         } catch (error) {
-            console.error(`Error deleting microservice ${name}:`, error.message);
             
             if (error.response?.status === 404) {
                 throw new Error(`Microservice '${name}' not found`);
@@ -122,13 +115,11 @@ class MicroserviceAPI {
      */
     async createMicroservice(microserviceData) {
         try {
-            console.log('Creating new microservice...', microserviceData);
             
             const response = await backupApiClient.post(this.endpoint, microserviceData);
             return response.data;
             
         } catch (error) {
-            console.error('Error creating microservice:', error);
             
             // Extract and format error message
             let errorMessage = error.message || 'Failed to create microservice';
@@ -168,7 +159,6 @@ export async function createMicroservice(microserviceData) {
         const data = await microserviceAPI.createMicroservice(microserviceData);
         return data;
     } catch (error) {
-        console.error('Error in createMicroservice:', error);
         throw error;
     }
 }
@@ -183,7 +173,6 @@ export async function deleteMicroservice(name) {
         const data = await microserviceAPI.deleteMicroservice(name);
         return data;
     } catch (error) {
-        console.error('Error in deleteMicroservice:', error);
         throw error;
     }
 }
@@ -199,7 +188,6 @@ export async function updateMicroservice(name, updateData) {
         const data = await microserviceAPI.updateMicroservice(name, updateData);
         return data;
     } catch (error) {
-        console.error('Error in updateMicroservice:', error);
         throw error;
     }
 }

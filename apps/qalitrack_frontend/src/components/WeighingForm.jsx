@@ -247,7 +247,6 @@ function AddWeighingModal({ visible, transaction, capturedWeight, onClose, onSuc
       onClose();
     } catch (error) {
       message.error(error?.message || 'Failed to add weighing');
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -515,7 +514,6 @@ export default function WeighingDashboard() {
       dispatch(fetchTransactions({ pageNumber: 1, pageSize: 50 }));
     } catch (err) {
       message.error(err?.message || 'Error creating transaction');
-      console.error(err);
     }
   };
 

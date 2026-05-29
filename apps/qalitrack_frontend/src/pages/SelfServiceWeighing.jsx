@@ -35,7 +35,7 @@ const STAGES = {
 class KioskErrorBoundary extends React.Component {
   state = { hasError: false, error: null };
   static getDerivedStateFromError(e) { return { hasError: true, error: e }; }
-  componentDidCatch(e, i)            { console.error("🛑 KioskBoundary:", e, i); }
+  componentDidCatch(e, i)            { /* boundary */ }
 
   render() {
     if (!this.state.hasError) return this.props.children;
@@ -72,7 +72,7 @@ function KioskInner() {
   const [transactionData,     setTransactionData]     = useState(null);
   const [error,               setError]               = useState(null);
 
-  useEffect(() => { console.log("📍 Stage →", stage); }, [stage]);
+  useEffect(() => {}, [stage]);
 
   const handleReset = useCallback(() => {
     setStage(STAGES.VEHICLE_DETECTION);
@@ -92,7 +92,6 @@ function KioskInner() {
   // ── STAGE 1 callback ──────────────────────────────────────────────────────
   // VehicleDetectionScreen now includes pendingTxn in its result
   const handleVehicleDetected = useCallback((result) => {
-    console.log("✅ handleVehicleDetected:", result);
 
     const vehicle    = result?.vehicle    ?? result;
     const driver     = result?.driver     ?? null;
@@ -118,7 +117,6 @@ function KioskInner() {
 
   // ── STAGE 2 callback ──────────────────────────────────────────────────────
   const handleWeighingComplete = useCallback((weighData) => {
-    console.log("⚖️ handleWeighingComplete:", weighData);
 
     const txn = {
       id:              weighData?.ticketID ?? weighData?.id ?? ("TXN_" + Date.now()),

@@ -19,7 +19,6 @@ export const fetchShifts = async (page = 1, pageSize = 10, signal) => {
         return response.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch shifts error:', err);
         }
         throw err;
     }
@@ -44,7 +43,6 @@ export const fetchDeletedShifts = async (page = 1, pageSize = 10, signal) => {
         return response.data.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch deleted shifts error:', err);
         }
         throw err;
     }
@@ -70,7 +68,6 @@ export const updateShift = async (shiftId, shiftData) => {
 
         return await apiClient.put(`/Shift/${shiftId}`, payload);
     } catch (err) {
-        console.error(`Update shift ${shiftId} error:`, err);
         throw err;
     }
 };
@@ -84,7 +81,6 @@ export const deleteShift = async (shiftId) => {
     try {
         return await apiClient.delete(`/Shift/${shiftId}`);
     } catch (err) {
-        console.error(`Delete shift ${shiftId} error:`, err);
         throw err;
     }
 };
@@ -107,7 +103,6 @@ export const createShift = async (shiftData) => {
         };
         return await apiClient.post('/Shift', payload);
     } catch (err) {
-        console.error('Create shift error:', err);
         throw err;
     }
 };
@@ -132,7 +127,6 @@ export const fetchShiftUsers = async (shiftId, signal) => {
         return response.data?.data?.items ?? response.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error(`Fetch users for shift ${shiftId} error:`, err);
         }
         throw err;
     }
@@ -150,7 +144,6 @@ export const assignShiftToRole = async (roleId, shiftId) => {
         }
         return await apiClient.post(`/UserShift/role/${roleId}/shift/${shiftId}`);
     } catch (err) {
-        console.error(`Assign shift ${shiftId} to role ${roleId} error:`, err);
         throw err;
     }
 };
@@ -168,7 +161,6 @@ export const removeShiftFromRole = async (roleId, shiftId) => {
         }
         return await apiClient.delete(`/UserShift/role/${roleId}/shift/${shiftId}`);
     } catch (err) {
-        console.error(`Remove shift ${shiftId} from role ${roleId} error:`, err);
         throw err;
     }
 };
@@ -185,7 +177,6 @@ export const assignShiftToUser = async (userId, shiftId) => {
         }
         return await apiClient.post(`/UserShift/${userId}/shift/${shiftId}`);
     } catch (err) {
-        console.error(`Assign shift ${shiftId} to user ${userId} error:`, err);
         throw err;
     }
 };
@@ -203,7 +194,6 @@ export const removeShiftFromUser = async (userId, shiftId) => {
         }
         return await apiClient.delete(`/UserShift/${userId}/shift/${shiftId}`);
     } catch (err) {
-        console.error(`Remove shift ${shiftId} from user ${userId} error:`, err);
         throw err;
     }
 };
@@ -225,11 +215,9 @@ export const fetchDeletedUserShifts = async (page = 1, pageSize = 10, signal) =>
             },
             signal,
         });
-        console.log('Deleted User Shifts response:', response.data);
         return response.data.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch deleted shifts error:', err);
         }
         throw err;
     }
@@ -247,7 +235,6 @@ export const fetchShiftById = async (shiftId, signal) => {
         return response.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error(`Fetch shift ${shiftId} error:`, err);
         }
         throw err;
     }

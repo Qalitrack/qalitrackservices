@@ -118,7 +118,6 @@ export default function WeighingDashboard() {
 
   // Debug: Log weighbridges when they change
   useEffect(() => {
-    console.log("🔍 Dashboard - weighbridges state:", weighbridges);
   }, [weighbridges]);
 
   const handleManualCapture = (weight) => {

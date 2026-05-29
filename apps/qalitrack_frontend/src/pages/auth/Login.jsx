@@ -77,7 +77,6 @@ export default function Login() {
 
         if (result.success) {
             if (result.requiresPasswordChange) {
-                console.log('Password change required, showing password change form');
             } else {
                 handleRedirect();
             }

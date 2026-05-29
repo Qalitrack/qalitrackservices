@@ -7,7 +7,6 @@ const handleRequest = async (promise) => {
     const response = await promise;
     return response.data;
   } catch (error) {
-    console.error("❌ Transaction API Error:", error.response?.data || error.message);
     throw new Error(
       error.response?.data?.message ||
         (typeof error.response?.data === "string"

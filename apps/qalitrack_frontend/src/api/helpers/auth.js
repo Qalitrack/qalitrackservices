@@ -66,7 +66,6 @@ const useAuth = () => {
             }
             return session;
         } catch (e) {
-            console.error('Failed to parse session data:', e);
             return null;
         }
     };
@@ -94,13 +93,11 @@ const useAuth = () => {
         
         // Check if session has expired
         if (now > session.expiresAt) {
-            console.log('Session expired');
             return false;
         }
 
         // Check for inactivity timeout
         if (now - session.lastActivity > ACTIVITY_TIMEOUT) {
-            console.log('Session inactive for too long');
             return false;
         }
 
@@ -136,7 +133,6 @@ const useAuth = () => {
             
             // Set new timeout
             activityTimeout.current = setTimeout(() => {
-                console.log('User inactive - logging out');
                 logout();
             }, ACTIVITY_TIMEOUT);
         };
@@ -225,12 +221,10 @@ const useAuth = () => {
     const updatePassword = async (currentPassword, newPassword, confirmPassword) => {
         if (!userId) {
             const errorMessage = 'No active session. Please login again.';
-            console.error('No userId:', errorMessage);
             setError(errorMessage);
             return { success: false, error: errorMessage };
         }
 
-        console.log('Sending updatePassword request:', { userId, currentPassword, newPassword, confirmPassword });
         setLoading(true);
         setError('');
 
@@ -270,7 +264,6 @@ const useAuth = () => {
 
         } catch (err) {
             const errorMessage = extractErrorMessage(err);
-            console.error('Update password error:', err, 'Message:', errorMessage);
             setError(errorMessage);
             return { success: false, error: errorMessage };
         } finally {

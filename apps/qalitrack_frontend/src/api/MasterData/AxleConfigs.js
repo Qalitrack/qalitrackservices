@@ -6,11 +6,6 @@ const BASE_PATH = "/MasterData/AxleConfigurations";
 // Fetch all axle configurations
 export const getAxleConfigs = async (pageNumber = 1, pageSize = 100, searchTerm = "") => {
   try {
-    console.log(`🔧 Fetching axle configs with params:`, { 
-      pageNumber, 
-      pageSize, 
-      searchTerm
-    });
     
     const response = await apiClient.get(BASE_PATH, {
       params: { 
@@ -20,15 +15,9 @@ export const getAxleConfigs = async (pageNumber = 1, pageSize = 100, searchTerm 
       }
     });
     
-    console.log('✅ Axle Configs API Response:', response.data);
     
     return response.data;
   } catch (error) {
-    console.error('❌ Axle Configs API Error:', {
-      message: error.message,
-      status: error.response?.status,
-      data: error.response?.data
-    });
     throw error;
   }
 };

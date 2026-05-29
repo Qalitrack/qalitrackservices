@@ -21,7 +21,6 @@ const ScheduledBackup = () => {
             setLastUpdated(new Date());
             setError(null);
         } catch (err) {
-            console.error('Failed to load scheduled backups:', err);
             setError('Failed to load scheduled backups. Please try again.');
         } finally {
             setLoading(false);
@@ -152,7 +151,6 @@ const ScheduledBackup = () => {
             description = description.replace(/,/g, ', ').replace(/\s+/g, ' ').trim();
             return description || cron;
         } catch (e) {
-            console.error('Error parsing cron expression:', e);
             return cron;
         }
     };
@@ -171,7 +169,6 @@ const ScheduledBackup = () => {
             toast.success('Backup unscheduled successfully');
             await loadScheduledBackups();
         } catch (error) {
-            console.error('Error unscheduling backup:', error);
             toast.error(`Failed to unschedule backup: ${error.message}`);
         } finally {
             setIsDeleting(false);

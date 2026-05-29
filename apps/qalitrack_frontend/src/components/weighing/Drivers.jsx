@@ -58,11 +58,9 @@ export default function DriverPortal() {
     try {
       setLoading(true);
       setError(null);
-      console.log("📡 Fetching drivers... page:", page, "search:", search);
 
       const data = await getDrivers({ pageNumber: page, pageSize, searchTerm: search });
 
-      console.log("🚀 Drivers API Response:", data);
 
       const driverList = Array.isArray(data?.data?.items)
         ? data.data.items
@@ -75,7 +73,6 @@ export default function DriverPortal() {
       setDrivers(driverList);
       setTotalPages(pages);
     } catch (error) {
-      console.error("❌ Failed to load drivers:", error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -102,7 +99,6 @@ export default function DriverPortal() {
         status: form.status,
       };
 
-      console.log("📤 Saving driver:", payload);
 
       if (editingDriver) {
         await updateDriver(editingDriver.id, payload);
@@ -112,7 +108,6 @@ export default function DriverPortal() {
       await fetchDrivers();
       resetForm();
     } catch (error) {
-      console.error("Error saving driver:", error.message);
       message.error(`Error: ${error.message}`);
     } finally {
       setLoading(false);
@@ -139,7 +134,6 @@ export default function DriverPortal() {
       await deleteDriver(id);
       await fetchDrivers();
     } catch (error) {
-      console.error("Delete failed:", error.message);
       message.error(`Delete failed: ${error.message}`);
     } finally {
       setLoading(false);

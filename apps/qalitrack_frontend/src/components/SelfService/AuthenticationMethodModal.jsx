@@ -78,7 +78,6 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
 
   const dbg = useCallback((msg, data) => {
     const line = `[${new Date().toLocaleTimeString()}] ${msg}${data !== undefined ? " → " + JSON.stringify(data) : ""}`;
-    console.log("💳", line);
     setDebugLog(p => [line, ...p].slice(0, 30));
   }, []);
 

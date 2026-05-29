@@ -113,7 +113,6 @@ const AvailableBackups = ({ microservice, onClose }) => {
             setLastUpdated(new Date());
             setError(null);
         } catch (err) {
-            console.error('Failed to load available backups:', err);
             setError('Failed to load available backups. Please try again.');
         } finally {
             setLoading(false);
@@ -194,7 +193,6 @@ const AvailableBackups = ({ microservice, onClose }) => {
             
             toast.success('Download started successfully');
         } catch (error) {
-            console.error('Failed to initiate download:', error);
             toast.error(`Failed to start download: ${error.message || 'Unknown error'}`);
         } finally {
             setBackupToDownload(null);
@@ -212,10 +210,6 @@ const AvailableBackups = ({ microservice, onClose }) => {
         try {
             setIsRestoring(true);
 
-            console.log('Initiating backup restore:', {
-                backupId: currentBackup.backupId,
-                microservice
-            });
 
             const result = await backupAPI.restoreBackupById(currentBackup.backupId, microservice);
             setRestoreResult(result);
@@ -224,7 +218,6 @@ const AvailableBackups = ({ microservice, onClose }) => {
             // Refresh the backups list
             loadAvailableBackups();
         } catch (error) {
-            console.error('Failed to restore backup:', error);
             toast.error(`Failed to restore backup: ${error.message || 'Unknown error'}`);
         } finally {
             setIsRestoring(false);

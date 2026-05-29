@@ -72,7 +72,6 @@ export default function ReportAnalytics({ transactions = [] }) {
 
       return data;
     } catch (error) {
-      console.error("Error calculating time series:", error);
       return [];
     }
   }, [transactions, timeRange]);
@@ -131,7 +130,6 @@ export default function ReportAnalytics({ transactions = [] }) {
         },
       };
     } catch (error) {
-      console.error("Error calculating period comparison:", error);
       return {
         current: { count: 0, weight: 0, avgWeight: 0, completed: 0 },
         previous: { count: 0, weight: 0, avgWeight: 0, completed: 0 },
@@ -192,7 +190,6 @@ export default function ReportAnalytics({ transactions = [] }) {
         topCommodities: processEntity(commodities),
       };
     } catch (error) {
-      console.error("Error calculating entity performance:", error);
       return {
         topDrivers: [],
         topCustomers: [],
@@ -222,7 +219,6 @@ export default function ReportAnalytics({ transactions = [] }) {
 
       return hours;
     } catch (error) {
-      console.error("Error calculating hourly distribution:", error);
       return [];
     }
   }, [transactions]);
@@ -253,7 +249,6 @@ export default function ReportAnalytics({ transactions = [] }) {
         .sort((a, b) => b.value - a.value)
         .slice(0, 8);
     } catch (error) {
-      console.error("Error calculating commodity mix:", error);
       return [];
     }
   }, [transactions]);

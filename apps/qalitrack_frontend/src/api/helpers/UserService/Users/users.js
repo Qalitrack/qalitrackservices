@@ -19,7 +19,6 @@ export const fetchUsers = async (page = 1, pageSize = 10, signal) => {
         return response.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch users error:', err);
         }
         throw err;
     }
@@ -44,7 +43,6 @@ export const fetchDeletedUsers = async (page = 1, pageSize = 10, signal) => {
         return response.data;
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch deleted users error:', err);
         }
         throw err;
     }
@@ -60,7 +58,6 @@ export const fetchUserById = async (userId) => {
         const response = await apiClient.get(`/Users/${userId}`);
         return response.data;
     } catch (err) {
-        console.error(`Fetch user with ID ${userId} error:`, err);
         throw err;
     }
 };
@@ -75,7 +72,6 @@ export const updateUser = async (userId, userData) => {
     try {
         return await apiClient.put(`/Users/${userId}`, userData);
     } catch (err) {
-        console.error(`Update user ${userId} error:`, err);
         throw err;
     }
 };
@@ -91,7 +87,6 @@ export const deleteUser = async (userId) => {
         // The backend should handle this as a soft delete.
         return await apiClient.delete(`/Users/${userId}`);
     } catch (err) {
-        console.error(`Delete user ${userId} error:`, err);
         throw err;
     }
 };
@@ -105,7 +100,6 @@ export const restoreUser = async (userId) => {
     try {
         return await apiClient.patch(`/Users/${userId}/restore`);
     } catch (err) {
-        console.error(`Restore user ${userId} error:`, err);
         throw err;
     }
 };
@@ -120,7 +114,6 @@ export const fetchUserRoles = async (userId) => {
         const response = await apiClient.get(`/Users/${userId}/roles`);
         return response.data.roles;
     } catch (err) {
-        console.error(`Fetch roles for user ${userId} error:`, err);
         throw err;
     }
 };
@@ -134,7 +127,6 @@ export const resetPassword = async (userId) => {
     try {
         return await apiClient.post(`/Users/${userId}/reset-password`);
     } catch (err) {
-        console.error(`Reset password for user ${userId} error:`, err);
         throw err;
     }
 };
@@ -155,7 +147,6 @@ export const assignRoleToUser = async (userId, roleId) => {
         }
         return await apiClient.post(`/UserRole/${userId}/roles/${roleId}`);
     } catch (err) {
-        console.error(`Assign role ${roleId} to user ${userId} error:`, err);
         throw err;
     }
 };
@@ -176,7 +167,6 @@ export const removeRoleFromUser = async (userId, roleId) => {
         }
         return await apiClient.delete(`/UserRole/${userId}/roles/${roleId}`);
     } catch (err) {
-        console.error(`Remove role ${roleId} from user ${userId} error:`, err);
         throw err;
     }
 };
@@ -211,7 +201,6 @@ export const fetchUserShifts = async (userId) => {
 
         return transformedShifts;
     } catch (err) {
-        console.error(`Fetch shifts for user ${userId} error:`, err);
         throw err;
     }
 };
@@ -226,7 +215,6 @@ export const createUser = async (userData) => {
         const response = await apiClient.post('/Users', userData);
         return response.data;
     } catch (err) {
-        console.error('Create user error:', err);
         throw err;
     }
 };

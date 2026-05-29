@@ -5,17 +5,11 @@ import { apiClient } from "../helpers/apiClients";
 const handleRequest = async (promise) => {
   try {
     const response = await promise;
-    console.log("🔍 Raw API Response:", response.data);
     
     // ✅ Return the full response.data (which contains items, pageNumber, etc.)
     return response.data;
   } catch (error) {
     // ✅ Log everything for debugging
-    console.error("🔍 Full error object:", error);
-    console.error("🔍 Error response:", error.response);
-    console.error("🔍 Error response data:", JSON.stringify(error.response?.data, null, 2));
-    console.error("🔍 Error status:", error.response?.status);
-    console.error("🔍 Error headers:", error.response?.headers);
     
     // ✅ Extract detailed error message
     let message = "Request failed";
@@ -63,7 +57,6 @@ const handleRequest = async (promise) => {
       message = error.message;
     }
     
-    console.error("🚨 Vehicle API Error:", message);
     throw new Error(message);
   }
 };
@@ -78,7 +71,6 @@ export const getVehicles = (pageNumber = 1, pageSize = 50, searchTerm = "") =>
 
 // ✅ Create a new vehicle
 export const createVehicle = (vehicleData) => {
-  console.log("📤 Creating vehicle with data:", vehicleData);
   return handleRequest(apiClient.post("/MasterData/Vehicles", vehicleData));
 };
 
@@ -88,7 +80,6 @@ export const getVehicleById = (id) =>
 
 // ✅ Update vehicle (includes rfiDcode field)
 export const updateVehicle = (id, vehicleData) => {
-  console.log("📤 Updating vehicle", id, "with data:", vehicleData);
   return handleRequest(apiClient.put(`/MasterData/Vehicles/${id}`, vehicleData));
 };
 
@@ -98,7 +89,6 @@ export const deleteVehicle = (id) =>
 
 // ✅ Get vehicle by RFID code
 export const getVehicleByRfid = (rfidCode) => {
-  console.log("📤 Fetching vehicle by RFID:", rfidCode);
   return handleRequest(apiClient.get(`/MasterData/Vehicles/rfid/${rfidCode}`));
 };
 
@@ -108,6 +98,5 @@ export const getVehicleDrivers = (id) =>
 
 // ✅ Update vehicle status (Active/Inactive)
 export const updateVehicleStatus = (id, status) => {
-  console.log("📤 Updating vehicle status:", id, "to", status);
   return handleRequest(apiClient.post(`/MasterData/Vehicles/${id}/status`, { status }));
 };

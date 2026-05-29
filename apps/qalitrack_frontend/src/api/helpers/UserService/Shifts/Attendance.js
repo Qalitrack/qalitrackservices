@@ -16,7 +16,6 @@ export const getAttendanceByInstanceId = async (instanceId, { pageNumber = 1, pa
             params: { pageNumber, pageSize },
             signal,
         });
-        console.log(response.data);
 
         return {
             items: response.data.items || [],
@@ -45,7 +44,6 @@ export const getAttendanceByInstanceId = async (instanceId, { pageNumber = 1, pa
             };
         }
         
-        console.error('Error fetching attendance by instance ID:', err);
         throw err;
     }
 };

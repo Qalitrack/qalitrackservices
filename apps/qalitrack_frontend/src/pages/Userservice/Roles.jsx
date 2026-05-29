@@ -99,7 +99,6 @@ const Roles = () => {
             const user = await fetchUserById(userId);
             setUserDetails(prev => ({ ...prev, [userId]: user.email }));
         } catch (error) {
-            console.error(`Failed to fetch user ${userId}`, error);
             setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' }));
         }
     };
@@ -113,7 +112,6 @@ const Roles = () => {
             const data = await fetchRoles(); // Fetch active roles for PDF
             return data;
         } catch (error) {
-            console.error('Error fetching all roles:', error);
             throw error;
         }
     };
@@ -275,7 +273,6 @@ const Roles = () => {
             doc.save(`roles-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
-            console.error('Error generating PDF:', error);
             setError('Failed to generate PDF: ' + (error.message || 'Unknown error'));
             return false;
         } finally {
@@ -408,7 +405,6 @@ const Roles = () => {
             setEditModalOpen(false);
             showMessage('Role updated successfully!', 'success');
         } catch (err) {
-            console.error("Failed to update role:", err);
             setModalFeedback({ text: err.message || 'Failed to update role.', type: 'error' });
         } finally {
             setIsUpdating(false);
@@ -427,7 +423,6 @@ const Roles = () => {
             setAddModalOpen(false);
             showMessage('Role created successfully!', 'success');
         } catch (err) {
-            console.error("Failed to create role:", err);
             setModalFeedback({ text: err.message || 'Failed to create role.', type: 'error' });
         } finally {
             setIsUpdating(false);
@@ -460,7 +455,6 @@ const Roles = () => {
             setDeleteModalOpen(false);
             showMessage(`Role successfully ${actionVerb}.`, 'success');
         } catch (err) {
-            console.error(`Failed to ${action} role:`, err);
             setModalFeedback({ text: err.message || `Failed to ${action} role.`, type: 'error' });
             loadRoles(showDeleted);
         } finally {

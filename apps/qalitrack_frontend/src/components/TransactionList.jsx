@@ -52,7 +52,6 @@ export default function TransporterList() {
       setTotalItems(response.totalItems || 0);
     } catch (error) {
       message.error("Failed to fetch transporters");
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -90,7 +89,6 @@ export default function TransporterList() {
       fetchData();
     } catch (error) {
       message.error("Failed to delete transporter");
-      console.error(error);
     }
   };
 

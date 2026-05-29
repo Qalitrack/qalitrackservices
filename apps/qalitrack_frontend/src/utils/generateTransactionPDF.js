@@ -46,15 +46,23 @@ export const generateThemedPDF = async (record, ticketSettings, formatTurnaround
   let circularLogo = null;
   if (logoImg) {
     try {
-      const sz = 120;
+      const sz  = 200;
+      const pad = sz * 0.08;
       const cCanvas = document.createElement("canvas");
       cCanvas.width = sz; cCanvas.height = sz;
       const cCtx = cCanvas.getContext("2d");
-      cCtx.beginPath(); cCtx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); cCtx.clip();
-      const srcSz = Math.min(logoImg.naturalWidth, logoImg.naturalHeight);
-      const srcX  = (logoImg.naturalWidth  - srcSz) / 2;
-      const srcY  = (logoImg.naturalHeight - srcSz) / 2;
-      cCtx.drawImage(logoImg, srcX, srcY, srcSz, srcSz, 0, 0, sz, sz);
+
+      // White background
+      cCtx.fillStyle = "#ffffff";
+      cCtx.fillRect(0, 0, sz, sz);
+
+      // Scale whole logo to fit — no cropping
+      const avail   = sz - pad * 2;
+      const aspect  = logoImg.naturalWidth / logoImg.naturalHeight;
+      const drawW   = aspect >= 1 ? avail : avail * aspect;
+      const drawH   = aspect >= 1 ? avail / aspect : avail;
+      cCtx.drawImage(logoImg, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH);
+
       circularLogo = cCanvas.toDataURL("image/png");
     } catch (_) {}
   }
@@ -281,16 +289,21 @@ export const generateThemedPDF = async (record, ticketSettings, formatTurnaround
   if (logoImg) {
     try {
       const wmSize = 90;
-      const PH = doc.internal.pageSize.getHeight();
+      const PH     = doc.internal.pageSize.getHeight();
+      const cSz    = 400;
+      const pad    = cSz * 0.08;
       const wmCanvas = document.createElement("canvas");
-      wmCanvas.width = 200; wmCanvas.height = 200;
+      wmCanvas.width = cSz; wmCanvas.height = cSz;
       const wmCtx = wmCanvas.getContext("2d");
-      wmCtx.beginPath(); wmCtx.arc(100, 100, 100, 0, Math.PI * 2); wmCtx.clip();
+
+      // Scale whole logo to fit — no cropping
       wmCtx.globalAlpha = 0.07;
-      const wmSz = Math.min(logoImg.naturalWidth, logoImg.naturalHeight);
-      const wmSrcX = (logoImg.naturalWidth - wmSz) / 2;
-      const wmSrcY = (logoImg.naturalHeight - wmSz) / 2;
-      wmCtx.drawImage(logoImg, wmSrcX, wmSrcY, wmSz, wmSz, 0, 0, 200, 200);
+      const avail  = cSz - pad * 2;
+      const aspect = logoImg.naturalWidth / logoImg.naturalHeight;
+      const drawW  = aspect >= 1 ? avail : avail * aspect;
+      const drawH  = aspect >= 1 ? avail / aspect : avail;
+      wmCtx.drawImage(logoImg, (cSz - drawW) / 2, (cSz - drawH) / 2, drawW, drawH);
+
       const wmData = wmCanvas.toDataURL("image/png");
       const totalPages = doc.internal.getNumberOfPages();
       for (let p = 1; p <= totalPages; p++) {

@@ -123,7 +123,6 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
 
   const dbg = useCallback((msg, data) => {
     const line = `[${new Date().toLocaleTimeString()}] ${msg}${data !== undefined ? " → " + JSON.stringify(data) : ""}`;
-    console.log("🔍", line);
     setDebugLog(p => [line, ...p].slice(0, 40));
   }, []);
 

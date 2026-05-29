@@ -34,7 +34,6 @@ export default function LiveWeighbridgeStatus({ onWeightStable }) {
     };
 
     source.onerror = (err) => {
-      console.error("SSE error:", err);
     };
 
     return () => source.close();
@@ -78,7 +77,6 @@ export default function LiveWeighbridgeStatus({ onWeightStable }) {
           if (currentWeightString !== lastReportedString) {
               onWeightStable(currentBufferWeight); 
               setIsStable(true);
-              console.log(`Weight stabilized and reported: ${currentBufferWeight}`);
           }
         }
       }

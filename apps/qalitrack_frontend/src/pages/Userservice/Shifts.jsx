@@ -161,7 +161,6 @@ const Shifts = () => {
 
             // Log the data for debugging
         } catch (err) {
-            console.error('Error loading shifts:', err);
             setError(err.response?.data?.message || err.message || 'Failed to fetch shifts.');
         } finally {
             setLoading(false);
@@ -447,7 +446,6 @@ const Shifts = () => {
             }
             return allShifts;
         } catch (error) {
-            console.error('Error fetching all shifts:', error);
             throw error;
         }
     };
@@ -611,7 +609,6 @@ const Shifts = () => {
             doc.save(`shifts-report-${dayjs().format('YYYY-MM-DD')}.pdf`);
             return true;
         } catch (error) {
-            console.error('Error generating PDF:', error);
             showMessage('Failed to generate PDF: ' + (error.message || 'Unknown error'), 'error');
             return false;
         } finally {

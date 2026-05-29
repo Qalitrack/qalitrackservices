@@ -157,7 +157,6 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
       const data    = await getReweighRecords(ticketId)
       // Handle plain array, { $values: [...] } (.NET ref-cycle), { data: [...] }, or { items: [...] }
       const records = Array.isArray(data) ? data : (data?.["$values"] ?? data?.data ?? data?.items ?? [])
-      console.log(`🔁 Reweigh records for ${ticketId}:`, records.map(r => ({ status: r.status ?? r.Status, performer: r.performedBy ?? r.PerformedBy, attempt: r.attemptNumber ?? r.AttemptNumber })))
       setReweighMap((prev) => ({ ...prev, [ticketId]: records }))
       return records
     } catch (_) {

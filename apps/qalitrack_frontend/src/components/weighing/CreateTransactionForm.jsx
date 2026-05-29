@@ -51,7 +51,6 @@ export default function CreateTransactionForm({
           dispatch(fetchCurrentUser());
         }
       } catch (err) {
-        console.warn("⚠️ Could not read session:", err);
         dispatch(fetchCurrentUser());
       }
     }
@@ -371,7 +370,6 @@ export default function CreateTransactionForm({
         if (onTransactionCreated) onTransactionCreated();
       }
     } catch (err) {
-      console.error("❌ Save failed:", err);
       let errorMsg = "Failed to save transaction";
       if (err.message) errorMsg = err.message;
       if (err.response?.status === 404) errorMsg = "API endpoint not found (404)";

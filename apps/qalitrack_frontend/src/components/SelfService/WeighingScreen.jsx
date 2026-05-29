@@ -281,7 +281,6 @@ export default function WeighingScreen({
         if (isValidGuid(form.driverID)) patchPayload.driverID = form.driverID;
         if (form.driverName?.trim())    patchPayload.driverName = form.driverName.trim();
 
-        console.log("📤 Second-weight PATCH payload:", patchPayload, "for txnId:", txnId);
         result = await patchTransaction(txnId, patchPayload);
         message.success(
           `Transaction completed! Net weight: ${effectiveWeight - (existingTransaction.firstWeight ?? 0)} kg`,
@@ -331,7 +330,6 @@ export default function WeighingScreen({
         if (form.destinationName?.trim()) payload.destinationName = form.destinationName.trim();
         payload.notes = form.notes?.trim() || "Unmanned transaction";
 
-        console.log("📤 First-weight POST payload:", payload);
         result = await postTransaction(payload);
         message.success(
           `Saved! Receipt: ${result?.data?.receiptNo ?? result?.receiptNo ?? result?.ticketID ?? "Generated"}`,

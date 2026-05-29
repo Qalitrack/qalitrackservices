@@ -101,18 +101,14 @@ export function usePendingTransaction() {
       const raw   = await fetchTransactions(plate.trim().toUpperCase());
       const items = extractItems(raw);
 
-      console.log(`🔍 Pending check for "${plate}":`, items.length, "records found");
 
       const pending = items.find(isPending);
       if (pending) {
-        console.log("⚠️  Pending transaction found:", pending);
         setPendingTxn(pending);
       } else {
-        console.log("✅ No pending transaction — first weighing");
         setPendingTxn(null);
       }
     } catch (err) {
-      console.warn("Pending-txn check failed (non-blocking):", err.message);
       setCheckError(err.message);
       setPendingTxn(null); // fail open — don't block kiosk
     } finally {

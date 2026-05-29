@@ -12,12 +12,6 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "/api";
 const TRANSACTION_BASE_URL = import.meta.env.VITE_TRANSACTION_API_URL || "/api/Transaction";
 
 // ⚠️ DEBUG: Log configuration on load
-console.log('🔧 API Client Configuration:', {
-  API_BASE_URL,
-  TRANSACTION_BASE_URL,
-  MODE: import.meta.env.MODE,
-  VITE_API_TARGET: import.meta.env.VITE_API_TARGET,
-});
 
 /* -------------------------------------------------------------------------- */
 /*                         SESSION MANAGEMENT UTILITY                         */
@@ -28,7 +22,6 @@ const getSessionData = () => {
     const sessionData = localStorage.getItem("authSession");
     return sessionData ? JSON.parse(sessionData) : null;
   } catch (err) {
-    console.error("❌ Error retrieving session token:", err);
     return null;
   }
 };
@@ -43,7 +36,6 @@ const getSessionToken = () => {
 
   const now = Date.now();
   if (now > session.expiresAt) {
-    console.warn('⏰ Session expired, clearing...');
     clearSession();
     return null;
   }
@@ -55,35 +47,8 @@ const getSessionToken = () => {
 /*                         LOGGING UTILITY                                    */
 /* -------------------------------------------------------------------------- */
 
-const logError = (level, message, data) => {
-  if (import.meta.env.MODE !== 'production') {
-    console[level](message, data);
-  } else {
-    // In production, you could send to error tracking service
-    // Example: Sentry.captureException(data);
-  }
-};
-
-const logRequest = (method, url, config) => {
-  if (import.meta.env.MODE !== 'production') {
-    const logData = {
-      baseURL: config?.baseURL,
-      fullURL: `${config?.baseURL || ''}${url}`,
-      params: config?.params,
-      data: config?.data ? '(data present)' : undefined,
-      headers: config?.headers ? Object.keys(config.headers) : [],
-    };
-    
-    // Hide sensitive data
-    if (config?.data?.password) {
-      logData.data = { ...config.data, password: '***' };
-    } else if (config?.data) {
-      logData.data = config.data;
-    }
-    
-    console.log(`🚀 API Request: ${method.toUpperCase()} ${url}`, logData);
-  }
-};
+const logError = () => {};
+const logRequest = () => {};
 
 /* -------------------------------------------------------------------------- */
 /*                         INTERCEPTOR LOGIC                                  */
@@ -112,7 +77,6 @@ const setupRequestInterceptor = (client) => {
       return config;
     },
     (error) => {
-      console.error('❌ Request setup error:', error);
       return Promise.reject(error);
     }
   );
@@ -124,7 +88,6 @@ const setupResponseInterceptor = (client) => {
       // Log response time in development
       if (import.meta.env.MODE !== 'production' && response.config.metadata) {
         const duration = Date.now() - response.config.metadata.startTime;
-        console.log(`✅ API Response (${duration}ms): ${response.status} ${response.config.method?.toUpperCase()} ${response.config.url}`);
       }
       return response;
     },
@@ -155,29 +118,16 @@ const setupResponseInterceptor = (client) => {
 
       // ⚠️ CRITICAL: Better timeout error messaging
       if (error.code === 'ECONNABORTED' && error.message.includes('timeout')) {
-        console.error('⏱️ Request Timeout Details:', {
-          url: error.config?.url,
-          timeout: error.config?.timeout,
-          hint: 'The server is not responding. Check if the backend is running and accessible.',
-        });
       }
 
       // ⚠️ CRITICAL: Better 404 error messaging
       if (error.response?.status === 404) {
-        console.error('🔍 404 Not Found Details:', {
-          requestedURL: error.config?.url,
-          baseURL: error.config?.baseURL,
-          fullURL: `${error.config?.baseURL || ''}${error.config?.url || ''}`,
-          hint: 'The endpoint does not exist. Check backend routes and proxy configuration.',
-        });
       }
 
       // Handle 401 Unauthorized
       if (error.response?.status === 401) {
-        console.warn("⚠️ 401 Unauthorized — clearing session");
         clearSession();
         if (!window.location.hash.includes("/login")) {
-          console.log('🔄 Redirecting to login...');
           window.location.hash = "#/login";
         }
         return Promise.reject(new Error('Session expired. Please log in again.'));
@@ -250,7 +200,6 @@ const setupResponseInterceptor = (client) => {
 
 class ApiClient {
   constructor(baseURL, timeout = 30000) {
-    console.log(`🏗️ Creating API Client:`, { baseURL, timeout });
     
     this.client = axios.create({
       baseURL: baseURL,
@@ -275,7 +224,6 @@ class ApiClient {
       token,
       expiresAt: Date.now() + expiresIn * 1000, // default 1 hour
     };
-    console.log('💾 Setting session:', { expiresAt: new Date(session.expiresAt) });
     localStorage.setItem("authSession", JSON.stringify(session));
   }
   
@@ -283,7 +231,6 @@ class ApiClient {
   clearSession = clearSession;
   isAuthenticated = () => {
     const authenticated = !!getSessionToken();
-    console.log('🔐 Authentication check:', authenticated);
     return authenticated;
   };
 
@@ -294,7 +241,6 @@ class ApiClient {
   createCancelToken(key) {
     // Cancel previous request with same key
     if (this.cancelTokens.has(key)) {
-      console.log(`🚫 Cancelling previous request: ${key}`);
       this.cancelTokens.get(key).cancel('Request superseded');
     }
     
@@ -308,7 +254,6 @@ class ApiClient {
    */
   cancelRequest(key) {
     if (this.cancelTokens.has(key)) {
-      console.log(`🚫 Cancelling request: ${key}`);
       this.cancelTokens.get(key).cancel('Request cancelled by user');
       this.cancelTokens.delete(key);
     }
@@ -400,7 +345,6 @@ class TransactionClient extends ApiClient {
 export const apiClient = new ApiClient(API_BASE_URL);
 export const transactionsClient = new TransactionClient();
 
-console.log('✅ API Clients initialized successfully');
 
 export { axios };
 export default apiClient;

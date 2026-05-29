@@ -123,7 +123,6 @@ export default class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, info) {
-    console.error('[ErrorBoundary]', error, info?.componentStack);
   }
 
   handleReset = () => {

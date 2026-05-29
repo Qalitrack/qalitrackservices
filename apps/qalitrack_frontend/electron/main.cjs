@@ -5,6 +5,13 @@ const fs   = require('fs');
 
 const isDev = !app.isPackaged;
 
+// Fedora / modern Linux: zygote crashes with SIGABRT due to sandbox/namespace
+// restrictions. Disabling the zygote avoids the crash entirely on Linux.
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('no-sandbox');
+  app.commandLine.appendSwitch('no-zygote');
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // MACHINE ID
 // Read from HKLM\SOFTWARE\Microsoft\Cryptography\MachineGuid — assigned once

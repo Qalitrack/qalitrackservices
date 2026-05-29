@@ -16,7 +16,6 @@ export const fetchPermissions = async (signal) => {
         }
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch permissions error:', err);
         }
         throw err; // Re-throw the error to be handled by the calling component
     }
@@ -36,7 +35,6 @@ export const updatePermission = async (permission) => {
         const response = await apiClient.put(`/Permissions/${permissionId}`, permission);
         return response.data?.data || response.data;
     } catch (err) {
-        console.error('Update permission error:', err);
         throw err;
     }
 };
@@ -55,7 +53,6 @@ export const deletePermission = async (permissionId) => {
         const response = await apiClient.delete(`/Permissions/${permissionId}`);
         return response.data?.data || response.data;
     } catch (err) {
-        console.error('Delete permission error:', err);
 
         // Handle specific error cases with user-friendly messages
         if (err.response) {
@@ -101,7 +98,6 @@ export const fetchDeletedPermissions = async (signal) => {
         }
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch deleted permissions error:', err);
         }
         throw err;
     }
@@ -120,7 +116,6 @@ export const restorePermission = async (permissionId) => {
         const response = await apiClient.patch(`/Permissions/${permissionId}/restore`);
         return response.data;
     } catch (err) {
-        console.error('Restore permission error:', err);
         throw err;
     }
 };
@@ -141,7 +136,6 @@ export const createPermission = async (permission) => {
             err.response?.data?.title?.includes('unique constraint')) {
             throw new Error('A permission with this name already exists. Please use a unique permission name.');
         }
-        console.error('Create permission error:', err);
         throw err;
     }
 };
@@ -166,7 +160,6 @@ export const fetchRolesForPermission = async (permissionId) => {
             return [];
         }
     } catch (err) {
-        console.error(`Fetch roles for permission ${permissionId} error:`, err);
         throw err;
     }
 };

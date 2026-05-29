@@ -28,7 +28,6 @@ const AxleConfigs = () => {
       const data = response?.data || response;
       setConfigs(data?.items || []);
     } catch (error) {
-      console.error("Error fetching axle configurations:", error);
       message.error("Failed to load axle configurations");
     } finally {
       setLoading(false);
@@ -77,7 +76,6 @@ const AxleConfigs = () => {
       message.success("Axle configuration deleted successfully");
       fetchConfigs();
     } catch (error) {
-      console.error("Error deleting axle configuration:", error);
       message.error("Failed to delete axle configuration");
     }
   };
@@ -88,7 +86,6 @@ const AxleConfigs = () => {
       message.success("Status updated successfully");
       fetchConfigs();
     } catch (error) {
-      console.error("Error toggling status:", error);
       message.error("Failed to update status");
     }
   };
@@ -109,7 +106,6 @@ const AxleConfigs = () => {
     } catch (error) {
       if (error.errorFields) message.error("Please fill in all required fields");
       else {
-        console.error("Error saving axle configuration:", error);
         message.error("Failed to save axle configuration");
       }
     }

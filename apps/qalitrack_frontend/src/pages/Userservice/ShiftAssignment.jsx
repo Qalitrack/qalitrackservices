@@ -196,7 +196,6 @@ const ShiftAssignment = () => {
                             const shift = await fetchShiftById(id);
                             return { id, shift };
                         } catch (err) {
-                            console.warn(`Failed to fetch shift ${id}:`, err);
                             return { id, shift: null };
                         }
                     });
@@ -213,7 +212,6 @@ const ShiftAssignment = () => {
                         mode: shiftMap[s.id]?.mode || s.mode,
                     }));
                 } catch (err) {
-                    console.error('Error fetching shift details:', err);
                 }
                 setShifts(processedShifts);
             } else {
@@ -461,7 +459,6 @@ const ShiftAssignment = () => {
             }
             return allShifts;
         } catch (error) {
-            console.error('Error fetching all shifts:', error);
             throw error;
         }
     };
@@ -499,7 +496,6 @@ const ShiftAssignment = () => {
                             assignedUsersCount: formattedUsers.length
                         };
                     } catch (err) {
-                        console.warn(`Failed to fetch users for shift ${shift.id}:`, err);
                         return {
                             ...shift,
                             assignedUsersList: ['Error fetching users'],
@@ -645,7 +641,6 @@ const ShiftAssignment = () => {
 
             return true;
         } catch (error) {
-            console.error('Error generating PDF:', error);
             setError('Failed to generate PDF: ' + (error.message || 'Unknown error'));
             return false;
         } finally {

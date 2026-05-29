@@ -63,12 +63,10 @@ const EditMicroservice = ({ service, onClose, onSuccess }) => {
                 lastBackupAt: null // Explicitly set to null as requested
             };
 
-            console.log('Updating microservice with data:', updateData);
             const result = await updateMicroservice(service.name, updateData);
 
             if (result) {
                 setSuccess(true);
-                console.log('Microservice updated successfully:', result);
 
                 if (onSuccess) {
                     onSuccess(result);
@@ -83,7 +81,6 @@ const EditMicroservice = ({ service, onClose, onSuccess }) => {
             }
         } catch (err) {
             setError(err.message || 'An error occurred while updating the microservice');
-            console.error('Error updating microservice:', err);
         } finally {
             setLoading(false);
         }

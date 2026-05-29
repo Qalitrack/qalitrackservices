@@ -55,7 +55,6 @@ export default function UserManagement() {
         const data = await fetchRoles();
         setRoles(data || []);
       } catch (err) {
-        console.error("Roles fetch failed:", err);
       } finally {
         setLoading(false);
       }

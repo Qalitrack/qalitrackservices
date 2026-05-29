@@ -73,7 +73,6 @@ const Backup = () => {
 
             setTimeout(() => setSuccessMessage(''), 5000);
         } catch (err) {
-            console.error('Backup error:', err);
             setError(err.response?.data?.message || err.message || 'Failed to create backup');
         } finally {
             setIsSubmitting(false);

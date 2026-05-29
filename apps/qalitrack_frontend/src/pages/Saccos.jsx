@@ -27,7 +27,6 @@ export default function SaccosPortal() {
       const data = await getSaccos(1, 200, "");
       setSaccos(Array.isArray(data) ? data : (data?.items || []));
     } catch (err) {
-      console.error("❌ Failed to load saccos:", err);
       setError(err.message || "Failed to fetch saccos");
       setSaccos([]);
     } finally {
@@ -77,7 +76,6 @@ export default function SaccosPortal() {
       resetForm();
       fetchSaccos();
     } catch (err) {
-      console.error("❌ Save failed:", err.message);
       alert(`Error: ${err.message}`);
     } finally {
       setLoading(false);
@@ -102,7 +100,6 @@ export default function SaccosPortal() {
       await deleteSacco(id);
       fetchSaccos();
     } catch (err) {
-      console.error("❌ Delete failed:", err.message);
       alert(`Error: ${err.message}`);
     } finally {
       setLoading(false);

@@ -10,7 +10,6 @@ export async function syncData(){
     await api.post('/sync', queue);
     store.dispatch(clearOfflineQueue());
   }catch(e){
-    console.warn('Sync failed, will retry later.');
   }
 }
 

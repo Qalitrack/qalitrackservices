@@ -16,7 +16,6 @@ export const fetchRoles = async (signal) => {
         }
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch roles error:', err);
         }
         throw err;
     }
@@ -32,7 +31,6 @@ export const createRole = async (role) => {
         const response = await apiClient.post('/Roles', role);
         return response.data?.data || response.data;
     } catch (err) {
-        console.error('Create role error:', err);
         throw err;
     }
 };
@@ -51,7 +49,6 @@ export const updateRole = async (role) => {
         const response = await apiClient.put(`/Roles/${roleId}`, role);
         return response.data?.data || response.data;
     } catch (err) {
-        console.error('Update role error:', err);
         throw err;
     }
 };
@@ -69,7 +66,6 @@ export const deleteRole = async (roleId) => {
         const response = await apiClient.delete(`/Roles/${roleId}`);
         return response.data;
     } catch (err) {
-        console.error('Delete role error:', err);
         throw err;
     }
 };
@@ -92,7 +88,6 @@ export const fetchDeletedRoles = async (signal) => {
         }
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error('Fetch deleted roles error:', err);
         }
         throw err;
     }
@@ -111,7 +106,6 @@ export const restoreRole = async (roleId) => {
         const response = await apiClient.patch(`/Roles/${roleId}/restore`);
         return response.data;
     } catch (err) {
-        console.error('Restore role error:', err);
         throw err;
     }
 };
@@ -128,7 +122,6 @@ export const getPermissionsForRole = async (roleId, signal) => {
         return Array.isArray(responseData) ? responseData : [];
     } catch (err) {
         if (err.name !== 'CanceledError') {
-            console.error(`Fetch permissions for role ${roleId} error:`, err);
         }
         throw err;
     }
@@ -144,7 +137,6 @@ export const assignPermissionToRole = async (roleId, permissionId) => {
     try {
         return await apiClient.post(`/Roles/${roleId}/permissions/${permissionId}`);
     } catch (err) {
-        console.error(`Assign permission ${permissionId} to role ${roleId} error:`, err);
         throw err;
     }
 };
@@ -159,7 +151,6 @@ export const removePermissionFromRole = async (roleId, permissionId) => {
     try {
         return await apiClient.delete(`/Roles/${roleId}/permissions/${permissionId}`);
     } catch (err) {
-        console.error(`Remove permission ${permissionId} from role ${roleId} error:`, err);
         throw err;
     }
 };
