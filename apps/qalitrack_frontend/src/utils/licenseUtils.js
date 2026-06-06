@@ -29,8 +29,6 @@
 export const THIS_APP_ID = "qalitrack-frontend";
 
 // ── PUBLIC KEY ────────────────────────────────────────────────────────────────
-// Replace this with the output of: node src/utils/generateKeyPair.mjs
-// This is a PLACEHOLDER — all keys will be rejected until you replace it.
 const PUBLIC_KEY_JWK = {
   kty: "EC",
   crv: "P-256",
@@ -48,8 +46,10 @@ const RECHECK_MS       = 24 * 60 * 60 * 1000;        // daily server re-check
 // MACHINE FINGERPRINT
 //
 // In Electron: calls the main process via IPC (preload exposes electronAPI).
-//   Main process derives ID from hostname + MAC and persists it to userData/machine-id.
-//   userData survives app reinstalls — same machine always gets the same ID.
+//   On Windows: reads HKLM\SOFTWARE\Microsoft\Cryptography\MachineGuid — set once
+//   at OS install, survives app reinstalls, reboots, and network changes.
+//   On non-Windows: derives from hostname + first physical MAC address (less stable).
+//   The result is cached in the main process for the lifetime of the session.
 //
 // In browser (dev/web): falls back to a random UUID cached in localStorage.
 //   Not hardware-bound, but stable for the life of that browser profile.
@@ -165,7 +165,7 @@ export async function verifyLicenseToken(token) {
     }
 
     // ── Machine binding (optional, only when key was issued with a machineId) ─
-    if (payload.mid && payload.mid !== getMachineId()) {
+    if (payload.mid && payload.mid !== await getMachineIdAsync()) {
       return { valid: false, reason: "machine_mismatch" };
     }
 
@@ -190,8 +190,6 @@ async function checkWithServer(token) {
     localStorage.getItem("licenseServerUrl") ||
     import.meta.env.VITE_LICENSE_SERVER_URL ||
     "https://kmk.support.qalibrated.co.ke";
-
-  if (!base) return null; // ERP URL not configured yet — skip server check
 
   try {
     const res = await fetch(`${base}/api/v1/licenses/validate`, {
@@ -250,7 +248,7 @@ export async function activateLicense(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 // GET LICENSE STATUS  (called on every app boot / tab open)
 // ─────────────────────────────────────────────────────────────────────────────
-export async function getLicenseStatus(feature = "kiosk") {
+export async function getLicenseStatus(feature = "") {
   const cache = readCache();
   if (!cache?.token) return { valid: false, reason: "not_activated" };
 
