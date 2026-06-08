@@ -1,8 +1,8 @@
 using System.IO.Ports;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using Qalitrack.Models;
-using Qalitrack.Services.ScaleProtocols;
 
 namespace Qalitrack.Services;
 
@@ -15,8 +15,6 @@ public class PlatformDataService : BackgroundService
     private TcpClient? _tcpClient;
     private NetworkStream? _networkStream;
     private SerialPort? _serialPort;
-
-    private readonly IScaleProtocol _scaleProtocol;
 
     private readonly object _connectionLock = new();
     private bool _disposed;
@@ -34,10 +32,8 @@ public class PlatformDataService : BackgroundService
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         _dataStreamService = dataStreamService ?? throw new ArgumentNullException(nameof(dataStreamService));
 
-        _scaleProtocol = ScaleProtocolFactory.Create(_settings.ScaleType);
-
-        _logger.LogInformation("PlatformDataService initializing — ConnectionType: {type}, ScaleType: {scale}, {desc}",
-            _settings.ConnectionType, _settings.ScaleType, _settings.GetConnectionDescription());
+        _logger.LogInformation("PlatformDataService initializing — ConnectionType: {type}, {desc}",
+            _settings.ConnectionType, _settings.GetConnectionDescription());
     }
 
     public bool IsConnected() => _tcpClient?.Connected == true || _serialPort?.IsOpen == true;
@@ -407,7 +403,10 @@ public class PlatformDataService : BackgroundService
                 {
                     var raw = _serialPort.ReadExisting();
                     if (!string.IsNullOrEmpty(raw))
-                        ProcessIncomingData(raw, "Serial");
+                    {
+                        _logger.LogInformation("[Serial] {raw}", raw);
+                        _ = _dataStreamService.PublishRawAsync(raw, token);
+                    }
                 }
                 else
                     await Task.Delay(10, token);
@@ -459,20 +458,35 @@ public class PlatformDataService : BackgroundService
 
     private void ProcessPlatformLine(string line, string source)
     {
-        var reading = _scaleProtocol.Parse(line);
+        var platformMatch = Regex.Match(line, @"Platform\s+(\d+)\s*:\s*(.+)", RegexOptions.IgnoreCase);
+        var totalMatch    = Regex.Match(line, @"Total\s*:\s*(.+)",            RegexOptions.IgnoreCase);
 
-        if (reading.Type == "unknown")
+        string type = "", platformNumber = "", weight = "";
+
+        if (platformMatch.Success)
         {
-            _logger.LogDebug("[{source}] unrecognised: {line}", source, line);
+            type           = "platform";
+            platformNumber = platformMatch.Groups[1].Value;
+            weight         = platformMatch.Groups[2].Value.Trim();
+        }
+        else if (totalMatch.Success)
+        {
+            type   = "total";
+            weight = totalMatch.Groups[1].Value.Trim();
+        }
+        else
+        {
+            _logger.LogInformation("[{source}] {line}", source, line);
+            _ = PublishData(line, source, "unknown", "", line);
             return;
         }
 
-        _logger.LogInformation("[{source}] {displayLine}", source, reading.DisplayLine);
+        var displayLine = type == "platform"
+            ? $"Platform {platformNumber}: {weight}"
+            : $"Total: {weight}";
 
-        if (_scaleProtocol.PublishRawWeight)
-            _ = _dataStreamService.PublishRawAsync(reading.Weight, CancellationToken.None);
-        else
-            _ = PublishData(line, source, reading.Type, reading.PlatformNumber, reading.Weight);
+        _logger.LogInformation("[{source}] {displayLine}", source, displayLine);
+        _ = PublishData(line, source, type, platformNumber, weight);
     }
 
     private async Task PublishData(string rawLine, string source, string type,

@@ -42,7 +42,7 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
   /*
   useEffect(() => {
     
-    const eventSource = new EventSource(import.meta.env.VITE_NFC_STREAM_URL);
+    const eventSource = new EventSource("http://172.16.0.93:5000/api/NFC/stream");
     
     eventSource.onmessage = (event) => {
       try {

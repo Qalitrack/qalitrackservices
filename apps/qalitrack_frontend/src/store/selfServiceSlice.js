@@ -16,13 +16,10 @@ export const fetchVehicleByPlate = createAsyncThunk(
     async (regNumber, { rejectWithValue }) => {
         try {
             
-            const response = await apiClient.get("/MasterData/Vehicles", {
-                params: { pageNumber: 1, pageSize: 1, regNumber },
-            });
-
-            const list = response.data?.data ?? response.data;
-            const vehicle = Array.isArray(list) ? list[0] : list;
-
+            const response = await apiClient.get(`/MasterData/Vehicles`);
+            
+            const vehicle = response.data?.data || response.data;
+            
             if (!vehicle) {
                 throw new Error("Vehicle not found");
             }

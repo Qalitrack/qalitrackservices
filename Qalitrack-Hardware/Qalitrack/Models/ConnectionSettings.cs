@@ -6,7 +6,6 @@ namespace Qalitrack.Models;
 public class ConnectionSettings
 {
     public string ConnectionType { get; set; } = "TCP"; // "Serial" or "TCP"
-    public ScaleType ScaleType { get; set; } = ScaleType.Generic;
 
     // Serial settings
     public string SerialPort { get; set; } = "AUTO"; // "AUTO", "/dev/ttyUSB0", or "COM9"

@@ -24,11 +24,17 @@ import { useState, useCallback } from "react";
 
 const BASE_URL = import.meta.env.VITE_API_URL || "/api";
 
-// ── Auth token ────────────────────────────────────────────────────────────────
+// ── Auth token (same helper pattern as WeighingScreen.jsx) ───────────────────
 function getToken() {
   try {
-    const raw = localStorage.getItem("authSession");
-    if (raw) { const p = JSON.parse(raw); if (p?.token) return p.token; }
+    const s1 = sessionStorage.getItem("authSession");
+    if (s1) { const p = JSON.parse(s1); const t = p?.token ?? p?.accessToken ?? p?.access_token ?? p?.userData?.token; if (t) return t; }
+    const s2 = sessionStorage.getItem("user");
+    if (s2) { const p = JSON.parse(s2); const t = p?.token ?? p?.accessToken ?? p?.access_token; if (t) return t; }
+    const l1 = localStorage.getItem("token");      if (l1) return l1;
+    const l2 = localStorage.getItem("authToken");  if (l2) return l2;
+    const l3 = localStorage.getItem("authSession");
+    if (l3) { const p = JSON.parse(l3); const t = p?.token ?? p?.accessToken ?? p?.access_token; if (t) return t; }
   } catch {}
   return null;
 }

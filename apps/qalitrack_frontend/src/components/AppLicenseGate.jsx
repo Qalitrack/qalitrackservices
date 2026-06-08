@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   getLicenseStatus,
   activateLicense,
+  deactivateLicense,
   getMachineId,
   getMachineIdAsync,
   licenseErrorMessage,
@@ -35,16 +36,17 @@ export default function AppLicenseGate({ children }) {
     }).then(setStatus);
   }, []);
 
-  // Runs every 60 seconds — locks on expiry/revocation, auto-recovers from offline_too_long.
+  // Live expiry check — runs every 60 seconds while the app is open.
+  // Locks the screen the moment the license expires mid-session.
   useEffect(() => {
-    if (!status?.valid && status?.reason !== "offline_too_long") return;
+    if (!status?.valid) return;
     const timer = setInterval(() => {
       getLicenseStatus("").then(result => {
-        if (result.valid || result.reason !== status?.reason) setStatus(result);
+        if (!result.valid) setStatus(result);
       });
     }, 60_000);
     return () => clearInterval(timer);
-  }, [status?.valid, status?.reason]);
+  }, [status?.valid]);
 
   const handleActivate = useCallback(async () => {
     setActing(true);
@@ -90,7 +92,6 @@ export default function AppLicenseGate({ children }) {
   const isExpired         = status.reason === "expired";
   const isMachineMismatch = status.reason === "machine_mismatch";
   const isRevoked         = status.reason === "revoked";
-  const isOfflineTooLong  = status.reason === "offline_too_long";
 
   return (
     <div className="fixed inset-0 bg-gray-950 flex flex-col items-center justify-center p-4 overflow-auto">
@@ -131,12 +132,7 @@ export default function AppLicenseGate({ children }) {
               This license is bound to a different machine. You need a license issued for this Machine ID.
             </StatusBanner>
           )}
-          {isOfflineTooLong && (
-            <StatusBanner type="warning">
-              License verification requires an internet connection. Please connect and the app will unlock automatically.
-            </StatusBanner>
-          )}
-          {!isExpired && !isRevoked && !isMachineMismatch && !isOfflineTooLong && (
+          {!isExpired && !isRevoked && !isMachineMismatch && (
             <p className="text-sm text-gray-400 text-center">
               Enter your license token to unlock the application.
             </p>
@@ -170,48 +166,45 @@ export default function AppLicenseGate({ children }) {
             </p>
           </div>
 
-          {/* Token input + activate — hidden when offline; reconnecting auto-unlocks */}
-          {!isOfflineTooLong && (
-            <>
-              <div className="space-y-2">
-                <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">
-                  License Token
-                </label>
-                <textarea
-                  rows={4}
-                  value={tokenInput}
-                  onChange={(e) => { setToken(e.target.value); setError(null); }}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Paste your license token here…  (eyJhbGci…)"
-                  className={`w-full px-3 py-2.5 rounded-lg border font-mono text-xs outline-none resize-none transition bg-gray-800 text-gray-100
-                    ${error
-                      ? "border-red-500 focus:border-red-400"
-                      : "border-gray-700 focus:border-amber-500"
-                    }`}
-                />
-                {error && (
-                  <p className="text-xs text-red-400 flex items-start gap-1.5">
-                    <LockIcon className="w-3 h-3 mt-0.5 shrink-0" /> {error}
-                  </p>
-                )}
-              </div>
+          {/* Token input */}
+          <div className="space-y-2">
+            <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">
+              License Token
+            </label>
+            <textarea
+              rows={4}
+              value={tokenInput}
+              onChange={(e) => { setToken(e.target.value); setError(null); }}
+              onKeyDown={handleKeyDown}
+              placeholder="Paste your license token here…  (eyJhbGci…)"
+              className={`w-full px-3 py-2.5 rounded-lg border font-mono text-xs outline-none resize-none transition bg-gray-800 text-gray-100
+                ${error
+                  ? "border-red-500 focus:border-red-400"
+                  : "border-gray-700 focus:border-amber-500"
+                }`}
+            />
+            {error && (
+              <p className="text-xs text-red-400 flex items-start gap-1.5">
+                <LockIcon className="w-3 h-3 mt-0.5 shrink-0" /> {error}
+              </p>
+            )}
+          </div>
 
-              <button
-                onClick={handleActivate}
-                disabled={activating || !tokenInput.trim()}
-                className={`w-full py-3 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 transition
-                  ${activating || !tokenInput.trim()
-                    ? "bg-gray-700 cursor-not-allowed text-gray-500"
-                    : "bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-90 shadow-lg shadow-amber-900/30"
-                  }`}
-              >
-                {activating
-                  ? <><Spinner /> Verifying…</>
-                  : <><ShieldIcon className="w-4 h-4" /> Activate License</>
-                }
-              </button>
-            </>
-          )}
+          {/* Activate button */}
+          <button
+            onClick={handleActivate}
+            disabled={activating || !tokenInput.trim()}
+            className={`w-full py-3 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 transition
+              ${activating || !tokenInput.trim()
+                ? "bg-gray-700 cursor-not-allowed text-gray-500"
+                : "bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-90 shadow-lg shadow-amber-900/30"
+              }`}
+          >
+            {activating
+              ? <><Spinner /> Verifying…</>
+              : <><ShieldIcon className="w-4 h-4" /> Activate License</>
+            }
+          </button>
 
           {/* Contact line */}
           <p className="text-xs text-gray-600 text-center">

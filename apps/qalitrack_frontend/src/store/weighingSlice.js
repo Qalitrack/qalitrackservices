@@ -998,7 +998,7 @@ const weighingSlice = createSlice({
             .addCase(updateTransactionApi.fulfilled, (state, action) => {
                 state.loading = false;
                 const updated = action.payload.data || action.payload;
-                const idx = state.transactions.findIndex(t => t.id === updated.id || t.ticketID === updated.ticketID);
+                const idx = state.transactions.findIndex(t => t.id === updated.id);
                 if (idx !== -1) state.transactions[idx] = { ...state.transactions[idx], ...updated };
             })
             .addCase(updateTransactionApi.rejected, rejected)
@@ -1006,7 +1006,7 @@ const weighingSlice = createSlice({
             .addCase(deactivateTransactionApi.pending, pending)
             .addCase(deactivateTransactionApi.fulfilled, (state, action) => {
                 state.loading = false;
-                const tx = state.transactions.find(t => t.id === action.payload.ticketId || t.ticketID === action.payload.ticketId);
+                const tx = state.transactions.find(t => t.id === action.payload.ticketId);
                 if (tx) tx.active = false;
             })
             .addCase(deactivateTransactionApi.rejected, rejected)
@@ -1025,12 +1025,13 @@ const weighingSlice = createSlice({
     
     if (idx !== -1) {
         // Update the transaction with new data
-        state.transactions[idx] = {
-            ...state.transactions[idx],
+        state.transactions[idx] = { 
+            ...state.transactions[idx], 
             ...updated,
+            // ✅ Mark as completed if second weight was added successfully
             isCompleted: true,
             completed: true,
-            status: updated.status ?? state.transactions[idx].status ?? 'Completed',
+            status: 'Completed'
         };
         
     } else {

@@ -38,10 +38,6 @@ public class InstallerWizard : Form
     private Label   _lblWbPort = null!;
     private TextBox _wbPort    = null!;
 
-    // Scale type
-    private Label    _lblScaleType = null!;
-    private ComboBox _wbScaleType  = null!;
-
     // Serial rows
     private Label    _lblSerialPort = null!;
     private TextBox  _wbSerialPort  = null!;
@@ -168,15 +164,6 @@ public class InstallerWizard : Form
         _wbPort    = new TextBox { Text = "3002", Location = new Point(FieldX, y), Size = new Size(FieldW, 24) };
         panel.Controls.Add(_lblWbPort);
         panel.Controls.Add(_wbPort);
-        y += RowH;
-
-        // ── Scale type row (always visible) ───────────────────────────────
-        _lblScaleType = new Label { Text = "Scale Type", Location = new Point(LabelX, y + 3), Size = new Size(FieldX - LabelX - 10, 22), AutoSize = false };
-        _wbScaleType  = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Location = new Point(FieldX, y), Size = new Size(FieldW, 24) };
-        _wbScaleType.Items.AddRange(new object[] { "Generic", "YaghuaXK3190DS8" });
-        _wbScaleType.SelectedIndex = 0;
-        panel.Controls.Add(_lblScaleType);
-        panel.Controls.Add(_wbScaleType);
         y += RowH;
 
         // ── Serial rows ───────────────────────────────────────────────────────
@@ -426,9 +413,6 @@ public class InstallerWizard : Form
                     _wbIp.Text   = tcp.GetStringOrDefault("IpAddress", _wbIp.Text);
                     _wbPort.Text = tcp.GetIntOrDefault("Port", 3002).ToString();
                 }
-
-                var scaleType = tcp.GetStringOrDefault("ScaleType", "Generic");
-                if (_wbScaleType.Items.Contains(scaleType)) _wbScaleType.SelectedItem = scaleType;
             }
 
             if (root.TryGetProperty("CameraSettings", out var cam) &&
@@ -570,7 +554,6 @@ public class InstallerWizard : Form
             TcpListener = new
             {
                 ConnectionType   = useTcp ? "TCP" : "Serial",
-                ScaleType        = _wbScaleType.SelectedItem?.ToString() ?? "Generic",
                 IpAddress        = useTcp ? _wbIp.Text.Trim() : "172.16.1.243",
                 Port             = useTcp && int.TryParse(_wbPort.Text, out int tp) ? tp : 3002,
                 ReadTimeoutMs    = 1000,

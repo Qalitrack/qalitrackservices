@@ -1,6 +1,6 @@
 // src/services/syncService.js
 import { dequeueById } from '../store/offlineQueueSlice';
-import { addTransaction, addSecondWeight, deactivateTransactionApi } from '../store/weighingSlice';
+import { createTransactionOnline, completeTransactionOnline, deleteTransactionOnline } from '../store/weighingSlice';
 
 export function initSync(store) {
   const flush = async () => {
@@ -11,11 +11,12 @@ export function initSync(store) {
     for (const item of queue) {
       try {
         if (item.type === 'CREATE') {
-          await store.dispatch(addTransaction(item.payload)).unwrap();
+          await store.dispatch(createTransactionOnline(item.payload)).unwrap();
         } else if (item.type === 'COMPLETE') {
-          await store.dispatch(addSecondWeight(item.payload)).unwrap();
+          const { id, w2 } = item.payload;
+          await store.dispatch(completeTransactionOnline({ id, w2, finishedAt: new Date().toISOString() })).unwrap();
         } else if (item.type === 'DELETE') {
-          await store.dispatch(deactivateTransactionApi(item.payload.id)).unwrap();
+          await store.dispatch(deleteTransactionOnline(item.payload.id)).unwrap();
         }
         store.dispatch(dequeueById(item.id));
       } catch (e) {
