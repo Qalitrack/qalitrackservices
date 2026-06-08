@@ -1,6 +1,6 @@
 // src/config.js  (or directly in your hook / component)
 
-export const HARDWARE_BASE_URL = "http://localhost:5000";
+export const HARDWARE_BASE_URL = import.meta.env.VITE_HARDWARE_BASE_URL;
 
 export const CAMERA_CONFIG = {
   cameraId: "npr1",

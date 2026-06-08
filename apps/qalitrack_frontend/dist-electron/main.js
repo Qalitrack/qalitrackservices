@@ -15,6 +15,10 @@ function requireMain() {
   const path = require$$1;
   const os = require$$2;
   const isDev = !app.isPackaged;
+  if (process.platform === "linux") {
+    app.commandLine.appendSwitch("no-sandbox");
+    app.commandLine.appendSwitch("no-zygote");
+  }
   const { execSync } = require$$4;
   function deriveMachineId() {
     var _a;
@@ -33,8 +37,10 @@ function requireMain() {
     const mac = ((_a = Object.values(ifaces).flat().filter((n) => n && !n.internal && n.mac && n.mac !== "00:00:00:00:00:00").sort((a, b) => a.mac.localeCompare(b.mac))[0]) == null ? void 0 : _a.mac) ?? "nomac";
     return Buffer.from(`${os.hostname()}:${mac}`).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 24);
   }
+  let _cachedMachineId = null;
   function getMachineId() {
-    return deriveMachineId();
+    if (!_cachedMachineId) _cachedMachineId = deriveMachineId();
+    return _cachedMachineId;
   }
   ipcMain.handle("get-machine-id", () => getMachineId());
   function createWindow() {
@@ -45,11 +51,11 @@ function requireMain() {
         nodeIntegration: false,
         contextIsolation: true,
         preload: path.join(__dirname, "preload.cjs"),
-        webSecurity: isDev
+        webSecurity: !isDev
       }
     });
     if (isDev) {
-      win.loadURL("http://localhost:4000");
+      win.loadURL(process.env.VITE_DEV_SERVER_URL || "http://localhost:5173");
       win.webContents.openDevTools();
     } else {
       win.loadFile(path.join(__dirname, "../dist/index.html"));

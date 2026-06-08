@@ -48,8 +48,10 @@ function deriveMachineId() {
     .slice(0, 24);
 }
 
+let _cachedMachineId = null;
 function getMachineId() {
-  return deriveMachineId();
+  if (!_cachedMachineId) _cachedMachineId = deriveMachineId();
+  return _cachedMachineId;
 }
 
 ipcMain.handle('get-machine-id', () => getMachineId());
@@ -64,7 +66,7 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.cjs'),
-      webSecurity: isDev,
+      webSecurity: !isDev,
     }
   });
 

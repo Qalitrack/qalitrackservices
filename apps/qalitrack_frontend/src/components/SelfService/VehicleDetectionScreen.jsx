@@ -73,7 +73,7 @@ const enrichVehicleNames = async (v) => {
 
 const normaliseVehicle = (v, rfidCode, enriched = {}) => ({
   id:                 v.id,
-  rfidTag:            v.rfiDcode           ?? rfidCode,
+  rfidTag:            v.rfidCode           ?? rfidCode,
   registrationNumber: v.registrationNumber ?? "—",
   vehicleType:        v.type               ?? null,
   vehicleMake:        v.make               ?? null,

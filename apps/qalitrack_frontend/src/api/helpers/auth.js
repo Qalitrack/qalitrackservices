@@ -11,6 +11,7 @@ const useAuth = () => {
     const listenerSet = useRef(false);
     const sessionCheckInterval = useRef(null);
     const activityTimeout = useRef(null);
+    const activityHandler = useRef(null);
 
     // Session configuration
     const SESSION_DURATION = 480 * 60 * 1000; // 480 minutes in milliseconds
@@ -31,6 +32,7 @@ const useAuth = () => {
             return () => {
                 stopSessionMonitoring();
                 clearActivityTimeout();
+                teardownActivityTracking();
             };
         }
     }, []);
@@ -126,32 +128,33 @@ const useAuth = () => {
     };
 
     // Activity tracking
+    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+
+    const teardownActivityTracking = () => {
+        if (activityHandler.current) {
+            activityEvents.forEach(event => {
+                window.removeEventListener(event, activityHandler.current);
+            });
+            activityHandler.current = null;
+        }
+    };
+
     const setupActivityTracking = () => {
-        const resetActivityTimeout = () => {
+        teardownActivityTracking();
+
+        activityHandler.current = () => {
             clearActivityTimeout();
             updateSessionActivity();
-            
-            // Set new timeout
             activityTimeout.current = setTimeout(() => {
                 logout();
             }, ACTIVITY_TIMEOUT);
         };
 
-        // Track user activity
-        const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
         activityEvents.forEach(event => {
-            window.addEventListener(event, resetActivityTimeout);
+            window.addEventListener(event, activityHandler.current);
         });
 
-        // Initial activity timeout
-        resetActivityTimeout();
-
-        // Store cleanup function
-        window.addEventListener('beforeunload', () => {
-            activityEvents.forEach(event => {
-                window.removeEventListener(event, resetActivityTimeout);
-            });
-        });
+        activityHandler.current();
     };
 
     const clearActivityTimeout = () => {
@@ -298,9 +301,11 @@ const useAuth = () => {
         localStorage.removeItem('authSession');
         stopSessionMonitoring();
         clearActivityTimeout();
+        teardownActivityTracking();
         setRequiresPasswordChange(false);
         setUserId('');
         setError('');
+        window.location.hash = '#/login';
     };
 
     const isAuthenticated = () => {

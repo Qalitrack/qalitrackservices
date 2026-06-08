@@ -28,7 +28,9 @@
       "Bash(reg add:*)",
       "Bash(powershell:*)",
       "Bash(find /c/qalitrackservices/packages/microservices/masterdata/user-service -name \"*.cs\" -type f -exec grep -l \"Pending\" {} \\\\;)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(git -C /home/alchemist/Qalitrack/qalitrackservices/apps/qalitrack_frontend log --oneline -5)",
+      "Bash(git -C /home/alchemist/Qalitrack/qalitrackservices/apps/qalitrack_frontend diff HEAD --name-only)"
     ]
   }
 }

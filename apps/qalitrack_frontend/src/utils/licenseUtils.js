@@ -29,8 +29,6 @@
 export const THIS_APP_ID = "qalitrack-frontend";
 
 // ── PUBLIC KEY ────────────────────────────────────────────────────────────────
-// Replace this with the output of: node src/utils/generateKeyPair.mjs
-// This is a PLACEHOLDER — all keys will be rejected until you replace it.
 const PUBLIC_KEY_JWK = {
   kty: "EC",
   crv: "P-256",
@@ -41,15 +39,17 @@ const PUBLIC_KEY_JWK = {
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const CACHE_KEY        = "qali_lic_v1";
 const MACHINE_ID_KEY   = "qali_mid";
-const GRACE_MS         = 7 * 24 * 60 * 60 * 1000;   // 7 days offline grace
+const GRACE_MS         = 10 * 24 * 60 * 60 * 1000;  // 10 days offline grace
 const RECHECK_MS       = 24 * 60 * 60 * 1000;        // daily server re-check
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MACHINE FINGERPRINT
 //
 // In Electron: calls the main process via IPC (preload exposes electronAPI).
-//   Main process derives ID from hostname + MAC and persists it to userData/machine-id.
-//   userData survives app reinstalls — same machine always gets the same ID.
+//   On Windows: reads HKLM\SOFTWARE\Microsoft\Cryptography\MachineGuid — set once
+//   at OS install, survives app reinstalls, reboots, and network changes.
+//   On non-Windows: derives from hostname + first physical MAC address (less stable).
+//   The result is cached in the main process for the lifetime of the session.
 //
 // In browser (dev/web): falls back to a random UUID cached in localStorage.
 //   Not hardware-bound, but stable for the life of that browser profile.
@@ -165,7 +165,7 @@ export async function verifyLicenseToken(token) {
     }
 
     // ── Machine binding (optional, only when key was issued with a machineId) ─
-    if (payload.mid && payload.mid !== getMachineId()) {
+    if (payload.mid && payload.mid !== await getMachineIdAsync()) {
       return { valid: false, reason: "machine_mismatch" };
     }
 
@@ -191,8 +191,6 @@ async function checkWithServer(token) {
     import.meta.env.VITE_LICENSE_SERVER_URL ||
     "https://kmk.support.qalibrated.co.ke";
 
-  if (!base) return null; // ERP URL not configured yet — skip server check
-
   try {
     const res = await fetch(`${base}/api/v1/licenses/validate`, {
       method: "POST",
@@ -206,6 +204,8 @@ async function checkWithServer(token) {
     });
 
     const body = await res.json().catch(() => ({}));
+    if (import.meta.env.DEV) console.log("[LicenseServer] raw response:", body);
+
     const payload = body.data ?? body; // unwrap envelope { data: {...} } if present
     return res.ok
       ? { ...payload, serverChecked: true, serverCheckedAt: Date.now() }
@@ -248,7 +248,7 @@ export async function activateLicense(token) {
 // ─────────────────────────────────────────────────────────────────────────────
 // GET LICENSE STATUS  (called on every app boot / tab open)
 // ─────────────────────────────────────────────────────────────────────────────
-export async function getLicenseStatus(feature = "kiosk") {
+export async function getLicenseStatus(feature = "") {
   const cache = readCache();
   if (!cache?.token) return { valid: false, reason: "not_activated" };
 
@@ -278,17 +278,39 @@ export async function getLicenseStatus(feature = "kiosk") {
   }
 
   // Feature entitlement check
-  if (feature && local.features.length > 0 && !local.features.includes(feature)) {
+  if (feature && !local.features.includes(feature)) {
     return { valid: false, reason: "feature_not_licensed" };
   }
 
-  // Background daily re-check (non-blocking — just updates cache / revokes quietly)
+  // Periodic server re-check — blocking so revocation is caught in-band
   const age = Date.now() - (cache.cachedAt || 0);
   if (age > RECHECK_MS) {
-    checkWithServer(cache.token).then((server) => {
-      if (server?.valid)          writeCache({ ...cache, ...server });
-      else if (server?.valid === false) localStorage.removeItem(CACHE_KEY);
-    });
+    const server = await checkWithServer(cache.token);
+
+    if (server?.valid === false) {
+      localStorage.removeItem(CACHE_KEY);
+      return { valid: false, reason: server.reason };
+    }
+
+    if (server?.valid) {
+      writeCache({ ...cache, ...server });
+      return { valid: true, ...local, ...server, token: cache.token };
+    }
+
+    // server === null → offline; allow within grace window from last confirmed check-in
+    const lastCheck = cache.serverCheckedAt || cache.cachedAt || 0;
+    const offlineAge = Date.now() - lastCheck;
+    if (offlineAge > GRACE_MS) {
+      // Keep cache intact so the app auto-recovers once internet is restored
+      return { valid: false, reason: "offline_too_long" };
+    }
+    return {
+      valid: true,
+      ...local,
+      token: cache.token,
+      warning: "offline_grace",
+      graceEndsAt: new Date(lastCheck + GRACE_MS),
+    };
   }
 
   return { valid: true, ...local, token: cache.token };
@@ -316,6 +338,7 @@ export function licenseErrorMessage(reason) {
     feature_not_licensed: "Your license does not include this feature.",
     server_rejected:      "License was rejected by the server. It may have been revoked.",
     verification_error:   "Could not verify the license key. Please try again.",
+    offline_too_long:     "License could not be verified — no internet connection for over 10 days. Please connect to the internet to continue.",
   };
   return messages[reason] || `License error: ${reason}`;
 }
