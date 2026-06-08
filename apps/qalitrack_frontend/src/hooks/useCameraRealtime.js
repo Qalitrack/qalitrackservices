@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const BASE_IP = "http://localhost:5000";
+const BASE_IP = import.meta.env.VITE_HARDWARE_BASE_URL;
 const PLATE_STREAM_URL = `${BASE_IP}/api/plates/stream`;
 
 export const useCameraRealtime = (cameraId = "npr1") => {

@@ -255,6 +255,15 @@
                     </div>
                 </div>
 
+                <!-- Scale type (always visible) -->
+                <div class="form-group">
+                    <label for="wbScaleType">Scale Type</label>
+                    <select id="wbScaleType">
+                        <option value="Generic">Generic (Platform N: weight format)</option>
+                        <option value="YaghuaXK3190DS8">Yaghua XK3190-DS8</option>
+                    </select>
+                </div>
+
                 <!-- Serial fields -->
                 <div id="wbSerialFields" style="display:none;">
                     <div class="form-row">
@@ -474,6 +483,8 @@
             document.getElementById('tcpTimeout').value   = wb.readTimeoutMs    || 1000;
             document.getElementById('tcpReconnect').value = wb.reconnectDelayMs || 5000;
 
+            document.getElementById('wbScaleType').value      = wb.scaleType         || 'Generic';
+
             document.getElementById('wbSerialPort').value     = wb.serialPort       || '';
             document.getElementById('wbBaudRate').value       = wb.baudRate         || 9600;
             document.getElementById('wbDataBits').value       = (wb.dataBits || 8).toString();
@@ -541,6 +552,7 @@
         updated.tcpListener = updated.tcpListener || {};
         const connType = document.getElementById('wbConnectionType').value;
         updated.tcpListener.connectionType   = connType;
+        updated.tcpListener.scaleType        = document.getElementById('wbScaleType').value  || 'Generic';
         updated.tcpListener.ipAddress        = document.getElementById('tcpIp').value        || '';
         updated.tcpListener.port             = parseInt(document.getElementById('tcpPort').value)      || 0;
         updated.tcpListener.readTimeoutMs    = parseInt(document.getElementById('tcpTimeout').value)   || 1000;

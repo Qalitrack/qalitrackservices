@@ -51,10 +51,6 @@ public class PlatformDataController : ControllerBase
 
         try
         {
-            // Send initial connection message
-            await Response.WriteAsync("event: connected\ndata: {\"status\":\"connected\"}\n\n", cancellationToken);
-            await Response.Body.FlushAsync(cancellationToken);
-
             // Start heartbeat timer (every 30 seconds)
             heartbeatTimer = new System.Threading.Timer(async _ =>
             {
@@ -148,7 +144,7 @@ public class PlatformDataController : ControllerBase
         Response.Headers["Connection"] = "keep-alive";
         Response.Headers["X-Client-Id"] = clientId;
 
-        var stream = _plateDataStreamService.SubscribeAsync(clientId, cancellationToken);
+        var stream = _plateDataStreamService.SubscribeAsync(clientId, cancellationToken: cancellationToken);
         var lastActivity = DateTime.UtcNow;
         System.Threading.Timer? heartbeatTimer = null;
 

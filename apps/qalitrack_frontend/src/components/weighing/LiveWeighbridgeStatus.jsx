@@ -20,6 +20,7 @@ function normalizeWeight(raw) {
 export default function LiveWeighbridgeStatus({ onManualCapture }) {
   const [totalWeight, setTotalWeight] = useState("---");
   const [isStable, setIsStable] = useState(false);
+  const [connected, setConnected] = useState(true);
 
   const bufferRef = useRef(null);
   const lastStableRef = useRef(null);
@@ -32,20 +33,24 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
   useEffect(() => {
     const source = new EventSource(getHardwareConfig().scaleStreamUrl);
 
+    source.onopen = () => setConnected(true);
+    source.onerror = () => { setConnected(false); setIsStable(false); };
+
     source.onmessage = (event) => {
+      setConnected(true);
       try {
         const data = JSON.parse(event.data);
         const raw = data?.weight !== undefined ? data.weight : (typeof data === "number" ? data : null);
         if (raw !== null) {
           const w = normalizeWeight(raw);
-          if (w !== null) {
+          if (w !== null && w !== bufferRef.current) {
             bufferRef.current = w;
             setTotalWeight(w);
           }
         }
       } catch {
         const w = normalizeWeight(event.data);
-        if (w !== null) {
+        if (w !== null && w !== bufferRef.current) {
           bufferRef.current = w;
           setTotalWeight(w);
         }
@@ -101,20 +106,22 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
         <div className="flex items-center gap-2 text-xs">
           <span
             className={`w-2 h-2 rounded-full ${
-              isStable ? "bg-green-500" : "bg-yellow-500"
+              !connected ? "bg-red-500" : isStable ? "bg-green-500" : "bg-yellow-500"
             }`}
           />
           <span className="text-neutral-400">
-            {isStable ? "Stable" : "Live"}
+            {!connected ? "No Signal" : isStable ? "Stable" : "Live"}
           </span>
         </div>
       </div>
 
       {/* WEIGHT */}
-      <div className="text-center flex-1 flex items-center justify-center">
-        <span className="font-mono font-black text-amber-500 leading-none"
-          style={{ fontSize: "clamp(3rem, 10vw, 7rem)" }}>
-          {totalWeight}
+      <div className="text-center flex-1 flex items-center justify-center overflow-hidden px-1">
+        <span
+          className={`font-mono font-black leading-none w-full text-center block ${connected ? "text-amber-500" : "text-red-500 text-2xl"}`}
+          style={connected ? { fontSize: ["7rem","7rem","7rem","7rem","5rem","4rem","3.5rem"][Math.min(String(totalWeight).length, 6)] } : {}}
+        >
+          {connected ? totalWeight : "NO SIGNAL"}
         </span>
       </div>
 

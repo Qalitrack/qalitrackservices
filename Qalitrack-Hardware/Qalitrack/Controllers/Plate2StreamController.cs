@@ -53,7 +53,7 @@ public class Plate2StreamController : ControllerBase
 
         try
         {
-            await foreach (var plateJson in _plateDataStreamService.SubscribeAsync(clientId, cancellationToken))
+            await foreach (var plateJson in _plateDataStreamService.SubscribeAsync(clientId, cancellationToken: cancellationToken))
             {
                 messagesSent++;
 
