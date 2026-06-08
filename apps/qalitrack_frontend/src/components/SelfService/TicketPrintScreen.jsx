@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import dayjs from "dayjs";
 import { useTheme } from "../Context/ThemeContext.jsx";
 import logo from "../../assets/qalitrack_logo_full.png";
@@ -10,15 +10,7 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
   const [countdown,     setCountdown]     = useState(7);
   const isComplete = ticketData?.isCompleted || (ticketData?.firstWeight && ticketData?.secondWeight);
 
-  useEffect(() => { printThermalTicket(); }, []);
-
-  useEffect(() => {
-    if (!printSuccess) return;
-    const id = setInterval(() => setCountdown(c => c - 1), 1000);
-    return () => clearInterval(id);
-  }, [printSuccess]);
-
-  const printThermalTicket = async () => {
+  const printThermalTicket = useCallback(async () => {
     try {
       setPrinting(true);
       // REAL MODE: uncomment and configure when thermal printer endpoint is ready
@@ -30,7 +22,15 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
       setPrinting(false);
       setTimeout(() => { onComplete(); }, 9000);
     }
-  };
+  }, [ticketData, onComplete]);
+
+  useEffect(() => { printThermalTicket(); }, [printThermalTicket]);
+
+  useEffect(() => {
+    if (!printSuccess) return;
+    const id = setInterval(() => setCountdown(c => c - 1), 1000);
+    return () => clearInterval(id);
+  }, [printSuccess]);
 
   const formatThermalTicket = (data) => {
     const lines = [];
