@@ -123,19 +123,19 @@ const DEFAULT_SETTINGS = {
 
   // Hardware — RFID
   rfidEnabled: true,
-  rfidStreamUrl: "http://localhost:5000/api/RFID/stream",
+  rfidStreamUrl: import.meta.env.VITE_RFID_STREAM_URL,
   rfidReaderType: "UHF Reader",
 
   // Hardware — NFC
   nfcEnabled: true,
-  nfcStreamUrl: "http://localhost:5000/api/NFC/stream",
+  nfcStreamUrl: import.meta.env.VITE_NFC_STREAM_URL,
   nfcReaderType: "MIFARE Classic",
 
   // Hardware — ANPR
   anprEnabled: false,
-  anprStreamUrl: "http://localhost:5000/api/Camera/npr1/stream",
-  anprCameraUrl: "http://localhost:5000/api/Camera/npr1/stream",
-  anprApiUrl: "http://localhost:5000/api/Camera/npr1/snapshot",
+  anprStreamUrl: import.meta.env.VITE_ANPR_STREAM_URL,
+  anprCameraUrl: import.meta.env.VITE_ANPR_STREAM_URL,
+  anprApiUrl:    import.meta.env.VITE_ANPR_SNAPSHOT_URL,
   anprConfidenceThreshold: 85,
   anprCameraPosition: "entry",
   anprFallbackToManual: true,
@@ -147,7 +147,7 @@ const DEFAULT_SETTINGS = {
 
   // Hardware — Scale
   scaleEnabled: true,
-  scaleStreamUrl: "http://localhost:5000/api/PlatformData/stream",
+  scaleStreamUrl: import.meta.env.VITE_SCALE_STREAM_URL,
   scaleBrand: "Avery Weigh-Tronix",
   scaleCapacity: 60000,
   scaleStabilityThreshold: 5,

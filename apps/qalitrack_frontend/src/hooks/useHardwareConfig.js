@@ -18,10 +18,10 @@ import { useState, useEffect, useCallback } from "react";
 
 // ── Defaults (match SystemSettings.jsx DEFAULT_SETTINGS) ─────────────────────
 const DEFAULTS = {
-  rfidStreamUrl:            "http://localhost:5000/api/RFID/stream",
-  nfcStreamUrl:             "http://localhost:5000/api/NFC/stream",
-  scaleStreamUrl:           "http://localhost:5000/api/PlatformData/stream",
-  anprStreamUrl:            "http://localhost:5000/api/Camera/npr1/stream",
+  rfidStreamUrl:            import.meta.env.VITE_RFID_STREAM_URL,
+  nfcStreamUrl:             import.meta.env.VITE_NFC_STREAM_URL,
+  scaleStreamUrl:           import.meta.env.VITE_SCALE_STREAM_URL,
+  anprStreamUrl:            import.meta.env.VITE_ANPR_STREAM_URL,
   rfidEnabled:              true,
   nfcEnabled:               true,
   scaleEnabled:             true,
@@ -45,7 +45,11 @@ function readFromStorage() {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return { ...DEFAULTS };
     const parsed = JSON.parse(raw);
-    // Merge — stored values win, but missing keys fall back to DEFAULTS
+    // Evict stale localhost stream URLs so env var defaults take over
+    const streamKeys = ["rfidStreamUrl", "nfcStreamUrl", "scaleStreamUrl", "anprStreamUrl"];
+    streamKeys.forEach((k) => {
+      if (parsed[k]?.includes("localhost:5000")) delete parsed[k];
+    });
     return { ...DEFAULTS, ...parsed };
   } catch {
     return { ...DEFAULTS };

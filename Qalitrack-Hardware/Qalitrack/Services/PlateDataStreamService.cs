@@ -223,7 +223,7 @@ public class PlateDataStreamService : IDisposable
         if (_disposed) return;
         _disposed = true;
 
-        foreach (var (clientId, (channel, _)) in _streams)
+        foreach (var (clientId, (channel, _, _)) in _streams)
         {
             try
             {
