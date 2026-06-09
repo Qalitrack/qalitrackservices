@@ -39,7 +39,6 @@ const PUBLIC_KEY_JWK = {
 // ── CONFIG ────────────────────────────────────────────────────────────────────
 const CACHE_KEY        = "qali_lic_v1";
 const MACHINE_ID_KEY   = "qali_mid";
-const GRACE_MS         = 10 * 24 * 60 * 60 * 1000;  // 10 days offline grace
 const RECHECK_MS       = 24 * 60 * 60 * 1000;        // daily server re-check
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -257,21 +256,10 @@ export async function getLicenseStatus(feature = "") {
 
   if (!local.valid) {
     if (local.reason === "expired") {
-      // Maybe the customer renewed — try the server before locking out
       const server = await checkWithServer(cache.token);
       if (server?.valid) {
         writeCache({ ...cache, ...server });
         return { valid: true, ...cache, ...server };
-      }
-      // Offline + still within grace period → allow but warn
-      const age = Date.now() - (cache.cachedAt || 0);
-      if (server === null && age < GRACE_MS) {
-        return {
-          valid: true,
-          ...cache,
-          warning: "offline_grace",
-          graceEndsAt: new Date((cache.cachedAt || 0) + GRACE_MS),
-        };
       }
     }
     return local;
@@ -297,20 +285,8 @@ export async function getLicenseStatus(feature = "") {
       return { valid: true, ...local, ...server, token: cache.token };
     }
 
-    // server === null → offline; allow within grace window from last confirmed check-in
-    const lastCheck = cache.serverCheckedAt || cache.cachedAt || 0;
-    const offlineAge = Date.now() - lastCheck;
-    if (offlineAge > GRACE_MS) {
-      // Keep cache intact so the app auto-recovers once internet is restored
-      return { valid: false, reason: "offline_too_long" };
-    }
-    return {
-      valid: true,
-      ...local,
-      token: cache.token,
-      warning: "offline_grace",
-      graceEndsAt: new Date(lastCheck + GRACE_MS),
-    };
+    // server === null → offline; keep app running
+    return { valid: true, ...local, token: cache.token, warning: "offline" };
   }
 
   return { valid: true, ...local, token: cache.token };
@@ -338,7 +314,6 @@ export function licenseErrorMessage(reason) {
     feature_not_licensed: "Your license does not include this feature.",
     server_rejected:      "License was rejected by the server. It may have been revoked.",
     verification_error:   "Could not verify the license key. Please try again.",
-    offline_too_long:     "License could not be verified — no internet connection for over 10 days. Please connect to the internet to continue.",
   };
   return messages[reason] || `License error: ${reason}`;
 }

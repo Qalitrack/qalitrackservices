@@ -35,9 +35,9 @@ export default function AppLicenseGate({ children }) {
     }).then(setStatus);
   }, []);
 
-  // Runs every 60 seconds — locks on expiry/revocation, auto-recovers from offline_too_long.
+  // Runs every 60 seconds — re-checks on expiry/revocation.
   useEffect(() => {
-    if (!status?.valid && status?.reason !== "offline_too_long") return;
+    if (!status?.valid) return;
     const timer = setInterval(() => {
       getLicenseStatus("").then(result => {
         if (result.valid || result.reason !== status?.reason) setStatus(result);
@@ -90,7 +90,6 @@ export default function AppLicenseGate({ children }) {
   const isExpired         = status.reason === "expired";
   const isMachineMismatch = status.reason === "machine_mismatch";
   const isRevoked         = status.reason === "revoked";
-  const isOfflineTooLong  = status.reason === "offline_too_long";
 
   return (
     <div className="fixed inset-0 bg-gray-950 flex flex-col items-center justify-center p-4 overflow-auto">
@@ -131,12 +130,7 @@ export default function AppLicenseGate({ children }) {
               This license is bound to a different machine. You need a license issued for this Machine ID.
             </StatusBanner>
           )}
-          {isOfflineTooLong && (
-            <StatusBanner type="warning">
-              License verification requires an internet connection. Please connect and the app will unlock automatically.
-            </StatusBanner>
-          )}
-          {!isExpired && !isRevoked && !isMachineMismatch && !isOfflineTooLong && (
+          {!isExpired && !isRevoked && !isMachineMismatch && (
             <p className="text-sm text-gray-400 text-center">
               Enter your license token to unlock the application.
             </p>
@@ -171,8 +165,7 @@ export default function AppLicenseGate({ children }) {
           </div>
 
           {/* Token input + activate — hidden when offline; reconnecting auto-unlocks */}
-          {!isOfflineTooLong && (
-            <>
+          <>
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-gray-400 uppercase tracking-wide">
                   License Token
@@ -211,7 +204,6 @@ export default function AppLicenseGate({ children }) {
                 }
               </button>
             </>
-          )}
 
           {/* Contact line */}
           <p className="text-xs text-gray-600 text-center">
