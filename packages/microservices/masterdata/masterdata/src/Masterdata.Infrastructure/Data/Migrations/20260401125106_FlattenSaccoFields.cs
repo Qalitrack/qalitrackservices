@@ -14,14 +14,8 @@ namespace Masterdata.Infrastructure.Data.Migrations
                 name: "ContactInfo",
                 table: "Saccos");
 
-            migrationBuilder.AlterColumn<string>(
-                name: "OtherDetails",
-                table: "Saccos",
-                type: "text",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "jsonb",
-                oldNullable: true);
+            // AlterColumn jsonb→text requires explicit USING cast; EF doesn't generate it for PostgreSQL
+            migrationBuilder.Sql(@"ALTER TABLE ""Saccos"" ALTER COLUMN ""OtherDetails"" TYPE text USING ""OtherDetails""::text;");
 
             migrationBuilder.AddColumn<string>(
                 name: "RegistrationNumber",
@@ -37,14 +31,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
                 name: "RegistrationNumber",
                 table: "Saccos");
 
-            migrationBuilder.AlterColumn<string>(
-                name: "OtherDetails",
-                table: "Saccos",
-                type: "jsonb",
-                nullable: true,
-                oldClrType: typeof(string),
-                oldType: "text",
-                oldNullable: true);
+            migrationBuilder.Sql(@"ALTER TABLE ""Saccos"" ALTER COLUMN ""OtherDetails"" TYPE jsonb USING ""OtherDetails""::jsonb;");
 
             migrationBuilder.AddColumn<string>(
                 name: "ContactInfo",

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -11,11 +10,10 @@ namespace Masterdata.Infrastructure.Data.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<List<string>>(
-                name: "Scales",
-                table: "Weighbridges",
-                type: "jsonb",
-                nullable: false);
+            // AddColumn with nullable:false generates no default, failing on tables with existing rows.
+            // Use raw SQL to add with a temporary default (empty array), then drop the default.
+            migrationBuilder.Sql(@"ALTER TABLE ""Weighbridges"" ADD COLUMN IF NOT EXISTS ""Scales"" jsonb NOT NULL DEFAULT '[]'::jsonb;");
+            migrationBuilder.Sql(@"ALTER TABLE ""Weighbridges"" ALTER COLUMN ""Scales"" DROP DEFAULT;");
         }
 
         /// <inheritdoc />
