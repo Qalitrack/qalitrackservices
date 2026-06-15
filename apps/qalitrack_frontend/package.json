@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "electron:dev": "vite",
     "electron:build": "vite build && electron-builder",
+    "electron:build:kiosk": "cross-env VITE_APP_TARGET=kiosk ELECTRON_KIOSK=1 vite build && mv dist/kiosk.html dist/index.html && electron-builder",
     "electron:preview": "electron ."
   },
   "dependencies": {

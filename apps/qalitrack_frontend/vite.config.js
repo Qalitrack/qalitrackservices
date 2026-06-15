@@ -13,6 +13,9 @@ const API_TARGET = env.VITE_API_TARGET || 'https://qalitrack.cseco.co.ke';
 const IS_PRODUCTION = mode === 'production';
 const APP_TARGET = process.env.VITE_APP_TARGET || 'main'; // 'main' | 'kiosk'
 const IS_KIOSK = APP_TARGET === 'kiosk';
+// When kiosk is being packaged into Electron, output to dist/ (not dist-kiosk/)
+// so electron/main.cjs can find dist/index.html after the rename step.
+const IS_ELECTRON_KIOSK = IS_KIOSK && process.env.ELECTRON_KIOSK === '1';
 
 console.log('🎯 API Target:', API_TARGET);
 console.log('🏭 Environment:', IS_PRODUCTION ? 'PRODUCTION' : 'DEVELOPMENT');
@@ -182,7 +185,7 @@ return {
   },
 
   build: {
-    outDir: IS_KIOSK ? 'dist-kiosk' : 'dist',
+    outDir: IS_KIOSK && !IS_ELECTRON_KIOSK ? 'dist-kiosk' : 'dist',
     sourcemap: !IS_PRODUCTION,
     minify: IS_PRODUCTION ? 'esbuild' : false,
 
