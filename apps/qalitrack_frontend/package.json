@@ -8,6 +8,8 @@
     "dev": "vite",
     "web": "cross-env WEB_ONLY=1 vite",
     "build": "vite build",
+    "build:main": "cross-env WEB_ONLY=1 vite build",
+    "build:kiosk": "cross-env VITE_APP_TARGET=kiosk vite build",
     "preview": "vite preview",
     "electron:dev": "vite",
     "electron:build": "vite build && electron-builder",
