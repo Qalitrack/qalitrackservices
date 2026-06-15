@@ -35,6 +35,8 @@ namespace Masterdata.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.HasDefaultSchema("masterdata");
+
             // ✅ Global soft-delete filter
             foreach (var entityType in modelBuilder.Model.GetEntityTypes()
                 .Where(t => typeof(BaseEntity).IsAssignableFrom(t.ClrType)))

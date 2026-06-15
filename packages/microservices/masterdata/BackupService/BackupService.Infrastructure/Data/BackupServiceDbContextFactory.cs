@@ -8,7 +8,10 @@ public class BackupServiceDbContextFactory : IDesignTimeDbContextFactory<BackupS
     public BackupServiceDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<BackupServiceDbContext>();
-        optionsBuilder.UseNpgsql( "Host=localhost;Port=5532;Database=backupservicedb;Username=backupservice;Password=backupservice123");
+        optionsBuilder.UseNpgsql(
+            Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                ?? "Host=localhost;Port=5432;Database=qalitrackdb;Username=qalitrack;Password=qalitrack123",
+            npgsqlOptions => npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "backup"));
         return new BackupServiceDbContext(optionsBuilder.Options);
     }
 }

@@ -17,6 +17,7 @@ public class BackupServiceDbContext : DbContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasDefaultSchema("backup");
             // Configure Microservices table
             modelBuilder.Entity<Microservice>()
                 .ToTable("microservices", "backup")

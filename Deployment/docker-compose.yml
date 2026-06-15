@@ -1,6 +1,44 @@
 services:
   # =================================================================
-  # GATEWAY SERVICE (PROD) - Handles JWT Authentication
+  # SHARED POSTGRES (single DB, per-service schemas)
+  #   masterdata  → schema: masterdata
+  #   transaction → schema: transactions
+  #   user-service → schema: users
+  # =================================================================
+  postgres-prod:
+    image: postgres:16
+    container_name: qalitrack-postgres-prod
+    restart: always
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_INITDB_ARGS=-E UTF8 --locale=en_US.utf8
+      - POSTGRES_SHARED_BUFFERS=512MB
+      - POSTGRES_MAX_CONNECTIONS=600
+      - POSTGRES_WORK_MEM=2MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    volumes:
+      - postgres_prod_data:/var/lib/postgresql/data
+      - ./postgres/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - qalitrack-proxy
+    expose:
+      - "5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+
+  # =================================================================
+  # GATEWAY SERVICE
   # =================================================================
   gateway-service-prod:
     build:
@@ -31,7 +69,7 @@ services:
       start_period: 10s
 
   # =================================================================
-  # USER SERVICE (PROD)
+  # USER SERVICE
   # =================================================================
   user-service-prod:
     build:
@@ -44,8 +82,8 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - UsePostgreSQL=true
       - UseRedis=true
-      - ConnectionStrings__DefaultConnection=Host=postgres-userservice-prod;Port=5432;Database=userservicedb;Username=userservice;Password=${USER_SERVICE_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
-      - ConnectionStrings__Redis=redis-cache-prod:6379,password=${USER_SERVICE_REDIS_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Host=postgres-prod;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-cache-prod:6379,password=${REDIS_PASSWORD}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
@@ -62,7 +100,7 @@ services:
       - ./user-service/logs:/app/logs
       - ./user-service/userservice-backups:/app/Backups
     depends_on:
-      postgres-userservice-prod:
+      postgres-prod:
         condition: service_healthy
       redis-cache-prod:
         condition: service_healthy
@@ -76,42 +114,11 @@ services:
           memory: 1G
           cpus: '1.0'
 
-  postgres-userservice-prod:
-    image: postgres:15-alpine
-    container_name: qalitrack-postgres-userservice-prod
-    restart: always
-    environment:
-      - POSTGRES_DB=userservicedb
-      - POSTGRES_USER=userservice
-      - POSTGRES_PASSWORD=${USER_SERVICE_DB_PASSWORD}
-      - POSTGRES_SHARED_BUFFERS=512MB
-      - POSTGRES_MAX_CONNECTIONS=600
-      - POSTGRES_WORK_MEM=2MB
-      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
-    volumes:
-      - postgres_userservice_prod_data:/var/lib/postgresql/data
-      - ./user-service/userservice-scripts:/docker-entrypoint-initdb.d
-    networks:
-      - qalitrack-proxy
-    expose:
-      - "5432"
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '2.0'
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U userservice -d userservicedb"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-
   redis-cache-prod:
     image: redis:7-alpine
     container_name: qalitrack-redis-prod
     restart: always
-    command: redis-server --appendonly yes --requirepass ${USER_SERVICE_REDIS_PASSWORD} --maxmemory 1gb --maxmemory-policy allkeys-lru --tcp-keepalive 60 --timeout 300
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD} --maxmemory 1gb --maxmemory-policy allkeys-lru --tcp-keepalive 60 --timeout 300
     volumes:
       - redis_prod_data:/data
     networks:
@@ -130,7 +137,7 @@ services:
       retries: 3
 
   # =================================================================
-  # MASTERDATA SERVICE (PROD)
+  # MASTERDATA SERVICE
   # =================================================================
   masterdata-service-prod:
     build:
@@ -141,7 +148,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=postgres-masterdata-prod;Port=5432;Database=qalitrack_masterdata;Username=masterdata;Password=${MASTERDATA_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__DefaultConnection=Host=postgres-prod;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
@@ -150,7 +157,7 @@ services:
       - ./masterdata/docs:/app/wwwroot/docs
       - ./masterdata/data:/app/data
     depends_on:
-      postgres-masterdata-prod:
+      postgres-prod:
         condition: service_healthy
     networks:
       - qalitrack-proxy
@@ -162,123 +169,8 @@ services:
           memory: 1G
           cpus: '1.0'
 
-  postgres-masterdata-prod:
-    image: postgres:16
-    container_name: qalitrack-postgres-masterdata-prod
-    restart: always
-    environment:
-      - POSTGRES_DB=qalitrack_masterdata
-      - POSTGRES_USER=masterdata
-      - POSTGRES_PASSWORD=${MASTERDATA_DB_PASSWORD}
-      - POSTGRES_INITDB_ARGS=-E UTF8 --locale=en_US.utf8
-      - POSTGRES_SHARED_BUFFERS=512MB
-      - POSTGRES_MAX_CONNECTIONS=600
-      - POSTGRES_WORK_MEM=2MB
-      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
-    volumes:
-      - postgres_masterdata_prod_data:/var/lib/postgresql/data
-      - ./masterdata/init-scripts:/docker-entrypoint-initdb.d
-    networks:
-      - qalitrack-proxy
-    expose:
-      - "5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U masterdata -d qalitrack_masterdata"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '2.0'
-
   # =================================================================
-  # BACKUP SERVICE (PROD)
-  # =================================================================
-  backup-service-prod:
-    build:
-      context: ../packages/microservices/masterdata/BackupService
-      dockerfile: Dockerfile
-    container_name: qalitrack-backup-service-prod
-    restart: always
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - ASPNETCORE_URLS=http://+:80
-      - UsePostgreSQL=true
-      - UseRedis=true
-      - ConnectionStrings__DefaultConnection=Host=postgres-backupservice-prod;Port=5432;Database=backupservicedb;Username=backupservice;Password=${BACKUP_SERVICE_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
-      - ConnectionStrings__Redis=redis-backup-prod:6379,password=${BACKUP_SERVICE_REDIS_PASSWORD}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - JWT_ISSUER=qalitrack
-      - JWT_AUDIENCE=qalitrack
-      - Backup__Path=/app/Backups
-      - Backup__MetadataPath=/app/backup-metadata
-    volumes:
-      - ./backup-service/data:/app/data
-      - ./backup-service/logs:/app/logs
-      - ./backup-service/backups:/app/Backups
-      - ./backup-service/metadata:/app/backup-metadata
-    depends_on:
-      postgres-backupservice-prod:
-        condition: service_started
-      redis-backup-prod:
-        condition: service_started
-    networks:
-      - qalitrack-proxy
-    ports:
-      - "7003:80"
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-          cpus: '1.0'
-
-  postgres-backupservice-prod:
-    image: postgres:15-alpine
-    container_name: qalitrack-postgres-backupservice-prod
-    restart: always
-    environment:
-      - POSTGRES_DB=backupservicedb
-      - POSTGRES_USER=backupservice
-      - POSTGRES_PASSWORD=${BACKUP_SERVICE_DB_PASSWORD}
-      - POSTGRES_SHARED_BUFFERS=512MB
-      - POSTGRES_MAX_CONNECTIONS=600
-      - POSTGRES_WORK_MEM=2MB
-      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
-    volumes:
-      - postgres_backupservice_prod_data:/var/lib/postgresql/data
-      - ./backup-service/backup-scripts:/docker-entrypoint-initdb.d
-    networks:
-      - qalitrack-proxy
-    expose:
-      - "5432"
-    deploy:
-      resources:
-        limits:
-          memory: 2G
-          cpus: '2.0'
-
-  redis-backup-prod:
-    image: redis:7-alpine
-    container_name: qalitrack-redis-backup-prod
-    restart: always
-    command: redis-server --requirepass ${BACKUP_SERVICE_REDIS_PASSWORD} --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - redis_backup_prod_data:/data
-    networks:
-      - qalitrack-proxy
-    expose:
-      - "6379"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
-
-  # =================================================================
-  # TRANSACTION SERVICE (PROD)
+  # TRANSACTION SERVICE
   # =================================================================
   transaction-service-prod:
     build:
@@ -291,8 +183,8 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - UsePostgreSQL=true
       - UseRedis=true
-      - ConnectionStrings__DefaultConnection=Host=postgres-transaction-prod;Port=5432;Database=transactiondb;Username=transaction;Password=${TRANSACTION_SERVICE_DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
-      - ConnectionStrings__Redis=redis-transaction-prod:6379,password=${TRANSACTION_SERVICE_REDIS_PASSWORD}
+      - ConnectionStrings__DefaultConnection=Host=postgres-prod;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-cache-prod:6379,password=${REDIS_PASSWORD}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
@@ -302,10 +194,10 @@ services:
       - ./transaction-service/logs:/app/logs
       - ./transaction-service/metadata:/app/transaction-metadata
     depends_on:
-      postgres-transaction-prod:
-        condition: service_started
-      redis-transaction-prod:
-        condition: service_started
+      postgres-prod:
+        condition: service_healthy
+      redis-cache-prod:
+        condition: service_healthy
     networks:
       - qalitrack-proxy
     ports:
@@ -316,70 +208,54 @@ services:
           memory: 1G
           cpus: '1.0'
 
-  postgres-transaction-prod:
-    image: postgres:15-alpine
-    container_name: qalitrack-postgres-transaction-prod
+  # =================================================================
+  # BACKUP SERVICE (schema: backup)
+  # =================================================================
+  backup-service-prod:
+    build:
+      context: ../packages/microservices/masterdata/BackupService
+      dockerfile: Dockerfile
+    container_name: qalitrack-backup-service-prod
     restart: always
     environment:
-      - POSTGRES_DB=transactiondb
-      - POSTGRES_USER=transaction
-      - POSTGRES_PASSWORD=${TRANSACTION_SERVICE_DB_PASSWORD}
-      - POSTGRES_SHARED_BUFFERS=512MB
-      - POSTGRES_MAX_CONNECTIONS=600
-      - POSTGRES_WORK_MEM=2MB
-      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - UsePostgreSQL=true
+      - UseRedis=true
+      - ConnectionStrings__DefaultConnection=Host=postgres-prod;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - ConnectionStrings__Redis=redis-cache-prod:6379,password=${REDIS_PASSWORD}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_ISSUER=qalitrack
+      - JWT_AUDIENCE=qalitrack
+      - Backup__Path=/app/Backups
+      - Backup__MetadataPath=/app/backup-metadata
     volumes:
-      - postgres_transaction_prod_data:/var/lib/postgresql/data
-      - ./transaction-service/init-scripts:/docker-entrypoint-initdb.d
+      - ./backup-service/data:/app/data
+      - ./backup-service/logs:/app/logs
+      - ./backup-service/backups:/app/Backups
+      - ./backup-service/metadata:/app/backup-metadata
+    depends_on:
+      postgres-prod:
+        condition: service_healthy
+      redis-cache-prod:
+        condition: service_started
     networks:
       - qalitrack-proxy
-    expose:
-      - "5432"
+    ports:
+      - "7003:80"
     deploy:
       resources:
         limits:
-          memory: 2G
-          cpus: '2.0'
-
-  redis-transaction-prod:
-    image: redis:7-alpine
-    container_name: qalitrack-redis-transaction-prod
-    restart: always
-    command: redis-server --requirepass ${TRANSACTION_SERVICE_REDIS_PASSWORD} --maxmemory 256mb --maxmemory-policy allkeys-lru
-    volumes:
-      - redis_transaction_prod_data:/data
-    networks:
-      - qalitrack-proxy
-    expose:
-      - "6379"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-          cpus: '0.5'
+          memory: 1G
+          cpus: '1.0'
 
 volumes:
-  postgres_userservice_prod_data:
+  postgres_prod_data:
     driver: local
-    name: postgres_userservice_prod_data
+    name: postgres_prod_data
   redis_prod_data:
     driver: local
     name: redis_prod_data
-  postgres_masterdata_prod_data:
-    driver: local
-    name: postgres_masterdata_prod_data
-  postgres_backupservice_prod_data:
-    driver: local
-    name: postgres_backupservice_prod_data
-  redis_backup_prod_data:
-    driver: local
-    name: redis_backup_prod_data
-  postgres_transaction_prod_data:
-    driver: local
-    name: postgres_transaction_prod_data
-  redis_transaction_prod_data:
-    driver: local
-    name: redis_transaction_prod_data
 
 networks:
   qalitrack-proxy:

@@ -36,6 +36,7 @@ public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<UserServic
                 maxRetryDelay: TimeSpan.FromSeconds(5),
                 errorCodesToAdd: null
             );
+            sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "users");
         });
 
         return new UserServiceDbContext(optionsBuilder.Options);

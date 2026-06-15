@@ -45,7 +45,7 @@ public class UserServiceDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         
         // Configure query splitting behavior for EF Core 9.0
-        modelBuilder.HasDefaultSchema("public");
+        modelBuilder.HasDefaultSchema("users");
         
         // Apply all configurations from the current assembly
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());

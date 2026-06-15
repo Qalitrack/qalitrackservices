@@ -108,10 +108,11 @@ builder.Services.AddAutoMapper(typeof(TransactionProfile));
 builder.Services.AddDbContext<TransactionDbContext>(options =>
 {
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                           "Host=localhost;Database=qalitrack_transactions;Username=postgres;Password=postgres";
-    
-    options.UseNpgsql(connectionString);
-    
+                           "Host=localhost;Database=qalitrackdb;Username=postgres;Password=postgres";
+
+    options.UseNpgsql(connectionString, npgsqlOptions =>
+        npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "transactions"));
+
     // Disable lazy loading to prevent AutoMapper issues with proxies
     options.UseLazyLoadingProxies(false);
 });

@@ -15,7 +15,8 @@ public class MasterdataDbContextFactory : IDesignTimeDbContextFactory<Masterdata
             Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
             ?? "Host=localhost;Port=5432;Database=masterdatadb;Username=masterdata;Password=masterdata123;Pooling=true;MinPoolSize=5;MaxPoolSize=100;IncludeErrorDetail=true;CommandTimeout=60";
 
-        optionsBuilder.UseNpgsql(connectionString);
+        optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
+            npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "masterdata"));
         
         return new MasterdataDbContext(optionsBuilder.Options);
     }
