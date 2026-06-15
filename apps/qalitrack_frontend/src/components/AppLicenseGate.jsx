@@ -33,14 +33,17 @@ export default function AppLicenseGate({ children, feature = "" }) {
     }).then(setStatus);
   }, [feature]);
 
-  // Runs every 60 seconds — re-checks on expiry/revocation.
+  // Re-checks once per day — catches expiry and remote revocation.
+  // A failed check (network down, server error) never locks the app;
+  // getLicenseStatus returns valid:true when the server is unreachable.
   useEffect(() => {
     if (!status?.valid) return;
+    const DAY_MS = 24 * 60 * 60 * 1000;
     const timer = setInterval(() => {
       getLicenseStatus(feature).then(result => {
         if (result.valid || result.reason !== status?.reason) setStatus(result);
       });
-    }, 60_000);
+    }, DAY_MS);
     return () => clearInterval(timer);
   }, [feature, status?.valid, status?.reason]);
 
