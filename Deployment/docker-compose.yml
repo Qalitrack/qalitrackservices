@@ -148,7 +148,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
-      - ConnectionStrings__DefaultConnection=Host=postgres-prod;Port=5432;Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;
+      - POSTGRES_HOST=postgres-prod
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=${DB_NAME}
+      - POSTGRES_USERNAME=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack

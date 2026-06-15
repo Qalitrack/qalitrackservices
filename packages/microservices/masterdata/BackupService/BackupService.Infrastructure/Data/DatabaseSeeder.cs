@@ -25,32 +25,8 @@ public class DatabaseSeeder
             {
                 new Microservice
                 {
-                    Name = "UserService",
-                    ConnectionString = "Host=postgres-userservice-prod;Port=5432;Database=userservicedb;Username=userservice;Password=userservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;",
-                    Status = MicroserviceStatus.Active,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-                new Microservice
-                {
-                    Name = "MasterDataService",
-                    ConnectionString = "Host=postgres-masterdata-prod;Port=5432;Database=qalitrack_masterdata;Username=masterdata;Password=masterdata123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;",
-                    Status = MicroserviceStatus.Active,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-                new Microservice
-                {
-                    Name = "BackupService",
-                    ConnectionString = "Host=postgres-backupservice-prod;Port=5432;Database=backupservicedb;Username=backupservice;Password=backupservice123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;",
-                    Status = MicroserviceStatus.Active,
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
-                },
-                new Microservice
-                {
-                    Name = "TransactionService",
-                    ConnectionString = "Host=postgres-transaction-prod;Port=5432;Database=transactiondb;Username=transaction;Password=transaction123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;",
+                    Name = "QalitrackDB",
+                    ConnectionString = "Host=postgres-prod;Port=5432;Database=qalitrackdb;Username=qalitrack;Password=qalitrack123;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=300;ConnectionPruningInterval=10;Pooling=true;",
                     Status = MicroserviceStatus.Active,
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow

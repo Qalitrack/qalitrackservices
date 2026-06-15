@@ -120,7 +120,7 @@ const Microservices = () => {
                 setMicroservices(list);
                 setLastUpdated(new Date());
             } else {
-                setError('Failed to fetch microservices data');
+                setError('Failed to fetch backup configuration');
             }
         } catch (err) {
             setError(err.message || 'An error occurred while fetching data');
@@ -140,7 +140,7 @@ const Microservices = () => {
                     <div className="flex items-center justify-center min-h-64">
                         <div className="flex items-center space-x-2 text-gray-600">
                             <RefreshCw className="w-6 h-6 animate-spin" />
-                            <span className="text-lg">Loading microservices...</span>
+                            <span className="text-lg">Loading backup configuration...</span>
                         </div>
                     </div>
                 </div>
@@ -153,7 +153,7 @@ const Microservices = () => {
             <div className="min-h-screen bg-gray-50 p-6">
                 <div className="max-w-7xl mx-auto">
                     <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                        <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Microservices</h2>
+                        <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Backup Configuration</h2>
                         <p className="text-red-600 mb-4">{error}</p>
                         <button
                             onClick={fetchData}
@@ -173,8 +173,8 @@ const Microservices = () => {
                 {/* Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
                     <div className="flex-1">
-                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Microservices Dashboard</h1>
-                        <p className="text-gray-600 mt-1">Monitor and manage your microservices</p>
+                        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Database Backup</h1>
+                        <p className="text-gray-600 mt-1">Manage backup configuration for QalitrackDB</p>
                     </div>
                     <div className="flex items-center space-x-4">
                         {lastUpdated && (
@@ -205,7 +205,7 @@ const Microservices = () => {
                             className="flex items-center px-3 py-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors text-sm"
                         >
                             <PlusCircle size={16} className="mr-1" />
-                            <span>Add Service</span>
+                            <span>Add Backup Target</span>
                         </button>
                         <button
                             onClick={fetchData}
@@ -230,7 +230,7 @@ const Microservices = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-800">
                         <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Name</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Database</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Connection String</th>
                             <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Last Backup</th>
@@ -321,8 +321,8 @@ const Microservices = () => {
                 {microservices.length === 0 && !loading && (
                     <div className="text-center py-12">
                         <Database className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">No microservices found</h3>
-                        <p className="text-gray-600">There are no microservices to display at the moment.</p>
+                        <h3 className="text-lg font-medium text-gray-900 mb-2">No backup targets found</h3>
+                        <p className="text-gray-600">There are no backup targets configured. Add one to get started.</p>
                     </div>
                 )}
             </div>
