@@ -44,6 +44,7 @@ export default function DriverPortal() {
     fullName: "",
     email: "",
     phone: "",
+    idNumber: "",
     licenseNumber: "",
     licenseExpiryDate: "",
     nfCcode: "",  // ← NFC UID (API field name: nfCcode - note capital C)
@@ -93,6 +94,7 @@ export default function DriverPortal() {
         fullName: form.fullName.trim(),
         email: form.email.trim() || undefined,
         phone: form.phone.trim(),
+        idNumber: form.idNumber.trim() || undefined,
         licenseNumber: form.licenseNumber.trim() || undefined,
         licenseExpiryDate: form.licenseExpiryDate || undefined,
         nfCcode: form.nfCcode.trim() || undefined,  // ← NFC UID
@@ -119,6 +121,7 @@ export default function DriverPortal() {
       fullName: driver.fullName || "",
       email: driver.email || "",
       phone: driver.phone || "",
+      idNumber: driver.idNumber || "",
       licenseNumber: driver.licenseNumber || "",
       licenseExpiryDate: driver.licenseExpiryDate?.split("T")[0] || "",
       nfCcode: driver.nfCcode || "",  // ← NFC UID
@@ -145,6 +148,7 @@ export default function DriverPortal() {
       fullName: "",
       email: "",
       phone: "",
+      idNumber: "",
       licenseNumber: "",
       licenseExpiryDate: "",
       nfCcode: "",
@@ -226,6 +230,20 @@ export default function DriverPortal() {
               required
               className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
               placeholder="+254 7XX XXX XXX"
+            />
+          </div>
+
+          <div>
+            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
+              ID Number
+            </label>
+            <input
+              type="text"
+              name="idNumber"
+              value={form.idNumber}
+              onChange={handleChange}
+              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 font-mono"
+              placeholder="National ID number"
             />
           </div>
 
@@ -357,6 +375,7 @@ export default function DriverPortal() {
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Phone</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">ID Number</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
                   <div className="flex items-center gap-1">
                     <CreditCard className="w-3 h-3" />
@@ -398,6 +417,9 @@ export default function DriverPortal() {
                     </td>
                     <td className="px-3 py-2 text-[10px] text-gray-600 font-medium">
                       {driver.phone || "-"}
+                    </td>
+                    <td className="px-3 py-2 text-[10px] text-gray-700 font-mono font-semibold">
+                      {driver.idNumber || "-"}
                     </td>
                     <td className="px-3 py-2">
                       {driver.nfCcode ? (

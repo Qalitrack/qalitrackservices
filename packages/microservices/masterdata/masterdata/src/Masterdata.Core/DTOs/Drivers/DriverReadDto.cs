@@ -18,7 +18,7 @@ namespace Masterdata.Core.DTOs.Drivers
         /// <summary>
         /// The email address of the driver
         /// </summary>
-        public string Email { get; set; } = null!;
+        public string? Email { get; set; }
 
         /// <summary>
         /// The phone number of the driver
@@ -26,9 +26,14 @@ namespace Masterdata.Core.DTOs.Drivers
         public string Phone { get; set; } = null!;
 
         /// <summary>
+        /// The driver's national ID number
+        /// </summary>
+        public string? IdNumber { get; set; }
+
+        /// <summary>
         /// The driver's license number
         /// </summary>
-        public string LicenseNumber { get; set; } = null!;
+        public string? LicenseNumber { get; set; }
 
         /// <summary>
         /// The date when the driver's license expires
