@@ -265,6 +265,9 @@ Thumbs.db
 # AI Development Planning
 todo/
 
+# Local-only reference notes — never push
+NOTES_*.md
+
 # Temporary AI automation scripts
 _*apps/qalitrack_frontend/release/
 apps/qalitrack_frontend/dist-electron/

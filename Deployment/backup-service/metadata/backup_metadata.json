@@ -35,6 +35,18 @@
       "Lsn": null,
       "Timeline": 0,
       "lastLsn": null
+    },
+    {
+      "Id": 4,
+      "MicroserviceId": 0,
+      "MicroserviceName": "QalitrackDB",
+      "FullBackupFile": "QalitrackDB_full_20260618_115626.dump",
+      "Timestamp": "2026-06-18T11:56:26.8523654Z",
+      "Incrementals": [],
+      "ChainId": "QalitrackDB_20260618115626",
+      "Lsn": null,
+      "Timeline": 0,
+      "lastLsn": null
     }
   ],
   "CreatedAt": "0001-01-01T00:00:00",

@@ -62,7 +62,6 @@ export default function DriverPortal() {
 
       const data = await getDrivers({ pageNumber: page, pageSize, searchTerm: search });
 
-
       const driverList = Array.isArray(data?.data?.items)
         ? data.data.items
         : Array.isArray(data?.items)
