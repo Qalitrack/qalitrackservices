@@ -193,7 +193,7 @@ Services (/metrics endpoints)
 
 Examples:
 - `gateway-service.qalitrack-prod.svc.cluster.local:7000`
-- `user-service-postgresql.qalitrack-prod.svc.cluster.local:5432`
+- `qalitrack-postgresql.qalitrack-prod.svc.cluster.local:5432` (shared DB, all services)
 
 **External (via Ingress):**
 - `https://qalibrated.co.ke/qalitrack/api/*` - API Gateway

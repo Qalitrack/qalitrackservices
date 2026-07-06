@@ -160,24 +160,15 @@ POST /api/Backup/restore
 Content-Type: application/json
 
 {
-  "microservice": "user-service",
+  "microservice": "QalitrackDB",
   "backupId": "backup-20260322-020000"
 }
 ```
 
-### Register Microservice
-
-```bash
-POST /api/Microservice/register
-Content-Type: application/json
-
-{
-  "name": "user-service",
-  "connectionString": "Host=user-service-postgresql;Port=5432;...",
-  "backupPath": "/backups/user-service",
-  "status": "Active"
-}
-```
+> Backup Service now targets a single shared database (`qalitrackdb`, all
+> per-service schemas) instead of a per-microservice registry — seeded
+> automatically by `DatabaseSeeder` on startup. The `/api/Microservice/*`
+> registry endpoints still exist but the UI no longer exposes add/edit/delete.
 
 ## Usage Examples
 
@@ -328,9 +319,9 @@ curl http://localhost:7004/health
 # Verify PostgreSQL is running
 kubectl get pods -n qalitrack-prod | grep postgresql
 
-# Check service connectivity
+# Check service connectivity (shared qalitrackdb)
 kubectl run -it --rm debug --image=postgres:15-alpine --restart=Never -- \
-  psql -h backup-service-postgresql -U backupservice -d backupservicedb
+  psql -h qalitrack-postgresql -U qalitrack -d qalitrackdb
 ```
 
 ## Resource Usage

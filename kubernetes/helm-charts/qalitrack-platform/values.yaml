@@ -64,23 +64,7 @@ userService:
     type: ClusterIP
     port: 7001
     targetPort: 80
-  postgresql:
-    enabled: true
-    fullnameOverride: "user-service-postgresql"
-    auth:
-      existingSecret: "qalitrack-secrets"
-      secretKeys:
-        adminPasswordKey: "USER_SERVICE_DB_PASSWORD"
-    primary:
-      resources:
-        requests:
-          memory: "1Gi"
-          cpu: "250m"
-        limits:
-          memory: "3Gi"
-          cpu: "1000m"
-      persistence:
-        size: 20Gi
+  # DB: shared `postgresql` release below (qalitrackdb, schema "users")
 # ============================================================================
 # MASTERDATA SERVICE - Vehicles, Products, Suppliers
 # ============================================================================
@@ -103,23 +87,7 @@ masterdata:
     type: ClusterIP
     port: 7002
     targetPort: 80
-  postgresql:
-    enabled: true
-    fullnameOverride: "masterdata-service-postgresql"
-    auth:
-      existingSecret: "qalitrack-secrets"
-      secretKeys:
-        adminPasswordKey: "MASTER_DATA_DB_PASSWORD"
-    primary:
-      resources:
-        requests:
-          memory: "1Gi"
-          cpu: "250m"
-        limits:
-          memory: "3Gi"
-          cpu: "1000m"
-      persistence:
-        size: 30Gi
+  # DB: shared `postgresql` release below (qalitrackdb, schema "masterdata")
 # ============================================================================
 # TRANSACTION SERVICE - Weighbridge Transactions
 # ============================================================================
@@ -142,23 +110,7 @@ transaction:
     type: ClusterIP
     port: 7003
     targetPort: 80
-  postgresql:
-    enabled: true
-    fullnameOverride: "transaction-service-postgresql"
-    auth:
-      existingSecret: "qalitrack-secrets"
-      secretKeys:
-        adminPasswordKey: "TRANSACTION_DB_PASSWORD"
-    primary:
-      resources:
-        requests:
-          memory: "1Gi"
-          cpu: "250m"
-        limits:
-          memory: "3Gi"
-          cpu: "1000m"
-      persistence:
-        size: 50Gi
+  # DB: shared `postgresql` release below (qalitrackdb, schema "transactions")
 # ============================================================================
 # BACKUP SERVICE - Scheduled Database Backups
 # ============================================================================
@@ -236,6 +188,9 @@ qtruckService:
         size: 20Gi
 # ============================================================================
 # POSTGRESQL - Shared Configuration
+# One DB (qalitrackdb), one app user (qalitrack), per-service schemas —
+# mirrors Deployment/docker-compose.yml's postgres-prod. Fullname resolves
+# to "qalitrack-postgresql" (release name "qalitrack" + chart name).
 # ============================================================================
 postgresql:
   enabled: true
@@ -243,8 +198,24 @@ postgresql:
     existingSecret: "qalitrack-secrets"
     secretKeys:
       adminPasswordKey: "POSTGRES_ADMIN_PASSWORD"
-    database: "qalitrack"
+      userPasswordKey: "DB_PASSWORD"
+    username: "qalitrack"
+    database: "qalitrackdb"
   primary:
+    initdb:
+      scripts:
+        01-init-schemas.sql: |-
+          -- QaliTrack shared database schema initialisation
+          -- Each microservice owns a dedicated schema to avoid table name collisions.
+          CREATE SCHEMA IF NOT EXISTS masterdata;
+          CREATE SCHEMA IF NOT EXISTS transactions;
+          CREATE SCHEMA IF NOT EXISTS users;
+          CREATE SCHEMA IF NOT EXISTS backup;
+
+          GRANT ALL PRIVILEGES ON SCHEMA masterdata    TO qalitrack;
+          GRANT ALL PRIVILEGES ON SCHEMA transactions  TO qalitrack;
+          GRANT ALL PRIVILEGES ON SCHEMA users         TO qalitrack;
+          GRANT ALL PRIVILEGES ON SCHEMA backup        TO qalitrack;
     persistence:
       enabled: true
       storageClass: "local-path"
@@ -521,7 +492,7 @@ autoscaling:
 # MasterData (x2)        1Gi         4Gi
 # Transaction (x2)       1.5Gi       5Gi
 # Backup (x1)            256Mi       512Mi
-# PostgreSQL (x3)        3Gi         9Gi
+# PostgreSQL (x1)        1Gi         3Gi
 # Redis (x1)             512Mi       2Gi
 # RabbitMQ (x1)          512Mi       2Gi
 # =====================================

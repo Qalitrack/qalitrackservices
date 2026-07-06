@@ -18,9 +18,7 @@ generate_jwt_secret() {
 
 # Generate all secrets
 JWT_SECRET=$(generate_jwt_secret)
-USER_DB_PASSWORD=$(generate_password)
-MASTERDATA_DB_PASSWORD=$(generate_password)
-TRANSACTION_DB_PASSWORD=$(generate_password)
+DB_PASSWORD=$(generate_password)
 TECHNICIAN_DB_PASSWORD=$(generate_password)
 POSTGRES_ADMIN_PASSWORD=$(generate_password)
 REDIS_PASSWORD=$(generate_password)
@@ -40,10 +38,11 @@ JWT_ISSUER=qalitrack
 JWT_AUDIENCE=qalitrack
 JWT_EXPIRATION_MINUTES=60
 
-# Database Passwords
-USER_SERVICE_DB_PASSWORD=$USER_DB_PASSWORD
-MASTER_DATA_DB_PASSWORD=$MASTERDATA_DB_PASSWORD
-TRANSACTION_DB_PASSWORD=$TRANSACTION_DB_PASSWORD
+# Database — one shared DB (qalitrackdb), one app user (qalitrack),
+# per-service schemas (masterdata/transactions/users/backup)
+DB_USER=qalitrack
+DB_NAME=qalitrackdb
+DB_PASSWORD=$DB_PASSWORD
 TECHNICIAN_DB_PASSWORD=$TECHNICIAN_DB_PASSWORD
 POSTGRES_ADMIN_PASSWORD=$POSTGRES_ADMIN_PASSWORD
 
@@ -52,14 +51,10 @@ USER_SERVICE_REDIS_PASSWORD=$REDIS_PASSWORD
 
 # Connection Strings (assembled from components above)
 USER_SERVICE_REDIS_CONNECTION_STRING=user-service-redis-master:6379,password=$REDIS_PASSWORD,abortConnect=false
-USER_SERVICE_DB_CONNECTION_STRING=Host=user-service-postgresql;Port=5432;Database=qalitrack_user_service;Username=postgres;Password=$USER_DB_PASSWORD;Pooling=true
-MASTER_DATA_DB_CONNECTION_STRING=Host=masterdata-service-postgresql;Port=5432;Database=qalitrack_master_data;Username=postgres;Password=$MASTERDATA_DB_PASSWORD;Pooling=true
-TRANSACTION_DB_CONNECTION_STRING=Host=transaction-service-postgresql;Port=5432;Database=qalitrack_transaction;Username=postgres;Password=$TRANSACTION_DB_PASSWORD;Pooling=true
+DB_CONNECTION_STRING=Host=qalitrack-postgresql;Port=5432;Database=qalitrackdb;Username=qalitrack;Password=$DB_PASSWORD;Pooling=true
 TECHNICIAN_DB_CONNECTION_STRING=Host=technician-service-postgresql;Port=5432;Database=qalitrack_techniciandb;Username=postgres;Password=$TECHNICIAN_DB_PASSWORD;Pooling=true;MinPoolSize=5;MaxPoolSize=100
-TECHNICIAN_USER_SERVICE_DB_CONNECTION_STRING=Host=technician-user-service-postgresql;Port=5432;Database=userservicedb;Username=postgres;Password=$USER_DB_PASSWORD;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=100;ConnectionPruningInterval=10;Pooling=true
+TECHNICIAN_USER_SERVICE_DB_CONNECTION_STRING=Host=technician-user-service-postgresql;Port=5432;Database=userservicedb;Username=postgres;Password=$DB_PASSWORD;MinPoolSize=50;MaxPoolSize=500;Timeout=30;CommandTimeout=60;ConnectionIdleLifetime=100;ConnectionPruningInterval=10;Pooling=true
 TECHNICIAN_REDIS_CONNECTION_STRING=technician-redis:6379,password=$TECHNICIAN_REDIS_PASSWORD,abortConnect=false
-BACKUP_SERVICE_DB_CONNECTION_STRING=Host=qalitrack-postgresql;Port=5432;Database=qalitrack_backup;Username=postgres;Password=$POSTGRES_ADMIN_PASSWORD;MinPoolSize=5;MaxPoolSize=100;Timeout=30;CommandTimeout=60;Pooling=true
-BACKUP_SERVICE_REDIS_CONNECTION_STRING=user-service-redis-master:6379,password=$REDIS_PASSWORD,abortConnect=false
 
 # RabbitMQ
 RABBITMQ_PASSWORD=$RABBITMQ_PASSWORD
@@ -80,9 +75,7 @@ echo ""
 echo "📋 Generated Secrets Summary:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "JWT Secret:              ${JWT_SECRET:0:10}... (64 chars)"
-echo "User DB Password:        ${USER_DB_PASSWORD:0:10}... (32 chars)"
-echo "MasterData DB Password:  ${MASTERDATA_DB_PASSWORD:0:10}... (32 chars)"
-echo "Transaction DB Password: ${TRANSACTION_DB_PASSWORD:0:10}... (32 chars)"
+echo "DB Password:             ${DB_PASSWORD:0:10}... (32 chars)"
 echo "Technician DB Password:  ${TECHNICIAN_DB_PASSWORD:0:10}... (32 chars)"
 echo "Postgres Admin Password: ${POSTGRES_ADMIN_PASSWORD:0:10}... (32 chars)"
 echo "Redis Password:          ${REDIS_PASSWORD:0:10}... (32 chars)"

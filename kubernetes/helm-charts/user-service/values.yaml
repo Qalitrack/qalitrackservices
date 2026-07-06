@@ -91,19 +91,6 @@ env:
       secretKeyRef:
         name: qalitrack-secrets
         key: JWT_SECRET_KEY
-  - name: USER_SERVICE_DB_HOST
-    value: "user-service-postgresql"
-  - name: USER_SERVICE_DB_PORT
-    value: "5432"
-  - name: USER_SERVICE_DB_NAME
-    value: "qalitrack_user_service"
-  - name: USER_SERVICE_DB_USERNAME
-    value: "postgres"
-  - name: USER_SERVICE_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: qalitrack-secrets
-        key: USER_SERVICE_DB_PASSWORD
   - name: USER_SERVICE_REDIS_HOST
     value: "user-service-redis-master"
   - name: USER_SERVICE_REDIS_PORT
@@ -123,7 +110,7 @@ env:
     valueFrom:
       secretKeyRef:
         name: qalitrack-secrets
-        key: USER_SERVICE_DB_CONNECTION_STRING
+        key: DB_CONNECTION_STRING
   - name: Email__SmtpHost
     valueFrom:
       secretKeyRef:

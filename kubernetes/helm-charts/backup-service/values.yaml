@@ -67,45 +67,6 @@ env:
       secretKeyRef:
         name: qalitrack-secrets
         key: JWT_SECRET_KEY
-  - name: USER_SERVICE_DB_HOST
-    value: "user-service-postgresql"
-  - name: USER_SERVICE_DB_PORT
-    value: "5432"
-  - name: USER_SERVICE_DB_NAME
-    value: "qalitrack_user_service"
-  - name: USER_SERVICE_DB_USERNAME
-    value: "postgres"
-  - name: USER_SERVICE_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: qalitrack-secrets
-        key: USER_SERVICE_DB_PASSWORD
-  - name: MASTER_DATA_DB_HOST
-    value: "masterdata-service-postgresql"
-  - name: MASTER_DATA_DB_PORT
-    value: "5432"
-  - name: MASTER_DATA_DB_NAME
-    value: "qalitrack_master_data"
-  - name: MASTER_DATA_DB_USERNAME
-    value: "postgres"
-  - name: MASTER_DATA_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: qalitrack-secrets
-        key: MASTER_DATA_DB_PASSWORD
-  - name: TRANSACTION_DB_HOST
-    value: "transaction-service-postgresql"
-  - name: TRANSACTION_DB_PORT
-    value: "5432"
-  - name: TRANSACTION_DB_NAME
-    value: "qalitrack_transaction"
-  - name: TRANSACTION_DB_USERNAME
-    value: "postgres"
-  - name: TRANSACTION_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: qalitrack-secrets
-        key: TRANSACTION_DB_PASSWORD
   - name: BACKUP_SCHEDULE
     value: "0 2 * * *"
   - name: BACKUP_RETENTION_DAYS
@@ -125,7 +86,7 @@ env:
     valueFrom:
       secretKeyRef:
         name: qalitrack-secrets
-        key: BACKUP_SERVICE_DB_CONNECTION_STRING
+        key: DB_CONNECTION_STRING
   - name: ConnectionStrings__Redis
     valueFrom:
       secretKeyRef:

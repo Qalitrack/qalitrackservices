@@ -190,13 +190,17 @@ kubectl port-forward -n qalitrack-prod svc/qalitrack-grafana 3000:80
 
 ## Database Operations
 
-Each service has its own PostgreSQL StatefulSet.
+All services share one PostgreSQL StatefulSet (`qalitrack-postgresql`),
+database `qalitrackdb`, isolated by schema per service
+(`masterdata`, `transactions`, `users`, `backup`).
 
-### Connect to a database
+### Connect to the database
 ```bash
-kubectl exec -it -n qalitrack-prod qalitrack-postgresql-0 -- psql -U postgres
-kubectl exec -it -n qalitrack-prod masterdata-postgresql-0 -- psql -U postgres
-kubectl exec -it -n qalitrack-prod backup-service-postgresql-0 -- psql -U postgres
+kubectl exec -it -n qalitrack-prod qalitrack-postgresql-0 -- psql -U qalitrack -d qalitrackdb
+
+# List schemas
+kubectl exec -it -n qalitrack-prod qalitrack-postgresql-0 -- \
+  psql -U qalitrack -d qalitrackdb -c "\dn"
 ```
 
 ---

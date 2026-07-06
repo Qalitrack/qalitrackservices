@@ -25,13 +25,12 @@ nano secrets.env
 The `generate-secrets.sh` script creates:
 
 1. **JWT_SECRET_KEY** - 64-character random string for JWT signing
-2. **USER_SERVICE_DB_PASSWORD** - PostgreSQL password for user service database
-3. **MASTER_DATA_DB_PASSWORD** - PostgreSQL password for masterdata database
-4. **TRANSACTION_DB_PASSWORD** - PostgreSQL password for transaction database
-5. **USER_SERVICE_REDIS_PASSWORD** - Redis password for caching
-6. **RABBITMQ_PASSWORD** - RabbitMQ password
-7. **RABBITMQ_ERLANG_COOKIE** - RabbitMQ Erlang cookie for clustering
-8. **EMAIL_* settings** - SMTP configuration (needs manual update)
+2. **DB_PASSWORD** - PostgreSQL password for the shared `qalitrack` app user (one DB, per-service schemas)
+3. **POSTGRES_ADMIN_PASSWORD** - PostgreSQL superuser password
+4. **USER_SERVICE_REDIS_PASSWORD** - Redis password for caching
+5. **RABBITMQ_PASSWORD** - RabbitMQ password
+6. **RABBITMQ_ERLANG_COOKIE** - RabbitMQ Erlang cookie for clustering
+7. **EMAIL_* settings** - SMTP configuration (needs manual update)
 
 ## Generated Files
 
@@ -40,7 +39,7 @@ The `generate-secrets.sh` script creates:
 ```bash
 # Example format (DO NOT commit!)
 JWT_SECRET_KEY=abc123...xyz (64 chars)
-USER_SERVICE_DB_PASSWORD=def456...uvw (32 chars)
+DB_PASSWORD=def456...uvw (32 chars)
 # ... etc
 ```
 
@@ -356,7 +355,7 @@ kubectl rollout status deployment/gateway-service -n qalitrack-prod
 ```bash
 # Use simpler secrets for dev
 JWT_SECRET_KEY=dev-secret-not-for-production
-USER_SERVICE_DB_PASSWORD=postgres
+DB_PASSWORD=postgres
 ```
 
 ### Staging

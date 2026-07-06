@@ -91,19 +91,6 @@ env:
       secretKeyRef:
         name: qalitrack-secrets
         key: JWT_SECRET_KEY
-  - name: TRANSACTION_DB_HOST
-    value: "transaction-service-postgresql"
-  - name: TRANSACTION_DB_PORT
-    value: "5432"
-  - name: TRANSACTION_DB_NAME
-    value: "qalitrack_transaction"
-  - name: TRANSACTION_DB_USERNAME
-    value: "postgres"
-  - name: TRANSACTION_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: qalitrack-secrets
-        key: TRANSACTION_DB_PASSWORD
   - name: RABBITMQ_HOST
     value: "rabbitmq"
   - name: RABBITMQ_PORT
@@ -119,7 +106,7 @@ env:
     valueFrom:
       secretKeyRef:
         name: qalitrack-secrets
-        key: TRANSACTION_DB_CONNECTION_STRING
+        key: DB_CONNECTION_STRING
 volumeMounts:
   - name: tmp
     mountPath: /tmp

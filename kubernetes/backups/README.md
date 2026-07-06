@@ -2,13 +2,35 @@
 
 Automated daily backups of all Qalitrack PostgreSQL databases with retention and compression.
 
+## Migrating from per-service databases to the shared qalitrackdb
+
+If your cluster still has the old per-service Postgres instances (separate
+databases for masterdata/transaction/user-service/backup) and real data in
+them, do **not** just deploy the new shared-DB manifests and let old data
+disappear. Use `migrate-to-shared-db.sh` in this directory:
+
+1. Deploy the new shared `qalitrack-postgresql` release and confirm the four
+   schemas exist (`\dn` should list `masterdata`, `transactions`, `users`, `backup`).
+2. Deploy the updated service images once so each one runs its EF migrations
+   against its (still-empty) schema — confirms `<schema>.__EFMigrationsHistory`
+   is populated — then scale all four services to 0 replicas.
+3. Stop writes to the old databases (maintenance window).
+4. Run `./migrate-to-shared-db.sh --dry-run` first to sanity-check the dump/
+   rewrite step, then run it for real with `OLD_*`/`NEW_*` env vars set to
+   your actual old and new DB connection details. It data-only dumps each
+   old database, rewrites schema references, loads into `qalitrackdb`, and
+   verifies row counts old vs. new per table.
+5. Fix any row-count mismatches before proceeding.
+6. Scale the services back up against the new shared DB.
+
+This script does not touch the old databases — keep them around until the
+new setup is verified in production, then decommission them.
+
 > **Note:** This is a simple CronJob-based backup system. For API-driven backups with on-demand restore capabilities, see the [BackupService](../helm-charts/backup-service/README.md). Both systems can run together for redundancy.
 
 ## What's Backed Up
 
-- **user-service** database (`qalitrack_user_service`)
-- **masterdata-service** database (`qalitrack_master_data`)
-- **transaction-service** database (`qalitrack_transaction`)
+- The shared **qalitrackdb** database (`qalitrack-postgresql`) — covers all per-service schemas: `masterdata`, `transactions`, `users`, `backup`
 
 ## Features
 
@@ -41,7 +63,7 @@ kubectl apply -f cronjob-postgres-backup.yaml
    ↓
 2. Creates backups directory with current date
    ↓
-3. pg_dump each database (custom format)
+3. pg_dump the shared qalitrackdb database (custom format)
    ↓
 4. Creates SHA256 checksums
    ↓
@@ -147,36 +169,24 @@ tar -xzf qalitrack-backup-2026-03-22.tar.gz
 ### Restore Database
 
 ```bash
-# Restore user-service database
-pg_restore -h localhost -p 5432 -U postgres \
-  -d qalitrack_user_service \
+# Restore qalitrackdb (all schemas)
+pg_restore -h localhost -p 5432 -U qalitrack \
+  -d qalitrackdb \
   -c \ # Clean (drop) database objects before recreating
-  2026-03-22/user-service.backup
-
-# Restore masterdata-service database
-pg_restore -h localhost -p 5432 -U postgres \
-  -d qalitrack_master_data \
-  -c \
-  2026-03-22/masterdata-service.backup
-
-# Restore transaction-service database
-pg_restore -h localhost -p 5432 -U postgres \
-  -d qalitrack_transaction \
-  -c \
-  2026-03-22/transaction-service.backup
+  2026-03-22/qalitrackdb.backup
 ```
 
 ### Restore in Kubernetes
 
 ```bash
-# Port-forward to PostgreSQL pod
-kubectl port-forward -n qalitrack-prod user-service-postgresql-0 5432:5432
+# Port-forward to the shared PostgreSQL pod
+kubectl port-forward -n qalitrack-prod svc/qalitrack-postgresql 5432:5432
 
 # Restore (in another terminal)
-pg_restore -h localhost -p 5432 -U postgres \
-  -d qalitrack_user_service \
+pg_restore -h localhost -p 5432 -U qalitrack \
+  -d qalitrackdb \
   -c \
-  2026-03-22/user-service.backup
+  2026-03-22/qalitrackdb.backup
 ```
 
 ## Verify Backup Integrity

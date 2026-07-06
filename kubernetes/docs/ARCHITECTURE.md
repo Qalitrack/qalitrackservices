@@ -52,10 +52,10 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
      ▼                                                           ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                      Data Layer                                  │
-│  ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐   │
-│  │PostgreSQL │  │PostgreSQL │  │PostgreSQL │  │PostgreSQL │   │
-│  │  (User)   │  │(MasterData)│  │  (Trans)  │  │ (Backup)  │   │
-│  └───────────┘  └───────────┘  └───────────┘  └───────────┘   │
+│  ┌───────────────────────────────────────────────────────────┐ │
+│  │  PostgreSQL — qalitrack-postgresql (DB: qalitrackdb)       │ │
+│  │  schemas: masterdata · transactions · users · backup       │ │
+│  └───────────────────────────────────────────────────────────┘ │
 │                                                                  │
 │  ┌───────────────────────┐  ┌──────────────────────────────┐  │
 │  │  Redis (Cache)        │  │  RabbitMQ (Message Queue)    │  │
@@ -94,7 +94,7 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
 
 **Technology:** ASP.NET Core 8.0
 **Port:** 7001
-**Database:** PostgreSQL (user_service_db)
+**Database:** PostgreSQL — shared `qalitrackdb`, schema `users`
 **Responsibilities:**
 - User authentication and authorization
 - User profile management
@@ -102,28 +102,28 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
 - JWT token issuance
 - Password management and reset
 
-**Database Schema:**
+**Database Schema (`users`):**
 - Users table
 - Roles table
 - UserRoles junction table
 - AuditLogs table
 
 **Dependencies:**
-- PostgreSQL (user-service-postgresql)
+- PostgreSQL (qalitrack-postgresql, schema `users`)
 - Redis (session storage, optional)
 
 ### MasterData Service
 
 **Technology:** ASP.NET Core 8.0
 **Port:** 7002
-**Database:** PostgreSQL (masterdata_db)
+**Database:** PostgreSQL — shared `qalitrackdb`, schema `masterdata`
 **Responsibilities:**
 - Vehicle registration and management
 - Product catalog management
 - Supplier/customer management
 - Reference data maintenance
 
-**Database Schema:**
+**Database Schema (`masterdata`):**
 - Vehicles table
 - Products table
 - Suppliers table
@@ -131,14 +131,14 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
 - Categories table
 
 **Dependencies:**
-- PostgreSQL (masterdata-service-postgresql)
+- PostgreSQL (qalitrack-postgresql, schema `masterdata`)
 - Redis (caching)
 
 ### Transaction Service
 
 **Technology:** ASP.NET Core 8.0
 **Port:** 7003
-**Database:** PostgreSQL (transaction_db)
+**Database:** PostgreSQL — shared `qalitrackdb`, schema `transactions`
 **Responsibilities:**
 - Weighbridge transaction processing
 - Weight recording (tare, gross)
@@ -146,14 +146,14 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
 - Reweigh request handling
 - Receipt generation
 
-**Database Schema:**
+**Database Schema (`transactions`):**
 - Transactions table
 - WeighingRecords table
 - ReweighRecords table
 - AuditLogs table
 
 **Dependencies:**
-- PostgreSQL (transaction-service-postgresql)
+- PostgreSQL (qalitrack-postgresql, schema `transactions`)
 - Redis (transaction state caching)
 - RabbitMQ (event publishing)
 
@@ -161,35 +161,40 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
 
 **Technology:** ASP.NET Core 8.0
 **Port:** 7004
-**Database:** PostgreSQL (backup_metadata_db)
+**Database:** PostgreSQL — shared `qalitrackdb`, schema `backup`
 **Responsibilities:**
-- Database backup orchestration
+- Database backup orchestration (single QalitrackDB target)
 - Backup metadata tracking
 - On-demand backup API
 - Backup verification
 
 **Dependencies:**
-- PostgreSQL (backup-service-postgresql, backup metadata)
-- All service PostgreSQL instances (backup targets)
+- PostgreSQL (qalitrack-postgresql, schema `backup` for metadata; connects
+  with the same `qalitrack` DB user for pg_dump/pg_restore across all schemas)
 - RabbitMQ (backup job queue)
 
 ## Data Layer Architecture
 
 ### PostgreSQL Database Strategy
 
-**Deployment Model:** Database-per-service pattern
+**Deployment Model:** Shared database, schema-per-service (one PostgreSQL
+instance — `qalitrack-postgresql` — database `qalitrackdb`, isolated by
+schema per service: `masterdata`, `transactions`, `users`, `backup`)
 
 **Rationale:**
-- Service isolation and independence
-- Independent scaling
-- Fault isolation
-- Schema evolution flexibility
+- Each service owns its own EF Core migration history
+  (`<schema>.__EFMigrationsHistory`), scoped by `HasDefaultSchema()`
+- One instance to operate, monitor, and back up instead of four
+- Schema isolation still prevents table-name collisions between services
+- Trade-off accepted: no per-service DB fault isolation or independent scaling
 
 **Configuration:**
-- Version: PostgreSQL 15
+- Version: PostgreSQL 16
 - Bitnami Helm chart
+- Schemas created on first boot via `primary.initdb.scripts` (see
+  `kubernetes/helm-charts/qalitrack-platform/values.yaml`)
 - Persistent storage via PVC
-- Connection pooling: 50-500 connections per instance
+- Connection pooling: 50-500 connections per service, shared instance
 
 **Performance Tuning:**
 ```
@@ -281,7 +286,7 @@ ingress-nginx namespace (isolated)
 
 Examples:
 - `user-service.qalitrack-prod.svc.cluster.local`
-- `user-service-postgresql.qalitrack-prod.svc.cluster.local`
+- `qalitrack-postgresql.qalitrack-prod.svc.cluster.local` (shared DB, all services)
 
 Short names work within namespace:
 - `user-service` (same namespace)
@@ -316,10 +321,7 @@ https://qalibrated.co.ke/prometheus/*        → prometheus
 
 | Service | PVC Name | Size | Access Mode |
 |---------|----------|------|-------------|
-| User PostgreSQL | user-service-postgresql | 10Gi | RWO |
-| MasterData PostgreSQL | masterdata-service-postgresql | 10Gi | RWO |
-| Transaction PostgreSQL | transaction-service-postgresql | 20Gi | RWO |
-| Backup PostgreSQL | backup-service-postgresql | 10Gi | RWO |
+| PostgreSQL (shared, all schemas) | qalitrack-postgresql | 50Gi | RWO |
 | Backup Storage | backup-storage-pvc | 100Gi | RWO |
 | Prometheus | prometheus-storage | 50Gi | RWO |
 | Grafana | grafana-storage | 10Gi | RWO |
@@ -605,12 +607,12 @@ Ensures zero downtime during updates.
 
 **Database Restore:**
 ```bash
-# Restore from backup
-kubectl cp /backups/user-service/backup-2026-03-25.tar.gz \
-  user-service-postgresql-0:/tmp/backup.tar.gz -n qalitrack-prod
+# Restore from backup (single shared qalitrackdb, all schemas)
+kubectl cp /backups/qalitrackdb-2026-03-25.tar.gz \
+  qalitrack-postgresql-0:/tmp/backup.tar.gz -n qalitrack-prod
 
-kubectl exec -it user-service-postgresql-0 -n qalitrack-prod -- \
-  psql -U postgres -d user_service_db -f /tmp/backup.sql
+kubectl exec -it qalitrack-postgresql-0 -n qalitrack-prod -- \
+  pg_restore -U qalitrack -d qalitrackdb -c /tmp/qalitrackdb.backup
 ```
 
 **Infrastructure Rebuild:**
@@ -639,17 +641,20 @@ helm install qalitrack . -n qalitrack-prod
 - Distributed system challenges
 - Network latency
 
-### Database-per-Service
+### Shared Database, Schema-per-Service
 
-**Decision:** Separate PostgreSQL instance per service
+**Decision:** One PostgreSQL instance (`qalitrackdb`), isolated by schema
+per service (`masterdata`, `transactions`, `users`, `backup`) — each with
+its own EF Core migration history table. Previously each service ran its
+own PostgreSQL instance; this was consolidated to cut operational overhead.
 **Rationale:**
-- Data ownership and isolation
-- Independent schema evolution
-- Fault isolation
-- Service autonomy
+- One instance to operate, monitor, back up, and scale instead of four
+- Schema isolation still prevents table-name collisions and keeps each
+  service's migrations independent
+- Lower baseline resource cost on a single VPS
 
 **Trade-offs:**
-- Resource overhead (multiple DB instances)
+- No per-service fault isolation or independent DB scaling
 - No cross-service transactions
 - Data duplication (acceptable)
 

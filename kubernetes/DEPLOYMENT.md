@@ -295,9 +295,9 @@ curl http://localhost:7000/health
 
 # Expected response: {"status":"healthy"}
 
-# Test database connectivity
+# Test database connectivity (shared qalitrackdb)
 kubectl exec -n qalitrack-prod -it deployment/user-service -- \
-  nc -zv user-service-postgresql 5432
+  nc -zv qalitrack-postgresql 5432
 
 # Check service mesh connectivity
 for svc in user-service masterdata-service transaction-service; do

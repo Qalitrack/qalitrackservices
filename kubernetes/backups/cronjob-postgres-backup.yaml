@@ -89,35 +89,15 @@ spec:
               BACKUP_DIR="/backups/$(date +%Y-%m-%d)"
               mkdir -p $BACKUP_DIR
 
-              # Backup User Service DB
-              echo "Backing up user-service database..."
-              PGPASSWORD=$USER_DB_PASSWORD pg_dump \
-                -h $USER_DB_HOST \
+              # Backup the shared qalitrackdb (all per-service schemas: masterdata, transactions, users, backup)
+              echo "Backing up qalitrackdb database..."
+              PGPASSWORD=$DB_PASSWORD pg_dump \
+                -h $DB_HOST \
                 -p 5432 \
-                -U postgres \
-                -d qalitrack_user_service \
+                -U $DB_USER \
+                -d $DB_NAME \
                 -F c \
-                -f $BACKUP_DIR/user-service.backup
-
-              # Backup MasterData Service DB
-              echo "Backing up masterdata-service database..."
-              PGPASSWORD=$MASTERDATA_DB_PASSWORD pg_dump \
-                -h $MASTERDATA_DB_HOST \
-                -p 5432 \
-                -U postgres \
-                -d qalitrack_master_data \
-                -F c \
-                -f $BACKUP_DIR/masterdata-service.backup
-
-              # Backup Transaction Service DB
-              echo "Backing up transaction-service database..."
-              PGPASSWORD=$TRANSACTION_DB_PASSWORD pg_dump \
-                -h $TRANSACTION_DB_HOST \
-                -p 5432 \
-                -U postgres \
-                -d qalitrack_transaction \
-                -F c \
-                -f $BACKUP_DIR/transaction-service.backup
+                -f $BACKUP_DIR/qalitrackdb.backup
 
               # Create checksums
               echo "Creating checksums..."
@@ -143,29 +123,23 @@ spec:
               ls -lh /backups/*.tar.gz | tail -10
 
             env:
-            - name: USER_DB_HOST
-              value: "user-service-postgresql"
-            - name: USER_DB_PASSWORD
+            - name: DB_HOST
+              value: "qalitrack-postgresql"
+            - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: qalitrack-secrets
-                  key: USER_SERVICE_DB_PASSWORD
-
-            - name: MASTERDATA_DB_HOST
-              value: "masterdata-service-postgresql"
-            - name: MASTERDATA_DB_PASSWORD
+                  key: DB_USER
+            - name: DB_NAME
               valueFrom:
                 secretKeyRef:
                   name: qalitrack-secrets
-                  key: MASTER_DATA_DB_PASSWORD
-
-            - name: TRANSACTION_DB_HOST
-              value: "transaction-service-postgresql"
-            - name: TRANSACTION_DB_PASSWORD
+                  key: DB_NAME
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: qalitrack-secrets
-                  key: TRANSACTION_DB_PASSWORD
+                  key: DB_PASSWORD
 
             volumeMounts:
             - name: backup-storage

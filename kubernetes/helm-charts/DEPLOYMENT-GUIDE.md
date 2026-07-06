@@ -107,7 +107,7 @@ Apply secrets:
 ```bash
 kubectl create secret generic qalitrack-secrets \
   --from-literal=JWT_SECRET_KEY="$(cat secrets.yaml | grep jwtSecret | cut -d':' -f2 | xargs)" \
-  --from-literal=USER_SERVICE_DB_PASSWORD="$(cat secrets.yaml | grep postgresPassword | cut -d':' -f2 | xargs)" \
+  --from-literal=DB_PASSWORD="$(cat secrets.yaml | grep postgresPassword | cut -d':' -f2 | xargs)" \
   --from-literal=USER_SERVICE_REDIS_PASSWORD="$(cat secrets.yaml | grep redisPassword | cut -d':' -f2 | xargs)" \
   --from-literal=RABBITMQ_PASSWORD="$(cat secrets.yaml | grep rabbitmqPassword | cut -d':' -f2 | xargs)" \
   -n qalitrack-prod

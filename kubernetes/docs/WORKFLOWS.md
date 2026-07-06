@@ -24,8 +24,8 @@ dotnet run
 **Local Testing Against Kubernetes:**
 
 ```bash
-# Port-forward dependencies from cluster
-kubectl port-forward -n qalitrack-prod svc/user-service-postgresql 5432:5432 &
+# Port-forward dependencies from cluster (shared qalitrackdb)
+kubectl port-forward -n qalitrack-prod svc/qalitrack-postgresql 5432:5432 &
 kubectl port-forward -n qalitrack-prod svc/redis-master 6379:6379 &
 
 # Update connection strings in appsettings.Development.json
@@ -337,14 +337,13 @@ git push origin main
      ▼
 Backup Pod Created
      │
-     ├─> 1. Connect to PostgreSQL (user-service-postgresql)
+     ├─> 1. Connect to PostgreSQL (qalitrack-postgresql, shared qalitrackdb)
      ├─> 2. Run pg_dump
      ├─> 3. Compress with gzip
      ├─> 4. Calculate SHA256 checksum
-     ├─> 5. Store in PVC (/backups/user-service/backup-YYYY-MM-DD.tar.gz)
-     ├─> 6. Repeat for other databases
-     ├─> 7. Cleanup backups older than 30 days
-     └─> 8. Pod terminates
+     ├─> 5. Store in PVC (/backups/qalitrackdb-YYYY-MM-DD.tar.gz)
+     ├─> 6. Cleanup backups older than 30 days
+     └─> 7. Pod terminates
 ```
 
 **Verification:**
@@ -374,7 +373,7 @@ kubectl logs -n qalitrack-prod -l job-name=manual-backup-<timestamp>
 ### Restore Workflow
 
 ```
-Backup File (/backups/user-service/backup-2026-03-25.tar.gz)
+Backup File (/backups/qalitrackdb-2026-03-25.tar.gz)
      │
      ▼
 1. Copy backup to PostgreSQL pod
@@ -403,19 +402,18 @@ Backup File (/backups/user-service/backup-2026-03-25.tar.gz)
 
 **Commands:**
 ```bash
-# 1. Scale down services
-kubectl scale deployment/user-service --replicas=0 -n qalitrack-prod
+# 1. Scale down all services (they share one DB)
+kubectl scale deployment/user-service deployment/masterdata-service \
+  deployment/transaction-service deployment/backup-service --replicas=0 -n qalitrack-prod
 
 # 2. Copy backup
-kubectl cp /backups/user-service/backup-2026-03-25.tar.gz \
-  qalitrack-prod/user-service-postgresql-0:/tmp/backup.tar.gz
+kubectl cp /backups/qalitrackdb-2026-03-25.tar.gz \
+  qalitrack-prod/qalitrack-postgresql-0:/tmp/backup.tar.gz
 
-# 3. Extract and restore
-kubectl exec -it user-service-postgresql-0 -n qalitrack-prod -- bash
+# 3. Extract and restore (pg_restore, custom format — schemas included)
+kubectl exec -it qalitrack-postgresql-0 -n qalitrack-prod -- bash
 tar -xzf /tmp/backup.tar.gz -C /tmp
-psql -U postgres -d postgres -c "DROP DATABASE IF EXISTS user_service_db;"
-psql -U postgres -d postgres -c "CREATE DATABASE user_service_db;"
-psql -U postgres -d user_service_db -f /tmp/backup.sql
+pg_restore -U qalitrack -d qalitrackdb -c /tmp/qalitrackdb.backup
 
 # 4. Scale up services
 kubectl scale deployment/user-service --replicas=2 -n qalitrack-prod
@@ -637,10 +635,10 @@ Application Logs: "Connection Refused"
      │ kubectl get pods -n qalitrack-prod -l app.kubernetes.io/name=postgresql
      ▼
 2. Check Database Logs
-     │ kubectl logs user-service-postgresql-0 -n qalitrack-prod
+     │ kubectl logs qalitrack-postgresql-0 -n qalitrack-prod
      ▼
 3. Test Connectivity
-     │ kubectl exec -it deployment/user-service -n qalitrack-prod -- nc -zv user-service-postgresql 5432
+     │ kubectl exec -it deployment/user-service -n qalitrack-prod -- nc -zv qalitrack-postgresql 5432
      ▼
 4. Verify Credentials
      │ kubectl get secret qalitrack-secrets -n qalitrack-prod -o yaml
@@ -723,7 +721,7 @@ helm upgrade qalitrack . -n qalitrack-prod
 
 # 6. Verify
 kubectl get pods -n qalitrack-prod
-kubectl exec -it user-service-postgresql-0 -n qalitrack-prod -- psql -U postgres -c "SELECT version();"
+kubectl exec -it qalitrack-postgresql-0 -n qalitrack-prod -- psql -U qalitrack -d qalitrackdb -c "SELECT version();"
 ```
 
 ## Adding a New Microservice

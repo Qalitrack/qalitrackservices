@@ -163,7 +163,7 @@ Services communicate internally via Kubernetes DNS:
 
 Examples:
 - `user-service.qalitrack-prod.svc.cluster.local:7001`
-- `user-service-postgresql.qalitrack-prod.svc.cluster.local:5432`
+- `qalitrack-postgresql.qalitrack-prod.svc.cluster.local:5432` (shared DB, all services)
 - `redis-master.qalitrack-prod.svc.cluster.local:6379`
 
 ## Resource Allocation

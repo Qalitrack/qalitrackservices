@@ -91,37 +91,24 @@ env:
       secretKeyRef:
         name: qalitrack-secrets
         key: JWT_SECRET_KEY
-  - name: MASTER_DATA_DB_HOST
-    value: "masterdata-service-postgresql"
-  - name: MASTER_DATA_DB_PORT
-    value: "5432"
-  - name: MASTER_DATA_DB_NAME
-    value: "qalitrack_master_data"
-  - name: MASTER_DATA_DB_USERNAME
-    value: "postgres"
-  - name: MASTER_DATA_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: qalitrack-secrets
-        key: MASTER_DATA_DB_PASSWORD
   - name: POSTGRES_HOST
-    value: "masterdata-service-postgresql"
+    value: "qalitrack-postgresql"
   - name: POSTGRES_PORT
     value: "5432"
   - name: POSTGRES_DATABASE
-    value: "qalitrack_master_data"
+    value: "qalitrackdb"
   - name: POSTGRES_USERNAME
-    value: "postgres"
+    value: "qalitrack"
   - name: POSTGRES_PASSWORD
     valueFrom:
       secretKeyRef:
         name: qalitrack-secrets
-        key: MASTER_DATA_DB_PASSWORD
+        key: DB_PASSWORD
   - name: ConnectionStrings__DefaultConnection
     valueFrom:
       secretKeyRef:
         name: qalitrack-secrets
-        key: MASTER_DATA_DB_CONNECTION_STRING
+        key: DB_CONNECTION_STRING
   - name: EMAIL_SMTP_PASSWORD
     valueFrom:
       secretKeyRef:
