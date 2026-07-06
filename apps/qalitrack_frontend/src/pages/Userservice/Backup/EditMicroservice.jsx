@@ -93,7 +93,7 @@ const EditMicroservice = ({ service, onClose, onSuccess }) => {
             <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
                 {/* Header */}
                 <div className="bg-amber-500 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
-                    <h2 className="text-xl font-semibold">Edit Microservice</h2>
+                    <h2 className="text-xl font-semibold">Edit Backup Target</h2>
                     <button
                         onClick={onClose}
                         className="text-white hover:text-gray-200 focus:outline-none"

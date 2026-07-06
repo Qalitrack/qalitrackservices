@@ -9,8 +9,15 @@ namespace Masterdata.Core.DTOs.Drivers
         [StringLength(200, ErrorMessage = "Full name cannot be longer than 200 characters")]
         public string? FullName { get; set; }
 
+        [EmailAddress(ErrorMessage = "Invalid email format")]
+        [StringLength(100, ErrorMessage = "Email cannot be longer than 100 characters")]
+        public string? Email { get; set; }
+
         [StringLength(50, ErrorMessage = "License number cannot be longer than 50 characters")]
         public string? LicenseNumber { get; set; }
+
+        [StringLength(50, ErrorMessage = "ID number cannot be longer than 50 characters")]
+        public string? IdNumber { get; set; }
 
         private DateTime? _licenseExpiryDate;
       

@@ -10,19 +10,20 @@ namespace Masterdata.Core.DTOs.Drivers
         [StringLength(200, ErrorMessage = "Full name cannot be longer than 200 characters")]
         public string FullName { get; set; } = null!;
 
-        [Required(ErrorMessage = "Email is required")]
         [EmailAddress(ErrorMessage = "Invalid email format")]
         [StringLength(100, ErrorMessage = "Email cannot be longer than 100 characters")]
-        public string Email { get; set; } = null!;
+        public string? Email { get; set; }
 
         [Required(ErrorMessage = "Phone number is required")]
         [StringLength(20, ErrorMessage = "Phone number cannot be longer than 20 characters")]
         [RegularExpression(@"^\+?[0-9]{7,15}$", ErrorMessage = "Invalid phone number format (must be digits and may start with +)")]
         public string Phone { get; set; } = null!;
 
-        [Required(ErrorMessage = "License number is required")]
         [StringLength(50, ErrorMessage = "License number cannot be longer than 50 characters")]
-        public string LicenseNumber { get; set; } = null!;
+        public string? LicenseNumber { get; set; }
+
+        [StringLength(50, ErrorMessage = "ID number cannot be longer than 50 characters")]
+        public string? IdNumber { get; set; }
 
         private DateTime? _licenseExpiryDate;
 

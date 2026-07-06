@@ -8,14 +8,17 @@ namespace Masterdata.Core.Entities
         [Required, MaxLength(100)]
         public string FullName { get; set; } = null!;
 
-        [Required, EmailAddress, MaxLength(100)]
-        public string Email { get; set; } = null!;
+        [EmailAddress, MaxLength(100)]
+        public string? Email { get; set; }
 
         [Required, Phone, MaxLength(20)]
         public string Phone { get; set; } = null!;
 
-        [Required, MaxLength(50)]
-        public string LicenseNumber { get; set; } = null!;
+        [MaxLength(50)]
+        public string? LicenseNumber { get; set; }
+
+        [MaxLength(50)]
+        public string? IdNumber { get; set; }
 
         public DateTime? LicenseExpiryDate { get; set; }
 

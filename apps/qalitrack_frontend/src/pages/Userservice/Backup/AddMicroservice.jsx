@@ -56,7 +56,7 @@ const AddMicroservice = ({ onClose, onSuccess }) => {
                 <div className="bg-amber-500 text-white px-6 py-4 rounded-t-lg flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <Database size={20} />
-                        <h2 className="text-lg font-semibold">Add Microservice</h2>
+                        <h2 className="text-lg font-semibold">Add Backup Target</h2>
                     </div>
                     <button onClick={onClose} disabled={loading} className="hover:text-gray-200">
                         <X size={22} />
@@ -73,7 +73,7 @@ const AddMicroservice = ({ onClose, onSuccess }) => {
                     {success && (
                         <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-700">
                             <CheckCircle size={16} className="shrink-0" />
-                            Microservice created successfully!
+                            Backup target created successfully!
                         </div>
                     )}
 
@@ -84,7 +84,7 @@ const AddMicroservice = ({ onClose, onSuccess }) => {
                             name="name"
                             value={formData.name}
                             onChange={handleChange}
-                            placeholder="e.g. UserService"
+                            placeholder="e.g. QalitrackDB"
                             disabled={loading}
                             required
                             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-amber-500 focus:border-amber-500"
@@ -99,7 +99,7 @@ const AddMicroservice = ({ onClose, onSuccess }) => {
                                 name="host"
                                 value={formData.host}
                                 onChange={handleChange}
-                                placeholder="postgres-userservice-prod"
+                                placeholder="postgres-prod"
                                 disabled={loading}
                                 required
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-amber-500 focus:border-amber-500"
@@ -125,7 +125,7 @@ const AddMicroservice = ({ onClose, onSuccess }) => {
                                 name="dbName"
                                 value={formData.dbName}
                                 onChange={handleChange}
-                                placeholder="userservicedb"
+                                placeholder="qalitrackdb"
                                 disabled={loading}
                                 required
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-amber-500 focus:border-amber-500"
@@ -137,7 +137,7 @@ const AddMicroservice = ({ onClose, onSuccess }) => {
                                 name="username"
                                 value={formData.username}
                                 onChange={handleChange}
-                                placeholder="userservice"
+                                placeholder="qalitrack"
                                 disabled={loading}
                                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-amber-500 focus:border-amber-500"
                             />

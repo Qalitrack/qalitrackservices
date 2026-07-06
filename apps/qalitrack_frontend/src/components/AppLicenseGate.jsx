@@ -17,7 +17,7 @@ import {
 // Machine ID is shown prominently so the customer can copy it and send it
 // to Qalibrated Systems when requesting a machine-bound license.
 // ─────────────────────────────────────────────────────────────────────────────
-export default function AppLicenseGate({ children }) {
+export default function AppLicenseGate({ children, feature = "" }) {
   const [status, setStatus]       = useState(null);   // null = still checking
   const [tokenInput, setToken]    = useState("");
   const [error, setError]         = useState(null);
@@ -29,22 +29,23 @@ export default function AppLicenseGate({ children }) {
   useEffect(() => {
     getMachineIdAsync().then(id => {
       setMachineId(id);
-      // Pass no feature — we just need the app licensed.
-      // Individual modules gate their own features (e.g. KioskLicenseGate).
-      return getLicenseStatus("");
+      return getLicenseStatus(feature);
     }).then(setStatus);
-  }, []);
+  }, [feature]);
 
-  // Runs every 60 seconds — re-checks on expiry/revocation.
+  // Re-checks once per day — catches expiry and remote revocation.
+  // A failed check (network down, server error) never locks the app;
+  // getLicenseStatus returns valid:true when the server is unreachable.
   useEffect(() => {
     if (!status?.valid) return;
+    const DAY_MS = 24 * 60 * 60 * 1000;
     const timer = setInterval(() => {
-      getLicenseStatus("").then(result => {
+      getLicenseStatus(feature).then(result => {
         if (result.valid || result.reason !== status?.reason) setStatus(result);
       });
-    }, 60_000);
+    }, DAY_MS);
     return () => clearInterval(timer);
-  }, [status?.valid, status?.reason]);
+  }, [feature, status?.valid, status?.reason]);
 
   const handleActivate = useCallback(async () => {
     setActing(true);

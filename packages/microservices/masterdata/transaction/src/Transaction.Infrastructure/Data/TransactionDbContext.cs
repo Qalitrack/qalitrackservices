@@ -17,6 +17,8 @@ public class TransactionDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.HasDefaultSchema("transactions");
+
         ConfigureWeighbridgeTransaction(modelBuilder);
         ConfigureReweighRecord(modelBuilder);
 

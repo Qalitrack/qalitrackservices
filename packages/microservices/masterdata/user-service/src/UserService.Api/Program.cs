@@ -61,6 +61,7 @@ try
             sqlOptions.CommandTimeout(15);
             sqlOptions.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
             sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
+            sqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "users");
         });
     });
 

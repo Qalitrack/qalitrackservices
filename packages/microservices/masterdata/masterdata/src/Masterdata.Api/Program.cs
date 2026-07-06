@@ -115,10 +115,14 @@ var dataSource = dataSourceBuilder.Build();
 // Configure DbContext with the connection string
 builder.Services.AddDbContext<MasterdataDbContext>(options =>
     options.UseNpgsql(dataSource,
-        npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(30),
-            errorCodesToAdd: null)));
+        npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorCodesToAdd: null);
+            npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "masterdata");
+        }));
 
 // Configure JWT Authentication
 var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY") ?? 

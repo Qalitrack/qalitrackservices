@@ -163,12 +163,6 @@ public class DriverService : IDriverService
 
     public async Task<DriverReadDto> CreateAsync(CreateDriverDto dto)
     {
-        // Check if license number is already in use
-        var existingDriver = (await _driverRepository.GetByIdsAsync(new[] { dto.LicenseNumber })).FirstOrDefault();
-        if (existingDriver != null)
-        {
-            throw new InvalidOperationException($"A driver with license number '{dto.LicenseNumber}' already exists.");
-        }
         
         // Map DTO to entity
         var driver = _mapper.Map<Driver>(dto);
@@ -210,15 +204,12 @@ public class DriverService : IDriverService
 
         // Check if license number is being updated and if it's already in use
         if (!string.IsNullOrEmpty(dto.LicenseNumber) &&
-            !existingDriver.LicenseNumber.Equals(dto.LicenseNumber, StringComparison.OrdinalIgnoreCase))
+            !string.Equals(existingDriver.LicenseNumber, dto.LicenseNumber, StringComparison.OrdinalIgnoreCase))
         {
-            var driverWithSameLicense = (await _driverRepository.GetByIdsAsync(new[] { dto.LicenseNumber }))
-                .FirstOrDefault(d => d.Id != id);
-
-            if (driverWithSameLicense != null)
-            {
+            var licenseExists = await _driverRepository.ExistsByPredicateAsync(d =>
+                d.LicenseNumber == dto.LicenseNumber && d.Id != id);
+            if (licenseExists)
                 throw new InvalidOperationException("A driver with this license number already exists.");
-            }
         }
 
         // NEW: Validate NFC code uniqueness if provided and changed

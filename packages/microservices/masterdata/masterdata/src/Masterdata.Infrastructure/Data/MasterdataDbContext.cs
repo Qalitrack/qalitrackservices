@@ -35,6 +35,8 @@ namespace Masterdata.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.HasDefaultSchema("masterdata");
+
             // ✅ Global soft-delete filter
             foreach (var entityType in modelBuilder.Model.GetEntityTypes()
                 .Where(t => typeof(BaseEntity).IsAssignableFrom(t.ClrType)))
@@ -104,8 +106,9 @@ namespace Masterdata.Infrastructure.Data
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.FullName).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.LicenseNumber).IsRequired().HasMaxLength(50);
-                entity.HasIndex(e => e.LicenseNumber).IsUnique();
+                entity.Property(e => e.Email).HasMaxLength(100);
+                entity.Property(e => e.LicenseNumber).HasMaxLength(50);
+                entity.Property(e => e.IdNumber).HasMaxLength(50);
                 entity.HasOne(e => e.Transporter).WithMany(t => t.Drivers).HasForeignKey(e => e.TransporterId).OnDelete(DeleteBehavior.Restrict);
             });
 

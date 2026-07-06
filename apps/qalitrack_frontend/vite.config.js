@@ -11,6 +11,11 @@ export default defineConfig(({ mode }) => {
 const env = loadEnv(mode, process.cwd(), '');
 const API_TARGET = env.VITE_API_TARGET || 'https://qalitrack.cseco.co.ke';
 const IS_PRODUCTION = mode === 'production';
+const APP_TARGET = process.env.VITE_APP_TARGET || 'main'; // 'main' | 'kiosk'
+const IS_KIOSK = APP_TARGET === 'kiosk';
+// When kiosk is being packaged into Electron, output to dist/ (not dist-kiosk/)
+// so electron/main.cjs can find dist/index.html after the rename step.
+const IS_ELECTRON_KIOSK = IS_KIOSK && process.env.ELECTRON_KIOSK === '1';
 
 console.log('🎯 API Target:', API_TARGET);
 console.log('🏭 Environment:', IS_PRODUCTION ? 'PRODUCTION' : 'DEVELOPMENT');
@@ -85,30 +90,23 @@ const createProxyConfig = (routeName, target = API_TARGET, options = {}) => ({
 return {
   plugins: [
     react(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
-      manifest: {
-        name: 'QaliTrack',
-        short_name: 'QaliTrack',
-        theme_color: '#ffffff',
-        icons: [
-          {
-            src: 'pwa-192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-          },
-          {
-            src: 'pwa-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-          },
-        ],
-      },
-    }),
-    ...(process.env.WEB_ONLY ? [] : [electron({
-      entry: 'electron/main.cjs',
-    })]),
+    // PWA and Electron only for the main app
+    ...(IS_KIOSK ? [] : [
+      VitePWA({
+        registerType: 'autoUpdate',
+        includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
+        manifest: {
+          name: 'QaliTrack',
+          short_name: 'QaliTrack',
+          theme_color: '#ffffff',
+          icons: [
+            { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+            { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
+          ],
+        },
+      }),
+      ...(process.env.WEB_ONLY ? [] : [electron({ entry: 'electron/main.cjs' })]),
+    ]),
   ],
 
   base: './',
@@ -187,17 +185,20 @@ return {
   },
 
   build: {
-    outDir: 'dist',
+    outDir: IS_KIOSK && !IS_ELECTRON_KIOSK ? 'dist-kiosk' : 'dist',
     sourcemap: !IS_PRODUCTION,
     minify: IS_PRODUCTION ? 'esbuild' : false,
-    
+
     rollupOptions: {
+      input: IS_KIOSK ? 'kiosk.html' : 'index.html',
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'ui-vendor': ['antd'],
-          'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
-        },
+        manualChunks: IS_KIOSK
+          ? { 'react-vendor': ['react', 'react-dom'] }
+          : {
+              'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+              'ui-vendor': ['antd'],
+              'redux-vendor': ['@reduxjs/toolkit', 'react-redux'],
+            },
       },
     },
   },

@@ -63,7 +63,9 @@ builder.Services.AddSwaggerGen();
 if (builder.Configuration.GetValue<bool>("UsePostgreSQL"))
 {
     builder.Services.AddDbContext<BackupServiceDbContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseNpgsql(
+            builder.Configuration.GetConnectionString("DefaultConnection"),
+            npgsqlOptions => npgsqlOptions.MigrationsHistoryTable("__EFMigrationsHistory", "backup")));
 }
 
 // Configure Quartz with proper dependency injection

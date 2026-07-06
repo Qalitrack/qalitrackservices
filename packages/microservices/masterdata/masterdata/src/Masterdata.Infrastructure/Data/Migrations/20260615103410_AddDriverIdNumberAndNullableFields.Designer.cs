@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Masterdata.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,13 +13,14 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Masterdata.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(MasterdataDbContext))]
-    partial class MasterdataDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260615103410_AddDriverIdNumberAndNullableFields")]
+    partial class AddDriverIdNumberAndNullableFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("masterdata")
                 .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
@@ -67,7 +69,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasIndex("SaccoId");
 
-                    b.ToTable("Affiliations", "masterdata");
+                    b.ToTable("Affiliations");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.AuditLog", b =>
@@ -126,7 +128,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasIndex("EntityName", "EntityId");
 
-                    b.ToTable("AuditLogs", "masterdata");
+                    b.ToTable("AuditLogs");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.AxleConfiguration", b =>
@@ -172,7 +174,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("AxleConfigurations", "masterdata");
+                    b.ToTable("AxleConfigurations");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Customer", b =>
@@ -210,7 +212,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", "masterdata");
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Driver", b =>
@@ -277,7 +279,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasIndex("TransporterId");
 
-                    b.ToTable("Drivers", "masterdata");
+                    b.ToTable("Drivers");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.DriverVehicle", b =>
@@ -322,7 +324,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("DriverVehicles", "masterdata");
+                    b.ToTable("DriverVehicles");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Organisation", b =>
@@ -360,7 +362,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Organisations", "masterdata");
+                    b.ToTable("Organisations");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Owner", b =>
@@ -438,7 +440,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Owners", "masterdata");
+                    b.ToTable("Owners");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Product", b =>
@@ -488,7 +490,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
                     b.HasIndex("Code")
                         .IsUnique();
 
-                    b.ToTable("Products", "masterdata");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Route", b =>
@@ -531,7 +533,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Routes", "masterdata");
+                    b.ToTable("Routes");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Sacco", b =>
@@ -571,7 +573,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Saccos", "masterdata");
+                    b.ToTable("Saccos");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Supplier", b =>
@@ -609,7 +611,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers", "masterdata");
+                    b.ToTable("Suppliers");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Transporter", b =>
@@ -647,7 +649,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Transporters", "masterdata");
+                    b.ToTable("Transporters");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Vehicle", b =>
@@ -776,7 +778,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasIndex("TransporterId");
 
-                    b.ToTable("Vehicles", "masterdata");
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Weighbridge", b =>
@@ -815,7 +817,7 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Weighbridges", "masterdata");
+                    b.ToTable("Weighbridges");
                 });
 
             modelBuilder.Entity("Masterdata.Core.Entities.Affiliation", b =>

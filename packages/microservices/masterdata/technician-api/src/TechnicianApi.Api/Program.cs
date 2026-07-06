@@ -90,7 +90,7 @@ else if (builder.Configuration.GetValue<bool>("UsePostgreSQL") == true)
     builder.Services.AddDbContext<TechnicianApiDbContext>((serviceProvider, options) =>
     {
         options.UseNpgsql(
-            builder.Configuration.GetConnectionString("DefaultConnection") ?? 
+            builder.Configuration.GetConnectionString("DefaultConnection") ??
             "Host=db;Port=5435;Database=techniciandb;Username=technician;Password=technician123;Pooling=true;MinPoolSize=5;MaxPoolSize=100",
             npgsqlOptions =>
             {
