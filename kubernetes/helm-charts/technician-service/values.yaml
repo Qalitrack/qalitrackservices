@@ -226,6 +226,12 @@ userService:
 postgresql:
   enabled: true
   fullnameOverride: "technician-service-postgresql"
+  # Chart-pinned default image tag (16.1.0-debian-11-r15) was removed from
+  # Bitnami's free tier and 404s on pull. Pin to "latest", matching the
+  # bitnami/postgresql image already running successfully as
+  # qalitrack-postgresql in this same cluster.
+  image:
+    tag: "latest"
   auth:
     existingSecret: "qalitrack-secrets"
     secretKeys:
