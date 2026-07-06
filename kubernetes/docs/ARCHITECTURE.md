@@ -39,17 +39,17 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
 │  └──────────────────────────────────────────────────────────┘  │
 └────────────────────┬────────────────────────────────────────────┘
                      │
-      ┌──────────────┼──────────────┬─────────────┬──────────────┐
-      │              │              │             │              │
-      ▼              ▼              ▼             ▼              ▼
-┌─────────┐    ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
-│  User   │    │MasterData│  │Transaction│  │ Backup   │  │Technician│
-│ Service │    │ Service  │  │  Service  │  │ Service  │  │ Service  │
-└────┬────┘    └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘
-     │              │              │             │              │
-     ├──────────────┴──────────────┴─────────────┴──────────────┤
-     │                                                           │
-     ▼                                                           ▼
+      ┌──────────────┼──────────────┬─────────────┐
+      │              │              │             │
+      ▼              ▼              ▼             ▼
+┌─────────┐    ┌──────────┐  ┌──────────┐  ┌──────────┐
+│  User   │    │MasterData│  │Transaction│  │ Backup   │
+│ Service │    │ Service  │  │  Service  │  │ Service  │
+└────┬────┘    └────┬─────┘  └────┬─────┘  └────┬─────┘
+     │              │              │             │
+     ├──────────────┴──────────────┴─────────────┤
+     │                                            │
+     ▼                                            ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                      Data Layer                                  │
 │  ┌───────────────────────────────────────────────────────────┐ │
@@ -82,7 +82,6 @@ Qalitrack is a microservices-based weighbridge management system designed for hi
 /api/masterdata/*  → masterdata-service:7002
 /api/transaction/* → transaction-service:7003
 /api/backup/*      → backup-service:7004
-/api/technician/*  → technician-service:7006
 /api/qtruck/*      → qtruck-api:7007
 ```
 
@@ -488,7 +487,6 @@ https://qalibrated.co.ke/prometheus/*        → prometheus
 - User Service
 - MasterData Service
 - Transaction Service
-- Technician Service
 - QTruck API
 
 ### Vertical Scaling

@@ -279,7 +279,6 @@ Expected pod count (default configuration):
 - masterdata-service: 2 replicas
 - transaction-service: 2 replicas
 - backup-service: 1 replica
-- technician-service: 2 replicas
 - qtruck-service-api: 2 replicas
 - qtruck-service-frontend: 2 replicas
 - PostgreSQL pods: 4-5 instances
@@ -841,7 +840,6 @@ Complete values.yaml structure documentation available at:
 | MasterData | 80 | 7002 | ClusterIP |
 | Transaction | 80 | 7003 | ClusterIP |
 | Backup | 80 | 7004 | ClusterIP |
-| Technician | 80 | 7006 | ClusterIP |
 | QTruck API | 80 | 7007 | ClusterIP |
 | PostgreSQL | 5432 | 5432 | ClusterIP |
 | Redis | 6379 | 6379 | ClusterIP |

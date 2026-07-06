@@ -134,7 +134,6 @@ spec:
 - masterdata-service
 - transaction-service
 - backup-service
-- technician-service
 - qtruck-service-api
 
 ### Accessing Prometheus

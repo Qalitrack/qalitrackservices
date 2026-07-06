@@ -14,9 +14,6 @@ dependencies:
 - name: backup-service
   repository: file://../backup-service
   version: 1.0.0
-- name: technician-service
-  repository: file://../technician-service
-  version: 1.0.0
 - name: qtruck-service
   repository: file://../qtruck-service
   version: 1.0.0
