@@ -14,7 +14,6 @@ The Qalitrack platform is a microservices-based weighbridge management system de
 - MasterData Service (Vehicles, products, suppliers)
 - Transaction Service (Weighbridge transactions)
 - Backup Service (Database backup management)
-- Technician Service (Technician management)
 - QTruck Service (Fleet and driver management)
 
 **Infrastructure:**
@@ -48,7 +47,6 @@ kubernetes/
 │   ├── masterdata-service/
 │   ├── qalitrack-platform/   # Umbrella chart (all services)
 │   ├── qtruck-service/
-│   ├── technician-service/
 │   ├── transaction-service/
 │   └── user-service/
 ├── infrastructure/            # Base infrastructure components
@@ -149,7 +147,6 @@ Internet
             ├─→ /api/masterdata/*  → MasterData Service (port 7002)
             ├─→ /api/transaction/* → Transaction Service (port 7003)
             ├─→ /api/backup/*      → Backup Service (port 7004)
-            ├─→ /api/technician/*  → Technician Service (port 7006)
             └─→ /api/qtruck/*      → QTruck Service (port 7007)
 ```
 
@@ -177,7 +174,6 @@ Examples:
 | MasterData | 250m | 1000m | 512Mi | 2Gi |
 | Transaction | 250m | 1000m | 512Mi | 2Gi |
 | Backup | 100m | 500m | 256Mi | 1Gi |
-| Technician | 250m | 1000m | 512Mi | 2Gi |
 | QTruck API | 250m | 1000m | 512Mi | 2Gi |
 | PostgreSQL (each) | 250m | 1000m | 1Gi | 3Gi |
 | Redis | 100m | 250m | 256Mi | 512Mi |

@@ -89,7 +89,6 @@ Comprehensive technical documentation for the Qalitrack platform Kubernetes infr
 - **[../helm-charts/user-service/README.md](../helm-charts/user-service/README.md)** - User service
 - **[../helm-charts/masterdata-service/README.md](../helm-charts/masterdata-service/README.md)** - MasterData service
 - **[../helm-charts/transaction-service/README.md](../helm-charts/transaction-service/README.md)** - Transaction service
-- **[../helm-charts/technician-service/README.md](../helm-charts/technician-service/README.md)** - Technician service
 - **[../helm-charts/qtruck-service/README.md](../helm-charts/qtruck-service/README.md)** - QTruck service
 
 ## Quick Reference
@@ -146,8 +145,7 @@ Internet
             ├─→ User Service → PostgreSQL
             ├─→ MasterData Service → PostgreSQL
             ├─→ Transaction Service → PostgreSQL
-            ├─→ Backup Service → PostgreSQL
-            └─→ Technician Service → PostgreSQL
+            └─→ Backup Service → PostgreSQL
 ```
 
 **Data Layer:**
@@ -176,7 +174,6 @@ Services (/metrics endpoints)
 | MasterData | 7002 | Master data |
 | Transaction | 7003 | Transactions |
 | Backup | 7004 | Backup API |
-| Technician | 7006 | Technicians |
 | QTruck API | 7007 | Fleet management |
 | PostgreSQL | 5432 | Database |
 | Redis | 6379 | Cache |
