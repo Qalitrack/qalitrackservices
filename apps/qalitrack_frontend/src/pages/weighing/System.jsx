@@ -44,7 +44,6 @@ import {
   Lock,
   KeyRound,
   ShieldCheck,
-  Globe,
   Webhook,
   Database,
   FileText,
@@ -975,10 +974,6 @@ function KioskTab({ settings, setField, isDark }) {
 function LicenseTab() {
   const [license,    setLicense]   = useState(null);
   const [confirming, setConfirm]   = useState(false);
-  const [serverUrl,  setServerUrl] = useState(
-    () => localStorage.getItem("licenseServerUrl") || import.meta.env.VITE_LICENSE_SERVER_URL || ""
-  );
-  const [urlSaved, setUrlSaved] = useState(false);
 
   useEffect(() => {
     getLicenseStatus("").then(setLicense);
@@ -987,14 +982,6 @@ function LicenseTab() {
   const handleDeactivate = () => {
     deactivateLicense();
     window.location.reload();
-  };
-
-  const handleSaveUrl = () => {
-    const trimmed = serverUrl.trim();
-    if (trimmed) localStorage.setItem("licenseServerUrl", trimmed);
-    else         localStorage.removeItem("licenseServerUrl");
-    setUrlSaved(true);
-    setTimeout(() => setUrlSaved(false), 2000);
   };
 
   const features = license?.features ?? [];
@@ -1043,34 +1030,6 @@ function LicenseTab() {
               </div>
             </div>
           </div>
-        )}
-      </Section>
-
-      <Section title="License Server" icon={<Globe className="w-4 h-4 text-gray-500" />}>
-        <p className="text-sm text-gray-500 mb-3">
-          URL of the Lante ERP license service. The app checks in here daily to detect revocations and renewals.
-          Leave blank to run fully offline (7-day grace period applies on expiry).
-        </p>
-        <div className="flex gap-2">
-          <input
-            type="url"
-            value={serverUrl}
-            onChange={e => setServerUrl(e.target.value)}
-            placeholder={import.meta.env.VITE_LICENSE_SERVER_URL || "http://localhost:8084"}
-            className="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <button
-            onClick={handleSaveUrl}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-amber-500 text-white text-sm font-semibold hover:bg-amber-600 transition"
-          >
-            {urlSaved ? <CheckCircle2 className="w-4 h-4" /> : <Save className="w-4 h-4" />}
-            {urlSaved ? "Saved" : "Save"}
-          </button>
-        </div>
-        {serverUrl && (
-          <p className="text-xs text-gray-400 mt-1.5">
-            Validates at: <span className="font-mono">{serverUrl.trim()}/api/v1/licenses/validate</span>
-          </p>
         )}
       </Section>
 
