@@ -229,7 +229,22 @@ function writeCache(data) {
 export async function activateLicense(token) {
   // 1. Verify signature + expiry + app binding locally (instant, no network)
   const local = await verifyLicenseToken(token);
-  if (!local.valid) return local;
+
+  // A token that looks locally expired may have been renewed server-side without being
+  // re-signed (the ERP's renew action only ever extends ExpiresAt in its database, same
+  // as getLicenseStatus()'s daily re-check already accounts for) — give the server the
+  // final say specifically for "expired", but not for a token that's simply invalid,
+  // malformed, or issued for the wrong app.
+  if (!local.valid) {
+    if (local.reason !== "expired") return local;
+
+    const server = await checkWithServer(token);
+    if (!server?.valid) return local; // still expired (or offline) — keep the original failure
+
+    const result = { valid: true, ...server };
+    writeCache({ ...result, token });
+    return result;
+  }
 
   // 2. Server validation — allows ERP to reject stolen / revoked keys immediately
   const server = await checkWithServer(token);
