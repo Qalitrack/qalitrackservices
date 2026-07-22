@@ -1,6 +1,153 @@
 // src/api/helpers/auth.js
 import { apiClient } from './apiClients.js';
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
+
+// Session configuration
+const SESSION_DURATION = 480 * 60 * 1000; // 480 minutes in milliseconds
+const ACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes of inactivity
+const SESSION_CHECK_INTERVAL = 60 * 1000; // Check every minute
+// updateSessionActivity() does a synchronous localStorage read+write.
+// mousedown/keydown/scroll/touchstart/click fire the activity handler on
+// every keystroke — throttle the actual storage write so rapid typing
+// doesn't hit localStorage dozens of times per second. The inactivity
+// timeout is still reset on every event (that part is just a timer, no I/O).
+const ACTIVITY_WRITE_THROTTLE = 5000;
+const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+
+// ─────────────────────────────────────────────────────────────────────────
+// Module-level singleton for session/activity monitoring.
+//
+// useAuth() is called independently by several components that are all
+// mounted at once (Sidebar, Topbar, ProtectedRoute, ...). Session monitoring
+// is an app-wide concern, not tied to any single component's lifecycle, so
+// its state lives here at module scope: exactly one setInterval and one set
+// of window listeners exists for the life of the authenticated session, no
+// matter how many components call the hook. Previously each instance kept
+// its own refs, so N mounted instances meant N window listeners firing (and
+// N synchronous localStorage writes) per keystroke/click/scroll anywhere in
+// the app — that's what was freezing form inputs.
+// ─────────────────────────────────────────────────────────────────────────
+let monitoringActive = false;
+let sessionCheckInterval = null;
+let activityTimeout = null;
+let activityHandler = null;
+let lastActivityWrite = 0;
+let onSessionInvalid = () => {};
+
+const getSession = () => {
+    const sessionData = localStorage.getItem('authSession');
+    if (!sessionData) return null;
+
+    try {
+        const session = JSON.parse(sessionData);
+        // Refresh lastActivity on load so the inactivity timer
+        // doesn't expire immediately after the app is reopened.
+        const now = Date.now();
+        if (session && now < session.expiresAt) {
+            session.lastActivity = now;
+            localStorage.setItem('authSession', JSON.stringify(session));
+        }
+        return session;
+    } catch (e) {
+        return null;
+    }
+};
+
+const updateSessionActivity = () => {
+    const session = getSession();
+    if (!session) return;
+
+    const now = Date.now();
+    session.lastActivity = now;
+
+    // Extend session if user is active
+    if (now - session.createdAt < SESSION_DURATION) {
+        session.expiresAt = now + SESSION_DURATION;
+    }
+
+    localStorage.setItem('authSession', JSON.stringify(session));
+};
+
+const isSessionValid = () => {
+    const session = getSession();
+    if (!session) return false;
+
+    const now = Date.now();
+
+    if (now > session.expiresAt) return false;
+    if (now - session.lastActivity > ACTIVITY_TIMEOUT) return false;
+
+    return true;
+};
+
+const stopSessionMonitoring = () => {
+    if (sessionCheckInterval) {
+        clearInterval(sessionCheckInterval);
+        sessionCheckInterval = null;
+    }
+};
+
+const clearActivityTimeout = () => {
+    if (activityTimeout) {
+        clearTimeout(activityTimeout);
+        activityTimeout = null;
+    }
+};
+
+const teardownActivityTracking = () => {
+    if (activityHandler) {
+        activityEvents.forEach(event => {
+            window.removeEventListener(event, activityHandler);
+        });
+        activityHandler = null;
+    }
+};
+
+const startSessionMonitoring = () => {
+    stopSessionMonitoring();
+    sessionCheckInterval = setInterval(() => {
+        if (!isSessionValid()) onSessionInvalid();
+    }, SESSION_CHECK_INTERVAL);
+};
+
+const setupActivityTracking = () => {
+    teardownActivityTracking();
+
+    activityHandler = () => {
+        clearActivityTimeout();
+
+        const now = Date.now();
+        if (now - lastActivityWrite >= ACTIVITY_WRITE_THROTTLE) {
+            lastActivityWrite = now;
+            updateSessionActivity();
+        }
+
+        activityTimeout = setTimeout(() => onSessionInvalid(), ACTIVITY_TIMEOUT);
+    };
+
+    activityEvents.forEach(event => {
+        window.addEventListener(event, activityHandler);
+    });
+
+    activityHandler();
+};
+
+// Idempotent: safe to call from every mounted instance's effect and from
+// createSession() after login — only the first caller (while a valid
+// session exists) actually starts the interval/listeners.
+const ensureMonitoringStarted = () => {
+    if (monitoringActive || !isSessionValid()) return;
+    monitoringActive = true;
+    startSessionMonitoring();
+    setupActivityTracking();
+};
+
+const stopMonitoring = () => {
+    monitoringActive = false;
+    stopSessionMonitoring();
+    clearActivityTimeout();
+    teardownActivityTracking();
+};
 
 const useAuth = () => {
     const [loading, setLoading] = useState(false);
@@ -8,38 +155,21 @@ const useAuth = () => {
     const [requiresPasswordChange, setRequiresPasswordChange] = useState(false);
     const [userId, setUserId] = useState('');
 
-    const listenerSet = useRef(false);
-    const sessionCheckInterval = useRef(null);
-    const activityTimeout = useRef(null);
-    const activityHandler = useRef(null);
-
-    // Session configuration
-    const SESSION_DURATION = 480 * 60 * 1000; // 480 minutes in milliseconds
-    const ACTIVITY_TIMEOUT = 15 * 60 * 1000; // 15 minutes of inactivity
-    const SESSION_CHECK_INTERVAL = 60 * 1000; // Check every minute
-
-    // Initialize session monitoring
+    // Keep the global monitoring callback pointed at a live instance's
+    // logout(), and make sure monitoring is running if a session already
+    // exists (e.g. app reopened with a valid session in localStorage).
     useEffect(() => {
-        if (!listenerSet.current) {
-            listenerSet.current = true;
-            
-            // Start session monitoring if user is authenticated
-            if (isAuthenticated()) {
-                startSessionMonitoring();
-                setupActivityTracking();
-            }
-
-            return () => {
-                stopSessionMonitoring();
-                clearActivityTimeout();
-                teardownActivityTracking();
-            };
-        }
+        onSessionInvalid = () => logout();
+        ensureMonitoringStarted();
+        // No cleanup here: monitoring is an app-wide concern that should
+        // keep running for the life of the authenticated session, not stop
+        // just because one of several components sharing it unmounts.
+        // It's torn down explicitly by logout() -> stopMonitoring().
     }, []);
 
     // Session Management Functions
     const createSession = (token, userData) => {
-        const now = new Date().getTime();
+        const now = Date.now();
         const session = {
             token,
             userData,
@@ -47,121 +177,10 @@ const useAuth = () => {
             expiresAt: now + SESSION_DURATION,
             lastActivity: now
         };
-        
+
         localStorage.setItem('authSession', JSON.stringify(session));
-        startSessionMonitoring();
-        setupActivityTracking();
-    };
-
-    const getSession = () => {
-        const sessionData = localStorage.getItem('authSession');
-        if (!sessionData) return null;
-
-        try {
-            const session = JSON.parse(sessionData);
-            // Refresh lastActivity on load so the inactivity timer
-            // doesn't expire immediately after the app is reopened.
-            const now = new Date().getTime();
-            if (session && now < session.expiresAt) {
-                session.lastActivity = now;
-                localStorage.setItem('authSession', JSON.stringify(session));
-            }
-            return session;
-        } catch (e) {
-            return null;
-        }
-    };
-
-    const updateSessionActivity = () => {
-        const session = getSession();
-        if (!session) return;
-
-        const now = new Date().getTime();
-        session.lastActivity = now;
-        
-        // Extend session if user is active
-        if (now - session.createdAt < SESSION_DURATION) {
-            session.expiresAt = now + SESSION_DURATION;
-        }
-        
-        localStorage.setItem('authSession', JSON.stringify(session));
-    };
-
-    const isSessionValid = () => {
-        const session = getSession();
-        if (!session) return false;
-
-        const now = new Date().getTime();
-        
-        // Check if session has expired
-        if (now > session.expiresAt) {
-            return false;
-        }
-
-        // Check for inactivity timeout
-        if (now - session.lastActivity > ACTIVITY_TIMEOUT) {
-            return false;
-        }
-
-        return true;
-    };
-
-    const startSessionMonitoring = () => {
-        // Clear any existing interval
-        if (sessionCheckInterval.current) {
-            clearInterval(sessionCheckInterval.current);
-        }
-
-        // Check session validity periodically
-        sessionCheckInterval.current = setInterval(() => {
-            if (!isSessionValid()) {
-                logout();
-            }
-        }, SESSION_CHECK_INTERVAL);
-    };
-
-    const stopSessionMonitoring = () => {
-        if (sessionCheckInterval.current) {
-            clearInterval(sessionCheckInterval.current);
-            sessionCheckInterval.current = null;
-        }
-    };
-
-    // Activity tracking
-    const activityEvents = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
-
-    const teardownActivityTracking = () => {
-        if (activityHandler.current) {
-            activityEvents.forEach(event => {
-                window.removeEventListener(event, activityHandler.current);
-            });
-            activityHandler.current = null;
-        }
-    };
-
-    const setupActivityTracking = () => {
-        teardownActivityTracking();
-
-        activityHandler.current = () => {
-            clearActivityTimeout();
-            updateSessionActivity();
-            activityTimeout.current = setTimeout(() => {
-                logout();
-            }, ACTIVITY_TIMEOUT);
-        };
-
-        activityEvents.forEach(event => {
-            window.addEventListener(event, activityHandler.current);
-        });
-
-        activityHandler.current();
-    };
-
-    const clearActivityTimeout = () => {
-        if (activityTimeout.current) {
-            clearTimeout(activityTimeout.current);
-            activityTimeout.current = null;
-        }
+        onSessionInvalid = () => logout();
+        ensureMonitoringStarted();
     };
 
     const login = async (email, password) => {
@@ -299,9 +318,7 @@ const useAuth = () => {
 
     const logout = () => {
         localStorage.removeItem('authSession');
-        stopSessionMonitoring();
-        clearActivityTimeout();
-        teardownActivityTracking();
+        stopMonitoring();
         setRequiresPasswordChange(false);
         setUserId('');
         setError('');
@@ -326,7 +343,7 @@ const useAuth = () => {
         const session = getSession();
         if (!session) return null;
 
-        const now = new Date().getTime();
+        const now = Date.now();
         return {
             timeRemaining: Math.max(0, session.expiresAt - now),
             lastActivity: session.lastActivity,
