@@ -26,9 +26,11 @@
 import { _electron as electron } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
 import { start as startHardwareMock } from './mock-hardware-server.mjs';
 
-const PROJECT_ROOT = new URL('..', import.meta.url).pathname;
+const PROJECT_ROOT = fileURLToPath(new URL('..', import.meta.url));
+const VITE_BIN = fileURLToPath(new URL('../node_modules/vite/bin/vite.js', import.meta.url));
 const PREVIEW_PORT = 4173;
 const PREVIEW_URL = `http://localhost:${PREVIEW_PORT}`;
 
@@ -71,12 +73,12 @@ async function main() {
 
   console.log('=== 1/5 Building app (npm run build) ===');
   await new Promise((resolve, reject) => {
-    const p = spawn('npx', ['vite', 'build'], { cwd: PROJECT_ROOT, stdio: 'inherit' });
+    const p = spawn(process.execPath, [VITE_BIN, 'build'], { cwd: PROJECT_ROOT, stdio: 'inherit' });
     p.on('exit', (code) => code === 0 ? resolve() : reject(new Error(`build failed (${code})`)));
   });
 
   console.log('\n=== 2/5 Starting vite preview (serves dist/) + mock hardware server ===');
-  const preview = spawn('npx', ['vite', 'preview', '--port', String(PREVIEW_PORT), '--strictPort'], {
+  const preview = spawn(process.execPath, [VITE_BIN, 'preview', '--port', String(PREVIEW_PORT), '--strictPort'], {
     cwd: PROJECT_ROOT,
     stdio: 'ignore',
   });
@@ -87,7 +89,7 @@ async function main() {
 
     console.log('\n=== 3/5 Launching Electron ===');
     const electronApp = await electron.launch({
-      args: ['--js-flags=--expose-gc', PROJECT_ROOT],
+      args: ['--no-sandbox', '--js-flags=--expose-gc', PROJECT_ROOT.replace(/[\\/]+$/, '')],
       cwd: PROJECT_ROOT,
       env: { ...process.env, VITE_DEV_SERVER_URL: PREVIEW_URL },
       timeout: 30000,
@@ -122,8 +124,9 @@ async function main() {
       await realLogin(page, LOGIN_EMAIL, LOGIN_PASSWORD);
 
       console.log('\n=== 4/5 Running scenarios ===');
-      report.realCrud = await scenarioRealCrud(page, Number(process.env.QALI_CRUD_ITERATIONS) || 10);
-      report.routeSmoke = await scenarioRouteSmokeTest(page);
+      const mixed = await scenarioRandomMix(page, Number(process.env.QALI_CRUD_ITERATIONS) || 10);
+      report.realCrud = mixed.crud;
+      report.routeSmoke = mixed.routeSmoke;
       report.formTyping = await scenarioFormTyping(page);
       report.routeChurn = await scenarioRouteChurn(page, hardware, Number(process.env.QALI_ROUTE_CHURN_MS) || 150000);
       report.reduxSoak = await scenarioReduxSoak(page, hardware, Number(process.env.QALI_STREAM_SOAK_MS) || 450000);
@@ -290,6 +293,24 @@ const CRUD_ENTITIES = [
     extractItems: (json) => json?.items ?? [],
     matchField: 'name',
   },
+  {
+    key: 'weighbridge',
+    route: '#/operator/weighbridges',
+    formReadySelector: 'input[name="location"]',
+    createFields: (unique) => [
+      { selector: 'input[name="location"]', value: unique },
+      { selector: 'input[name="description"]', value: 'Stress test weighbridge' },
+    ],
+    useSearch: true, // fetches all + filters client-side, like Owners
+    searchSelector: 'input[placeholder="Search weighbridges..."]',
+    editButtonTitle: 'Edit',
+    deleteButtonTitle: 'Delete',
+    editField: { selector: 'input[name="description"]', value: 'Edited by stress test' },
+    apiListPath: '/MasterData/Weighbridges?pageNumber=1&pageSize=200',
+    apiDeletePath: (id) => `/MasterData/Weighbridges/${id}`,
+    extractItems: (json) => json?.items ?? [],
+    matchField: 'location',
+  },
 ];
 
 async function apiGet(path) {
@@ -363,22 +384,19 @@ async function crudCycle(page, cfg, iteration) {
       result.errors.push('could not locate created row in UI to edit (search/render mismatch)');
     }
 
-    // DELETE via the real UI (handles the native confirm() dialog)
+    // DELETE via the real UI (opens an antd Modal.confirm — not a native dialog)
     const rowForDelete = await findRowByText(page, cfg.searchSelector, unique, cfg.useSearch);
     if ((await rowForDelete.count()) > 0) {
-      // .catch() here matters: if the click below fails/times out (e.g. the
-      // row re-renders and detaches mid-click, which does happen under load)
-      // no dialog ever fires, this listener is never consumed, and a LATER
-      // unrelated dialog can double-fire it -> "Cannot accept dialog which
-      // is already handled" as an unhandled rejection that kills the whole
-      // multi-minute run. Swallowing it here is safe: worst case is one
-      // missed delete confirmation, which the DB-verify step below catches.
-      page.once('dialog', (d) => d.accept().catch(() => {}));
       // Re-locate immediately before clicking rather than reusing the
       // earlier handle — the table can re-render between find and click.
       await page.locator('tr', { hasText: unique }).first()
         .locator(`button[title="${cfg.deleteButtonTitle}"]`)
         .click({ timeout: 10000 });
+      // Click the antd Modal.confirm's own "Delete" button. Scoping to
+      // .ant-modal-confirm avoids ever matching a stray leftover modal from
+      // a previous iteration — there should only ever be one open at a time,
+      // but if there isn't, failing loud here beats silently never deleting.
+      await page.locator('.ant-modal-confirm .ant-btn-dangerous').click({ timeout: 10000 });
       await sleep(1500);
       result.deleted = true;
       const afterDelete = await apiGet(cfg.apiListPath);
@@ -398,19 +416,6 @@ async function crudCycle(page, cfg, iteration) {
   }
 
   return result;
-}
-
-async function scenarioRealCrud(page, iterationsPerEntity = 5) {
-  const results = [];
-  for (const cfg of CRUD_ENTITIES) {
-    for (let i = 0; i < iterationsPerEntity; i++) {
-      // eslint-disable-next-line no-await-in-loop
-      const r = await crudCycle(page, cfg, i);
-      results.push(r);
-      console.log(`  [real CRUD] ${cfg.key} #${i + 1}/${iterationsPerEntity}: created=${r.created} dbVerified=${r.verifiedInDb} edited=${r.edited} deleted=${r.deleted} dbDeleteVerified=${r.verifiedDeletedInDb}${r.errors.length ? '  ERRORS: ' + r.errors.join('; ') : ''}`);
-    }
-  }
-  return results;
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -452,42 +457,82 @@ const ALL_ADMIN_ROUTES = [
   '/admin/profile',
 ];
 
-async function scenarioRouteSmokeTest(page) {
-  const results = [];
-
-  for (const path of ALL_ADMIN_ROUTES) {
-    const pageErrors = [];
-    const consoleErrors = [];
-    const onPageError = (err) => pageErrors.push(err.message);
-    const onConsole = (msg) => { if (msg.type() === 'error') consoleErrors.push(msg.text()); };
-    page.on('pageerror', onPageError);
-    page.on('console', onConsole);
-
-    // eslint-disable-next-line no-await-in-loop
-    await page.evaluate((p) => { location.hash = `#${p}`; }, path);
-    // eslint-disable-next-line no-await-in-loop
-    await sleep(1000);
-
-    // eslint-disable-next-line no-await-in-loop
-    const bodyText = await page.evaluate(() => document.body.innerText);
-    page.off('pageerror', onPageError);
-    page.off('console', onConsole);
-
-    const crashed = bodyText.includes('Page Error') || bodyText.includes('Something Went Wrong');
-    const blank = bodyText.trim().length < 20;
-
-    results.push({
-      path,
-      ok: !crashed && !blank,
-      crashed,
-      blank,
-      pageErrors,
-      consoleErrors: consoleErrors.slice(0, 3), // cap noise
-    });
-    console.log(`  [route smoke] ${path} -> ${crashed ? 'CRASHED' : blank ? 'BLANK' : 'ok'}${pageErrors.length ? `  (${pageErrors.length} page errors)` : ''}${consoleErrors.length ? `  (${consoleErrors.length} console errors)` : ''}`);
+// Fisher-Yates — in-place, unbiased.
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  return arr;
+}
 
-  return results;
+async function navigateOnce(page, path) {
+  const pageErrors = [];
+  const consoleErrors = [];
+  const onPageError = (err) => pageErrors.push(err.message);
+  const onConsole = (msg) => { if (msg.type() === 'error') consoleErrors.push(msg.text()); };
+  page.on('pageerror', onPageError);
+  page.on('console', onConsole);
+
+  await page.evaluate((p) => { location.hash = `#${p}`; }, path);
+  await sleep(600 + Math.floor(Math.random() * 900)); // randomized dwell, not a fixed cadence
+
+  const bodyText = await page.evaluate(() => document.body.innerText);
+  page.off('pageerror', onPageError);
+  page.off('console', onConsole);
+
+  const crashed = bodyText.includes('Page Error') || bodyText.includes('Something Went Wrong');
+  const blank = bodyText.trim().length < 20;
+
+  return {
+    path,
+    ok: !crashed && !blank,
+    crashed,
+    blank,
+    pageErrors,
+    consoleErrors: consoleErrors.slice(0, 3),
+  };
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// Scenario 0-combined — Random mix of real CRUD cycles and route navigation,
+// interleaved in a randomly shuffled order (not entity-by-entity blocks, not
+// route-by-route blocks) so the run looks like an actual erratic user session
+// instead of a clean, predictable sweep. Same underlying crudCycle/navigateOnce
+// primitives as the sequential scenarios — only the ORDER is randomized, so
+// the printReport grouping-by-entity/by-route logic downstream still works
+// unchanged on the returned arrays.
+// ─────────────────────────────────────────────────────────────────────────
+async function scenarioRandomMix(page, iterationsPerEntity = 10) {
+  const actions = [];
+  for (const cfg of CRUD_ENTITIES) {
+    for (let i = 0; i < iterationsPerEntity; i++) {
+      actions.push({ type: 'crud', cfg, i });
+    }
+  }
+  for (const path of ALL_ADMIN_ROUTES) {
+    actions.push({ type: 'nav', path });
+  }
+  shuffle(actions);
+
+  console.log(`  [random-mix] ${actions.length} actions shuffled (${actions.length - ALL_ADMIN_ROUTES.length} CRUD cycles + ${ALL_ADMIN_ROUTES.length} navigations)`);
+
+  const crud = [];
+  const routeSmoke = [];
+  for (const [idx, action] of actions.entries()) {
+    if (action.type === 'crud') {
+      // eslint-disable-next-line no-await-in-loop
+      const r = await crudCycle(page, action.cfg, action.i);
+      crud.push(r);
+      console.log(`  [${idx + 1}/${actions.length}] CRUD ${action.cfg.key}: created=${r.created} dbVerified=${r.verifiedInDb} edited=${r.edited} deleted=${r.deleted} dbDeleteVerified=${r.verifiedDeletedInDb}${r.errors.length ? '  ERRORS: ' + r.errors.join('; ') : ''}`);
+    } else {
+      // eslint-disable-next-line no-await-in-loop
+      const r = await navigateOnce(page, action.path);
+      routeSmoke.push(r);
+      console.log(`  [${idx + 1}/${actions.length}] NAV ${action.path} -> ${r.crashed ? 'CRASHED' : r.blank ? 'BLANK' : 'ok'}${r.pageErrors.length ? `  (${r.pageErrors.length} page errors)` : ''}${r.consoleErrors.length ? `  (${r.consoleErrors.length} console errors)` : ''}`);
+    }
+  }
+  return { crud, routeSmoke };
 }
 
 // ─────────────────────────────────────────────────────────────────────────

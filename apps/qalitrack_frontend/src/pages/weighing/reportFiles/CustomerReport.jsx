@@ -117,14 +117,22 @@ export default function CustomerReport({ transactions = [], loading }) {
       const img = await new Promise((resolve, reject) => {
         const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = settings.companyLogo || logoSrc
       })
-      const sz = Math.min(img.naturalWidth, img.naturalHeight)
+      const sz  = 200
+      const pad = sz * 0.06
       const cv = document.createElement("canvas")
       cv.width = sz; cv.height = sz
       const ctx = cv.getContext("2d")
-      ctx.beginPath(); ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); ctx.clip()
-      const srcX = (img.naturalWidth - sz) / 2
-      const srcY = (img.naturalHeight - sz) / 2
-      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz)
+      const avail  = sz - pad * 2
+      const aspect = img.naturalWidth / img.naturalHeight
+      const drawW  = aspect >= 1 ? avail : avail * aspect
+      const drawH  = aspect >= 1 ? avail / aspect : avail
+      ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH)
+      const imgData = ctx.getImageData(0, 0, sz, sz)
+      const px = imgData.data
+      for (let p = 0; p < px.length; p += 4) {
+        if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0
+      }
+      ctx.putImageData(imgData, 0, 0)
       circularLogo = cv.toDataURL("image/png")
     } catch (_) {}
 
@@ -171,7 +179,6 @@ export default function CustomerReport({ transactions = [], loading }) {
       body: customerSummary.map((c) => [c.customerName, c.trips, c.commodities, c.totalNetWeight.toLocaleString()]),
       styles: { fontSize: 8, cellPadding: 2, textColor: black, lineColor: borderCol },
       headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 8.5, halign: "center", lineColor: accentDark },
-      alternateRowStyles: { fillColor: [252, 252, 252] },
       columnStyles: { 1: { halign: "center" }, 2: { halign: "center" }, 3: { halign: "right", fontStyle: "bold" } },
     })
 

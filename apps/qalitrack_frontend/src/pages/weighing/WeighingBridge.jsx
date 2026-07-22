@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X } from "lucide-react";
-import { message } from "antd";
+import { message, Modal } from "antd";
 import {
   getWeighbridges,
   createWeighbridge,
@@ -110,17 +110,23 @@ export default function WeighbridgesPortal() {
     setForm((prev) => ({ ...prev, scales: prev.scales.filter((s) => s !== name) }));
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this weighbridge?")) return;
-    setLoading(true);
-    try {
-      await deleteWeighbridge(id);
-      fetchWeighbridges();
-    } catch (err) {
-      message.error(`Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this weighbridge?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        setLoading(true);
+        try {
+          await deleteWeighbridge(id);
+          fetchWeighbridges();
+        } catch (err) {
+          message.error(`Error: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const handleToggleStatus = async (wb) => {

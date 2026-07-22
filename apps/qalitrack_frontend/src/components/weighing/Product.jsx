@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, PackagePlus, Search, X } from "lucide-react";
-import { message } from "antd";
+import { message, Modal } from "antd";
 import {
   getProducts,
   createProduct,
@@ -87,17 +87,23 @@ export default function ProductsPortal() {
     setEditingProduct(product);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-
-    setLoading(true);
-    try {
-      await deleteProduct(id);
-      await fetchProducts();
-    } catch (err) {
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this product?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        setLoading(true);
+        try {
+          await deleteProduct(id);
+          await fetchProducts();
+        } catch (err) {
+          message.error(err.message || "Failed to delete product");
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const resetForm = () => {

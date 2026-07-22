@@ -17,7 +17,7 @@
 
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2 } from "lucide-react";
-import { message } from "antd";
+import { message, Modal } from "antd";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import {
@@ -129,17 +129,23 @@ export default function DriverPortal() {
     setEditingDriver(driver);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this driver?")) return;
-    setLoading(true);
-    try {
-      await deleteDriver(id);
-      await fetchDrivers();
-    } catch (error) {
-      message.error(`Delete failed: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this driver?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        setLoading(true);
+        try {
+          await deleteDriver(id);
+          await fetchDrivers();
+        } catch (error) {
+          message.error(`Delete failed: ${error.message}`);
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const resetForm = () => {

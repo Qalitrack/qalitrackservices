@@ -6,12 +6,15 @@ import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Input, Select, AutoComplete, Button, message, Row, Col, Typography, Space, Alert, Modal } from "antd";
 import { Scale } from "lucide-react";
+import dayjs from "dayjs";
 import {
   fetchWeighbridges,
   addTransaction,
   addSecondWeight,
   fetchTransactions,
   fetchCurrentUser,
+  fetchIncompleteByPlate,
+  fetchIncompleteByVehicleIdThunk,
 } from "../../store/weighingSlice";
 
 const { Option } = Select;
@@ -63,12 +66,17 @@ export default function CreateTransactionForm({
 
   const isSecondWeighing = !!(formData.id || formData.ticketID);
   const [manualPlate, setManualPlate] = useState(false);
+  const [existingTicket, setExistingTicket] = useState(null);
 
   useEffect(() => {
     if (weighbridges.length === 0) {
       dispatch(fetchWeighbridges({ pageNumber: 1, pageSize: 100 }));
     }
   }, [dispatch, weighbridges.length]);
+
+  useEffect(() => {
+    if (!formData.noPlate?.trim()) setExistingTicket(null);
+  }, [formData.noPlate]);
 
 
   // ✅ Automatically set operator information (still sent to backend)
@@ -127,6 +135,91 @@ export default function CreateTransactionForm({
         "",
     }));
   };
+
+  // Warns (doesn't block outright) when the selected vehicle already has an
+  // open ticket, so operators don't accidentally start a duplicate first weight.
+  const checkIncompleteForVehicle = useCallback(async (vehicleId, plate) => {
+    setExistingTicket(null);
+    if (!vehicleId && !plate?.trim()) return;
+    try {
+      const result = vehicleId
+        ? await dispatch(fetchIncompleteByVehicleIdThunk(vehicleId)).unwrap()
+        : await dispatch(fetchIncompleteByPlate(plate.trim().toUpperCase())).unwrap();
+      const items = Array.isArray(result)
+        ? result
+        : Array.isArray(result?.data)
+        ? result.data
+        : Array.isArray(result?.items)
+        ? result.items
+        : [];
+      if (items.length > 0) {
+        setExistingTicket(items[0]);
+      }
+    } catch (_) {
+      // advisory check only — a failed lookup shouldn't block the operator
+    }
+  }, [dispatch]);
+
+  // Autofills transporter/driver/supplier from the vehicle's master record
+  // when an existing vehicle is picked from the plate AutoComplete.
+  const handleVehicleSelect = useCallback((val, opt) => {
+    const vehicle = vehicles.find((v) => v.id === opt.id);
+    // driverIds/driverNames/transporterName/supplierName are never populated by
+    // the backend (dead DTO fields) — resolve every name from the already-loaded
+    // master-data lists by ID instead of trusting the vehicle record's own fields.
+    const linkedDriverId = vehicle?.assignedDriverIds?.[0];
+    const linkedDriver = linkedDriverId ? drivers.find((d) => d.id === linkedDriverId) : null;
+    const linkedTransporter = vehicle?.transporterId ? transporters.find((t) => t.id === vehicle.transporterId) : null;
+    const linkedSupplier = vehicle?.supplierId ? suppliers.find((s) => s.id === vehicle.supplierId) : null;
+
+    setFormData((prev) => ({
+      ...prev,
+      noPlate: val.toUpperCase(),
+      vehicleID: opt.id,
+      ...(vehicle?.transporterId
+        ? { transporterID: vehicle.transporterId, transporterName: linkedTransporter?.name || prev.transporterName }
+        : {}),
+      ...(linkedDriverId
+        ? { driverID: linkedDriverId, driverName: linkedDriver?.fullName || prev.driverName }
+        : {}),
+      ...(vehicle?.supplierId
+        ? { supplierID: vehicle.supplierId, supplierName: linkedSupplier?.name || prev.supplierName }
+        : {}),
+    }));
+    checkIncompleteForVehicle(opt.id, val);
+  }, [vehicles, drivers, transporters, suppliers, setFormData, checkIncompleteForVehicle]);
+
+  // Reverse of the above: autofills transporter/supplier/vehicle from the
+  // driver's master record when the operator picks a driver first instead.
+  const handleDriverSelect = useCallback((val, opt) => {
+    const driver = drivers.find((d) => d.id === opt.id);
+    const linkedVehicleId = driver?.assignedVehicleIds?.[0];
+    const linkedVehicle = linkedVehicleId ? vehicles.find((v) => v.id === linkedVehicleId) : null;
+    const linkedTransporter = driver?.transporterId ? transporters.find((t) => t.id === driver.transporterId) : null;
+    const linkedSupplier = driver?.supplierId ? suppliers.find((s) => s.id === driver.supplierId) : null;
+
+    setFormData((prev) => ({
+      ...prev,
+      driverName: val,
+      driverID: opt.id,
+      ...(driver?.transporterId
+        ? { transporterID: driver.transporterId, transporterName: linkedTransporter?.name || prev.transporterName }
+        : {}),
+      ...(driver?.supplierId
+        ? { supplierID: driver.supplierId, supplierName: linkedSupplier?.name || prev.supplierName }
+        : {}),
+      ...(linkedVehicle
+        ? {
+            vehicleID: linkedVehicle.id,
+            noPlate: (linkedVehicle.registrationNumber || linkedVehicle.plateNumber || prev.noPlate || "").toUpperCase(),
+          }
+        : {}),
+    }));
+
+    if (linkedVehicle) {
+      checkIncompleteForVehicle(linkedVehicle.id, linkedVehicle.registrationNumber || linkedVehicle.plateNumber);
+    }
+  }, [drivers, vehicles, transporters, suppliers, setFormData, checkIncompleteForVehicle]);
 
   const validateForm = useCallback(() => {
     const errors = [];
@@ -287,6 +380,21 @@ export default function CreateTransactionForm({
           resolvedOperatorName = currentUser.email.split('@')[0];
         }
       }
+    }
+
+    if (!isSecondWeighing && existingTicket) {
+      const proceed = await new Promise((resolve) => {
+        Modal.confirm({
+          title: "Vehicle Already Has an Open Transaction",
+          content: `Receipt ${existingTicket.receiptNo || "—"} for this vehicle is still ${existingTicket.status || "open"}. Creating a new first weight will start a separate ticket for the same vehicle. Proceed anyway?`,
+          okText: "Proceed Anyway",
+          okButtonProps: { danger: true },
+          cancelText: "Cancel",
+          onOk: () => resolve(true),
+          onCancel: () => resolve(false),
+        });
+      });
+      if (!proceed) return;
     }
 
     try {
@@ -511,6 +619,28 @@ export default function CreateTransactionForm({
         />
       )}
 
+      {existingTicket && !isSecondWeighing && (
+        <Alert
+          message="Vehicle Already Has an Open Transaction"
+          description={
+            <div className="text-[11px]">
+              <div><strong>Receipt:</strong> {existingTicket.receiptNo || "—"}</div>
+              <div><strong>Status:</strong> {existingTicket.status || "—"}</div>
+              <div>
+                <strong>First Weight:</strong>{" "}
+                {existingTicket.firstWeight ? `${existingTicket.firstWeight} kg` : "—"}
+                {existingTicket.firstWeightDate ? ` on ${dayjs(existingTicket.firstWeightDate).format("DD MMM YYYY HH:mm")}` : ""}
+              </div>
+            </div>
+          }
+          type="warning"
+          showIcon
+          closable
+          onClose={() => setExistingTicket(null)}
+          className="mb-3"
+        />
+      )}
+
       {submitError && (
         <Alert
           message="Save Failed"
@@ -556,7 +686,11 @@ export default function CreateTransactionForm({
                 size="middle"
                 className="w-full"
                 value={formData.noPlate}
-                onChange={(e) => setFormData((prev) => ({ ...prev, noPlate: e.target.value.toUpperCase(), vehicleID: null }))}
+                onChange={(e) => {
+                  setExistingTicket(null);
+                  setFormData((prev) => ({ ...prev, noPlate: e.target.value.toUpperCase(), vehicleID: null }));
+                }}
+                onBlur={() => { if (!isSecondWeighing && formData.noPlate?.trim()) checkIncompleteForVehicle(null, formData.noPlate); }}
                 disabled={isSecondWeighing}
                 placeholder="Type plate number"
               />
@@ -566,8 +700,11 @@ export default function CreateTransactionForm({
                 className="w-full"
                 value={formData.noPlate}
                 options={filterOptions(vehicles, formData.noPlate, (it) => it.registrationNumber || it.plateNumber || "")}
-                onChange={(val) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: null }))}
-                onSelect={(val, opt) => setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: opt.id }))}
+                onChange={(val) => {
+                  setExistingTicket(null);
+                  setFormData((prev) => ({ ...prev, noPlate: val.toUpperCase(), vehicleID: null }));
+                }}
+                onSelect={handleVehicleSelect}
                 disabled={isSecondWeighing}
                 placeholder="Type or search plate"
               />
@@ -583,7 +720,7 @@ export default function CreateTransactionForm({
               value={formData.driverName}
               options={filterOptions(drivers, formData.driverName, (it) => it.fullName || it.name || "")}
               onChange={(val) => setFormData((prev) => ({ ...prev, driverName: val, driverID: null }))}
-              onSelect={(val, opt) => setFormData((prev) => ({ ...prev, driverName: val, driverID: opt.id }))}
+              onSelect={handleDriverSelect}
               disabled={isSecondWeighing}
               placeholder="Type or search driver"
             />

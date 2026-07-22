@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
+import { message, Modal } from "antd";
 import {
   getProducts,
   createProduct,
@@ -54,7 +55,7 @@ export default function Products() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.code.trim() || !form.name.trim()) {
-      alert("Code and Name are required!");
+      message.warning("Code and Name are required!");
       return;
     }
 
@@ -68,7 +69,7 @@ export default function Products() {
       resetForm();
       await fetchProducts();
     } catch (error) {
-      alert("Error saving product: " + (error.message || "Unknown error"));
+      message.error("Error saving product: " + (error.message || "Unknown error"));
     } finally {
       setLoading(false);
     }
@@ -85,13 +86,20 @@ export default function Products() {
     window.scrollTo(0, 0);
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this product?")) return;
-    try {
-      await deleteProduct(id);
-      await fetchProducts();
-    } catch (error) {
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete this product?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteProduct(id);
+          await fetchProducts();
+        } catch (err) {
+          message.error(err.message || "Failed to delete product");
+        }
+      },
+    });
   };
 
   const resetForm = () => {

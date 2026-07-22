@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X, Building2 } from "lucide-react";
+import { message, Modal } from "antd";
 import { getSaccos, createSacco, updateSacco, deleteSacco } from "../api/MasterData/Saccos";
 
 const PAGE_SIZE = 10;
@@ -76,7 +77,7 @@ export default function SaccosPortal() {
       resetForm();
       fetchSaccos();
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
     }
@@ -93,17 +94,23 @@ export default function SaccosPortal() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this sacco?")) return;
-    setLoading(true);
-    try {
-      await deleteSacco(id);
-      fetchSaccos();
-    } catch (err) {
-      alert(`Error: ${err.message}`);
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this sacco?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        setLoading(true);
+        try {
+          await deleteSacco(id);
+          fetchSaccos();
+        } catch (err) {
+          message.error(`Error: ${err.message}`);
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const handleToggleStatus = async (sacco) => {
@@ -112,7 +119,7 @@ export default function SaccosPortal() {
       await updateSacco(sacco.id, { ...sacco, status: newStatus });
       fetchSaccos();
     } catch (err) {
-      alert(`Failed to update status: ${err.message}`);
+      message.error(`Failed to update status: ${err.message}`);
     }
   };
 

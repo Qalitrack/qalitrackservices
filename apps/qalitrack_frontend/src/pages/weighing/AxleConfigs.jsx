@@ -69,15 +69,21 @@ const AxleConfigs = () => {
     setIsModalVisible(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this configuration?")) return;
-    try {
-      await deleteAxleConfig(id);
-      message.success("Axle configuration deleted successfully");
-      fetchConfigs();
-    } catch (error) {
-      message.error("Failed to delete axle configuration");
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this configuration?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteAxleConfig(id);
+          message.success("Axle configuration deleted successfully");
+          fetchConfigs();
+        } catch (error) {
+          message.error("Failed to delete axle configuration");
+        }
+      },
+    });
   };
 
   const handleStatusToggle = async (id, currentStatus) => {

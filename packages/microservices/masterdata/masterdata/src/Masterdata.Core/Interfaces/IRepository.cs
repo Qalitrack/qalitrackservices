@@ -24,6 +24,7 @@ public interface IRepository<T> where T : BaseEntity
     Task<PagedResult<T>> GetDeletedPagedAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null);
         
     Task<T?> GetByPredicateAsync(Expression<Func<T, bool>> predicate);
+    Task<IEnumerable<T>> GetAllByPredicateAsync(Expression<Func<T, bool>> predicate);
     Task<bool> ExistsByPredicateAsync(Expression<Func<T, bool>> predicate);
     Task UpdateRangeAsync(IEnumerable<T> entities);
 }

@@ -6,7 +6,6 @@ import {
 import { message } from "antd";
 import dayjs from "dayjs";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import logoSrc from "../../assets/logo.jpeg";
 import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
@@ -283,16 +282,22 @@ export default function CustomReportBuilder({ transactions = [] }) {
         i.onerror = reject;
         i.src = settings.companyLogo || logoSrc;
       });
-      const sz = Math.min(img.naturalWidth, img.naturalHeight);
+      const sz  = 200;
+      const pad = sz * 0.06;
       const cv = document.createElement("canvas");
       cv.width = sz; cv.height = sz;
       const ctx = cv.getContext("2d");
-      ctx.beginPath();
-      ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
-      ctx.clip();
-      const srcX = (img.naturalWidth - sz) / 2;
-      const srcY = (img.naturalHeight - sz) / 2;
-      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+      const avail  = sz - pad * 2;
+      const aspect = img.naturalWidth / img.naturalHeight;
+      const drawW  = aspect >= 1 ? avail : avail * aspect;
+      const drawH  = aspect >= 1 ? avail / aspect : avail;
+      ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH);
+      const imgData = ctx.getImageData(0, 0, sz, sz);
+      const px = imgData.data;
+      for (let p = 0; p < px.length; p += 4) {
+        if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0;
+      }
+      ctx.putImageData(imgData, 0, 0);
       circularLogo = cv.toDataURL("image/png");
     } catch (_) { /* logo unavailable */ }
 
@@ -356,59 +361,142 @@ export default function CustomReportBuilder({ transactions = [] }) {
 
     y += 14;
 
-    // Data table
-    const headers = selectedFields.map(fieldKey => {
+    // ── DATA — one record card per row, showing exactly the fields the user selected ──
+    const PH      = doc.internal.pageSize.getHeight();
+    const colW    = TW / 3;
+    const rowH    = 5.2;
+    const headerH = 7;
+    const cardGap = 3;
+    const bottomReserve = 12;
+
+    // receiptNo/createdAt/status render in the card header (if selected); weight
+    // fields get their own bolded row at the bottom; everything else the user
+    // picked fills the 3-column body grid.
+    const headerFieldKeys = ["receiptNo", "createdAt", "status"].filter(k => selectedFields.includes(k));
+    const weightFieldKeys = ["firstWeight", "secondWeight", "netWeight"].filter(k => selectedFields.includes(k));
+    const bodyFieldKeys   = selectedFields.filter(k => !headerFieldKeys.includes(k) && !weightFieldKeys.includes(k));
+    const bodyRows = Math.ceil(bodyFieldKeys.length / 3);
+    const cardH = headerH + bodyRows * rowH + (weightFieldKeys.length ? 8 : 3);
+
+    const fieldLabel = (fieldKey) => {
       const field = availableFields.find(f => f.key === fieldKey);
       return field ? field.label : fieldKey;
-    });
+    };
 
-    const body = dataArray.map((row, idx) =>
-      selectedFields.map(fieldKey => {
-        const value = row[fieldKey];
-        if (fieldKey === "createdAt") return dayjs(value).format("DD MMM YY HH:mm");
-        if (fieldKey.includes("Weight")) return value ? parseFloat(value).toLocaleString() : "-";
-        return value || "-";
-      })
-    );
+    const formatValue = (fieldKey, row) => {
+      const value = row[fieldKey];
+      if (fieldKey === "createdAt") return value ? dayjs(value).format("DD MMM YYYY, HH:mm") : "-";
+      if (fieldKey.includes("Weight")) return value ? `${parseFloat(value).toLocaleString()} kg` : "-";
+      return value || "-";
+    };
 
-    const statusColIdx = selectedFields.indexOf("status");
+    const drawContinuationHeader = () => {
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...black);
+      doc.text(companyName, L, 10);
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...gray);
+      doc.text(`${reportName} (continued)`, R, 10, { align: "right" });
+      doc.setDrawColor(...accent);
+      doc.setLineWidth(0.5);
+      doc.line(L, 13, R, 13);
+      return 18;
+    };
 
-    autoTable(doc, {
-      startY: y,
-      margin: { left: L, right: L },
-      head: [headers],
-      body,
-      styles: {
-        fontSize: 6.5,
-        cellPadding: 1.5,
-        textColor: black,
-        lineColor: borderCol,
-      },
-      headStyles: {
-        fillColor: accent,
-        textColor: accentHeaderText,
-        fontStyle: "bold",
-        fontSize: 7,
-        halign: "center",
-        lineColor: accentDark,
-      },
-      alternateRowStyles: { fillColor: [252, 252, 252] },
-      didParseCell: (data) => {
-        if (statusColIdx >= 0 && data.column.index === statusColIdx && data.section === "body") {
-          const raw = String(data.cell.raw || "").toLowerCase();
-          if (raw === "completed") {
-            data.cell.styles.textColor = green;
-            data.cell.styles.fontStyle = "bold";
-          } else if (raw === "in progress") {
-            data.cell.styles.textColor = amberDark;
-            data.cell.styles.fontStyle = "bold";
-          }
+    const drawField = (label, value, cx, cy, colWidth) => {
+      if (!label) return;
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...gray);
+      doc.text(`${label}:`, cx, cy);
+      const labelW = doc.getTextWidth(`${label}: `);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...black);
+      const maxValW = colWidth - labelW - 4;
+      const valText = doc.splitTextToSize(String(value ?? "-") || "-", maxValW)[0];
+      doc.text(valText, cx + labelW, cy);
+    };
+
+    const drawRecordCard = (row, idx, yStart) => {
+      const isCompleted = String(row.status || "").toLowerCase() === "completed";
+
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(...accentDark);
+      doc.setLineWidth(0.3);
+      doc.rect(L, yStart, TW, cardH, "FD");
+
+      // Header band: # / receipt / date+time / status badge — only the ones selected
+      doc.setFillColor(...accent);
+      doc.rect(L, yStart, TW, headerH, "F");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...accentHeaderText);
+      doc.text(`#${idx + 1}`, L + 3, yStart + headerH / 2 + 1.3);
+      if (selectedFields.includes("receiptNo")) {
+        doc.text(row.receiptNo || "-", L + 16, yStart + headerH / 2 + 1.3);
+      }
+      if (selectedFields.includes("createdAt")) {
+        doc.text(dayjs(row.createdAt).format("DD MMM YYYY, HH:mm"), L + TW / 2, yStart + headerH / 2 + 1.3, { align: "center" });
+      }
+      if (selectedFields.includes("status")) {
+        const badgeW = 30;
+        doc.setFillColor(...(isCompleted ? green : accentDark));
+        doc.roundedRect(R - badgeW - 2, yStart + 1.2, badgeW, headerH - 2.4, 1.2, 1.2, "F");
+        doc.setFontSize(7);
+        doc.setTextColor(255, 255, 255);
+        doc.text(String(row.status || "-").toUpperCase(), R - badgeW / 2 - 2, yStart + headerH / 2 + 1, { align: "center" });
+      }
+
+      // Body grid — every selected field not already shown in the header/weight row
+      let fy = yStart + headerH + 3.8;
+      for (let r = 0; r < bodyRows; r++) {
+        for (let c = 0; c < 3; c++) {
+          const fieldKey = bodyFieldKeys[r * 3 + c];
+          if (!fieldKey) continue;
+          drawField(fieldLabel(fieldKey), formatValue(fieldKey, row), L + c * colW + 2.5, fy, colW);
         }
-      },
+        fy += rowH;
+      }
+
+      // Weight row — visually separated + bolded, only the weight fields selected
+      if (weightFieldKeys.length) {
+        const wy = yStart + headerH + bodyRows * rowH + 5.5;
+        doc.setDrawColor(...borderCol);
+        doc.setLineWidth(0.2);
+        doc.line(L + 2, wy - 3.6, R - 2, wy - 3.6);
+        weightFieldKeys.forEach((fieldKey, c) => {
+          const cx = L + c * colW + 2.5;
+          const label = fieldLabel(fieldKey);
+          doc.setFontSize(7.5);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(...gray);
+          doc.text(`${label}:`, cx, wy);
+          const labelW = doc.getTextWidth(`${label}: `);
+          doc.setFontSize(9);
+          doc.setTextColor(...(fieldKey === "netWeight" ? accentDark : black));
+          doc.text(formatValue(fieldKey, row), cx + labelW, wy);
+        });
+      }
+
+      return yStart + cardH;
+    };
+
+    dataArray.forEach((row, idx) => {
+      if (y + cardH > PH - bottomReserve) {
+        doc.addPage();
+        y = drawContinuationHeader();
+      }
+      y = drawRecordCard(row, idx, y) + cardGap;
     });
 
     // Footer
-    const footerY = doc.lastAutoTable.finalY + 4;
+    if (y + 2 + 10 > PH - 5) {
+      doc.addPage();
+      y = drawContinuationHeader();
+    }
+    const footerY = y + 2;
     doc.setFillColor(...accentLight);
     doc.setDrawColor(...accentDark);
     doc.setLineWidth(0.3);
@@ -429,7 +517,6 @@ export default function CustomReportBuilder({ transactions = [] }) {
     if (circularLogo) {
       try {
         const wmSize = 90;
-        const PH = doc.internal.pageSize.getHeight();
         const wmCanvas = document.createElement("canvas");
         wmCanvas.width = 200; wmCanvas.height = 200;
         const wmCtx = wmCanvas.getContext("2d");

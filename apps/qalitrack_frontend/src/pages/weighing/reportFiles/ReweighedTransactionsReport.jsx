@@ -84,17 +84,27 @@ function groupIntoCycles(records) {
   return cycles
 }
 
-// ─── CIRCULAR LOGO HELPER ─────────────────────────────────────────────────────
+// ─── LOGO HELPER — scaled to fit, never cropped ──────────────────────────────
 async function buildCircularLogo(src) {
   try {
     const img = await new Promise((res, rej) => {
       const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src
     })
-    const sz = Math.min(img.naturalWidth, img.naturalHeight)
+    const sz  = 200
+    const pad = sz * 0.06
     const cv = document.createElement("canvas"); cv.width = sz; cv.height = sz
     const ctx = cv.getContext("2d")
-    ctx.beginPath(); ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); ctx.clip()
-    ctx.drawImage(img, (img.naturalWidth - sz) / 2, (img.naturalHeight - sz) / 2, sz, sz, 0, 0, sz, sz)
+    const avail  = sz - pad * 2
+    const aspect = img.naturalWidth / img.naturalHeight
+    const drawW  = aspect >= 1 ? avail : avail * aspect
+    const drawH  = aspect >= 1 ? avail / aspect : avail
+    ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH)
+    const imgData = ctx.getImageData(0, 0, sz, sz)
+    const px = imgData.data
+    for (let p = 0; p < px.length; p += 4) {
+      if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0
+    }
+    ctx.putImageData(imgData, 0, 0)
     return cv.toDataURL("image/png")
   } catch (_) { return null }
 }
@@ -405,7 +415,6 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
       }),
       styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
       headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 7, halign: "center", lineColor: accentDark },
-      alternateRowStyles: { fillColor: [252, 252, 252] },
       columnStyles: {
         0:  { halign: "center", cellWidth: 6 },
         6:  { halign: "right" },
@@ -588,7 +597,6 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
         }),
         styles:           { fontSize: 6.5, cellPadding: 1.8, textColor: black, lineColor: lgray },
         headStyles:       { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 7, halign: "center", lineColor: accentDark },
-        alternateRowStyles: { fillColor: [250, 250, 250] },
         columnStyles: {
           0: { halign: "center", cellWidth: 7 },
           1: { halign: "center", cellWidth: 17 },

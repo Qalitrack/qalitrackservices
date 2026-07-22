@@ -21,7 +21,6 @@ import {
 import dayjs from "dayjs";
 
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import logoSrc from "../../assets/logo.jpeg";
 import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
@@ -185,7 +184,9 @@ export default function Reports() {
     const borderCol  = [229, 231, 235];
     const green      = [21,  128, 61];
 
-    // ── Pre-load logo (circular crop via canvas) ──────────────────────────
+    // ── Pre-load logo — scaled to fit, never cropped ───────────────────────
+    // Previously clipped to a circle via ctx.arc()+ctx.clip(), which cut off
+    // any part of the (non-circular) logo that fell outside that circle.
     let circularLogo = null;
     try {
       const img = await new Promise((resolve, reject) => {
@@ -194,16 +195,22 @@ export default function Reports() {
         i.onerror = reject;
         i.src = settings.companyLogo || logoSrc;
       });
-      const sz = Math.min(img.naturalWidth, img.naturalHeight);
+      const sz  = 200;
+      const pad = sz * 0.06;
       const cv = document.createElement("canvas");
       cv.width = sz; cv.height = sz;
       const ctx = cv.getContext("2d");
-      ctx.beginPath();
-      ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
-      ctx.clip();
-      const srcX = (img.naturalWidth - sz) / 2;
-      const srcY = (img.naturalHeight - sz) / 2;
-      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+      const avail  = sz - pad * 2;
+      const aspect = img.naturalWidth / img.naturalHeight;
+      const drawW  = aspect >= 1 ? avail : avail * aspect;
+      const drawH  = aspect >= 1 ? avail / aspect : avail;
+      ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH);
+      const imgData = ctx.getImageData(0, 0, sz, sz);
+      const px = imgData.data;
+      for (let p = 0; p < px.length; p += 4) {
+        if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0;
+      }
+      ctx.putImageData(imgData, 0, 0);
       circularLogo = cv.toDataURL("image/png");
     } catch (_) { /* logo unavailable */ }
 
@@ -266,81 +273,137 @@ export default function Reports() {
 
     y += 14;
 
-    // ── DATA TABLE ────────────────────────────────────────────────────────
-    autoTable(doc, {
-      startY: y,
-      margin: { left: L, right: L },
-      head: [[
-        "#", "Date & Time", "Receipt", "Vehicle", "Driver", "Commodity",
-        "Supplier", "Transporter", "Customer", "Origin", "Destination",
-        "Weighbridge", "Scale", "Mode", "Operation", "Operator",
-        "First Wt (kg)", "Second Wt (kg)", "Net Wt (kg)", "TAT", "Status",
-      ]],
-      body: filteredTransactions.map((t, idx) => {
-        const hasSecondWeight = t.secondWeight && parseFloat(t.secondWeight) > 0;
-        const isCompleted =
-          hasSecondWeight || t.status === "Completed" || t.status === "completed";
-        return [
-          idx + 1,
-          dayjs(t.createdAt).format("DD MMM YY HH:mm"),
-          t.receiptNo          || "-",
-          t.noPlate            || "-",
-          t.driverName         || "-",
-          t.commodityName      || "-",
-          t.supplierName       || "-",
-          t.transporterName    || "-",
-          t.customerName       || "-",
-          t.originName         || "-",
-          t.destinationName    || "-",
-          t.weighBridgeName    || "-",
-          t.scaleName          || "-",
-          t.weighMode          || "-",
-          t.operation          || "-",
-          t.operatorName || t.firstWeightOperator || "-",
-          t.firstWeight  ? parseFloat(t.firstWeight).toLocaleString()  : "-",
-          t.secondWeight ? parseFloat(t.secondWeight).toLocaleString() : "-",
-          t.netWeight    ? parseFloat(t.netWeight).toLocaleString()    : "-",
-          calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime),
-          isCompleted ? "COMPLETED" : "IN PROGRESS",
-        ];
-      }),
-      styles: {
-        fontSize: 6.5,
-        cellPadding: 1.5,
-        textColor: black,
-        lineColor: borderCol,
-      },
-      headStyles: {
-        fillColor: accent,
-        textColor: accentHeaderText,
-        fontStyle: "bold",
-        fontSize: 7,
-        halign: "center",
-        lineColor: accentDark,
-      },
-      alternateRowStyles: { fillColor: [252, 252, 252] },
-      columnStyles: {
-        0:  { halign: "center", cellWidth: 6 },
-        16: { halign: "right" },
-        17: { halign: "right" },
-        18: { halign: "right", fontStyle: "bold" },
-        20: { halign: "center", cellWidth: 18 },
-      },
-      didParseCell: (data) => {
-        if (data.column.index === 20 && data.section === "body") {
-          if (data.cell.raw === "COMPLETED") {
-            data.cell.styles.textColor = green;
-            data.cell.styles.fontStyle = "bold";
-          } else {
-            data.cell.styles.textColor = accentDark;
-            data.cell.styles.fontStyle = "bold";
-          }
+    // ── DATA — one record card per transaction, every field, never truncated ──
+    // A flat table with all ~17 non-identity fields (269mm / 17 ≈ 16mm per
+    // column) still forces truncation on names/dates no matter how the widths
+    // are tuned. Each transaction gets its own bordered card with a 3-column
+    // label:value grid instead — every field gets ~64mm of value space, more
+    // than enough for anything in this data set. Trade-off: ~3-4 cards fit per
+    // landscape page instead of ~20 table rows, so this report runs longer.
+    const PH      = doc.internal.pageSize.getHeight();
+    const colW    = TW / 3;
+    const rowH    = 5.2;
+    const headerH = 7;
+    const bodyRows = 5; // 15 label:value slots (14 fields + 1 spare)
+    const cardH   = headerH + bodyRows * rowH + 8; // +8 for the weight row band
+    const cardGap = 3;
+    const bottomReserve = 12; // keep clear of the page edge; footer only draws once, after the last card
+
+    const drawContinuationHeader = () => {
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...black);
+      doc.text(companyName, L, 10);
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...gray);
+      doc.text("Transactions Report (continued)", R, 10, { align: "right" });
+      doc.setDrawColor(...accent);
+      doc.setLineWidth(0.5);
+      doc.line(L, 13, R, 13);
+      return 18;
+    };
+
+    const drawField = (label, value, cx, cy, colWidth) => {
+      if (!label) return;
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...gray);
+      doc.text(`${label}:`, cx, cy);
+      const labelW = doc.getTextWidth(`${label}: `);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...black);
+      const maxValW = colWidth - labelW - 4;
+      const valText = doc.splitTextToSize(String(value ?? "-") || "-", maxValW)[0];
+      doc.text(valText, cx + labelW, cy);
+    };
+
+    const drawTransactionCard = (t, idx, yStart) => {
+      const hasSecondWeight = t.secondWeight && parseFloat(t.secondWeight) > 0;
+      const isCompleted =
+        hasSecondWeight || t.status === "Completed" || t.status === "completed";
+      const isOutbound = t.operation === "Outbound Product Dispatch";
+      const party = isOutbound ? t.customerName : t.supplierName;
+      const partyLabel = isOutbound ? "Customer" : "Supplier";
+
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(...accentDark);
+      doc.setLineWidth(0.3);
+      doc.rect(L, yStart, TW, cardH, "FD");
+
+      // Header band: # / receipt / date+time / status badge
+      doc.setFillColor(...accent);
+      doc.rect(L, yStart, TW, headerH, "F");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...accentHeaderText);
+      doc.text(`#${idx + 1}`, L + 3, yStart + headerH / 2 + 1.3);
+      doc.text(t.receiptNo || "-", L + 16, yStart + headerH / 2 + 1.3);
+      doc.text(dayjs(t.createdAt).format("DD MMM YYYY, HH:mm"), L + TW / 2, yStart + headerH / 2 + 1.3, { align: "center" });
+
+      const badgeW = 30;
+      doc.setFillColor(...(isCompleted ? green : accentDark));
+      doc.roundedRect(R - badgeW - 2, yStart + 1.2, badgeW, headerH - 2.4, 1.2, 1.2, "F");
+      doc.setFontSize(7);
+      doc.setTextColor(255, 255, 255);
+      doc.text(isCompleted ? "COMPLETED" : "IN PROGRESS", R - badgeW / 2 - 2, yStart + headerH / 2 + 1, { align: "center" });
+
+      // Body grid — every field the original report had, none dropped
+      const fields = [
+        ["Vehicle", t.noPlate], ["Driver", t.driverName], ["Commodity", t.commodityName],
+        ["Transporter", t.transporterName], [partyLabel, party], ["Origin", t.originName],
+        ["Destination", t.destinationName], ["Weighbridge", t.weighBridgeName], ["Scale", t.scaleName],
+        ["Mode", t.weighMode], ["Operation", t.operation], ["Operator", t.operatorName || t.firstWeightOperator],
+        ["TAT", calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime)], [null, null], [null, null],
+      ];
+      let fy = yStart + headerH + 3.8;
+      for (let r = 0; r < bodyRows; r++) {
+        for (let c = 0; c < 3; c++) {
+          const [label, value] = fields[r * 3 + c];
+          drawField(label, value, L + c * colW + 2.5, fy, colW);
         }
-      },
+        fy += rowH;
+      }
+
+      // Weight row — visually separated + bolded, mirrors the summary table
+      const wy = yStart + headerH + bodyRows * rowH + 5.5;
+      doc.setDrawColor(...borderCol);
+      doc.setLineWidth(0.2);
+      doc.line(L + 2, wy - 3.6, R - 2, wy - 3.6);
+      const weightFields = [
+        ["Gross Wt", t.firstWeight  ? `${parseFloat(t.firstWeight).toLocaleString()} kg`  : "-"],
+        ["Second Wt", t.secondWeight ? `${parseFloat(t.secondWeight).toLocaleString()} kg` : "-"],
+        ["Net Wt", t.netWeight    ? `${parseFloat(t.netWeight).toLocaleString()} kg`    : "-"],
+      ];
+      weightFields.forEach(([label, value], c) => {
+        const cx = L + c * colW + 2.5;
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(...gray);
+        doc.text(`${label}:`, cx, wy);
+        const labelW = doc.getTextWidth(`${label}: `);
+        doc.setFontSize(9);
+        doc.setTextColor(...(c === 2 ? accentDark : black));
+        doc.text(value, cx + labelW, wy);
+      });
+
+      return yStart + cardH;
+    };
+
+    filteredTransactions.forEach((t, idx) => {
+      if (y + cardH > PH - bottomReserve) {
+        doc.addPage();
+        y = drawContinuationHeader();
+      }
+      y = drawTransactionCard(t, idx, y) + cardGap;
     });
 
     // ── FOOTER ────────────────────────────────────────────────────────────
-    const footerY = doc.lastAutoTable.finalY + 4;
+    if (y + 2 + 10 > PH - 5) {
+      doc.addPage();
+      y = drawContinuationHeader();
+    }
+    const footerY = y + 2;
     doc.setFillColor(...accentLight);
     doc.setDrawColor(...accentDark);
     doc.setLineWidth(0.3);
@@ -361,7 +424,6 @@ export default function Reports() {
     if (circularLogo) {
       try {
         const wmSize = 90;
-        const PH = doc.internal.pageSize.getHeight();
         const wmCanvas = document.createElement("canvas");
         wmCanvas.width = 200; wmCanvas.height = 200;
         const wmCtx = wmCanvas.getContext("2d");

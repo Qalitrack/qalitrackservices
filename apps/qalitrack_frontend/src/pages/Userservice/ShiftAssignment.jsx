@@ -603,9 +603,6 @@ const ShiftAssignment = () => {
                     fontSize: 9
                 },
                 columnStyles,
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
                 margin: {
                     top: 40,
                     right: 10,

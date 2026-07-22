@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X, Truck } from "lucide-react";
-import { message } from "antd";
+import { message, Modal } from "antd";
 import {
   getTransporters,
   createTransporter,
@@ -116,10 +116,20 @@ export default function TransportersPortal() {
     setEditingTransporter(t);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this transporter?")) return;
-    await deleteTransporter(id);
-    fetchTransporters();
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete this transporter?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteTransporter(id);
+          fetchTransporters();
+        } catch (err) {
+          message.error(err.message || "Failed to delete transporter");
+        }
+      },
+    });
   };
 
   const resetForm = () => {

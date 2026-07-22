@@ -152,13 +152,16 @@ const Roles = () => {
                 const img = await new Promise((resolve, reject) => {
                     const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = settings.companyLogo || logoSrc;
                 });
-                const sz = Math.min(img.naturalWidth, img.naturalHeight);
+                const sz = 200;
+                const pad = sz * 0.06;
                 const cv = document.createElement('canvas'); cv.width = sz; cv.height = sz;
                 const ctx = cv.getContext('2d');
-                ctx.beginPath(); ctx.arc(sz/2, sz/2, sz/2, 0, Math.PI*2); ctx.clip();
-                const srcX = (img.naturalWidth - sz) / 2;
-                const srcY = (img.naturalHeight - sz) / 2;
-                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+                ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, sz, sz);
+                const avail = sz - pad * 2;
+                const aspect = img.naturalWidth / img.naturalHeight;
+                const drawW = aspect >= 1 ? avail : avail * aspect;
+                const drawH = aspect >= 1 ? avail / aspect : avail;
+                ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH);
                 circularLogo = cv.toDataURL('image/png');
             } catch (_) {}
 
@@ -220,7 +223,6 @@ const Roles = () => {
                 body,
                 styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
                 headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: accentDark },
-                alternateRowStyles: { fillColor: [252, 252, 252] },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 8 },
                     3: { halign: 'center', cellWidth: 14 },

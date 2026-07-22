@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, Building, Search, X } from "lucide-react";
+import { message, Modal } from "antd";
 import {
   getSuppliers,
   createSupplier,
@@ -68,7 +69,7 @@ export default function SuppliersPortal() {
       resetForm();
       fetchSuppliersWithSearch();
     } catch (err) {
-      alert(err.message || "Failed to save supplier");
+      message.error(err.message || "Failed to save supplier");
     } finally {
       setLoading(false);
     }
@@ -86,10 +87,20 @@ export default function SuppliersPortal() {
     setEditingSupplier(supplier);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this supplier?")) return;
-    await deleteSupplier(id);
-    fetchSuppliersWithSearch();
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete this supplier?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteSupplier(id);
+          fetchSuppliersWithSearch();
+        } catch (err) {
+          message.error(err.message || "Failed to delete supplier");
+        }
+      },
+    });
   };
 
   const resetForm = () => {

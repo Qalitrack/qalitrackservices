@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, UserPlus, Search, X, Car } from "lucide-react";
-import { message } from "antd";
+import { message, Modal } from "antd";
 import {
   getOwners,
   createOwner,
@@ -85,10 +85,20 @@ export default function OwnersPortal() {
     setEditingOwner(owner);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this owner?")) return;
-    await deleteOwner(id);
-    await fetchOwners();
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete this owner?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteOwner(id);
+          await fetchOwners();
+        } catch (err) {
+          message.error(err.message || "Failed to delete owner");
+        }
+      },
+    });
   };
 
   const handleViewVehicles = async (owner) => {

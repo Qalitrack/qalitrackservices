@@ -42,7 +42,7 @@ export const generateThemedPDF = async (record, ticketSettings, formatTurnaround
     });
   } catch (_) { /* logo unavailable – skip */ }
 
-  // ── Circular logo crop for header ────────────────────────────────────────
+  // ── Logo for header — scaled to fit, never cropped ─────────────────────
   let circularLogo = null;
   if (logoImg) {
     try {
@@ -52,9 +52,6 @@ export const generateThemedPDF = async (record, ticketSettings, formatTurnaround
       cCanvas.width = sz; cCanvas.height = sz;
       const cCtx = cCanvas.getContext("2d");
 
-      // White background
-      cCtx.fillStyle = "#ffffff";
-      cCtx.fillRect(0, 0, sz, sz);
 
       // Scale whole logo to fit — no cropping
       const avail   = sz - pad * 2;
@@ -62,6 +59,13 @@ export const generateThemedPDF = async (record, ticketSettings, formatTurnaround
       const drawW   = aspect >= 1 ? avail : avail * aspect;
       const drawH   = aspect >= 1 ? avail / aspect : avail;
       cCtx.drawImage(logoImg, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH);
+
+      const imgData = cCtx.getImageData(0, 0, sz, sz);
+      const px = imgData.data;
+      for (let p = 0; p < px.length; p += 4) {
+        if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0;
+      }
+      cCtx.putImageData(imgData, 0, 0);
 
       circularLogo = cCanvas.toDataURL("image/png");
     } catch (_) {}

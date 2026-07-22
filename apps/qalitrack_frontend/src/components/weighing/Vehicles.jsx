@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Truck, Plus, Search, X } from "lucide-react";
+import { Pencil, Trash2, Truck, Plus, Search, X, Users } from "lucide-react";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
-import { message } from "antd";
+import { message, Modal, Select } from "antd";
 import {
   getVehicles,
   createVehicle,
@@ -13,6 +13,9 @@ import {
 } from "../../api/MasterData/Vehicles";
 import { getOwners } from "../../api/MasterData/Owners";
 import { getAxleConfigs } from "../../api/MasterData/AxleConfigs";
+import { getSuppliers } from "../../api/MasterData/Suppliers";
+import { getTransporters } from "../../api/MasterData/Transporters";
+import { getDrivers, assignDriverToVehicle, unassignDriverFromVehicle } from "../../api/MasterData/Drivers";
 
 export default function Vehicles() {
   const rfidLicensed = useLicenseFeature(LicenseFeatures.RFID);
@@ -20,6 +23,12 @@ export default function Vehicles() {
   const [loading, setLoading] = useState(false);
   const [owners, setOwners] = useState([]);
   const [axleConfigs, setAxleConfigs] = useState([]);
+  const [suppliers, setSuppliers] = useState([]);
+  const [transporters, setTransporters] = useState([]);
+  const [driversList, setDriversList] = useState([]);
+  const [assignModalVehicle, setAssignModalVehicle] = useState(null);
+  const [driverToAssign, setDriverToAssign] = useState("");
+  const [assignBusy, setAssignBusy] = useState(false);
   const [form, setForm] = useState({
     registrationNumber: "",
     type: "",
@@ -118,12 +127,41 @@ export default function Vehicles() {
   const fetchAxleConfigs = async () => {
     try {
       const data = await getAxleConfigs(1, 100, "");
-      
+
       const items = data?.items || data?.data?.items || data || [];
-      
+
       setAxleConfigs(Array.isArray(items) ? items : []);
     } catch (error) {
       setAxleConfigs([]);
+    }
+  };
+
+  const fetchSuppliers = async () => {
+    try {
+      const data = await getSuppliers(1, 200, "");
+      const items = Array.isArray(data) ? data : data?.items || [];
+      setSuppliers(items);
+    } catch (error) {
+      setSuppliers([]);
+    }
+  };
+
+  const fetchTransporters = async () => {
+    try {
+      const data = await getTransporters({ pageNumber: 1, pageSize: 200 });
+      setTransporters(Array.isArray(data?.items) ? data.items : []);
+    } catch (error) {
+      setTransporters([]);
+    }
+  };
+
+  const fetchDriversList = async () => {
+    try {
+      const data = await getDrivers({ pageNumber: 1, pageSize: 500 });
+      const items = data?.data?.items || data?.items || [];
+      setDriversList(Array.isArray(items) ? items : []);
+    } catch (error) {
+      setDriversList([]);
     }
   };
 
@@ -134,6 +172,9 @@ export default function Vehicles() {
   useEffect(() => {
     fetchOwners();
     fetchAxleConfigs();
+    fetchSuppliers();
+    fetchTransporters();
+    fetchDriversList();
   }, []);
 
   // ✅ Re-enrich vehicles whenever owners or axleConfigs are loaded
@@ -313,13 +354,20 @@ export default function Vehicles() {
     setShowAdvanced(true);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this vehicle?")) return;
-    try {
-      await deleteVehicle(id);
-      await fetchVehicles();
-    } catch (error) {
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this vehicle?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteVehicle(id);
+          await fetchVehicles();
+        } catch (err) {
+          message.error(err.message || "Failed to delete vehicle");
+        }
+      },
+    });
   };
 
   const handleToggleStatus = async (vehicle) => {
@@ -826,28 +874,40 @@ export default function Vehicles() {
                 <div className="grid grid-cols-2 gap-2">
                   <div>
                     <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-                      Supplier ID
+                      Supplier
                     </label>
-                    <input
+                    <select
                       name="supplierId"
                       value={form.supplierId}
                       onChange={handleChange}
                       className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
-                      placeholder="Supplier ID"
-                    />
+                    >
+                      <option value="">-- None --</option>
+                      {Array.isArray(suppliers) && suppliers.map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name || `Supplier ${s.id.substring(0, 8)}`}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
                     <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-                      Transporter ID
+                      Transporter
                     </label>
-                    <input
+                    <select
                       name="transporterId"
                       value={form.transporterId}
                       onChange={handleChange}
                       className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
-                      placeholder="Transporter ID"
-                    />
+                    >
+                      <option value="">-- None --</option>
+                      {Array.isArray(transporters) && transporters.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name || `Transporter ${t.id.substring(0, 8)}`}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
