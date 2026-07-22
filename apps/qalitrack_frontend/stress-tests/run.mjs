@@ -26,9 +26,13 @@
 import { _electron as electron } from 'playwright-core';
 import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { fileURLToPath } from 'node:url';
 import { start as startHardwareMock } from './mock-hardware-server.mjs';
 
-const PROJECT_ROOT = new URL('..', import.meta.url).pathname;
+// new URL('..', import.meta.url).pathname would produce a leading-slash path
+// like /C:/Users/... on Windows, which breaks child_process.spawn's cwd —
+// fileURLToPath() handles the platform difference correctly.
+const PROJECT_ROOT = fileURLToPath(new URL('..', import.meta.url));
 const PREVIEW_PORT = 4173;
 const PREVIEW_URL = `http://localhost:${PREVIEW_PORT}`;
 
@@ -326,7 +330,9 @@ async function crudCycle(page, cfg, iteration) {
 
   try {
     await page.evaluate((r) => { location.hash = r; }, cfg.route);
-    await page.waitForSelector(cfg.formReadySelector, { timeout: 10000 });
+    // Generous timeout: the very first navigation right after login can be
+    // slow while lazy-loaded route chunks are still warming up.
+    await page.waitForSelector(cfg.formReadySelector, { timeout: 20000 });
 
     // CREATE via the real form
     for (const f of cfg.createFields(unique)) {
