@@ -4,11 +4,11 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'apps/qalitrack_frontend/*'
+      - 'apps/qalitrack_frontend/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'apps/qalitrack_frontend/*'
+      - 'apps/qalitrack_frontend/**'
   workflow_dispatch:
 
 env:
