@@ -80,12 +80,16 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
                     if (property != null && property.PropertyType == typeof(string))
                     {
                         var propertyExpression = Expression.Property(parameter, property);
+                        // Lower-case the property value so the comparison is case-insensitive,
+                        // matching the searchTerm which is already lower-cased above.
+                        var toLowerMethod = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes);
+                        var lowerPropertyExpression = Expression.Call(propertyExpression, toLowerMethod!);
                         // Create the EF.Functions.Like call
                         var likeCall = Expression.Call(
                             null,
                             likeMethod!,
                             Expression.Property(null, typeof(EF).GetProperty(nameof(EF.Functions))!),
-                            propertyExpression,
+                            lowerPropertyExpression,
                             Expression.Constant($"%{searchTerm}%"));
 
                         searchExpression = searchExpression == null ? likeCall : Expression.OrElse(searchExpression, likeCall);

@@ -42,9 +42,9 @@ public class SaccoService : ISaccoService
                 pageNumber,
                 pageSize,
                 searchTerm,
-                string.IsNullOrEmpty(searchTerm) 
-                    ? null 
-                    : s => s.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+                string.IsNullOrEmpty(searchTerm)
+                    ? null
+                    : s => s.Name.ToLower().Contains(searchTerm.ToLower()));
 
             return new PagedResult<SaccoDto>
             {

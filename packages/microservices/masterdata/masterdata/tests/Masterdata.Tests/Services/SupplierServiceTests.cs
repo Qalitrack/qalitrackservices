@@ -186,7 +186,7 @@ public class SupplierServiceTests
                 10,
                 searchTerm,
                 It.IsAny<Expression<Func<Supplier, bool>>>(),
-                It.Is<string[]>(props => props.Contains(nameof(Supplier.Name)) && props.Contains(nameof(Supplier.ContactInfo))),
+                It.Is<string[]>(props => props.Contains(nameof(Supplier.Name))),
                 It.IsAny<string>(),
                 It.IsAny<bool>()))
             .ReturnsAsync(pagedResult);
@@ -256,7 +256,7 @@ public class SupplierServiceTests
                 10,
                 null,
                 null,
-                It.Is<string[]>(props => props.Contains(nameof(Supplier.Name)) && props.Contains(nameof(Supplier.ContactInfo))),
+                It.Is<string[]>(props => props.Contains(nameof(Supplier.Name))),
                 It.IsAny<string>(),
                 It.IsAny<bool>()))
             .ReturnsAsync(pagedResult);

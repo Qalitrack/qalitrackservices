@@ -34,15 +34,17 @@ public class TransporterService : ITransporterService
         int pageSize = 10,
         string? searchTerm = null)
     {
+        // Note: ContactInfo is stored as a jsonb column, so it can't be matched with a
+        // plain-text LIKE/lower() comparison (Postgres has no lower(jsonb) overload) -
+        // search is limited to Name.
         var pagedResult = await _repository.GetPagedAsync(
             pageNumber,
             pageSize,
             searchTerm,
-            searchTerm != null 
-                ? t => t.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-                       t.ContactInfo != null && t.ContactInfo.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            searchTerm != null
+                ? t => t.Name.ToLower().Contains(searchTerm.ToLower())
                 : null,
-            new[] { nameof(Transporter.Name), nameof(Transporter.ContactInfo) }
+            new[] { nameof(Transporter.Name) }
         );
 
         return new PagedResult<TransporterReadDto>
