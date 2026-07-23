@@ -1,40 +1,32 @@
 # Default values for gateway-service
 replicaCount: 1
-
 image:
   repository: ghcr.io/qalitrack/qalitrackservices/gateway-service
   pullPolicy: Always
-  tag: "main-142e48e"
-
+  tag: "main-be15d57"
 imagePullSecrets:
   - name: ghcr-credentials
 nameOverride: ""
 fullnameOverride: ""
-
 serviceAccount:
   create: true
   annotations: {}
   name: ""
-
 podAnnotations: {}
-
 podSecurityContext:
   runAsNonRoot: true
   runAsUser: 1000
   fsGroup: 1000
-
 securityContext:
   capabilities:
     drop:
-    - ALL
+      - ALL
   readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
-
 service:
   type: ClusterIP
   port: 7000
   targetPort: 80
-
 resources:
   limits:
     cpu: 250m
@@ -42,31 +34,26 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-
 autoscaling:
   enabled: true
   minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 70
   targetMemoryUtilizationPercentage: 80
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
-    - weight: 100
-      podAffinityTerm:
-        labelSelector:
-          matchExpressions:
-          - key: app
-            operator: In
-            values:
-            - gateway-service
-        topologyKey: kubernetes.io/hostname
-
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app
+                operator: In
+                values:
+                  - gateway-service
+          topologyKey: kubernetes.io/hostname
 env:
   ASPNETCORE_ENVIRONMENT: "Production"
   ASPNETCORE_URLS: "http://+:80"
@@ -84,11 +71,9 @@ env:
   ReverseProxy__Routes__transaction-service-swagger__Order: "15"
   ReverseProxy__Routes__transaction-service-health__Order: "16"
   ReverseProxy__Routes__transaction-service-api__Order: "20"
-
 envFrom:
   - secretRef:
       name: qalitrack-secrets
-
 startupProbe:
   httpGet:
     path: /health
@@ -96,7 +81,6 @@ startupProbe:
   failureThreshold: 30
   periodSeconds: 10
   timeoutSeconds: 5
-
 livenessProbe:
   httpGet:
     path: /health
@@ -105,7 +89,6 @@ livenessProbe:
   periodSeconds: 10
   timeoutSeconds: 5
   failureThreshold: 3
-
 readinessProbe:
   httpGet:
     path: /health
