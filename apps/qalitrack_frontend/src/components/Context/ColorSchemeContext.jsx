@@ -1,9 +1,10 @@
 /**
  * ColorSchemeContext.jsx
  *
- * Manages the global primary color scheme: amber | green | blue.
+ * Manages the global primary color scheme: amber | midnight | emerald.
  * On change, writes `data-color-scheme` to <html> and persists to localStorage.
- * CSS overrides in index.css then remap Tailwind amber-* classes to the active palette.
+ * amber-* Tailwind classes resolve through CSS variables (tailwind.config.cjs +
+ * index.css), so every amber-* utility follows the active scheme automatically.
  */
 
 import { createContext, useContext, useState, useEffect } from "react";
@@ -11,27 +12,27 @@ import { createContext, useContext, useState, useEffect } from "react";
 export const COLOR_SCHEMES = {
   amber: {
     name: "Amber",
-    description: "Warm golden tones",
+    description: "Warm golden tones — the signature look",
     primary:  "#f59e0b",
     secondary: "#d97706",
     preview:  ["#f59e0b", "#fbbf24", "#fef3c7"],
     label:    "text-amber-700",
   },
-  green: {
-    name: "Green",
-    description: "Natural & fresh",
-    primary:  "#22c55e",
-    secondary: "#16a34a",
-    preview:  ["#22c55e", "#4ade80", "#dcfce7"],
-    label:    "text-green-700",
+  midnight: {
+    name: "Midnight",
+    description: "Deep navy sidebar, same warm gold accents",
+    primary:  "#f59e0b",
+    secondary: "#d97706",
+    preview:  ["#0f172a", "#f59e0b", "#fef3c7"],
+    label:    "text-amber-700",
   },
-  blue: {
-    name: "Blue",
-    description: "Professional & calm",
-    primary:  "#3b82f6",
-    secondary: "#2563eb",
-    preview:  ["#3b82f6", "#60a5fa", "#dbeafe"],
-    label:    "text-blue-700",
+  emerald: {
+    name: "Emerald",
+    description: "Refined, professional green accent",
+    primary:  "#10b981",
+    secondary: "#059669",
+    preview:  ["#10b981", "#34d399", "#d1fae5"],
+    label:    "text-emerald-700",
   },
 };
 

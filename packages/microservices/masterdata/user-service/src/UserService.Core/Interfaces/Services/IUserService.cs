@@ -35,5 +35,7 @@ public interface IUserService
     // Get all roles assigned to a specific user
     Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId);
     
-    Task<bool> ResetUserPasswordAsync(string userId);
+    // Returns the new temporary password on success (so it can be relayed to the
+    // user out-of-band if the reset email doesn't arrive), or null if not found.
+    Task<string?> ResetUserPasswordAsync(string userId);
 }

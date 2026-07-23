@@ -58,7 +58,7 @@ export default function ExportPreviewModal({
       width={980}
       title={
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
             <Printer size={13} className="text-white" />
           </div>
           <span className="text-sm font-bold text-gray-900">

@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X } from "lucide-react";
 import { message, Modal } from "antd";
+import TablePagination from "../../components/TablePagination";
 import {
   getWeighbridges,
   createWeighbridge,
@@ -146,13 +147,13 @@ export default function WeighbridgesPortal() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
 
       {/* Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 shrink-0">
+      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 shrink-0">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2v20M2 22h20M6 22V12l6-4 6 4v10" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -171,7 +172,7 @@ export default function WeighbridgesPortal() {
               <input
                 type="text"
                 placeholder="Search weighbridges..."
-                className="w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -181,7 +182,7 @@ export default function WeighbridgesPortal() {
       </div>
 
       {/* Inline Form */}
-      <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border-b border-amber-200 px-3 py-2.5 shrink-0">
+      <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20 border-b border-amber-200 px-3 py-2.5 shrink-0">
         <div className="bg-white rounded-lg p-3 border border-amber-300 shadow-sm">
           <h3 className="text-xs font-bold text-amber-900 mb-2 flex items-center gap-1.5">
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,8 +286,8 @@ export default function WeighbridgesPortal() {
           ) : (
             <>
               <div className="flex-1 overflow-auto">
-                <table className="w-full text-sm">
-                  <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50/80 border-b-[1.5px] border-amber-500">
+                <table className="w-full compact-table">
+                  <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
                       {[
                         { label: "Location", align: "text-left" },
@@ -295,7 +296,7 @@ export default function WeighbridgesPortal() {
                         { label: "Status", align: "text-left" },
                         { label: "Actions", align: "text-center" },
                       ].map((h) => (
-                        <th key={h.label} className={`px-4 py-2 text-[9px] font-bold text-amber-900 uppercase tracking-wide ${h.align}`}>{h.label}</th>
+                        <th key={h.label} className={`px-3 py-2 text-[9px] font-bold text-amber-900 uppercase tracking-wide ${h.align}`}>{h.label}</th>
                       ))}
                     </tr>
                   </thead>
@@ -304,18 +305,19 @@ export default function WeighbridgesPortal() {
                     {paginated.map((wb, i) => {
                       const isActive = wb.status?.toLowerCase() === "active";
                       return (
-                        <tr key={wb.id} className={`border-b border-gray-100 transition-all ${
-                          isActive 
-                            ? 'hover:bg-emerald-50/50 bg-emerald-50/20' 
-                            : 'hover:bg-amber-50'
-                        }`}>
-                          <td className="px-4 py-2.5">
-                            <span className="inline-block bg-gradient-to-r from-teal-800 to-teal-900 text-teal-200 px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider shadow-sm">
+                        <tr
+                          key={wb.id}
+                          className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
+                            i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                          }`}
+                        >
+                          <td className="px-3 py-2">
+                            <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
                               {wb.location}
-                            </span>
+                            </div>
                           </td>
-                          <td className="px-4 py-2.5 text-[10px] text-gray-600 max-w-xs truncate">{wb.description || "—"}</td>
-                          <td className="px-4 py-2.5">
+                          <td className="px-3 py-2 text-[10px] text-gray-600 max-w-xs truncate">{wb.description || "—"}</td>
+                          <td className="px-3 py-2">
                             {Array.isArray(wb.scales) && wb.scales.length > 0 ? (
                               <div className="flex flex-wrap gap-1">
                                 {wb.scales.map((s) => (
@@ -326,20 +328,20 @@ export default function WeighbridgesPortal() {
                               <span className="text-gray-400 text-[10px]">—</span>
                             )}
                           </td>
-                          <td className="px-4 py-2.5">
-                            <span className={`px-2.5 py-0.5 rounded-full text-[9px] font-bold uppercase shadow-sm border ${
+                          <td className="px-3 py-2">
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase border ${
                               isActive
-                                ? "bg-gradient-to-r from-emerald-100 to-green-200 text-emerald-700 border-emerald-300"
-                                : "bg-gradient-to-r from-red-100 to-rose-200 text-red-700 border-red-300"
+                                ? "bg-green-100 text-green-700 border-green-300"
+                                : "bg-red-100 text-red-700 border-red-300"
                             }`}>
                               {isActive ? "✓ Active" : "✕ Inactive"}
                             </span>
                           </td>
-                          <td className="px-4 py-2.5">
-                            <div className="flex gap-2 justify-center">
+                          <td className="px-3 py-2">
+                            <div className="flex gap-1.5 justify-center">
                               <button
                                 onClick={() => handleToggleStatus(wb)}
-                                className={`p-1.5 rounded-lg border text-[9px] font-bold transition-all ${
+                                className={`p-1 rounded border text-[9px] font-semibold transition-all ${
                                   isActive
                                     ? "text-green-700 border-green-300 hover:bg-green-50"
                                     : "text-red-700 border-red-300 hover:bg-red-50"
@@ -349,12 +351,12 @@ export default function WeighbridgesPortal() {
                                 {isActive ? "✓" : "✕"}
                               </button>
                               <button onClick={() => handleEdit(wb)}
-                                className="p-1.5 rounded-lg text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all" title="Edit">
-                                <Pencil className="w-3.5 h-3.5" />
+                                className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all" title="Edit">
+                                <Pencil className="w-3 h-3" />
                               </button>
                               <button onClick={() => handleDelete(wb.id)}
-                                className="p-1.5 rounded-lg text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all" title="Delete">
-                                <Trash2 className="w-3.5 h-3.5" />
+                                className="p-1 rounded text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all" title="Delete">
+                                <Trash2 className="w-3 h-3" />
                               </button>
                             </div>
                           </td>
@@ -363,35 +365,30 @@ export default function WeighbridgesPortal() {
                     })}
                   </tbody>
                 </table>
-              </div>
 
-              {/* Pagination */}
-              <div className="border-t border-gray-200 bg-gray-50 px-3 py-2 flex justify-between items-center shrink-0">
-                <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-                  className="h-6 px-3 text-[11px] font-medium border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:border-amber-500 hover:text-amber-600 transition-all">
-                  Previous
-                </button>
-                <div className="flex items-center gap-1">
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                    <button key={n} onClick={() => setPage(n)}
-                      className={`w-6 h-6 text-[11px] font-semibold rounded transition-all ${
-                        n === page
-                          ? "bg-gradient-to-br from-amber-500 to-orange-600 text-white shadow-sm"
-                          : "border border-gray-300 hover:border-amber-500 hover:text-amber-600"
-                      }`}>
-                      {n}
-                    </button>
-                  ))}
-                </div>
-                <button onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                  className="h-6 px-3 text-[11px] font-medium border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:border-amber-500 hover:text-amber-600 transition-all">
-                  Next
-                </button>
+                {/* Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+                <TablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
               </div>
             </>
           )}
         </div>
       </div>
+
+      <style>{`
+        .compact-table {
+          font-size: 10px;
+        }
+        .compact-table thead tr th {
+          padding: 6px 12px;
+          font-weight: 700;
+          font-size: 9px;
+          line-height: 1.2;
+        }
+        .compact-table tbody tr td {
+          padding: 6px 12px;
+          line-height: 1.3;
+        }
+      `}</style>
     </div>
   );
 }

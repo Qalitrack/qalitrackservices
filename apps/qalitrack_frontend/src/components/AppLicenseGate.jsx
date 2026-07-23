@@ -99,7 +99,7 @@ export default function AppLicenseGate({ children, feature = "" }) {
       <div className="w-full max-w-md bg-gray-900 rounded-2xl shadow-2xl border border-gray-800 overflow-hidden">
 
         {/* Header strip */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-6 py-5 flex items-center gap-4">
+        <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-6 py-5 flex items-center gap-4">
           <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
             <LockIcon className="w-6 h-6 text-white" />
           </div>
@@ -196,7 +196,7 @@ export default function AppLicenseGate({ children, feature = "" }) {
                 className={`w-full py-3 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 transition
                   ${activating || !tokenInput.trim()
                     ? "bg-gray-700 cursor-not-allowed text-gray-500"
-                    : "bg-gradient-to-r from-amber-500 to-orange-600 hover:opacity-90 shadow-lg shadow-amber-900/30"
+                    : "bg-gradient-to-r from-amber-500 to-amber-600 hover:opacity-90 shadow-lg shadow-amber-900/30"
                   }`}
               >
                 {activating
@@ -228,7 +228,7 @@ export default function AppLicenseGate({ children, feature = "" }) {
 // ─────────────────────────────────────────────────────────────────────────────
 function StatusBanner({ type, children }) {
   const styles = {
-    warning: "bg-orange-950 border-orange-800 text-orange-300",
+    warning: "bg-amber-950 border-amber-800 text-amber-300",
     error:   "bg-red-950 border-red-800 text-red-300",
   };
   return (

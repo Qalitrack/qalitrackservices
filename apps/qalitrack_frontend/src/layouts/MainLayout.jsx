@@ -1,9 +1,15 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import UnifiedSidebar from "../components/Sidebar";
 import Topbar from "../components/Topbar";
 import ErrorBoundary from "../components/ErrorBoundary";
+
+const ContentLoading = () => (
+  <div className="flex items-center justify-center h-full">
+    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-amber-500"></div>
+  </div>
+);
 
 export default function MainLayout() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -22,13 +28,15 @@ export default function MainLayout() {
 
       <div className="flex flex-col flex-1 min-w-0 h-full overflow-hidden">
         <header className="h-14 bg-white shadow-sm z-20 shrink-0">
-          <Topbar isCollapsed={isCollapsed} onToggleSidebar={toggleSidebar} />
+          <Topbar />
         </header>
 
         <main className="flex-1 bg-gray-50 overflow-hidden relative">
           <div className="absolute inset-0 p-2">
             <ErrorBoundary variant="inline">
-              <Outlet />
+              <Suspense fallback={<ContentLoading />}>
+                <Outlet />
+              </Suspense>
             </ErrorBoundary>
           </div>
         </main>

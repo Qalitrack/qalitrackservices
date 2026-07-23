@@ -330,7 +330,7 @@ export default function DriverAuthScreen({ vehicleData, onDriverAuthenticated, o
                       </span>
                     </div>
                     <div className={`h-2 ${isDark ? 'bg-gray-700' : 'bg-gray-200'} rounded-full overflow-hidden`}>
-                      <div className="h-full bg-gradient-to-r from-amber-500 to-orange-600 animate-pulse"></div>
+                      <div className="h-full bg-gradient-to-r from-amber-500 to-amber-600 animate-pulse"></div>
                     </div>
                   </div>
 

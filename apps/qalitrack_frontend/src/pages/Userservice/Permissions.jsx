@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission, fetchDeletedPermissions, restorePermission } from '../../api/helpers/UserService/Permissions/permissions.js';
 import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
-import { Edit, Trash2, ShieldAlert, PlusCircle, Users, FileText, RefreshCw, Download } from 'lucide-react';
+import { Edit, Trash2, Shield, ShieldAlert, PlusCircle, Users, FileText, RefreshCw, Download, Lock } from 'lucide-react';
+import TablePagination from '../../components/TablePagination';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -28,6 +29,10 @@ const Permissions = () => {
     const [error, setError] = useState(null);
     const [showDeleted, setShowDeleted] = useState(false);
     const [actionLoading, setActionLoading] = useState(null);
+
+    // ── Pagination ──
+    const PAGE_SIZE = 10;
+    const [page, setPage] = useState(1);
 
     // State for modals
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -67,6 +72,12 @@ const Permissions = () => {
     useEffect(() => {
         loadPermissions(showDeleted);
     }, [showDeleted]);
+
+    const totalPages = Math.max(1, Math.ceil(permissions.length / PAGE_SIZE));
+    const paginated = useMemo(
+        () => permissions.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+        [permissions, page]
+    );
 
     const fetchAllPermissions = async () => {
         try {
@@ -268,6 +279,7 @@ const Permissions = () => {
 
     const handleToggleShowDeleted = () => {
         setShowDeleted(prev => !prev);
+        setPage(1);
     };
 
     const handleLogsClick = (permission) => {
@@ -369,8 +381,16 @@ const Permissions = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-sm font-bold text-gray-800">Manage Permissions</h2>
+            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
+                        <Shield className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                        <span className="text-sm font-bold text-gray-900 block leading-tight">Manage Permissions</span>
+                        <span className="text-xs text-amber-800 font-medium">Fine-grained access controls used by role authorization</span>
+                    </div>
+                </div>
                 <div className="flex items-center gap-2">
                     <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
                         <input
@@ -391,7 +411,7 @@ const Permissions = () => {
                     </button>
                     <button
                         onClick={handleAddClick}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all"
                     >
                         <PlusCircle size={13} />
                         <span>Add Permission</span>
@@ -405,54 +425,103 @@ const Permissions = () => {
                 </div>
             )}
 
-            <div className="flex-1 overflow-auto">
-                <table className="min-w-full">
-                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <div className="flex-1 overflow-auto bg-white">
+                <table className="w-full compact-table">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider hidden md:table-cell">Description</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide hidden md:table-cell">Description</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Last Updated</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
-                    {permissions.map((permission) => (
-                        <tr key={permission.id} className={`border-b border-gray-100 hover:bg-amber-50 transition-all ${permission.isDeleted ? 'opacity-60 bg-gray-50' : ''}`}>
-                            <td className="px-4 py-3 text-sm font-medium text-gray-800">{permission.name}</td>
-                            <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{permission.description}</td>
-                            <td className="px-4 py-3 text-sm text-gray-500">
+                    <tbody>
+                    {paginated.map((permission, index) => (
+                        <tr
+                            key={permission.id}
+                            className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
+                                permission.isDeleted ? 'opacity-60 bg-gray-100' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                            }`}
+                        >
+                            <td className="px-3 py-2 text-[10px] font-semibold text-gray-900">
+                                <div className="flex items-center gap-1.5">
+                                    {permission.name}
+                                    {permission.isSystem && (
+                                        <span
+                                            className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[8px] font-semibold uppercase bg-gray-100 text-gray-600 border border-gray-300"
+                                            title="System permission — used by backend authorization checks, cannot be edited"
+                                        >
+                                            <Lock size={8} /> System
+                                        </span>
+                                    )}
+                                </div>
+                            </td>
+                            <td className="px-3 py-2 text-[10px] text-gray-600 hidden md:table-cell">{permission.description}</td>
+                            <td className="px-3 py-2 text-[10px] text-gray-600">
                                 {format(parseISO(permission.updatedAt), "PPP")}
                             </td>
-                            <td className="px-4 py-3 text-sm font-medium space-x-3">
-                                <button onClick={() => handleLogsClick(permission)} className="text-gray-600 hover:text-gray-900 transition-colors" title="View Logs">
-                                    <FileText size={18} />
-                                </button>
-                                {!showDeleted && (
-                                    <>
-                                        <button onClick={() => handleViewRolesClick(permission)} className="text-blue-600 hover:text-blue-900 transition-colors" title="View Roles">
-                                            <Users size={18} />
-                                        </button>
-                                        <button onClick={() => handleEditClick(permission)} className="text-amber-600 hover:text-amber-900 transition-colors" title="Edit Permission" disabled={permission.isDeleted}>
-                                            <Edit size={18} />
-                                        </button>
-                                    </>
-                                )}
-                                {!showDeleted && (
-                                    <button
-                                        onClick={() => handleDeleteClick(permission)}
-                                        className={`text-red-600 hover:text-red-800 transition-colors ${actionLoading === permission.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        title="Delete Permission"
-                                        disabled={actionLoading === permission.id}
-                                    >
-                                        <Trash2 size={18} />
+                            <td className="px-3 py-2">
+                                <div className="flex gap-1.5 justify-center">
+                                    <button onClick={() => handleLogsClick(permission)} className="p-1 rounded text-gray-600 hover:bg-gray-100 border border-gray-300 hover:border-gray-400 transition-all" title="View Logs">
+                                        <FileText size={12} />
                                     </button>
-                                )}
+                                    {!showDeleted && (
+                                        <>
+                                            <button onClick={() => handleViewRolesClick(permission)} className="p-1 rounded text-blue-600 hover:bg-blue-50 border border-blue-300 hover:border-blue-500 transition-all" title="View Roles">
+                                                <Users size={12} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleEditClick(permission)}
+                                                className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                                title={permission.isSystem ? "System permission — not editable" : "Edit Permission"}
+                                                disabled={permission.isDeleted || permission.isSystem}
+                                            >
+                                                <Edit size={12} />
+                                            </button>
+                                        </>
+                                    )}
+                                    {!showDeleted && (
+                                        <button
+                                            onClick={() => handleDeleteClick(permission)}
+                                            className="p-1 rounded text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                            title={permission.isSystem ? "System permission — not deletable" : "Delete Permission"}
+                                            disabled={actionLoading === permission.id || permission.isSystem}
+                                        >
+                                            <Trash2 size={12} />
+                                        </button>
+                                    )}
+                                </div>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
+
+                {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+                <TablePagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                    itemCount={permissions.length}
+                    itemLabel="permissions total"
+                />
             </div>
+
+            <style>{`
+                .compact-table {
+                  font-size: 10px;
+                }
+                .compact-table thead tr th {
+                  padding: 6px 12px;
+                  font-weight: 700;
+                  font-size: 9px;
+                  line-height: 1.2;
+                }
+                .compact-table tbody tr td {
+                  padding: 6px 12px;
+                  line-height: 1.3;
+                }
+            `}</style>
 
             {/* Edit Modal */}
             <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)}>

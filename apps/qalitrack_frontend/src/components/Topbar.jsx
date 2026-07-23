@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
-import { User, LogOut, Menu } from "lucide-react";
+import { User, LogOut } from "lucide-react";
 import useAuth from "../api/helpers/auth";
 import { useState, useRef, useEffect } from "react";
 
-export default function Topbar({ onToggleSidebar }) {
+export default function Topbar() {
   const { getCurrentUser, logout } = useAuth();
   const user = getCurrentUser ? getCurrentUser() : null;
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -40,16 +40,7 @@ export default function Topbar({ onToggleSidebar }) {
   };
 
   return (
-    <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-3 md:px-6">
-      {/* Sidebar toggle */}
-      <button
-        onClick={onToggleSidebar}
-        className="h-9 w-9 flex items-center justify-center rounded hover:bg-gray-50"
-        aria-label="Toggle sidebar"
-      >
-        <Menu size={20} className="text-gray-700" />
-      </button>
-
+    <header className="h-14 bg-white border-b border-gray-200 flex items-center justify-end px-3 md:px-6">
       {/* User dropdown */}
       <div className="relative" ref={dropdownRef}>
         <button

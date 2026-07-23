@@ -6,9 +6,15 @@ html, body, #root { height: 100%; }
 body { @apply bg-gray-100 text-gray-900; }
 
 /* ── Color Scheme CSS Variables ──────────────────────────────────────────────
-   These are set on :root (amber default) and overridden via
-   [data-color-scheme="green"] / [data-color-scheme="blue"] on <html>.
-   Tailwind amber-* classes are remapped below so the whole UI shifts color.
+   amber-* is defined in tailwind.config.cjs to resolve through these vars, so
+   EVERY amber-* utility (bg/text/border/ring/gradient stops, hover:/focus:
+   variants, all of it) follows the active scheme automatically — no more
+   hand-listing which specific classes happen to be covered.
+
+   :root holds the Amber defaults. "Midnight" intentionally sets no overrides
+   here — it's the same amber accent, just a different sidebar background (see
+   SIDEBAR_THEMES in Sidebarsettingscontext.jsx), so it inherits :root as-is.
+   "Emerald" is a genuine alternate accent hue and gets its own full override.
 ───────────────────────────────────────────────────────────────────────────── */
 :root {
   --cs-50:  #fffbeb;
@@ -21,90 +27,22 @@ body { @apply bg-gray-100 text-gray-900; }
   --cs-700: #b45309;
   --cs-800: #92400e;
   --cs-900: #78350f;
+  --cs-950: #451a03;
 }
 
-[data-color-scheme="green"] {
-  --cs-50:  #f0fdf4;
-  --cs-100: #dcfce7;
-  --cs-200: #bbf7d0;
-  --cs-300: #86efac;
-  --cs-400: #4ade80;
-  --cs-500: #22c55e;
-  --cs-600: #16a34a;
-  --cs-700: #15803d;
-  --cs-800: #166534;
-  --cs-900: #14532d;
+[data-color-scheme="emerald"] {
+  --cs-50:  #ecfdf5;
+  --cs-100: #d1fae5;
+  --cs-200: #a7f3d0;
+  --cs-300: #6ee7b7;
+  --cs-400: #34d399;
+  --cs-500: #10b981;
+  --cs-600: #059669;
+  --cs-700: #047857;
+  --cs-800: #065f46;
+  --cs-900: #064e3b;
+  --cs-950: #022c22;
 }
-
-[data-color-scheme="blue"] {
-  --cs-50:  #eff6ff;
-  --cs-100: #dbeafe;
-  --cs-200: #bfdbfe;
-  --cs-300: #93c5fd;
-  --cs-400: #60a5fa;
-  --cs-500: #3b82f6;
-  --cs-600: #2563eb;
-  --cs-700: #1d4ed8;
-  --cs-800: #1e40af;
-  --cs-900: #1e3a8a;
-}
-
-/* ── Override Tailwind amber-* classes for non-amber schemes ─────────────── */
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-50  { background-color: var(--cs-50)  !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-100 { background-color: var(--cs-100) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-200 { background-color: var(--cs-200) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-300 { background-color: var(--cs-300) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-400 { background-color: var(--cs-400) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-500 { background-color: var(--cs-500) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-600 { background-color: var(--cs-600) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-700 { background-color: var(--cs-700) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-800 { background-color: var(--cs-800) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .bg-amber-900 { background-color: var(--cs-900) !important; }
-
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-50  { color: var(--cs-50)  !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-100 { color: var(--cs-100) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-200 { color: var(--cs-200) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-300 { color: var(--cs-300) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-400 { color: var(--cs-400) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-500 { color: var(--cs-500) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-600 { color: var(--cs-600) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-700 { color: var(--cs-700) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .text-amber-900 { color: var(--cs-900) !important; }
-
-[data-color-scheme]:not([data-color-scheme="amber"]) .border-amber-200 { border-color: var(--cs-200) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .border-amber-300 { border-color: var(--cs-300) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .border-amber-400 { border-color: var(--cs-400) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .border-amber-500 { border-color: var(--cs-500) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .border-amber-600 { border-color: var(--cs-600) !important; }
-
-/* Hover variants */
-[data-color-scheme]:not([data-color-scheme="amber"]) .hover\:bg-amber-500:hover { background-color: var(--cs-500) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .hover\:bg-amber-600:hover { background-color: var(--cs-600) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .hover\:bg-amber-700:hover { background-color: var(--cs-700) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .hover\:border-amber-300:hover { border-color: var(--cs-300) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .hover\:border-amber-500:hover { border-color: var(--cs-500) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .hover\:text-amber-600:hover { color: var(--cs-600) !important; }
-
-/* Focus variants */
-[data-color-scheme]:not([data-color-scheme="amber"]) .focus\:ring-amber-500:focus  { --tw-ring-color: var(--cs-500) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .focus\:border-amber-500:focus { border-color: var(--cs-500) !important; }
-
-/* Gradient from/via/to — override the Tailwind gradient CSS variables */
-[data-color-scheme]:not([data-color-scheme="amber"]) .from-amber-50  { --tw-gradient-from: var(--cs-50)  !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .from-amber-400 { --tw-gradient-from: var(--cs-400) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .from-amber-500 { --tw-gradient-from: var(--cs-500) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .via-amber-50   { --tw-gradient-stops: var(--tw-gradient-from), var(--cs-50),  var(--tw-gradient-to, transparent) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .via-amber-500  { --tw-gradient-stops: var(--tw-gradient-from), var(--cs-500), var(--tw-gradient-to, transparent) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .to-amber-50    { --tw-gradient-to: var(--cs-50)  !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .to-amber-500   { --tw-gradient-to: var(--cs-500) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .to-amber-600   { --tw-gradient-to: var(--cs-600) !important; }
-
-/* orange-* overrides (often paired with amber in gradients) */
-[data-color-scheme]:not([data-color-scheme="amber"]) .from-orange-50  { --tw-gradient-from: var(--cs-50)  !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, transparent) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .via-orange-50   { --tw-gradient-stops: var(--tw-gradient-from), var(--cs-50), var(--tw-gradient-to, transparent) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .to-orange-50    { --tw-gradient-to: var(--cs-50)  !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .to-orange-600   { --tw-gradient-to: var(--cs-600) !important; }
-[data-color-scheme]:not([data-color-scheme="amber"]) .border-orange-600 { border-color: var(--cs-600) !important; }
 
 .compact-transaction-form .ant-form-item {
   margin-bottom: 8px;

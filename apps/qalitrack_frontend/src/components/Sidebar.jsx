@@ -7,7 +7,8 @@
  *  - No API calls — all state is in-memory via Context
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -28,18 +29,179 @@ import {
   Users,
   User2,
   Shield,
-  Lock,
   Database,
 } from "lucide-react";
 import useAuth from "../api/helpers/auth";
-import qalitrackLogoIcon from "/src/assets/qalitrack_logo.png";
 import qalitrackLogoFull from "/src/assets/qalitrack_logo_full.png";
 import { useSidebarSettings } from "../components/Context/Sidebarsettingscontext";
+
+// A single nav row: icon + label when expanded, icon + hover tooltip when
+// collapsed. Shared by top-level items and by a group's children once
+// flattened in collapsed mode, so both look and behave identically.
+//
+// The tooltip is rendered via a portal to document.body, positioned from the
+// icon's actual on-screen rect. It used to be a plain `absolute left-full`
+// div, but the nav list needs `overflow-x: hidden` to stop a scrollbar from
+// the browser's overflow-x/overflow-y pairing rule (setting overflow-y:auto
+// forces overflow-x to also become non-visible) — that same rule clips any
+// horizontally-overflowing content, tooltip included. A portal escapes that
+// clipping entirely instead of fighting it.
+function NavIconItem({ to, icon, label, isCollapsed, resolvedTheme, accentStyle }) {
+  const anchorRef = useRef(null);
+  const [tooltipPos, setTooltipPos] = useState(null);
+
+  const showTooltip = () => {
+    if (!isCollapsed || !anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    setTooltipPos({ top: rect.top + rect.height / 2, left: rect.right + 12 });
+  };
+  const hideTooltip = () => setTooltipPos(null);
+
+  return (
+    <div
+      ref={anchorRef}
+      className="relative mb-1"
+      onMouseEnter={showTooltip}
+      onMouseLeave={hideTooltip}
+    >
+      <NavLink
+        to={to}
+        className={`flex items-center gap-3 py-2 rounded-r-md transition-colors duration-150 relative w-full ${
+          isCollapsed ? "justify-center" : "px-3"
+        }`}
+        style={({ isActive }) => ({
+          background: isActive ? resolvedTheme.activeBg : "transparent",
+          borderLeft: isActive ? `2px solid ${resolvedTheme.accent}` : "2px solid transparent",
+          paddingLeft: isCollapsed ? 0 : "10px",
+        })}
+        onMouseEnter={(e) => (e.currentTarget.style.background = resolvedTheme.hoverBg)}
+        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+      >
+        <span style={accentStyle}>{icon}</span>
+        {!isCollapsed && (
+          <span className="text-sm" style={{ color: resolvedTheme.text }}>
+            {label}
+          </span>
+        )}
+      </NavLink>
+
+      {isCollapsed && tooltipPos &&
+        createPortal(
+          <div
+            style={{ position: "fixed", top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-50%)" }}
+            className="z-[100] pointer-events-none bg-white text-black text-xs px-3 py-1 rounded-md shadow-md whitespace-nowrap"
+          >
+            {label}
+          </div>,
+          document.body
+        )}
+    </div>
+  );
+}
+
+// Same row styling and portal-tooltip approach as NavIconItem, but a plain
+// button (not a route) since it toggles collapse state instead of navigating.
+function ToggleNavItem({ isCollapsed, onToggle, resolvedTheme, accentStyle }) {
+  const anchorRef = useRef(null);
+  const [tooltipPos, setTooltipPos] = useState(null);
+
+  const showTooltip = () => {
+    if (!isCollapsed || !anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    setTooltipPos({ top: rect.top + rect.height / 2, left: rect.right + 12 });
+  };
+  const hideTooltip = () => setTooltipPos(null);
+
+  return (
+    <div ref={anchorRef} className="relative mb-1" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
+      <button
+        onClick={onToggle}
+        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        className={`flex items-center gap-3 w-full px-3 py-2 rounded-r-md transition-colors duration-150 ${
+          isCollapsed ? "justify-center" : ""
+        }`}
+        onMouseEnter={(e) => (e.currentTarget.style.background = resolvedTheme.hoverBg)}
+        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+      >
+        <span style={accentStyle}>
+          {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+        </span>
+        {!isCollapsed && (
+          <span className="text-sm" style={{ color: resolvedTheme.text }}>
+            Collapse
+          </span>
+        )}
+      </button>
+
+      {isCollapsed && tooltipPos &&
+        createPortal(
+          <div
+            style={{ position: "fixed", top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-50%)" }}
+            className="z-[100] pointer-events-none bg-white text-black text-xs px-3 py-1 rounded-md shadow-md whitespace-nowrap"
+          >
+            Expand sidebar
+          </div>,
+          document.body
+        )}
+    </div>
+  );
+}
+
+// Sits in the branding row in place of the logo when collapsed — a small
+// square button (matching the earlier squared-icon design), always expands
+// since this only ever renders in the collapsed state.
+function CollapsedToggleButton({ onToggle, resolvedTheme, chevronStyle }) {
+  const anchorRef = useRef(null);
+  const [tooltipPos, setTooltipPos] = useState(null);
+
+  const showTooltip = () => {
+    if (!anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    setTooltipPos({ top: rect.top + rect.height / 2, left: rect.right + 12 });
+  };
+  const hideTooltip = () => setTooltipPos(null);
+
+  return (
+    <div ref={anchorRef} onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
+      <button
+        onClick={onToggle}
+        aria-label="Expand sidebar"
+        style={{ borderColor: resolvedTheme.border, background: "rgba(255,255,255,0.04)" }}
+        className="p-1.5 rounded-md hover:bg-white/10 border"
+      >
+        <ChevronRight size={18} style={chevronStyle} />
+      </button>
+
+      {tooltipPos &&
+        createPortal(
+          <div
+            style={{ position: "fixed", top: tooltipPos.top, left: tooltipPos.left, transform: "translateY(-50%)" }}
+            className="z-[100] pointer-events-none bg-white text-black text-xs px-3 py-1 rounded-md shadow-md whitespace-nowrap"
+          >
+            Expand sidebar
+          </div>,
+          document.body
+        )}
+    </div>
+  );
+}
 
 export default function UnifiedSidebar({ isCollapsed, onToggle }) {
   const location = useLocation();
   const [openMenus, setOpenMenus] = useState({});
   const { getCurrentUser } = useAuth();
+
+  // Scrollbar should only be visible while actively scrolling, not sitting on
+  // screen permanently — flip a class on scroll and drop it again once the
+  // user stops for a moment.
+  const [isNavScrolling, setIsNavScrolling] = useState(false);
+  const navScrollTimeoutRef = useRef(null);
+  const handleNavScroll = () => {
+    setIsNavScrolling(true);
+    if (navScrollTimeoutRef.current) clearTimeout(navScrollTimeoutRef.current);
+    navScrollTimeoutRef.current = setTimeout(() => setIsNavScrolling(false), 800);
+  };
+  useEffect(() => () => navScrollTimeoutRef.current && clearTimeout(navScrollTimeoutRef.current), []);
 
   // ── Live sidebar settings from Context ─────────────────────────────────────
   const { sidebarSettings, resolvedTheme } = useSidebarSettings();
@@ -82,28 +244,23 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
         { key: "weighing-owners",      label: "Owners",            icon: <Users size={16} />,           path: `${basePath}/weighing/owners`,     roles: null },
         { key: "suppliers",            label: "Suppliers",         icon: <Satellite size={16} />,       path: `${basePath}/suppliers`,           roles: null },
         { key: "weighing-products",    label: "Products",          icon: <BarChart3 size={16} />,       path: `${basePath}/weighing/products`,   roles: null },
-{ key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,           path: `${basePath}/weighing/axle-config`,roles: ["Admin"] },
+        { key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,           path: `${basePath}/weighing/axle-config`,roles: null },
         { key: "weighing-saccos",      label: "Saccos",            icon: <User2 size={16} />,           path: `${basePath}/saccos`,              roles: null },
       ],
     },
-    { key: "user-management",  label: "User Management",  icon: <Users size={18} />,    path: `${basePath}/user-management`,   roles: ["Admin"] },
-    // Analytics, Reports — visible to all authenticated users; System — all except Operator
-    { key: "analytics",        label: "Analytics",         icon: <BarChart3 size={18} />,path: `${basePath}/analytics`,        roles: null },
-    { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,          roles: null },
-    { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,           roles: ["Admin"] },
-    { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`, roles: ["Admin"] },
-    {
-      key: "security",
-      label: "Security",
-      icon: <Shield size={18} />,
-      roles: ["Admin"],
-      children: [
-        { key: "permissions",     label: "Permissions",    icon: <Shield size={16} />, path: `${basePath}/security/permissions`,    roles: ["Admin"] },
-        { key: "roles",           label: "Roles",          icon: <Users size={16} />,  path: `${basePath}/security/roles`,          roles: ["Admin"] },
-        { key: "password-policy", label: "Password Policy",icon: <Lock size={16} />,   path: `${basePath}/security/password-policy`,roles: ["Admin"] },
-      ],
-    },
-    { key: "system",      label: "System",         icon: <Cog size={18} />,      path: `${basePath}/system`,              roles: null, excludeRoles: ["Operator"] },
+    // User Management — Supervisor and Admin only (Manager does not get staff admin)
+    { key: "user-management",  label: "User Management",  icon: <Users size={18} />,    path: `${basePath}/user-management`,   roles: ["Admin", "Supervisor"] },
+    // Analytics, Reports — everyone except Operator (reporting, not master data)
+    { key: "analytics",        label: "Analytics",         icon: <BarChart3 size={18} />,path: `${basePath}/analytics`,        roles: null, excludeRoles: ["Operator"] },
+    { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,          roles: null, excludeRoles: ["Operator"] },
+    // Shifts / Shift Assignment — Manager, Supervisor, Admin (staff scheduling)
+    { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,           roles: ["Admin", "Manager", "Supervisor"] },
+    { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`, roles: ["Admin", "Manager", "Supervisor"] },
+    // Security — Permissions/Roles/Password Policy/Audit Logs live as tabs
+    // inside a single page now instead of separate nav items.
+    { key: "security", label: "Security", icon: <Shield size={18} />, path: `${basePath}/security`, roles: ["Admin"] },
+    // System / Backup — the genuinely dangerous levers, Admin only
+    { key: "system",      label: "System",         icon: <Cog size={18} />,      path: `${basePath}/system`,              roles: ["Admin"] },
     { key: "backup",      label: "Backup",         icon: <Database size={18} />, path: `${basePath}/backup/microservice`, roles: ["Admin"] },
     // { key: "automation",  label: "Automation",     icon: <Cog size={18} />,  path: `${basePath}/automation`, roles: ["Admin"] },
   ];
@@ -142,151 +299,119 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
   return (
     <aside
       style={sidebarStyle}
-      className={`fixed top-0 left-0 h-full z-40 flex flex-col shadow-lg transition-all duration-300 ${
+      className={`fixed top-0 left-0 h-full z-40 flex flex-col shadow-lg transition-all duration-300 overflow-x-hidden ${
         isCollapsed ? "w-16" : "w-64"
       }`}
       aria-label="Main sidebar"
     >
-      {/* ── Branding + Collapse ─────────────────────────────────────────────── */}
-      <div
-        className={`flex items-center relative py-1 ${
-          isCollapsed ? "justify-center px-0" : "justify-between px-3"
-        }`}
-      >
+      {/* ── Branding — fixed height to line up exactly with the topbar/app-bar ──
+          Collapsed: the logo doesn't fit meaningfully next to a toggle in a
+          64px-wide row, so the toggle takes its place here instead; expanded:
+          logo as usual, toggle lives in the nav list below. */}
+      <div className={`h-14 flex items-center shrink-0 ${isCollapsed ? "justify-center" : "px-3"}`}>
         {isCollapsed ? (
-          <img
-            src={qalitrackLogoIcon}
-            alt="QaliTrack"
-            className="h-8 w-8 object-contain transition-all duration-300"
-          />
+          <CollapsedToggleButton onToggle={onToggle} resolvedTheme={resolvedTheme} chevronStyle={chevronStyle} />
         ) : (
           <img
             src={qalitrackLogoFull}
             alt="QaliTrack"
-            className="w-full h-auto object-contain transition-all duration-300"
-            style={{ maxWidth: "calc(100% - 16px)" }}
+            className="h-8 w-auto max-w-[150px] object-contain transition-all duration-300"
           />
         )}
-
-        <button
-          onClick={onToggle}
-          aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          style={{ borderColor: resolvedTheme.border, background: "rgba(255,255,255,0.04)" }}
-          className={`absolute top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-white/10 border ${
-            isCollapsed ? "right-1" : "-right-3"
-          }`}
-        >
-          {isCollapsed ? (
-            <ChevronRight size={16} style={chevronStyle} />
-          ) : (
-            <ChevronLeft size={16} style={chevronStyle} />
-          )}
-        </button>
       </div>
+      <div style={{ borderBottom: `1px solid ${resolvedTheme.border}` }} />
 
       {/* ── Navigation ──────────────────────────────────────────────────────── */}
-      <nav className="flex-1 overflow-y-auto px-1 py-2">
-        {menuItems.map((item) =>
-          item.children ? (
-            <div key={item.key} className="mb-1">
-              <button
-                onClick={() => toggleMenu(item.key)}
-                style={openMenus[item.key] ? { background: resolvedTheme.hoverBg } : {}}
-                className={`flex items-center justify-between w-full px-3 py-2 rounded-r-md transition-colors duration-150 ${
-                  isCollapsed ? "justify-center" : ""
-                }`}
-                onMouseEnter={(e) => (e.currentTarget.style.background = resolvedTheme.hoverBg)}
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = openMenus[item.key]
-                    ? resolvedTheme.hoverBg
-                    : "transparent")
-                }
-                aria-expanded={!!openMenus[item.key]}
-              >
-                <span className="flex items-center gap-3">
-                  <span style={accentStyle}>{item.icon}</span>
-                  {!isCollapsed && (
+      <nav
+        onScroll={handleNavScroll}
+        className={`sidebar-nav-scroll ${isNavScrolling ? "is-scrolling" : ""} flex-1 overflow-y-auto overflow-x-hidden py-2 ${
+          isCollapsed ? "" : "px-1"
+        }`}
+      >
+        {/* No horizontal padding here when collapsed: the branding row's
+            toggle button is centered across the full 64px width, so the
+            nav's px-1 would otherwise nudge these icons a few pixels off
+            from that column (this is what the reference screenshots show —
+            icons and the collapse chevron share one vertical column). */}
+        {!isCollapsed && (
+          <>
+            <ToggleNavItem isCollapsed={isCollapsed} onToggle={onToggle} resolvedTheme={resolvedTheme} accentStyle={accentStyle} />
+            <div style={{ borderBottom: `1px solid ${resolvedTheme.border}`, opacity: 0.6 }} className="mb-2" />
+          </>
+        )}
+
+        {menuItems.map((item) => {
+          if (item.children) {
+            if (isCollapsed) {
+              // A group icon alone can't show its children and grouping/labels
+              // don't mean anything once collapsed, so a click on it used to do
+              // nothing. Flatten instead: each sub-item becomes its own icon
+              // with a tooltip, exactly like a top-level item.
+              return item.children.map((child) => (
+                <NavIconItem key={child.key} to={child.path} icon={child.icon} label={child.label} isCollapsed={isCollapsed} resolvedTheme={resolvedTheme} accentStyle={accentStyle} />
+              ));
+            }
+            return (
+              <div key={item.key} className="mb-1">
+                <button
+                  onClick={() => toggleMenu(item.key)}
+                  style={openMenus[item.key] ? { background: resolvedTheme.hoverBg } : {}}
+                  className="flex items-center justify-between w-full px-3 py-2 rounded-r-md transition-colors duration-150"
+                  onMouseEnter={(e) => (e.currentTarget.style.background = resolvedTheme.hoverBg)}
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = openMenus[item.key]
+                      ? resolvedTheme.hoverBg
+                      : "transparent")
+                  }
+                  aria-expanded={!!openMenus[item.key]}
+                >
+                  <span className="flex items-center gap-3">
+                    <span style={accentStyle}>{item.icon}</span>
                     <span className="text-sm" style={{ color: resolvedTheme.text }}>
                       {item.label}
                     </span>
-                  )}
-                </span>
-                {!isCollapsed && (
+                  </span>
                   <span style={{ color: resolvedTheme.text, opacity: 0.6 }}>
                     {openMenus[item.key] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   </span>
-                )}
-              </button>
+                </button>
 
-              <div className={`${openMenus[item.key] && !isCollapsed ? "block" : "hidden"} mt-1`}>
-                {item.children.map((child) => (
-                  <NavLink
-                    key={child.key}
-                    to={child.path}
-                    className="flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative group"
-                    style={({ isActive }) => ({
-                      background: isActive ? resolvedTheme.activeBg : "transparent",
-                      borderLeft: isActive
-                        ? `2px solid ${resolvedTheme.accent}`
-                        : "2px solid transparent",
-                      paddingLeft: "10px",
-                    })}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = resolvedTheme.hoverBg)}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-                  >
-                    <span style={{ color: resolvedTheme.text, opacity: 0.8 }}>{child.icon}</span>
-                    {!isCollapsed && (
+                <div className={`${openMenus[item.key] ? "block" : "hidden"} mt-1`}>
+                  {item.children.map((child) => (
+                    <NavLink
+                      key={child.key}
+                      to={child.path}
+                      className="flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative"
+                      style={({ isActive }) => ({
+                        background: isActive ? resolvedTheme.activeBg : "transparent",
+                        borderLeft: isActive
+                          ? `2px solid ${resolvedTheme.accent}`
+                          : "2px solid transparent",
+                        paddingLeft: "10px",
+                      })}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = resolvedTheme.hoverBg)}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                    >
+                      <span style={{ color: resolvedTheme.text, opacity: 0.8 }}>{child.icon}</span>
                       <span className="text-sm" style={{ color: resolvedTheme.text, opacity: 0.85 }}>
                         {child.label}
                       </span>
-                    )}
-                  </NavLink>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <div key={item.key} className="relative group mb-1">
-              <NavLink
-                to={item.path}
-                className="flex items-center gap-3 px-3 py-2 rounded-r-md transition-colors duration-150 relative"
-                style={({ isActive }) => ({
-                  background: isActive ? resolvedTheme.activeBg : "transparent",
-                  borderLeft: isActive
-                    ? `2px solid ${resolvedTheme.accent}`
-                    : "2px solid transparent",
-                  paddingLeft: "10px",
-                })}
-                onMouseEnter={(e) => (e.currentTarget.style.background = resolvedTheme.hoverBg)}
-                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
-              >
-                <span style={accentStyle}>{item.icon}</span>
-                {!isCollapsed && (
-                  <span className="text-sm" style={{ color: resolvedTheme.text }}>
-                    {item.label}
-                  </span>
-                )}
-              </NavLink>
-
-              {/* Collapsed tooltip */}
-              {isCollapsed && (
-                <div
-                  className="absolute left-full top-1/2 -translate-y-1/2 ml-3 z-50 opacity-0 group-hover:opacity-100 pointer-events-none
-                              bg-white text-black text-xs px-3 py-1 rounded-md shadow-md whitespace-nowrap transition-opacity duration-150"
-                >
-                  {item.label}
+                    </NavLink>
+                  ))}
                 </div>
-              )}
-            </div>
-          )
-        )}
+              </div>
+            );
+          }
+          return <NavIconItem key={item.key} to={item.path} icon={item.icon} label={item.label} isCollapsed={isCollapsed} resolvedTheme={resolvedTheme} accentStyle={accentStyle} />;
+        })}
       </nav>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
-      <div
-        className="px-3 py-3 text-xs"
-        style={{ borderTop: `1px solid ${resolvedTheme.border}`, opacity: 0.75 }}
-      >
-        {!isCollapsed ? (
+      {!isCollapsed && (
+        <div
+          className="px-3 py-3 text-xs"
+          style={{ borderTop: `1px solid ${resolvedTheme.border}`, opacity: 0.75 }}
+        >
           <div className="text-center space-y-0.5">
             <p style={{ color: resolvedTheme.text }} className="text-[10px]">
               Powered by{" "}
@@ -298,12 +423,35 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
               &copy; {new Date().getFullYear()} All rights reserved.
             </p>
           </div>
-        ) : (
-          <div className="flex justify-center">
-            <span style={accentStyle} className="text-[10px] font-bold">Q</span>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      <style>{`
+        .sidebar-nav-scroll {
+          scrollbar-width: thin;
+          scrollbar-color: transparent transparent;
+        }
+        .sidebar-nav-scroll.is-scrolling {
+          scrollbar-color: rgba(245, 158, 11, 0.35) transparent;
+        }
+        .sidebar-nav-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+        .sidebar-nav-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .sidebar-nav-scroll::-webkit-scrollbar-thumb {
+          background-color: transparent;
+          border-radius: 999px;
+          transition: background-color 0.3s ease;
+        }
+        .sidebar-nav-scroll.is-scrolling::-webkit-scrollbar-thumb {
+          background-color: rgba(245, 158, 11, 0.35);
+        }
+        .sidebar-nav-scroll::-webkit-scrollbar-thumb:hover {
+          background-color: rgba(245, 158, 11, 0.55);
+        }
+      `}</style>
     </aside>
   );
 }

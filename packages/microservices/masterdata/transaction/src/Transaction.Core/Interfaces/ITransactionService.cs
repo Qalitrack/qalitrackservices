@@ -6,6 +6,7 @@ public interface ITransactionService
 {
     // Basic CRUD with pagination
     Task<PagedResult<TransactionReadDto>> GetAllAsync(WeighbridgeTransactionFilter filter);
+    Task<TransactionStatsDto> GetStatsAsync();
     Task<TransactionReadDto?> GetByIdAsync(string ticketId);
     Task<TransactionReadDto?> GetByReceiptNoAsync(string receiptNo);
     Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto);

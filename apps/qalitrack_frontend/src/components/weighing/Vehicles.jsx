@@ -13,9 +13,19 @@ import {
 } from "../../api/MasterData/Vehicles";
 import { getOwners } from "../../api/MasterData/Owners";
 import { getAxleConfigs } from "../../api/MasterData/AxleConfigs";
+import TablePagination from "../TablePagination";
 import { getSuppliers } from "../../api/MasterData/Suppliers";
 import { getTransporters } from "../../api/MasterData/Transporters";
 import { getDrivers, assignDriverToVehicle, unassignDriverFromVehicle } from "../../api/MasterData/Drivers";
+
+// Axle config codes follow the truck-industry "NxM" convention (e.g. "8x4" =
+// 8 wheels total, 4 driven) — the leading number is the wheel count. Spelling
+// that out next to the code lets non-technical staff pick the right one
+// without having to already know what "8x4" means.
+const getWheelCount = (code) => {
+  const match = code?.match(/^(\d+)/);
+  return match ? parseInt(match[1], 10) : null;
+};
 
 export default function Vehicles() {
   const rfidLicensed = useLicenseFeature(LicenseFeatures.RFID);
@@ -416,10 +426,10 @@ export default function Vehicles() {
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
               <Truck className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -518,7 +528,7 @@ export default function Vehicles() {
                   name="registrationNumber"
                   value={form.registrationNumber}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   required
                   placeholder="e.g., KXX 123Y"
                 />
@@ -532,7 +542,7 @@ export default function Vehicles() {
                   name="type"
                   value={form.type}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   required
                   placeholder="e.g., Truck, Van"
                 />
@@ -546,7 +556,7 @@ export default function Vehicles() {
                   name="make"
                   value={form.make}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   placeholder="e.g., Isuzu"
                 />
               </div>
@@ -559,7 +569,7 @@ export default function Vehicles() {
                   name="model"
                   value={form.model}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   placeholder="e.g., FRR"
                 />
               </div>
@@ -573,7 +583,7 @@ export default function Vehicles() {
                   name="yearOfManufacture"
                   value={form.yearOfManufacture}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   placeholder="e.g., 2020"
                   min="1900"
                   max="2100"
@@ -588,7 +598,7 @@ export default function Vehicles() {
                   name="color"
                   value={form.color}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   placeholder="e.g., White"
                 />
               </div>
@@ -601,7 +611,7 @@ export default function Vehicles() {
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
@@ -616,7 +626,7 @@ export default function Vehicles() {
                   name="bodyType"
                   value={form.bodyType}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   placeholder="e.g., Flatbed"
                 />
               </div>
@@ -630,7 +640,7 @@ export default function Vehicles() {
                   name="ownerId"
                   value={form.ownerId}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   required
                 >
                   <option value="">-- Select Owner --</option>
@@ -650,15 +660,21 @@ export default function Vehicles() {
                   name="axleConfigurationId"
                   value={form.axleConfigurationId}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                   required
                 >
                   <option value="">-- Select Axle Config --</option>
-                  {Array.isArray(axleConfigs) && axleConfigs.map((config) => (
-                    <option key={config.id} value={config.id}>
-                      {config.code || config.description || config.name || `Config ${config.id?.substring(0, 6)}`}
-                    </option>
-                  ))}
+                  {Array.isArray(axleConfigs) && axleConfigs
+                    .filter((config) => config.isActive !== false || config.id === form.axleConfigurationId)
+                    .map((config) => {
+                    const label = config.code || config.description || config.name || `Config ${config.id?.substring(0, 6)}`;
+                    const wheels = getWheelCount(config.code);
+                    return (
+                      <option key={config.id} value={config.id}>
+                        {label}{wheels ? ` — ${wheels} wheels` : ""}{config.isActive === false ? " (inactive)" : ""}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 
@@ -671,7 +687,7 @@ export default function Vehicles() {
                     name="rfiDcode"
                     value={form.rfiDcode}
                     onChange={handleChange}
-                    className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder={editingVehicle ? "RFID/NFC Code" : "Set after creation"}
                     disabled={!editingVehicle}
                     title={editingVehicle ? "Edit RFID code" : "RFID can only be set when updating a vehicle"}
@@ -696,7 +712,7 @@ export default function Vehicles() {
                       name="chassisNumber"
                       value={form.chassisNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="Chassis #"
                     />
                   </div>
@@ -709,7 +725,7 @@ export default function Vehicles() {
                       name="engineNumber"
                       value={form.engineNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="Engine #"
                     />
                   </div>
@@ -722,7 +738,7 @@ export default function Vehicles() {
                       name="vehicleClass"
                       value={form.vehicleClass}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="Class"
                     />
                   </div>
@@ -736,7 +752,7 @@ export default function Vehicles() {
                       name="seatingCapacity"
                       value={form.seatingCapacity}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="Seats"
                       min="0"
                     />
@@ -757,7 +773,7 @@ export default function Vehicles() {
                       name="grossWeight"
                       value={form.grossWeight}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="kg"
                       min="0"
                     />
@@ -772,7 +788,7 @@ export default function Vehicles() {
                       name="tareWeight"
                       value={form.tareWeight}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="kg"
                       min="0"
                     />
@@ -787,7 +803,7 @@ export default function Vehicles() {
                       name="netWeightCapacity"
                       value={form.netWeightCapacity}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="kg"
                       min="0"
                     />
@@ -802,7 +818,7 @@ export default function Vehicles() {
                       name="fuelTankCapacity"
                       value={form.fuelTankCapacity}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="Liters"
                       min="0"
                     />
@@ -822,7 +838,7 @@ export default function Vehicles() {
                       name="insurancePolicyNumber"
                       value={form.insurancePolicyNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="Policy Number"
                     />
                   </div>
@@ -836,7 +852,7 @@ export default function Vehicles() {
                       name="insuranceExpiryDate"
                       value={form.insuranceExpiryDate}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                     />
                   </div>
 
@@ -848,7 +864,7 @@ export default function Vehicles() {
                       name="roadWorthinessNumber"
                       value={form.roadWorthinessNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                       placeholder="Certificate #"
                     />
                   </div>
@@ -862,7 +878,7 @@ export default function Vehicles() {
                       name="roadWorthinessExpiryDate"
                       value={form.roadWorthinessExpiryDate}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                     />
                   </div>
                 </div>
@@ -880,7 +896,7 @@ export default function Vehicles() {
                       name="supplierId"
                       value={form.supplierId}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                     >
                       <option value="">-- None --</option>
                       {Array.isArray(suppliers) && suppliers.map((s) => (
@@ -899,7 +915,7 @@ export default function Vehicles() {
                       name="transporterId"
                       value={form.transporterId}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
                     >
                       <option value="">-- None --</option>
                       {Array.isArray(transporters) && transporters.map((t) => (
@@ -929,7 +945,7 @@ export default function Vehicles() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50"
+              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50"
             >
               <Plus className="w-3 h-3" />
               {editingVehicle ? "Update" : "Add"} Vehicle
@@ -950,7 +966,7 @@ export default function Vehicles() {
           </div>
         ) : (
           <table className="w-full compact-table">
-            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
               <tr>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Reg. Number</th>
@@ -967,7 +983,7 @@ export default function Vehicles() {
               {vehicles.filter(v => statusFilter === "All" || v.status?.toLowerCase() === statusFilter.toLowerCase()).map((v, index) => (
                 <tr
                   key={v.id}
-                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
                     index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
@@ -990,6 +1006,7 @@ export default function Vehicles() {
                     {v.axleConfigurationName ? (
                       <div className="inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-semibold border border-blue-300">
                         {v.axleConfigurationName}
+                        {getWheelCount(v.axleConfigurationName) ? ` (${getWheelCount(v.axleConfigurationName)} wheels)` : ""}
                       </div>
                     ) : (
                       <span className="text-gray-400">-</span>
@@ -1049,32 +1066,15 @@ export default function Vehicles() {
             </tbody>
           </table>
         )}
-      </div>
 
-      {/* Footer with Pagination */}
-      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-        <span className="text-[10px] text-gray-600 font-medium">
-          Page <span className="font-semibold text-amber-600">{pageNumber}</span> of{" "}
-          <span className="font-semibold text-amber-600">{totalPages}</span>
-          {" • "}
-          <span className="font-semibold text-amber-600">{vehicles.length}</span> vehicles on this page
-        </span>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
-            disabled={pageNumber === 1}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => setPageNumber((p) => Math.min(totalPages, p + 1))}
-            disabled={pageNumber === totalPages}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Next
-          </button>
-        </div>
+        {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+        <TablePagination
+          page={pageNumber}
+          totalPages={totalPages}
+          onPageChange={setPageNumber}
+          itemCount={vehicles.length}
+          itemLabel="vehicles on this page"
+        />
       </div>
 
       <style>{`

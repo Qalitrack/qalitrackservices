@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import TablePagination from '../../components/TablePagination';
 import {
     fetchRoles,
     updateRole,
@@ -12,7 +13,7 @@ import {
 } from '../../api/helpers/UserService/Roles/Roles.js';
 import { fetchPermissions } from '../../api/helpers/UserService/Permissions/permissions.js';
 import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
-import { Edit, Trash2, PlusCircle, Users, FileText, ShieldCheck, ShieldAlert, RefreshCw, Download } from 'lucide-react';
+import { Edit, Trash2, PlusCircle, Users, FileText, ShieldCheck, ShieldAlert, RefreshCw, Download, Lock } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -46,6 +47,10 @@ const Roles = () => {
     const [error, setError] = useState(null);
     const [showDeleted, setShowDeleted] = useState(false);
     const [actionLoading, setActionLoading] = useState(null);
+
+    // ── Pagination ──
+    const PAGE_SIZE = 10;
+    const [page, setPage] = useState(1);
 
     // State for modals
     const [isEditModalOpen, setEditModalOpen] = useState(false);
@@ -310,7 +315,14 @@ const Roles = () => {
 
     const handleToggleShowDeleted = () => {
         setShowDeleted(prev => !prev);
+        setPage(1);
     };
+
+    const totalPages = Math.max(1, Math.ceil(roles.length / PAGE_SIZE));
+    const paginated = useMemo(
+        () => roles.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE),
+        [roles, page]
+    );
 
     const handleViewUsersClick = (role) => {
         setSelectedRole(role);
@@ -475,8 +487,16 @@ const Roles = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-base font-bold text-gray-900">Manage Roles</h2>
+            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
+                        <ShieldCheck className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                        <span className="text-sm font-bold text-gray-900 block leading-tight">Manage Roles</span>
+                        <span className="text-xs text-amber-800 font-medium">Define what each role can access</span>
+                    </div>
+                </div>
                 <div className="flex items-center gap-2">
                     <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
                         <input
@@ -497,7 +517,7 @@ const Roles = () => {
                     </button>
                     <button
                         onClick={handleAddClick}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all"
                     >
                         <PlusCircle size={13} />
                         <span>Add Role</span>
@@ -511,84 +531,133 @@ const Roles = () => {
                 </div>
             )}
 
-            <div className="flex-1 overflow-auto">
-                <table className="min-w-full">
-                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <div className="flex-1 overflow-auto bg-white">
+                <table className="w-full compact-table">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider hidden md:table-cell">Description</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Users</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide hidden md:table-cell">Description</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Users</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Status</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Last Updated</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
-                    {roles.map((role) => (
-                        <tr key={role.id} className={`border-b border-gray-100 hover:bg-amber-50 transition-all ${role.isDeleted ? 'opacity-60 bg-gray-50' : ''}`}>
-                            <td className="px-4 py-3 text-sm font-semibold text-gray-900">{role.name}</td>
-                            <td className="px-4 py-3 text-sm text-gray-700 hidden md:table-cell max-w-xs truncate">{role.description}</td>
-                            <td className="px-4 py-3 text-sm text-gray-700">
+                    <tbody>
+                    {paginated.map((role, index) => (
+                        <tr
+                            key={role.id}
+                            className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
+                                role.isDeleted ? 'opacity-60 bg-gray-100' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                            }`}
+                        >
+                            <td className="px-3 py-2 text-[10px] font-semibold text-gray-900">
+                                <div className="flex items-center gap-1.5">
+                                    {role.name}
+                                    {role.isSystem && (
+                                        <span
+                                            className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[8px] font-semibold uppercase bg-gray-100 text-gray-600 border border-gray-300"
+                                            title="System role — used by backend authorization checks, cannot be edited"
+                                        >
+                                            <Lock size={8} /> System
+                                        </span>
+                                    )}
+                                </div>
+                            </td>
+                            <td className="px-3 py-2 text-[10px] text-gray-600 hidden md:table-cell max-w-xs truncate">{role.description}</td>
+                            <td className="px-3 py-2 text-[10px] text-gray-600">
                                 <button
                                     onClick={() => handleViewUsersClick(role)}
-                                    className="flex items-center gap-1.5 text-amber-600 hover:text-amber-900 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
+                                    className="flex items-center gap-1 text-amber-600 hover:text-amber-700 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
                                     disabled={!role.users || role.users.length === 0}
                                 >
-                                    <Users size={14} />
+                                    <Users size={12} />
                                     <span>{role.totalUsers}</span>
                                 </button>
                             </td>
-                            <td className="px-4 py-3">
-                                <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium rounded-full ${role.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            <td className="px-3 py-2">
+                                <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${role.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                                     {role.isActive ? 'Active' : 'Inactive'}
                                 </span>
                             </td>
-                            <td className="px-4 py-3 text-sm text-gray-700">
+                            <td className="px-3 py-2 text-[10px] text-gray-600">
                                 {format(parseISO(role.updatedAt), "PPP")}
                             </td>
-                            <td className="px-4 py-3 text-sm font-medium space-x-3">
-                                <button onClick={() => handleLogsClick(role)} className="text-gray-600 hover:text-gray-900 transition-colors" title="View Logs">
-                                    <FileText size={18} />
-                                </button>
-                                {!showDeleted && (
-                                    <>
-                                        <button onClick={() => handleManagePermissionsClick(role)} className="text-green-600 hover:text-green-900 transition-colors" title="Manage Permissions">
-                                            <ShieldCheck size={18} />
-                                        </button>
-                                        <button onClick={() => handleViewUsersClick(role)} className="text-blue-600 hover:text-blue-900 transition-colors" title="View Users" disabled={!role.users || role.users.length === 0}>
-                                            <Users size={16} />
-                                        </button>
-                                        <button onClick={() => handleEditClick(role)} className="text-amber-600 hover:text-amber-900 transition-colors" title="Edit Role">
-                                            <Edit size={18} />
-                                        </button>
-                                    </>
-                                )}
-                                {!showDeleted && (
-                                    <button
-                                        onClick={() => handleDeleteClick(role)}
-                                        className={`text-red-600 hover:text-red-800 transition-colors ${actionLoading === role.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        title="Delete Role"
-                                        disabled={actionLoading === role.id}
-                                    >
-                                        <Trash2 size={18} />
+                            <td className="px-3 py-2">
+                                <div className="flex gap-1.5 justify-center">
+                                    <button onClick={() => handleLogsClick(role)} className="p-1 rounded text-gray-600 hover:bg-gray-100 border border-gray-300 hover:border-gray-400 transition-all" title="View Logs">
+                                        <FileText size={12} />
                                     </button>
-                                )}
-                                {showDeleted && (
-                                    <button
-                                        onClick={() => handleToggleDelete(role)}
-                                        className={`text-blue-600 hover:text-blue-800 transition-colors ${actionLoading === role.id ? 'opacity-50 cursor-not-allowed' : ''}`}
-                                        title="Restore Role"
-                                        disabled={actionLoading === role.id}
-                                    >
-                                        <RefreshCw size={18} />
-                                    </button>
-                                )}
+                                    {!showDeleted && (
+                                        <>
+                                            <button onClick={() => handleManagePermissionsClick(role)} className="p-1 rounded text-green-600 hover:bg-green-50 border border-green-300 hover:border-green-500 transition-all" title="Manage Permissions">
+                                                <ShieldCheck size={12} />
+                                            </button>
+                                            <button onClick={() => handleViewUsersClick(role)} className="p-1 rounded text-blue-600 hover:bg-blue-50 border border-blue-300 hover:border-blue-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed" title="View Users" disabled={!role.users || role.users.length === 0}>
+                                                <Users size={12} />
+                                            </button>
+                                            <button
+                                                onClick={() => handleEditClick(role)}
+                                                className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                                title={role.isSystem ? "System role — not editable" : "Edit Role"}
+                                                disabled={role.isSystem}
+                                            >
+                                                <Edit size={12} />
+                                            </button>
+                                        </>
+                                    )}
+                                    {!showDeleted && (
+                                        <button
+                                            onClick={() => handleDeleteClick(role)}
+                                            className="p-1 rounded text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                            title={role.isSystem ? "System role — not deletable" : "Delete Role"}
+                                            disabled={actionLoading === role.id || role.isSystem}
+                                        >
+                                            <Trash2 size={12} />
+                                        </button>
+                                    )}
+                                    {showDeleted && (
+                                        <button
+                                            onClick={() => handleToggleDelete(role)}
+                                            className="p-1 rounded text-blue-600 hover:bg-blue-50 border border-blue-300 hover:border-blue-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                            title="Restore Role"
+                                            disabled={actionLoading === role.id}
+                                        >
+                                            <RefreshCw size={12} />
+                                        </button>
+                                    )}
+                                </div>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
+
+                {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+                <TablePagination
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                    itemCount={roles.length}
+                    itemLabel="roles total"
+                />
             </div>
+
+            <style>{`
+                .compact-table {
+                  font-size: 10px;
+                }
+                .compact-table thead tr th {
+                  padding: 6px 12px;
+                  font-weight: 700;
+                  font-size: 9px;
+                  line-height: 1.2;
+                }
+                .compact-table tbody tr td {
+                  padding: 6px 12px;
+                  line-height: 1.3;
+                }
+            `}</style>
 
             {/* Edit Modal */}
             <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)}>

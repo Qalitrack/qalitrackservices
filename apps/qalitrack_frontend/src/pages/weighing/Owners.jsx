@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, UserPlus, Search, X, Car } from "lucide-react";
 import { message, Modal } from "antd";
+import TablePagination from "../../components/TablePagination";
 import {
   getOwners,
   createOwner,
@@ -119,10 +120,10 @@ export default function OwnersPortal() {
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
               <UserPlus className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -140,7 +141,7 @@ export default function OwnersPortal() {
               <input
                 type="text"
                 placeholder="Search owners..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -150,7 +151,7 @@ export default function OwnersPortal() {
                 setSearch("");
                 fetchOwners();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md border border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
             >
               Refresh
             </button>
@@ -171,7 +172,7 @@ export default function OwnersPortal() {
               onChange={handleChange}
               required
               placeholder="Owner name"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             />
           </div>
 
@@ -184,7 +185,7 @@ export default function OwnersPortal() {
               value={form.contactPerson}
               onChange={handleChange}
               placeholder="Contact person"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             />
           </div>
 
@@ -197,7 +198,7 @@ export default function OwnersPortal() {
               value={form.phoneNumber}
               onChange={handleChange}
               placeholder="+254 7XX XXX XXX"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             />
           </div>
 
@@ -210,7 +211,7 @@ export default function OwnersPortal() {
               value={form.email}
               onChange={handleChange}
               placeholder="email@example.com"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             />
           </div>
 
@@ -223,7 +224,7 @@ export default function OwnersPortal() {
               value={form.address}
               onChange={handleChange}
               placeholder="Full address"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             />
           </div>
 
@@ -235,7 +236,7 @@ export default function OwnersPortal() {
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
             >
               {Object.entries(OWNER_TYPES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
@@ -255,7 +256,7 @@ export default function OwnersPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1"
+              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all flex items-center gap-1"
             >
               <UserPlus className="w-3 h-3" />
               {editingOwner ? "Update" : "Add"} Owner
@@ -280,7 +281,7 @@ export default function OwnersPortal() {
           </div>
         ) : (
           <table className="w-full compact-table">
-            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
               <tr>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
@@ -295,7 +296,7 @@ export default function OwnersPortal() {
               {paginated.map((o, i) => (
                 <tr
                   key={o.id}
-                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
                     i % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
@@ -347,37 +348,16 @@ export default function OwnersPortal() {
             </tbody>
           </table>
         )}
-      </div>
 
-      {/* Footer with Pagination */}
-      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-        <span className="text-[10px] text-gray-600 font-medium">
-          Page <span className="font-semibold text-amber-600">{page}</span> of{" "}
-          <span className="font-semibold text-amber-600">{totalPages}</span>
-        </span>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Next
-          </button>
-        </div>
+        {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+        <TablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       {/* Vehicles Modal */}
       {vehiclesOwner && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-md border-2 border-amber-300">
-            <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2.5 rounded-t-lg flex items-center justify-between">
+            <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2.5 rounded-t-lg flex items-center justify-between">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Car className="w-4 h-4" /> Vehicles – {vehiclesOwner.name}
               </h3>

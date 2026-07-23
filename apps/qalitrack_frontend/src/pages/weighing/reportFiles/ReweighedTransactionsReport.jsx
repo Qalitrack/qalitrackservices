@@ -800,7 +800,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
     <div className="space-y-3">
 
       {/* ── FILTER BAR ──────────────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border border-amber-200 rounded-lg p-3">
+      <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20 border border-amber-200 rounded-lg p-3">
         <div className="flex justify-between items-center mb-2">
           <span className="text-[10px] font-bold text-gray-900 uppercase tracking-wide">
             Reweigh Transactions
@@ -971,7 +971,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                     </td>
                     <td className="p-2 text-[10px] font-medium">{t.driverName || "-"}</td>
                     <td className="p-2 text-[10px] text-gray-600">{t.commodityName || "-"}</td>
-                    <td className="p-2 text-right text-[10px] font-bold text-orange-600">
+                    <td className="p-2 text-right text-[10px] font-bold text-amber-600">
                       {t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}
                     </td>
                     <td className="p-2 text-right text-[10px] font-bold text-blue-600">
@@ -1080,7 +1080,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                           <td className="p-2 font-medium">{t.driverName || "-"}</td>
                           <td className="p-2 text-gray-600">{t.commodityName || "-"}</td>
                           <td className="p-2 text-gray-600 max-w-[140px] truncate">{row.requestRecord?.reason || t.reweighPermission || "-"}</td>
-                          <td className="p-2 text-right font-bold text-orange-600">{t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}</td>
+                          <td className="p-2 text-right font-bold text-amber-600">{t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}</td>
                           <td className="p-2 text-right font-bold text-blue-600">{t.secondWeight ? parseFloat(t.secondWeight).toLocaleString() : "-"}</td>
                           <td className="p-2 text-right font-bold text-amber-700">{t.netWeight ? parseFloat(t.netWeight).toLocaleString() : "-"}</td>
                           <td className="p-2 font-medium">{row.record?.performedBy || "-"}</td>
@@ -1115,7 +1115,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
           <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl">
 
             {/* Modal header */}
-            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 rounded-t-xl">
+            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 rounded-t-xl">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-black text-gray-900">Reweigh Details</h2>

@@ -283,7 +283,7 @@ export default function DriverReport({ transactions = [], loading }) {
     <div className="space-y-3">
       {/* FILTERS */}
       {!selectedDriver && (
-        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border border-amber-200 rounded-lg p-3">
+        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20 border border-amber-200 rounded-lg p-3">
           <div className="flex justify-between items-center mb-2">
             <span className="text-[10px] font-bold text-gray-900 uppercase tracking-wide">Filter Options</span>
             <Button 
@@ -422,7 +422,7 @@ export default function DriverReport({ transactions = [], loading }) {
       {/* DRIVER DETAIL PAGE */}
       {selectedDriver && (
         <>
-          <div className="flex items-center gap-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200 rounded-lg p-2">
+          <div className="flex items-center gap-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border border-amber-200 rounded-lg p-2">
             <button
               onClick={() => setSelectedDriver(null)}
               className="flex items-center gap-1 text-[10px] border border-amber-300 rounded px-2 py-1 hover:bg-amber-50 font-medium"

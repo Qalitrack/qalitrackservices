@@ -57,11 +57,11 @@ namespace UserService.Core.Services
             {
                 fallbackPolicy = new PasswordPolicy
                 {
-                    MinimumLength = 8,
-                    RequireUppercase = true,
-                    RequireLowercase = true,
-                    RequireDigit = true,
-                    RequireSpecialCharacter = true,
+                    MinimumLength = 6,
+                    RequireUppercase = false,
+                    RequireLowercase = false,
+                    RequireDigit = false,
+                    RequireSpecialCharacter = false,
                     MaxAgeDays = 90
                 };
             }

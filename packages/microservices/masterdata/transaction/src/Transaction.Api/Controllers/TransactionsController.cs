@@ -39,6 +39,25 @@ public class TransactionsController : BaseController
     }
 
     /// <summary>
+    /// Get aggregated dashboard stats (counts, net weight sums, top vehicles/commodities, weekly trend).
+    /// Computed server-side so the dashboard no longer has to pull the entire transaction table.
+    /// </summary>
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetStats()
+    {
+        try
+        {
+            var stats = await _transactionService.GetStatsAsync();
+            return Ok(stats);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting transaction stats");
+            return InternalServerError("An error occurred while retrieving transaction stats");
+        }
+    }
+
+    /// <summary>
     /// Get transaction by ID (TicketID)
     /// </summary>
     [HttpGet("{ticketId}")]

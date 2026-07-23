@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
 import DriverReport from "./reportFiles/DriverReport";
 import ReweighedTransactionsReport from "./reportFiles/ReweighedTransactionsReport";
@@ -13,7 +12,7 @@ import CustomReportBuilder from "./CustomReportBuilder";
 // import ReportScheduler from "./ReportScheduler"; // TODO: backend not implemented yet
 import CrossEntityComparison from "./CrossEntityComparison";
 
-import { fetchTransactions } from "../../store/weighingSlice";
+import { getTransactions } from "../../api/Transaction/Transaction.js";
 import {
   RotateCcw, FileDown, FileSpreadsheet, Filter, X,
   BarChart3, Settings, Calendar, GitCompare
@@ -26,8 +25,16 @@ import logoSrc from "../../assets/logo.jpeg";
 import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
 
 export default function Reports() {
-  const dispatch = useDispatch();
-  const { transactions, loading } = useSelector((state) => state.weighing);
+  // Reports.jsx fetches its own data independently instead of reading/writing
+  // the shared `weighing.transactions` Redux slice — that slice is also used
+  // by the Dashboard/Analytics/Transactions pages, and the Reweighed
+  // Transactions tab below needs the true, always-unfiltered transaction set
+  // regardless of whatever date/status filter is currently applied here, so
+  // sharing state with pages that filter/replace that slice risked corrupting
+  // it for everyone else.
+  const [allTransactions, setAllTransactions] = useState([]);
+  const [scopedTransactions, setScopedTransactions] = useState(null); // non-null once a server-side date/status filter is active
+  const [loading, setLoading] = useState(true);
 
   const REPORT_TABS = [
     { id: "transactions", label: "Transactions", icon: null },
@@ -65,9 +72,59 @@ export default function Reports() {
   const [showExportPreview, setShowExportPreview] = useState(false);
   const [exportType, setExportType] = useState(null);
 
+  const extractItems = (res) => res?.data?.items || res?.items || (Array.isArray(res?.data) ? res.data : []) || [];
+
+  // The true, always-unfiltered set — fetched once per page visit (this page
+  // has no 30-second poller, unlike Dashboard/Analytics, so a single bulk
+  // load here isn't a growing/recurring cost). Powers the Reweighed
+  // Transactions tab and is the fallback source everywhere else when no
+  // date/status filter is active.
   useEffect(() => {
-    dispatch(fetchTransactions({ pageSize: 10000 }));
-  }, [dispatch]);
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await getTransactions({ pageSize: 10000 });
+        if (!cancelled) setAllTransactions(extractItems(res));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // When the user picks a date range or status, ask the server for just that
+  // slice instead of re-filtering the already-fetched 10,000 rows in JS —
+  // this is the part that previously always operated on the full pull.
+  useEffect(() => {
+    const hasServerFilter = filters.startDate || filters.endDate || filters.status;
+    if (!hasServerFilter) {
+      setScopedTransactions(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const params = { pageSize: 10000 };
+        if (filters.startDate) params.startDate = `${filters.startDate}T${filters.startTime || "00:00"}`;
+        if (filters.endDate) params.endDate = `${filters.endDate}T${filters.endTime || "23:59"}`;
+        if (filters.status.toLowerCase() === "completed") params.isCompleted = true;
+        if (filters.status.toLowerCase() === "in progress") params.isCompleted = false;
+        const res = await getTransactions(params);
+        if (!cancelled) setScopedTransactions(extractItems(res));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [filters.startDate, filters.endDate, filters.startTime, filters.endTime, filters.status]);
+
+  // Server-scoped when a date/status filter is active, else the full set —
+  // date/status filtering itself now happens server-side; only free-text
+  // search (which the backend doesn't support as a single multi-field OR) is
+  // still applied client-side below.
+  const transactions = scopedTransactions ?? allTransactions;
 
   useEffect(() => {
     setCurrentPage(1);
@@ -102,31 +159,10 @@ export default function Reports() {
   const filteredTransactions = useMemo(() => {
     let data = [...transactions];
 
-    if (filters.startDate) {
-      const start = new Date(`${filters.startDate}T${filters.startTime || "00:00"}`);
-      data = data.filter((t) => new Date(t.createdAt) >= start);
-    }
-    if (filters.endDate) {
-      const end = new Date(`${filters.endDate}T${filters.endTime || "23:59"}`);
-      data = data.filter((t) => new Date(t.createdAt) <= end);
-    }
-    if (filters.status) {
-      if (filters.status.toLowerCase() === "completed") {
-        data = data.filter(
-          (t) =>
-            (t.secondWeight && parseFloat(t.secondWeight) > 0) ||
-            t.status === "Completed" ||
-            t.status === "completed"
-        );
-      } else if (filters.status.toLowerCase() === "in progress") {
-        data = data.filter(
-          (t) =>
-            (!t.secondWeight || parseFloat(t.secondWeight) === 0) &&
-            t.status !== "Completed" &&
-            t.status !== "completed"
-        );
-      }
-    }
+    // Date range and status are now applied server-side (see the fetch
+    // effects above) — `transactions` already reflects them when active.
+    // Only free-text search still needs a client-side pass, since the
+    // backend doesn't support a single multi-field OR search.
     if (filters.search) {
       const q = filters.search.toLowerCase();
       data = data.filter(
@@ -532,10 +568,11 @@ export default function Reports() {
     //   return <ReportScheduler transactions={filteredTransactions} />;
     // }
 
-    // REWEIGHED TRANSACTIONS REPORT — pass ALL unfiltered transactions so parent
-    // date/status filters don't accidentally exclude ReweighRequested records
+    // REWEIGHED TRANSACTIONS REPORT — pass the true unfiltered set so the
+    // date/status filters above (now applied server-side) can't accidentally
+    // exclude ReweighRequested records
     if (activeTab === "reweighed") {
-      return <ReweighedTransactionsReport transactions={transactions} loading={loading} />;
+      return <ReweighedTransactionsReport transactions={allTransactions} loading={loading} />;
     }
 
     // EXISTING REPORTS
@@ -562,7 +599,7 @@ export default function Reports() {
               {totals.count.toLocaleString()}
             </div>
           </div>
-          <div className="bg-gradient-to-br from-amber-100 to-orange-100 rounded-lg p-3 border border-amber-300 shadow-sm">
+          <div className="bg-gradient-to-br from-amber-100 to-amber-100 rounded-lg p-3 border border-amber-300 shadow-sm">
             <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
               Total Net Weight
             </div>
@@ -575,12 +612,12 @@ export default function Reports() {
             <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
               First Weight Total
             </div>
-            <div className="text-xl font-bold mt-1 text-orange-600">
+            <div className="text-xl font-bold mt-1 text-amber-600">
               {totals.first.toLocaleString()}
             </div>
             <div className="text-[10px] text-amber-700">kg</div>
           </div>
-          <div className="bg-gradient-to-br from-amber-100 to-orange-100 rounded-lg p-3 border border-amber-300 shadow-sm">
+          <div className="bg-gradient-to-br from-amber-100 to-amber-100 rounded-lg p-3 border border-amber-300 shadow-sm">
             <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
               Second Weight Total
             </div>
@@ -610,11 +647,11 @@ export default function Reports() {
   ].includes(activeTab);
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
+    <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
       {/* Header */}
       <div className="mb-4 px-4 sm:px-6 pt-4 sm:pt-6 shrink-0">
         <div className="flex items-center gap-2 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
             <svg
               className="w-6 h-6 text-white"
               fill="none"
@@ -646,7 +683,7 @@ export default function Reports() {
             onClick={() => setActiveTab(tab.id)}
             className={`relative px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all flex items-center gap-1.5 ${
               activeTab === tab.id
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border border-amber-500 shadow-sm"
+                ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-500 shadow-sm"
                 : "bg-white text-gray-700 hover:bg-amber-50 border border-gray-200"
             }`}
           >
@@ -667,7 +704,7 @@ export default function Reports() {
         {showFiltersPanel && (
         <div className="bg-white border border-amber-200 rounded-lg shadow-sm mb-4">
           {/* Filter bar header */}
-          <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between rounded-t-lg">
+          <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between rounded-t-lg">
             <div className="flex items-center gap-2">
               {/* Search — always visible */}
               <div className="relative">
@@ -728,7 +765,7 @@ export default function Reports() {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 h-7 px-3 rounded-md text-[11px] font-medium border transition-all ${
                   showFilters
-                    ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-500 shadow-sm"
+                    ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white border-amber-500 shadow-sm"
                     : "border-gray-300 text-gray-700 hover:border-amber-400 hover:text-amber-700"
                 }`}
               >
@@ -765,7 +802,7 @@ export default function Reports() {
 
           {/* Collapsible filter panel */}
           {showFilters && (
-            <div className="px-3 py-3 bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20">
+            <div className="px-3 py-3 bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {/* Start Date */}
                 <div className="space-y-1">
@@ -844,7 +881,7 @@ export default function Reports() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-7xl max-h-[90vh] flex flex-col shadow-2xl">
             {/* Modal Header */}
-            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50">
+            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold text-gray-900">
@@ -933,7 +970,7 @@ export default function Reports() {
                           <td className="p-2 font-medium text-gray-700">
                             {t.operatorName || t.firstWeightOperator || "-"}
                           </td>
-                          <td className="p-2 text-right font-bold text-orange-600">
+                          <td className="p-2 text-right font-bold text-amber-600">
                             {t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}
                           </td>
                           <td className="p-2 text-right font-bold text-green-600">
@@ -965,7 +1002,7 @@ export default function Reports() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 flex justify-end gap-2">
+            <div className="p-4 border-t bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 flex justify-end gap-2">
               <button
                 onClick={() => setShowExportPreview(false)}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-xs font-medium hover:bg-white transition-colors"
@@ -977,7 +1014,7 @@ export default function Reports() {
                   exportType === "pdf" ? exportPDF() : exportExcel();
                   setShowExportPreview(false);
                 }}
-                className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg text-xs font-semibold hover:from-amber-600 hover:to-orange-700 transition-all shadow-sm"
+                className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-lg text-xs font-semibold hover:from-amber-600 hover:to-amber-700 transition-all shadow-sm"
               >
                 Download {exportType?.toUpperCase()}
               </button>

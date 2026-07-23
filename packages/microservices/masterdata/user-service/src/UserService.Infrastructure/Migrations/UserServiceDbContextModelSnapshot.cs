@@ -23,6 +23,57 @@ namespace UserService.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("UserService.Core.Entities.AuditLog", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TIMESTAMPTZ");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<long>("DurationMs")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("IpAddress")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("BOOLEAN");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("QueryString")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusCode")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TIMESTAMPTZ");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditLogs", "users");
+                });
+
             modelBuilder.Entity("UserService.Core.Entities.PasswordPolicy", b =>
                 {
                     b.Property<string>("Id")
@@ -85,6 +136,9 @@ namespace UserService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BOOLEAN")
                         .HasDefaultValue(false);
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("BOOLEAN");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -174,6 +228,9 @@ namespace UserService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("BOOLEAN")
                         .HasDefaultValue(false);
+
+                    b.Property<bool>("IsSystem")
+                        .HasColumnType("BOOLEAN");
 
                     b.Property<string>("Name")
                         .IsRequired()

@@ -22,9 +22,7 @@ const System             = lazy(() => import("../pages/weighing/System.jsx"));
 const Vehicle            = lazy(() => import("../components/weighing/Vehicles.jsx"));
 const Drivers            = lazy(() => import("../components/weighing/Drivers.jsx"));
 const AdminDashboard     = lazy(() => import("../pages/Userservice/AdminDashboard.jsx"));
-const PasswordPolicy     = lazy(() => import("../pages/Userservice/PasswordPolicy.jsx"));
-const Permissions        = lazy(() => import("../pages/Userservice/Permissions.jsx"));
-const Roles              = lazy(() => import("../pages/Userservice/Roles.jsx"));
+const Security           = lazy(() => import("../pages/Userservice/Security.jsx"));
 const Shifts             = lazy(() => import("../pages/Userservice/Shifts.jsx"));
 const ShiftAssignment    = lazy(() => import("../pages/Userservice/ShiftAssignment.jsx"));
 const Attendance         = lazy(() => import("../pages/Userservice/Attendance.jsx"));
@@ -113,9 +111,6 @@ export const routes = [
                     { path: "weighing/drivers",       element: <Drivers /> },
                     { path: "automation",             element: <Automation /> },
                     { path: "calibrations",           element: <Calibrations /> },
-                    { path: "analytics",              element: <FeatureLicenseGate feature={LicenseFeatures.ANALYTICS}><Analytics /></FeatureLicenseGate> },
-                    { path: "reports",                element: <FeatureLicenseGate feature={LicenseFeatures.REPORTS}><Reports /></FeatureLicenseGate> },
-                    { path: "system",                 element: <System /> },
                     { path: "transporters",           element: <Transporters /> },
                     { path: "weighing/axle-config",   element: <AxleConfigs /> },
                     { path: "weighing/owners",        element: <Owners /> },
@@ -125,6 +120,33 @@ export const routes = [
                     { path: "weighbridges",           element: <WeighbridgesPortal /> },
                     { path: "routes",                 element: <Routes /> },
                     { path: "profile",                element: <Profile /> },
+
+                    // Reporting — everyone except Operator (not master data)
+                    {
+                        element: <ProtectedRoute allowedRoles={["Admin", "Manager", "Supervisor"]} />,
+                        children: [
+                            { path: "analytics", element: <FeatureLicenseGate feature={LicenseFeatures.ANALYTICS}><Analytics /></FeatureLicenseGate> },
+                            { path: "reports",   element: <FeatureLicenseGate feature={LicenseFeatures.REPORTS}><Reports /></FeatureLicenseGate> },
+                            { path: "shifts",            element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><Shifts /></FeatureLicenseGate> },
+                            { path: "shift-assignment",  element: <ShiftAssignment /> },
+                        ],
+                    },
+
+                    // Staff administration — Supervisor and Admin only
+                    {
+                        element: <ProtectedRoute allowedRoles={["Admin", "Supervisor"]} />,
+                        children: [
+                            { path: "user-management", element: <FeatureLicenseGate feature={LicenseFeatures.USER_MANAGEMENT}><UserManagement /></FeatureLicenseGate> },
+                        ],
+                    },
+
+                    // System settings — the dangerous lever, Admin only
+                    {
+                        element: <ProtectedRoute allowedRoles={["Admin"]} />,
+                        children: [
+                            { path: "system", element: <System /> },
+                        ],
+                    },
                 ]
             }
         ]
@@ -162,9 +184,8 @@ export const routes = [
                     { path: "routes",                   element: <Routes /> },
                     // admin-only
                     { path: "user-management",          element: <FeatureLicenseGate feature={LicenseFeatures.USER_MANAGEMENT}><UserManagement /></FeatureLicenseGate> },
-                    { path: "security/password-policy", element: <PasswordPolicy /> },
-                    { path: "security/permissions",     element: <Permissions /> },
-                    { path: "security/roles",           element: <Roles /> },
+                    { path: "security",                 element: <Security /> },
+                    { path: "security/:tab",             element: <Security /> },
                     { path: "shifts",                   element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><Shifts /></FeatureLicenseGate> },
                     { path: "attendance",               element: <Attendance /> },
                     { path: "shift-assignment",         element: <ShiftAssignment /> },

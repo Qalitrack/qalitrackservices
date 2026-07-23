@@ -28,6 +28,7 @@ public class UserServiceDbContext : DbContext
     public DbSet<PasswordPolicy> PasswordPolicies { get; set; } = null!;
     public DbSet<ShiftInstance> ShiftInstances { get; set; } = null!;
     public DbSet<ShiftAttendance> ShiftAttendances { get; set; } = null!;
+    public DbSet<AuditLog> AuditLogs { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

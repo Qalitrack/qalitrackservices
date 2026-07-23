@@ -32,6 +32,11 @@ public class TransactionService(
         };
     }
 
+    public async Task<TransactionStatsDto> GetStatsAsync()
+    {
+        return await _transactionRepository.GetStatsAsync();
+    }
+
     public async Task<TransactionReadDto?> GetByIdAsync(string ticketId)
     {
         var transaction = await _transactionRepository.GetByIdAsync(ticketId);

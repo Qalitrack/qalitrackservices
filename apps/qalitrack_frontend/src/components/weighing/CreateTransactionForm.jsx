@@ -4,8 +4,8 @@
 
 import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Input, Select, AutoComplete, Button, message, Row, Col, Typography, Space, Alert, Modal } from "antd";
-import { Scale } from "lucide-react";
+import { Input, Select, AutoComplete, Button, message, Row, Col, Typography, Space, Alert, Modal, Tooltip } from "antd";
+import { Scale, Info } from "lucide-react";
 import dayjs from "dayjs";
 import {
   fetchWeighbridges,
@@ -68,6 +68,13 @@ export default function CreateTransactionForm({
   const [manualPlate, setManualPlate] = useState(false);
   const [existingTicket, setExistingTicket] = useState(null);
 
+  // Tracks which fields were filled from a past transaction (a guess, since a
+  // vehicle's route/cargo can change trip-to-trip) rather than master data (which
+  // is authoritative) — drives the "suggested — verify" tag so operators don't
+  // mistake a guess for a confirmed value. Cleared per-field the moment the
+  // operator edits that field themselves.
+  const [suggestedFields, setSuggestedFields] = useState({});
+
   useEffect(() => {
     if (weighbridges.length === 0) {
       dispatch(fetchWeighbridges({ pageNumber: 1, pageSize: 100 }));
@@ -122,6 +129,10 @@ export default function CreateTransactionForm({
   const handleChange = (field, value) =>
     setFormData((prev) => ({ ...prev, [field]: value }));
 
+  // Once the operator edits a suggested field themselves, it's no longer just a guess.
+  const clearSuggested = (field) =>
+    setSuggestedFields((prev) => (prev[field] ? { ...prev, [field]: false } : prev));
+
   const handleSelect = (list, id, idKey, nameKey) => {
     const item = list.find((i) => i.id === id);
     setFormData((p) => ({
@@ -160,9 +171,53 @@ export default function CreateTransactionForm({
     }
   }, [dispatch]);
 
+  // Suggests transporter/supplier/commodity/customer/origin/destination from this
+  // vehicle's (or driver's) most recent trip — master data is always tried first;
+  // this only fills in whatever master data left blank, and never overwrites a
+  // value master data already supplied.
+  const applyRecentTransactionDefaults = useCallback(async ({ plate, driverName } = {}) => {
+    const filter = plate?.trim()
+      ? { noPlate: plate.trim().toUpperCase() }
+      : driverName?.trim()
+      ? { driverName: driverName.trim() }
+      : null;
+    if (!filter) return;
+
+    try {
+      const result = await dispatch(
+        fetchTransactions({ ...filter, pageNumber: 1, pageSize: 1 })
+      ).unwrap();
+      const recent = result?.items?.[0];
+      if (!recent) return;
+
+      const filled = [];
+      setFormData((prev) => {
+        const next = { ...prev };
+        if (!prev.transporterName && recent.transporterName) { next.transporterName = recent.transporterName; next.transporterID = recent.transporterID || null; filled.push("transporterName"); }
+        if (!prev.supplierName && recent.supplierName) { next.supplierName = recent.supplierName; next.supplierID = recent.supplierID || null; filled.push("supplierName"); }
+        if (!prev.commodityName && recent.commodityName) { next.commodityName = recent.commodityName; next.commodityID = recent.commodityID || null; filled.push("commodityName"); }
+        if (!prev.customerName && recent.customerName) { next.customerName = recent.customerName; next.customerID = recent.customerID || null; filled.push("customerName"); }
+        if (!prev.originName && recent.originName) { next.originName = recent.originName; next.originID = recent.originID || null; filled.push("originName"); }
+        if (!prev.destinationName && recent.destinationName) { next.destinationName = recent.destinationName; next.destinationID = recent.destinationID || null; filled.push("destinationName"); }
+        return next;
+      });
+
+      if (filled.length > 0) {
+        setSuggestedFields((prev) => {
+          const next = { ...prev };
+          filled.forEach((f) => { next[f] = true; });
+          return next;
+        });
+      }
+    } catch (_) {
+      // advisory only — a failed lookup shouldn't block the operator
+    }
+  }, [dispatch, setFormData, setSuggestedFields]);
+
   // Autofills transporter/driver/supplier from the vehicle's master record
   // when an existing vehicle is picked from the plate AutoComplete.
   const handleVehicleSelect = useCallback((val, opt) => {
+    setSuggestedFields({}); // a new vehicle invalidates any previous trip-history suggestions
     const vehicle = vehicles.find((v) => v.id === opt.id);
     // driverIds/driverNames/transporterName/supplierName are never populated by
     // the backend (dead DTO fields) — resolve every name from the already-loaded
@@ -187,11 +242,13 @@ export default function CreateTransactionForm({
         : {}),
     }));
     checkIncompleteForVehicle(opt.id, val);
-  }, [vehicles, drivers, transporters, suppliers, setFormData, checkIncompleteForVehicle]);
+    if (!isSecondWeighing) applyRecentTransactionDefaults({ plate: val });
+  }, [vehicles, drivers, transporters, suppliers, setFormData, setSuggestedFields, checkIncompleteForVehicle, applyRecentTransactionDefaults, isSecondWeighing]);
 
   // Reverse of the above: autofills transporter/supplier/vehicle from the
   // driver's master record when the operator picks a driver first instead.
   const handleDriverSelect = useCallback((val, opt) => {
+    setSuggestedFields({}); // a new driver invalidates any previous trip-history suggestions
     const driver = drivers.find((d) => d.id === opt.id);
     const linkedVehicleId = driver?.assignedVehicleIds?.[0];
     const linkedVehicle = linkedVehicleId ? vehicles.find((v) => v.id === linkedVehicleId) : null;
@@ -216,10 +273,15 @@ export default function CreateTransactionForm({
         : {}),
     }));
 
+    const linkedPlate = linkedVehicle?.registrationNumber || linkedVehicle?.plateNumber;
     if (linkedVehicle) {
-      checkIncompleteForVehicle(linkedVehicle.id, linkedVehicle.registrationNumber || linkedVehicle.plateNumber);
+      checkIncompleteForVehicle(linkedVehicle.id, linkedPlate);
     }
-  }, [drivers, vehicles, transporters, suppliers, setFormData, checkIncompleteForVehicle]);
+    // Master data covered transporter/supplier/vehicle above where present; whatever
+    // it left blank (including when this driver has no assigned vehicle at all) falls
+    // back to this driver's (or their vehicle's) most recent transaction.
+    if (!isSecondWeighing) applyRecentTransactionDefaults({ plate: linkedPlate, driverName: val });
+  }, [drivers, vehicles, transporters, suppliers, setFormData, setSuggestedFields, checkIncompleteForVehicle, applyRecentTransactionDefaults, isSecondWeighing]);
 
   const validateForm = useCallback(() => {
     const errors = [];
@@ -347,6 +409,7 @@ export default function CreateTransactionForm({
       })();
       message.success({ content: `✓ Transaction Completed! Net: ${finalNet.toLocaleString()} KG`, duration: 5 });
       await dispatch(fetchTransactions({ isCompleted: false, pageNumber: 1, pageSize: 100 }));
+      setSuggestedFields({});
       if (onTransactionCreated) onTransactionCreated();
     } catch (err) {
       let errMsg = "Failed to save transaction";
@@ -442,7 +505,8 @@ export default function CreateTransactionForm({
         const result = await dispatch(addTransaction(payload)).unwrap();
         message.success("✓ First Weight Saved!");
         await dispatch(fetchTransactions({ isCompleted: false, pageNumber: 1, pageSize: 100 }));
-        if (onTransactionCreated) onTransactionCreated();
+        setSuggestedFields({});
+      if (onTransactionCreated) onTransactionCreated();
       } else {
         // SECOND WEIGHING
         if (!isValid) {
@@ -475,7 +539,8 @@ export default function CreateTransactionForm({
 
         await dispatch(fetchTransactions({ isCompleted: false, pageNumber: 1, pageSize: 100 }));
 
-        if (onTransactionCreated) onTransactionCreated();
+        setSuggestedFields({});
+      if (onTransactionCreated) onTransactionCreated();
       }
     } catch (err) {
       let errorMsg = "Failed to save transaction";
@@ -489,9 +554,14 @@ export default function CreateTransactionForm({
     }
   };
 
-  const FieldLabel = ({ children, required }) => (
-    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-tight block mb-0.5">
-      {children} {required && <span className="text-red-500">*</span>}
+  const FieldLabel = ({ children, required, suggested }) => (
+    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-tight mb-0.5 flex items-center gap-1 truncate">
+      <span className="truncate">{children} {required && <span className="text-red-500">*</span>}</span>
+      {suggested && (
+        <Tooltip title="Filled from this vehicle's last trip, not confirmed — please verify">
+          <Info size={11} className="text-amber-500 shrink-0 cursor-help" />
+        </Tooltip>
+      )}
     </label>
   );
 
@@ -690,7 +760,12 @@ export default function CreateTransactionForm({
                   setExistingTicket(null);
                   setFormData((prev) => ({ ...prev, noPlate: e.target.value.toUpperCase(), vehicleID: null }));
                 }}
-                onBlur={() => { if (!isSecondWeighing && formData.noPlate?.trim()) checkIncompleteForVehicle(null, formData.noPlate); }}
+                onBlur={() => {
+                  if (!isSecondWeighing && formData.noPlate?.trim()) {
+                    checkIncompleteForVehicle(null, formData.noPlate);
+                    applyRecentTransactionDefaults({ plate: formData.noPlate });
+                  }
+                }}
                 disabled={isSecondWeighing}
                 placeholder="Type plate number"
               />
@@ -743,14 +818,14 @@ export default function CreateTransactionForm({
 
           {/* Commodity */}
           <Col span={12}>
-            <FieldLabel>Commodity</FieldLabel>
+            <FieldLabel suggested={suggestedFields.commodityName}>Commodity</FieldLabel>
             <AutoComplete
               size="middle"
               className="w-full"
               value={formData.commodityName}
               options={filterOptions(products, formData.commodityName, (it) => it.name || "")}
-              onChange={(val) => setFormData((prev) => ({ ...prev, commodityName: val, commodityID: null }))}
-              onSelect={(val, opt) => setFormData((prev) => ({ ...prev, commodityName: val, commodityID: opt.id }))}
+              onChange={(val) => { clearSuggested("commodityName"); setFormData((prev) => ({ ...prev, commodityName: val, commodityID: null })); }}
+              onSelect={(val, opt) => { clearSuggested("commodityName"); setFormData((prev) => ({ ...prev, commodityName: val, commodityID: opt.id })); }}
               disabled={isSecondWeighing}
               placeholder="Type or search commodity"
             />
@@ -773,11 +848,11 @@ export default function CreateTransactionForm({
 
           {/* Customer */}
           <Col span={12}>
-            <FieldLabel>Customer Name</FieldLabel>
+            <FieldLabel suggested={suggestedFields.customerName}>Customer Name</FieldLabel>
             <Input
               size="middle"
               value={formData.customerName}
-              onChange={(e) => handleChange("customerName", e.target.value)}
+              onChange={(e) => { clearSuggested("customerName"); handleChange("customerName", e.target.value); }}
               disabled={isSecondWeighing}
               placeholder="Enter customer"
             />
@@ -785,22 +860,22 @@ export default function CreateTransactionForm({
 
           {/* Origin + Destination - smaller */}
           <Col span={6}>
-            <FieldLabel>Origin</FieldLabel>
+            <FieldLabel suggested={suggestedFields.originName}>Origin</FieldLabel>
             <Input
               size="middle"
               value={formData.originName}
-              onChange={(e) => handleChange("originName", e.target.value)}
+              onChange={(e) => { clearSuggested("originName"); handleChange("originName", e.target.value); }}
               disabled={isSecondWeighing}
               placeholder="Origin"
             />
           </Col>
 
           <Col span={6}>
-            <FieldLabel>Destination</FieldLabel>
+            <FieldLabel suggested={suggestedFields.destinationName}>Destination</FieldLabel>
             <Input
               size="middle"
               value={formData.destinationName}
-              onChange={(e) => handleChange("destinationName", e.target.value)}
+              onChange={(e) => { clearSuggested("destinationName"); handleChange("destinationName", e.target.value); }}
               disabled={isSecondWeighing}
               placeholder="Destination"
             />
@@ -869,7 +944,7 @@ export default function CreateTransactionForm({
       width={720}
       title={
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
             <span className="text-white text-xs font-bold">📋</span>
           </div>
           <span className="text-sm font-bold text-gray-900">
@@ -898,7 +973,7 @@ export default function CreateTransactionForm({
       {showFinalizePreview && (
         <div className="space-y-3 text-xs max-h-[70vh] overflow-y-auto pr-1">
           {/* Net Weight Banner */}
-          <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-lg p-3 text-center shadow-md">
+          <div className="bg-gradient-to-r from-amber-400 to-amber-500 rounded-lg p-3 text-center shadow-md">
             <div className="text-white text-[10px] font-bold uppercase tracking-wider mb-1">Net Payload</div>
             <div className="text-white text-3xl font-black font-mono">
               {previewNetWeight.toLocaleString()} <small className="text-base font-normal">KG</small>
@@ -909,7 +984,7 @@ export default function CreateTransactionForm({
           </div>
 
           {/* Basic Info */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border-2 border-amber-200">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-50 rounded-lg p-3 border-2 border-amber-200">
             <div className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wide mb-2">📋 Basic Information</div>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -938,7 +1013,7 @@ export default function CreateTransactionForm({
           </div>
 
           {/* Parties */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border-2 border-amber-200">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-50 rounded-lg p-3 border-2 border-amber-200">
             <div className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wide mb-2">🏢 Parties</div>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -961,7 +1036,7 @@ export default function CreateTransactionForm({
           </div>
 
           {/* Locations */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border-2 border-amber-200">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-50 rounded-lg p-3 border-2 border-amber-200">
             <div className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wide mb-2">📍 Locations</div>
             <div className="grid grid-cols-2 gap-2">
               {[
@@ -983,12 +1058,12 @@ export default function CreateTransactionForm({
           </div>
 
           {/* Weight Summary */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border-2 border-amber-200">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-50 rounded-lg p-3 border-2 border-amber-200">
             <div className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wide mb-2">⚖️ Weight Summary</div>
             <div className="grid grid-cols-3 gap-2">
               <div className="bg-white rounded-lg p-2.5 border-2 border-amber-200 text-center">
                 <div className="text-[9px] text-amber-700 font-bold uppercase mb-1">1st Weight</div>
-                <div className="text-lg font-extrabold text-orange-600">{previewEditData.firstWeight || 0}</div>
+                <div className="text-lg font-extrabold text-amber-600">{previewEditData.firstWeight || 0}</div>
                 <div className="text-[9px] text-gray-500">KG (locked)</div>
               </div>
               <div className="bg-white rounded-lg p-2.5 border-2 border-amber-400 text-center">
@@ -1002,7 +1077,7 @@ export default function CreateTransactionForm({
                 />
                 <div className="text-[9px] text-gray-500 mt-1">KG</div>
               </div>
-              <div className="bg-gradient-to-br from-amber-200 to-orange-300 rounded-lg p-2.5 border-2 border-amber-500 text-center">
+              <div className="bg-gradient-to-br from-amber-200 to-amber-300 rounded-lg p-2.5 border-2 border-amber-500 text-center">
                 <div className="text-[9px] text-amber-900 font-extrabold uppercase mb-1">Net Weight</div>
                 <div className="text-lg font-black text-amber-950">{previewNetWeight.toLocaleString()}</div>
                 <div className="text-[9px] text-amber-800 font-bold">KG</div>
@@ -1011,7 +1086,7 @@ export default function CreateTransactionForm({
           </div>
 
           {/* Notes */}
-          <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg p-3 border-2 border-amber-200">
+          <div className="bg-gradient-to-br from-amber-50 to-amber-50 rounded-lg p-3 border-2 border-amber-200">
             <div className="text-[10px] font-extrabold text-amber-800 uppercase tracking-wide mb-2">📝 Notes / Remarks</div>
             <Input.TextArea
               rows={2}

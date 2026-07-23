@@ -453,7 +453,7 @@ function StatCard({ label, value, color = "amber" }) {
     blue: "bg-blue-50 border-blue-200",
     green: "bg-green-50 border-green-200",
     purple: "bg-purple-50 border-purple-200",
-    orange: "bg-orange-50 border-orange-200",
+    orange: "bg-amber-50 border-amber-200",
   };
 
   return (

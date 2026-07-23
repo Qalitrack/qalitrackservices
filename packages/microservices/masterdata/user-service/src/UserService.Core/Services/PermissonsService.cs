@@ -62,6 +62,9 @@ public class PermissionsService(
             if (existingPermission == null)
                 return null;
 
+            if (existingPermission.IsSystem)
+                throw new InvalidOperationException("System permissions cannot be modified.");
+
             // 2. Check if name is being changed and if new name exists
             if (!string.Equals(existingPermission.Name, dto.Name, StringComparison.OrdinalIgnoreCase))
             {
@@ -103,6 +106,11 @@ public class PermissionsService(
         if (permission == null)
         {
             return false;
+        }
+
+        if (permission.IsSystem)
+        {
+            throw new InvalidOperationException("System permissions cannot be deleted.");
         }
 
         // Check if permission is assigned to any active roles

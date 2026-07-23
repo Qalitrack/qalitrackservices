@@ -326,7 +326,7 @@ export default function ReweighModal({ visible, transaction, onClose, onSuccess,
                     <div className="grid grid-cols-3 gap-1.5">
                       {[
                         { value: "secondWeight", label: "2nd Weight", desc: "Redo W2 only", color: "text-blue-600" },
-                        { value: "firstWeight",  label: "1st Weight", desc: "Redo full process", color: "text-orange-600" },
+                        { value: "firstWeight",  label: "1st Weight", desc: "Redo full process", color: "text-amber-600" },
                         { value: "all",          label: "All Weights", desc: "Restart from W1", color: "text-red-600" },
                       ].map(({ value, label, desc, color }) => (
                         <label

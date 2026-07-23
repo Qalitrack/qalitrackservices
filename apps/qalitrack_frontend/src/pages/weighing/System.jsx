@@ -366,12 +366,12 @@ export default function SystemSettings() {
         className={`px-6 py-4 border-b shrink-0 ${
           isDark
             ? "bg-gray-800 border-gray-700"
-            : "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200"
+            : "bg-gradient-to-r from-amber-50 to-amber-50 border-amber-200"
         }`}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg">
               <Settings className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -399,7 +399,7 @@ export default function SystemSettings() {
               loading={saving}
               disabled={loading}
               icon={<Save className="w-4 h-4" />}
-              className="bg-gradient-to-r from-amber-500 to-orange-600 border-0 shadow-md"
+              className="bg-gradient-to-r from-amber-500 to-amber-600 border-0 shadow-md"
             >
               Save Settings
             </Button>
@@ -1080,7 +1080,7 @@ function InfoRow({ label, value, badge }) {
         {badge && (
           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full
             ${badge.color === "green"  ? "bg-green-100 text-green-700"  : ""}
-            ${badge.color === "orange" ? "bg-orange-100 text-orange-700" : ""}
+            ${badge.color === "orange" ? "bg-amber-100 text-amber-700" : ""}
             ${badge.color === "red"    ? "bg-red-100 text-red-700"      : ""}
           `}>
             {badge.text}
@@ -1132,7 +1132,7 @@ const borderColorMap = {
   green: "border-green-200",
   purple: "border-purple-200",
   blue: "border-blue-200",
-  orange: "border-orange-200",
+  orange: "border-amber-200",
   indigo: "border-indigo-200",
 };
 

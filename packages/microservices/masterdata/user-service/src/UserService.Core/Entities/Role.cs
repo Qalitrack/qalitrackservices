@@ -15,6 +15,11 @@ namespace UserService.Core.Entities
         [Required]
         public bool IsActive { get; set; } = true;
 
+        // Seeded system roles (e.g. Admin) are referenced by name in [Authorize] attributes
+        // across the backend — renaming/deleting them would silently break authorization.
+        [Required]
+        public bool IsSystem { get; set; } = false;
+
         // Navigation properties
         public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
         public virtual ICollection<RolePermission> RolePermissions { get; set; } = new List<RolePermission>();

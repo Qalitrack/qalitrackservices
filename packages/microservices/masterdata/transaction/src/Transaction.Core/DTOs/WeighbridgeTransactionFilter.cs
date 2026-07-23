@@ -24,6 +24,7 @@ public class WeighbridgeTransactionFilter
     public string? WeighBridgeID { get; set; }
     public string? OperatorID { get; set; }
     public string? Status { get; set; }
+    public bool? IsCompleted { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public string? WeighMode { get; set; }

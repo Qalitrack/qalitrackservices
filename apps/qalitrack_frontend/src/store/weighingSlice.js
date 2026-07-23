@@ -479,13 +479,24 @@ export const fetchTransactions = createAsyncThunk(
                 }
                 items = [];
             }
-            
-            
+
+
             // Log first transaction for debugging
             if (items.length > 0) {
             }
-            
-            return items;
+
+            // ✅ Real server-side total record count, not just this page's length —
+            // the Transactions table pagination relies on this to compute page count.
+            const totalCount =
+                response?.data?.data?.totalCount ??
+                response?.data?.totalCount ??
+                response?.totalCount ??
+                response?.data?.data?.totalItems ??
+                response?.data?.totalItems ??
+                response?.totalItems ??
+                items.length;
+
+            return { items, totalCount };
         } catch (error) {
             return rejectWithValue(error.message || "Failed to load transactions");
         }
@@ -772,6 +783,7 @@ const initialState = {
     weighbridges: [],
     transporters: [],
     transactions: [],
+    total: 0,
     incompleteTransactions: [],
     reweighRecords: [],
     
@@ -958,7 +970,8 @@ const weighingSlice = createSlice({
             .addCase(fetchTransactions.pending, pending)
             .addCase(fetchTransactions.fulfilled, (state, action) => {
                 state.loading = false;
-                state.transactions = action.payload;
+                state.transactions = action.payload.items;
+                state.total = action.payload.totalCount;
             })
             .addCase(fetchTransactions.rejected, rejected)
 

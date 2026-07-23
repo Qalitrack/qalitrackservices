@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../../store/weighingSlice";
 import dayjs from "dayjs";
@@ -44,18 +44,37 @@ export default function Analytics() {
   const [selectedDriver, setSelectedDriver] = useState("all");
   const [alertsOnly, setAlertsOnly] = useState(false);
 
+  // This used to unconditionally pull { pageSize: 10000 } — the entire
+  // transaction table — every 30 seconds regardless of which time range was
+  // selected, so the payload only grows as more tickets are recorded. Instead,
+  // fetch a window sized to what the view actually needs: the selected range
+  // plus the corresponding "previous period" used below for growth comparisons.
+  const getFetchRange = useCallback((range) => {
+    const now = dayjs();
+    switch (range) {
+      case "week":
+        return { start: now.subtract(14, "day").startOf("day"), end: now.endOf("day") };
+      case "month":
+        return { start: now.subtract(60, "day").startOf("day"), end: now.endOf("day") };
+      case "today":
+      case "yesterday":
+      default:
+        return { start: now.subtract(2, "day").startOf("day"), end: now.endOf("day") };
+    }
+  }, []);
+
+  const loadTransactions = useCallback(() => {
+    const { start, end } = getFetchRange(timeRange);
+    dispatch(fetchTransactions({ startDate: start.toISOString(), endDate: end.toISOString(), pageSize: 10000 }));
+    setLastUpdated(dayjs());
+  }, [dispatch, timeRange, getFetchRange]);
+
   // Auto-refresh every 30 seconds
   useEffect(() => {
-    dispatch(fetchTransactions({ pageSize: 10000 }));
-    setLastUpdated(dayjs());
-
-    const interval = setInterval(() => {
-      dispatch(fetchTransactions({ pageSize: 10000 }));
-      setLastUpdated(dayjs());
-    }, 30000);
-
+    loadTransactions();
+    const interval = setInterval(loadTransactions, 30000);
     return () => clearInterval(interval);
-  }, [dispatch]);
+  }, [loadTransactions]);
 
   // NEW: Filtered transactions based on time range and filters
   const filteredTransactions = useMemo(() => {
@@ -431,7 +450,7 @@ export default function Analytics() {
   ].filter(Boolean).length;
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
+    <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
 
       {/* HEADER */}
       <div className="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0">
@@ -453,10 +472,7 @@ export default function Analytics() {
               <div className="text-xs font-bold text-amber-700">{lastUpdated.fromNow()}</div>
             </div>
             <button
-              onClick={() => {
-                dispatch(fetchTransactions({ pageSize: 10000 }));
-                setLastUpdated(dayjs());
-              }}
+              onClick={loadTransactions}
               disabled={loading}
               className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-xs font-semibold text-amber-900 transition-all disabled:opacity-50"
             >

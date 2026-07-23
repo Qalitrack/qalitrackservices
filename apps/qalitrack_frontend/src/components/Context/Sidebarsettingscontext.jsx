@@ -25,25 +25,27 @@ export const SIDEBAR_THEMES = {
     activeBg: "rgba(245,158,11,0.13)",
     border: "rgba(245,158,11,0.10)",
   },
-  blue: {
-    name: "Blue",
-    description: "Dark navy with blue accents",
+  midnight: {
+    // Same amber/gold accent as the default theme — only the sidebar's dark
+    // base shifts from near-black to navy. A mood variant, not a hue change.
+    name: "Midnight",
+    description: "Deep navy with warm gold accents",
     bg: "#0f172a",
     text: "#e2e8f0",
-    accent: "#3b82f6",
-    hoverBg: "rgba(59,130,246,0.08)",
-    activeBg: "rgba(59,130,246,0.13)",
-    border: "rgba(59,130,246,0.10)",
+    accent: "#f59e0b",
+    hoverBg: "rgba(245,158,11,0.08)",
+    activeBg: "rgba(245,158,11,0.13)",
+    border: "rgba(245,158,11,0.10)",
   },
-  green: {
-    name: "Green",
-    description: "Dark with emerald green accents",
-    bg: "#0d1f17",
-    text: "#d1fae5",
-    accent: "#22c55e",
-    hoverBg: "rgba(34,197,94,0.08)",
-    activeBg: "rgba(34,197,94,0.13)",
-    border: "rgba(34,197,94,0.10)",
+  emerald: {
+    name: "Emerald",
+    description: "Dark with refined emerald accents",
+    bg: "#0d1f1a",
+    text: "#ffffff",
+    accent: "#10b981",
+    hoverBg: "rgba(16,185,129,0.08)",
+    activeBg: "rgba(16,185,129,0.13)",
+    border: "rgba(16,185,129,0.10)",
   },
 };
 

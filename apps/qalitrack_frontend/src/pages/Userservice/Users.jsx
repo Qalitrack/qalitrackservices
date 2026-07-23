@@ -10,6 +10,7 @@ import { format, parseISO, formatDistanceToNow } from 'date-fns';
 import dayjs from 'dayjs';
 import logoSrc from '../../assets/logo.jpeg';
 import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
+import TablePagination from '../../components/TablePagination';
 
 const Modal = ({ children, isOpen, onClose, size = "md" }) => {
     if (!isOpen) return null;
@@ -47,17 +48,23 @@ const Users = () => {
     const [error, setError] = useState(null);
     const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: '' });
     const [showDeleted, setShowDeleted] = useState(false);
-    const [isEditModalOpen, setEditModalOpen] = useState(false);
-    const [isAddModalOpen, setAddModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
-    const [newUser, setNewUser] = useState({
+    const [editingUser, setEditingUser] = useState(null);
+    const [editingUserOriginalRoleId, setEditingUserOriginalRoleId] = useState('');
+    const [form, setForm] = useState({
         firstName: '',
         lastName: '',
         mobileNumber: '',
-        email: ''
+        email: '',
+        roleId: '',
+        password: '',
+        twoFactorEnabled: true
     });
     const [isUpdating, setIsUpdating] = useState(false);
     const [modalFeedback, setModalFeedback] = useState({ text: '', type: '' });
+    // Shown after create/reset so the admin can relay it out-of-band (phone/SMS)
+    // when the welcome/reset email doesn't reach a user in a remote area.
+    const [temporaryPassword, setTemporaryPassword] = useState('');
     const [isLogsModalOpen, setLogsModalOpen] = useState(false);
     const [isResetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
     const [userDetails, setUserDetails] = useState({});
@@ -156,15 +163,20 @@ const Users = () => {
         }
     };
 
-    const handleAddUserClick = () => {
-        setNewUser({
+    const resetForm = () => {
+        setForm({
             firstName: '',
             lastName: '',
             mobileNumber: '',
-            email: ''
+            email: '',
+            roleId: '',
+            password: '',
+            twoFactorEnabled: true
         });
+        setEditingUser(null);
+        setEditingUserOriginalRoleId('');
         setModalFeedback({ text: '', type: '' });
-        setAddModalOpen(true);
+        setTemporaryPassword('');
     };
 
     const formatKenyanPhoneNumber = (number) => {
@@ -195,11 +207,11 @@ const Users = () => {
         return kenyanPhoneRegex.test(number);
     };
 
-    const handleNewUserInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewUser(prev => ({
+    const handleFormChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setForm(prev => ({
             ...prev,
-            [name]: value,
+            [name]: type === 'checkbox' ? checked : value,
             // Add error state for mobile number
             mobileNumberError: name === 'mobileNumber' && value && !validateKenyanPhoneNumber(value)
                 ? 'Please enter a valid Kenyan phone number (e.g., 0712345678)'
@@ -207,58 +219,51 @@ const Users = () => {
         }));
     };
 
-    const handleCreateUser = async (e) => {
-        e.preventDefault();
+    const handleCreateUser = async () => {
+        const { roleId, ...userPayload } = form;
+        const result = await createUser(userPayload);
+        setTemporaryPassword(result?.temporaryPassword || '');
 
-        // Validation
-        if (!newUser.firstName || !newUser.lastName || !newUser.email) {
-            setModalFeedback({ text: 'Please fill in all required fields.', type: 'error' });
-            return;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(newUser.email)) {
-            setModalFeedback({ text: 'Please enter a valid email address.', type: 'error' });
-            return;
-        }
-
-        // Validate and format mobile number if provided
-        if (newUser.mobileNumber) {
-            if (!validateKenyanPhoneNumber(newUser.mobileNumber)) {
-                setModalFeedback({
-                    text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)',
-                    type: 'error'
-                });
-                return;
+        if (roleId) {
+            const newUserId = result?.user?.id;
+            try {
+                await assignRoleToUser(newUserId, roleId);
+                setModalFeedback({ text: 'User created and role assigned successfully!', type: 'success' });
+            } catch (roleErr) {
+                // The user account exists either way — a role can still be
+                // assigned afterwards from Manage Roles, so don't present
+                // this as if user creation itself failed.
+                setModalFeedback({ text: `User created, but role assignment failed: ${roleErr.message || 'unknown error'}. Assign it from Manage Roles.`, type: 'error' });
             }
-            // Format the mobile number before sending
-            newUser.mobileNumber = formatKenyanPhoneNumber(newUser.mobileNumber);
+        } else {
+            setModalFeedback({ text: 'User created successfully! Remember to assign a role from Manage Roles.', type: 'success' });
         }
 
-        setIsUpdating(true);
-        setModalFeedback({ text: '', type: '' });
-
-        try {
-            await createUser(newUser);
-            setModalFeedback({ text: 'User created successfully!', type: 'success' });
-            await loadData(pagination.page, showDeleted);
-            setTimeout(() => {
-                setAddModalOpen(false);
-            }, 2000);
-        } catch (err) {
-            setModalFeedback({ text: err.message || 'Failed to create user.', type: 'error' });
-        } finally {
-            setIsUpdating(false);
-        }
+        await loadData(pagination.page, showDeleted);
+        // Left open (no auto-close) so the admin has time to copy the temp
+        // password down below before dismissing.
     };
 
-    const handleEditClick = (user) => {
-        setSelectedUser({
-            ...user,
+    const handleEditClick = async (user) => {
+        let currentRoleId = '';
+        try {
+            const userRoles = await fetchUserRoles(user.id);
+            currentRoleId = userRoles?.[0]?.id || '';
+        } catch (err) {
+            currentRoleId = '';
+        }
+        setForm({
+            firstName: user.firstName || '',
+            lastName: user.lastName || '',
+            email: user.email || '',
+            mobileNumber: user.mobileNumber || '',
+            roleId: currentRoleId,
             mobileNumberError: ''
         });
+        setEditingUserOriginalRoleId(currentRoleId);
         setModalFeedback({ text: '', type: '' });
-        setEditModalOpen(true);
+        setTemporaryPassword('');
+        setEditingUser(user);
     };
 
     const handleLogsClick = (user) => {
@@ -290,6 +295,7 @@ const Users = () => {
     const handleResetPasswordClick = (user) => {
         setSelectedUser(user);
         setModalFeedback({ text: '', type: '' });
+        setTemporaryPassword('');
         setResetPasswordModalOpen(true);
     };
 
@@ -323,11 +329,11 @@ const Users = () => {
         setIsUpdating(true);
         setModalFeedback({ text: '', type: '' });
         try {
-            await resetPassword(selectedUser.id);
-            setModalFeedback({ text: 'Password reset email sent successfully!', type: 'success' });
-            setTimeout(() => {
-                setResetPasswordModalOpen(false);
-            }, 3000);
+            const result = await resetPassword(selectedUser.id);
+            setModalFeedback({ text: 'Password reset successfully!', type: 'success' });
+            setTemporaryPassword(result?.temporaryPassword || result?.TemporaryPassword || '');
+            // Left open (no auto-close) so the admin has time to copy the temp
+            // password below before dismissing.
         } catch (err) {
             setModalFeedback({ text: err.message || 'Failed to reset password.', type: 'error' });
         } finally {
@@ -373,37 +379,44 @@ const Users = () => {
         }
     };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setSelectedUser(prev => ({
-            ...prev,
-            [name]: value,
-            // Add error state for mobile number
-            mobileNumberError: name === 'mobileNumber' && value && !validateKenyanPhoneNumber(value)
-                ? 'Please enter a valid Kenyan phone number (e.g., 0712345678)'
-                : ''
-        }));
+    const handleUpdateUser = async () => {
+        const { mobileNumberError, roleId, password, twoFactorEnabled, ...userData } = form;
+        await updateUser(editingUser.id, userData);
+
+        if (roleId !== editingUserOriginalRoleId) {
+            try {
+                if (editingUserOriginalRoleId) await removeRoleFromUser(editingUser.id, editingUserOriginalRoleId);
+                if (roleId) await assignRoleToUser(editingUser.id, roleId);
+            } catch (roleErr) {
+                setModalFeedback({ text: `User updated, but role change failed: ${roleErr.message || 'unknown error'}. Change it from Manage Roles.`, type: 'error' });
+                await loadData(pagination.page, showDeleted);
+                return;
+            }
+        }
+
+        setModalFeedback({ text: 'User updated successfully!', type: 'success' });
+        await loadData(pagination.page, showDeleted);
+        setTimeout(resetForm, 1500);
     };
 
-    const handleUpdate = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!selectedUser) return;
 
         // Validation
-        if (!selectedUser.firstName || !selectedUser.lastName || !selectedUser.email) {
+        if (!form.firstName || !form.lastName || !form.email) {
             setModalFeedback({ text: 'Please fill in all required fields.', type: 'error' });
             return;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(selectedUser.email)) {
+        if (!emailRegex.test(form.email)) {
             setModalFeedback({ text: 'Please enter a valid email address.', type: 'error' });
             return;
         }
 
         // Validate and format mobile number if provided
-        if (selectedUser.mobileNumber) {
-            if (!validateKenyanPhoneNumber(selectedUser.mobileNumber)) {
+        if (form.mobileNumber) {
+            if (!validateKenyanPhoneNumber(form.mobileNumber)) {
                 setModalFeedback({
                     text: 'Please enter a valid Kenyan phone number (e.g., 0712345678 or 712345678)',
                     type: 'error'
@@ -411,21 +424,17 @@ const Users = () => {
                 return;
             }
             // Format the mobile number before sending
-            selectedUser.mobileNumber = formatKenyanPhoneNumber(selectedUser.mobileNumber);
+            form.mobileNumber = formatKenyanPhoneNumber(form.mobileNumber);
         }
 
         setIsUpdating(true);
         setModalFeedback({ text: '', type: '' });
+        setTemporaryPassword('');
         try {
-            const { id, mobileNumberError, ...userData } = selectedUser;
-            await updateUser(id, userData);
-            setModalFeedback({ text: 'User updated successfully!', type: 'success' });
-            await loadData(pagination.page, showDeleted);
-            setTimeout(() => {
-                setEditModalOpen(false);
-            }, 3000);
+            if (editingUser) await handleUpdateUser();
+            else await handleCreateUser();
         } catch (err) {
-            setModalFeedback({ text: err.message || 'Failed to update user.', type: 'error' });
+            setModalFeedback({ text: err.message || `Failed to ${editingUser ? 'update' : 'create'} user.`, type: 'error' });
         } finally {
             setIsUpdating(false);
         }
@@ -756,340 +765,304 @@ const Users = () => {
     }
 
     return (
-        <div className="bg-white shadow-lg rounded-xl p-5 md:p-8 max-w-7xl mx-auto my-4 md:my-10">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 md:gap-0">
+        <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+            {/* Header */}
+            <div className="shrink-0 px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex flex-col md:flex-row justify-between items-center gap-2">
                 <div className="flex items-center gap-4 w-full md:w-auto">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-900">Users</h2>
-                    <div className="flex items-center gap-2 ml-4">
-                        <label htmlFor="show-deleted" className="text-sm font-medium text-gray-800">Show Deleted</label>
+                    <h2 className="text-[11px] font-bold text-gray-900">Users</h2>
+                    <div className="flex items-center gap-1.5">
+                        <label htmlFor="show-deleted" className="text-[10px] font-semibold text-gray-700">Show Deleted</label>
                         <input
                             type="checkbox"
                             id="show-deleted"
                             checked={showDeleted}
                             onChange={handleToggleShowDeleted}
-                            className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                            className="h-3.5 w-3.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
                         />
                     </div>
                 </div>
-                <div className="flex items-center gap-4 w-full md:w-auto justify-end mt-2 md:mt-0">
+                <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                     <button
                         onClick={handleDownloadPDF}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
+                        className="h-7 px-3 flex items-center gap-1.5 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow-sm transition-all"
                         title="Download Users as PDF"
                     >
-                        <Download size={18} />
+                        <Download size={14} />
                         <span className="hidden md:inline">Download PDF</span>
-                    </button>
-                    <button
-                        onClick={handleAddUserClick}
-                        className="flex items-center gap-2 px-4 py-2 bg-amber-500 text-white border border-amber-500 rounded-lg hover:bg-amber-600 transition-colors shadow"
-                    >
-                        <PlusCircle size={18} />
-                        <span className="hidden md:inline">Add User</span>
-                        <span className="inline md:hidden">Add</span>
                     </button>
                 </div>
             </div>
 
             {feedbackMessage.text && (
-                <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <div className={`shrink-0 mx-3 mt-2 p-2 rounded text-center text-[11px] font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                     {feedbackMessage.text}
                 </div>
             )}
 
-            <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            {/* Inline Form */}
+            <div className="shrink-0 px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">
+                {modalFeedback.text && (
+                    <div className={`mb-2 p-2 rounded text-center text-[11px] font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                        {modalFeedback.text}
+                    </div>
+                )}
+                {temporaryPassword && (
+                    <div className="mb-2 p-2 rounded bg-amber-50 border border-amber-200">
+                        <p className="text-[10px] text-amber-800 mb-1">
+                            Temporary password — the email may not always reach the user (e.g. in remote areas). Relay this to them directly if needed.
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <code className="flex-1 px-2 py-1 bg-white border border-amber-300 rounded text-[11px] font-mono text-amber-900">{temporaryPassword}</code>
+                            <button
+                                type="button"
+                                onClick={() => navigator.clipboard.writeText(temporaryPassword)}
+                                className="px-2 py-1 text-[10px] font-semibold border border-amber-300 rounded text-amber-700 hover:bg-amber-100"
+                            >
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                )}
+                <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-2">
+                    <div>
+                        <label className="text-[10px] font-semibold text-gray-700 mb-1 block">First Name *</label>
+                        <input
+                            name="firstName"
+                            value={form.firstName}
+                            onChange={handleFormChange}
+                            required
+                            placeholder="First name"
+                            className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-[10px] font-semibold text-gray-700 mb-1 block">Last Name *</label>
+                        <input
+                            name="lastName"
+                            value={form.lastName}
+                            onChange={handleFormChange}
+                            required
+                            placeholder="Last name"
+                            className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-[10px] font-semibold text-gray-700 mb-1 block">Email *</label>
+                        <input
+                            type="email"
+                            name="email"
+                            value={form.email}
+                            onChange={handleFormChange}
+                            required
+                            placeholder="email@example.com"
+                            className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="text-[10px] font-semibold text-gray-700 mb-1 block">Mobile Number</label>
+                        <input
+                            type="tel"
+                            name="mobileNumber"
+                            value={form.mobileNumber || ''}
+                            onChange={handleFormChange}
+                            placeholder="e.g., 0712345678"
+                            className={`w-full h-7 text-[11px] rounded border px-2 focus:ring-1 ${form.mobileNumberError ? 'border-red-400 focus:border-red-500 focus:ring-red-200' : 'border-amber-300 focus:border-amber-500 focus:ring-amber-200'}`}
+                        />
+                        {form.mobileNumberError && (
+                            <p className="mt-0.5 text-[9px] text-red-600">{form.mobileNumberError}</p>
+                        )}
+                    </div>
+
+                    <div className="col-span-2">
+                        <label className="text-[10px] font-semibold text-gray-700 mb-1 block">Role</label>
+                        <select
+                            name="roleId"
+                            value={form.roleId}
+                            onChange={handleFormChange}
+                            className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                        >
+                            <option value="">-- No role (assign later) --</option>
+                            {roles.map((role) => (
+                                <option key={role.id} value={role.id}>{role.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {!editingUser && (
+                        <>
+                            <div>
+                                <label className="text-[10px] font-semibold text-gray-700 mb-1 block">Password</label>
+                                <input
+                                    type="text"
+                                    name="password"
+                                    value={form.password}
+                                    onChange={handleFormChange}
+                                    placeholder="Leave blank to auto-generate"
+                                    className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                                />
+                            </div>
+
+                            <div className="flex items-end pb-1.5">
+                                <label className="flex items-center gap-1.5 text-[10px] font-semibold text-gray-700">
+                                    <input
+                                        type="checkbox"
+                                        name="twoFactorEnabled"
+                                        checked={form.twoFactorEnabled}
+                                        onChange={handleFormChange}
+                                        className="h-3.5 w-3.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
+                                    />
+                                    Require 2FA on first login
+                                </label>
+                            </div>
+                        </>
+                    )}
+
+                    <div className="col-span-4 flex gap-2 justify-end mt-1">
+                        {editingUser && (
+                            <button type="button" onClick={resetForm}
+                                className="h-7 px-3 text-[11px] font-semibold bg-gray-200 hover:bg-gray-300 text-gray-800 rounded transition-all flex items-center gap-1">
+                                <XCircle className="w-3 h-3" /> Cancel
+                            </button>
+                        )}
+                        <button type="submit" disabled={isUpdating}
+                            className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow-sm transition-all flex items-center gap-1">
+                            <PlusCircle className="w-3.5 h-3.5" />
+                            {isUpdating ? (editingUser ? 'Updating...' : 'Creating...') : (editingUser ? 'Update User' : 'Add User')}
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {/* Table Section */}
+            <div className="flex-1 overflow-auto bg-white">
+                <table className="w-full compact-table">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Email</th>
-                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Roles</th>
-                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Shifts</th>
-                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Last Updated</th>
-                        <th scope="col" className="px-3 py-2.5 md:px-6 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Email</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Roles</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Shifts</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Status</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Last Updated</th>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Actions</th>
                     </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-gray-100">
-                    {users.map((user) => (
-                        <tr key={user.id} className={`hover:bg-gray-50 ${user.isDeleted ? 'opacity-60 bg-gray-100' : ''}`}>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{user.email}</td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm font-medium text-gray-800">{user.firstName} {user.lastName}</td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
+                    <tbody>
+                    {users.map((user, index) => (
+                        <tr
+                            key={user.id}
+                            className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
+                                user.isDeleted ? 'opacity-60 bg-gray-100' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                            }`}
+                        >
+                            <td className="px-3 py-2 text-[10px] font-semibold text-gray-900">{user.email}</td>
+                            <td className="px-3 py-2 text-[10px] font-medium text-gray-700">{user.firstName} {user.lastName}</td>
+                            <td className="px-3 py-2 text-[10px] text-gray-600">
                                 <button
                                     onClick={() => handleViewRolesClick(user)}
-                                    className="flex items-center text-amber-500 hover:text-amber-600 transition-colors"
+                                    className="flex items-center text-amber-600 hover:text-amber-700 transition-colors"
                                     title="View Roles"
                                 >
-                                    <UsersIcon size={18} className="mr-1" />
+                                    <UsersIcon size={12} className="mr-1" />
                                     <span>{user.roles ? user.roles.length : '0'}</span>
                                 </button>
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
+                            <td className="px-3 py-2 text-[10px] text-gray-600">
                                 <button
                                     onClick={() => handleViewShiftsClick(user)}
-                                    className="flex items-center text-purple-500 hover:text-purple-600 transition-colors"
+                                    className="flex items-center text-purple-600 hover:text-purple-700 transition-colors"
                                     title="View Shifts"
                                 >
-                                    <Clock size={18} className="mr-1" />
+                                    <Clock size={12} className="mr-1" />
                                     <span>{userShiftCounts[user.id] || 0}</span>
                                 </button>
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap">
-                                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(user)}`}>
+                            <td className="px-3 py-2">
+                                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${getStatusBadge(user)}`}>
                                         {getStatusText(user)}
                                     </span>
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-sm text-gray-700">
+                            <td className="px-3 py-2 text-[10px] text-gray-600">
                                 {formatDistanceToNow(parseISO(user.updatedAt), { addSuffix: true })}
                             </td>
-                            <td className="px-3 py-4 md:px-6 md:py-4 whitespace-nowrap text-left text-sm font-medium flex flex-wrap gap-2">
+                            <td className="px-3 py-2">
+                                <div className="flex gap-1.5 justify-center">
                                 <button
                                     onClick={() => handleLogsClick(user)}
-                                    className="text-gray-600 hover:text-gray-900 transition-colors"
+                                    className="p-1 rounded text-gray-600 hover:bg-gray-100 border border-gray-300 hover:border-gray-400 transition-all"
                                     title="View Logs"
                                 >
-                                    <FileText size={18} />
+                                    <FileText size={12} />
                                 </button>
                                 <button
                                     onClick={() => handleEditClick(user)}
-                                    className="text-amber-600 hover:text-amber-900 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
+                                    className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                     title="Edit User"
                                     disabled={user.isDeleted || actionLoading === user.id}
                                 >
-                                    <Edit size={18} />
+                                    <Edit size={12} />
                                 </button>
                                 <button
                                     onClick={() => handleManageRolesClick(user)}
-                                    className="text-green-600 hover:text-green-900 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
+                                    className="p-1 rounded text-green-600 hover:bg-green-50 border border-green-300 hover:border-green-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                     title="Manage Roles"
                                     disabled={user.isDeleted || actionLoading === user.id}
                                 >
-                                    <ShieldCheck size={18} />
+                                    <ShieldCheck size={12} />
                                 </button>
                                 <button
                                     onClick={() => handleResetPasswordClick(user)}
-                                    className="text-blue-600 hover:text-blue-900 transition-colors disabled:text-gray-400 disabled:cursor-not-allowed"
+                                    className="p-1 rounded text-blue-600 hover:bg-blue-50 border border-blue-300 hover:border-blue-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                     title="Reset Password"
                                     disabled={user.isDeleted || actionLoading === user.id}
                                 >
-                                    <Key size={18} />
+                                    <Key size={12} />
                                 </button>
                                 <button
                                     onClick={() => handleToggleDelete(user)}
-                                    className={`${
-                                        user.isDeleted ? 'text-blue-600 hover:text-blue-800' : 'text-red-600 hover:text-red-800'
-                                    } transition-colors ${actionLoading === user.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                    className={`p-1 rounded border transition-all disabled:opacity-40 disabled:cursor-not-allowed ${
+                                        user.isDeleted ? 'text-blue-600 border-blue-300 hover:bg-blue-50 hover:border-blue-500' : 'text-red-600 border-red-300 hover:bg-red-50 hover:border-red-500'
+                                    }`}
                                     title={user.isDeleted ? 'Restore User' : 'Delete User'}
                                     disabled={actionLoading === user.id}
                                 >
-                                    {user.isDeleted ? <RefreshCw size={18} /> : <Trash2 size={18} />}
+                                    {user.isDeleted ? <RefreshCw size={12} /> : <Trash2 size={12} />}
                                 </button>
+                                </div>
                             </td>
                         </tr>
                     ))}
                     </tbody>
                 </table>
+
+                {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+                <TablePagination
+                    page={pagination.page}
+                    totalPages={pagination.totalPages}
+                    onPageChange={handlePageClick}
+                    itemCount={pagination.totalCount}
+                    itemLabel="users total"
+                />
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-center mt-4 text-sm text-gray-700 gap-4 md:gap-0">
-                <div>
-                    <p className="text-gray-700">
-                        <span className="font-medium">{pagination.page * pagination.pageSize - pagination.pageSize + 1}</span> to <span className="font-medium">{Math.min(pagination.page * pagination.pageSize, pagination.totalCount)}</span> of <span className="font-medium">{pagination.totalCount}</span> rows
-                    </p>
-                </div>
-                <div className="flex items-center gap-1">
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={!pagination.hasPreviousPage || loading}
-                        className="p-2 border rounded-md text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                    {[...Array(pagination.totalPages).keys()].map((index) => (
-                        <button
-                            key={index}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                                pagination.page === index + 1
-                                    ? 'bg-amber-500 text-white'
-                                    : 'bg-white text-gray-700 hover:bg-gray-100'
-                            }`}
-                            onClick={() => handlePageClick(index + 1)}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                    <button
-                        onClick={handleNextPage}
-                        disabled={!pagination.hasNextPage || loading}
-                        className="p-2 border rounded-md text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <ChevronRight size={16} />
-                    </button>
-                </div>
-            </div>
-            {/* Add User Modal */}
-            <Modal isOpen={isAddModalOpen} onClose={() => setAddModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Add New User</h3>
-                {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {modalFeedback.text}
-                    </div>
-                )}
-                <form onSubmit={handleCreateUser} className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="firstName" className="block text-sm font-medium text-gray-800">First Name *</label>
-                            <input
-                                type="text"
-                                name="firstName"
-                                id="firstName"
-                                value={newUser.firstName}
-                                onChange={handleNewUserInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">Last Name *</label>
-                            <input
-                                type="text"
-                                name="lastName"
-                                id="lastName"
-                                value={newUser.lastName}
-                                onChange={handleNewUserInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email *</label>
-                        <input
-                            type="email"
-                            name="email"
-                            id="email"
-                            value={newUser.email}
-                            onChange={handleNewUserInputChange}
-                            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                            required
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-800">Mobile Number</label>
-                        <input
-                            type="tel"
-                            name="mobileNumber"
-                            id="mobileNumber"
-                            value={newUser.mobileNumber || ''}
-                            onChange={handleNewUserInputChange}
-                            placeholder="e.g., 0712345678 or 712345678"
-                            className={`mt-1 block w-full p-2 border ${newUser.mobileNumberError ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500`}
-                        />
-                        {newUser.mobileNumberError && (
-                            <p className="mt-1 text-sm text-red-600">{newUser.mobileNumberError}</p>
-                        )}
-                    </div>
-                    <div className="flex justify-end space-x-3 pt-4">
-                        <button
-                            type="button"
-                            onClick={() => setAddModalOpen(false)}
-                            className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={isUpdating}
-                            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300"
-                        >
-                            {isUpdating ? 'Creating...' : 'Create User'}
-                        </button>
-                    </div>
-                </form>
-            </Modal>
-
-
-            <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)}>
-                <h3 className="text-lg font-bold mb-4">Edit User</h3>
-                {modalFeedback.text && (
-                    <div className={`p-3 rounded-lg mb-4 text-center text-sm font-medium ${modalFeedback.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                        {modalFeedback.text}
-                    </div>
-                )}
-                {selectedUser && (
-                    <form onSubmit={handleUpdate} className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label htmlFor="firstName" className="block text-sm font-medium text-gray-800">First Name</label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    id="firstName"
-                                    value={selectedUser.firstName}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="lastName" className="block text-sm font-medium text-gray-800">Last Name</label>
-                                <input
-                                    type="text"
-                                    name="lastName"
-                                    id="lastName"
-                                    value={selectedUser.lastName}
-                                    onChange={handleInputChange}
-                                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-800">Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={selectedUser.email}
-                                onChange={handleInputChange}
-                                className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500"
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-800">Mobile Number</label>
-                            <input
-                                type="tel"
-                                name="mobileNumber"
-                                id="mobileNumber"
-                                value={selectedUser.mobileNumber || ''}
-                                onChange={handleInputChange}
-                                placeholder="e.g., 0712345678 or 712345678"
-                                className={`mt-1 block w-full p-2 border ${selectedUser.mobileNumberError ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:ring-amber-500 focus:border-amber-500`}
-                            />
-                            {selectedUser.mobileNumberError && (
-                                <p className="mt-1 text-sm text-red-600">{selectedUser.mobileNumberError}</p>
-                            )}
-                        </div>
-                        <div className="flex justify-end space-x-3 pt-4">
-                            <button
-                                type="button"
-                                onClick={() => setEditModalOpen(false)}
-                                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={isUpdating}
-                                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-amber-600 hover:bg-amber-700 disabled:bg-gray-300"
-                            >
-                                {isUpdating ? 'Updating...' : 'Update User'}
-                            </button>
-                        </div>
-                    </form>
-                )}
-            </Modal>
+            <style>{`
+                .compact-table {
+                  font-size: 10px;
+                }
+                .compact-table thead tr th {
+                  padding: 6px 12px;
+                  font-weight: 700;
+                  font-size: 9px;
+                  line-height: 1.2;
+                }
+                .compact-table tbody tr td {
+                  padding: 6px 12px;
+                  line-height: 1.3;
+                }
+            `}</style>
 
             {/* Logs Modal */}
             <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
@@ -1141,25 +1114,46 @@ const Users = () => {
                         {modalFeedback.text}
                     </div>
                 )}
+                {temporaryPassword && (
+                    <div className="p-3 rounded-lg mb-4 bg-amber-50 border border-amber-200">
+                        <p className="text-xs text-amber-800 mb-1.5">
+                            Temporary password — the reset email may not always reach the user (e.g. in remote areas). Relay this to them directly if needed.
+                        </p>
+                        <div className="flex items-center gap-2">
+                            <code className="flex-1 px-2 py-1 bg-white border border-amber-300 rounded text-sm font-mono text-amber-900">{temporaryPassword}</code>
+                            <button
+                                type="button"
+                                onClick={() => navigator.clipboard.writeText(temporaryPassword)}
+                                className="px-3 py-1 text-xs font-semibold border border-amber-300 rounded text-amber-700 hover:bg-amber-100"
+                            >
+                                Copy
+                            </button>
+                        </div>
+                    </div>
+                )}
                 {selectedUser && (
                     <div className="text-gray-700">
-                        <p className="mb-4">Are you sure you want to send a password reset email to **{selectedUser.email}**?</p>
+                        {!temporaryPassword && (
+                            <p className="mb-4">Are you sure you want to reset the password for **{selectedUser.email}**?</p>
+                        )}
                         <div className="flex justify-end space-x-3">
                             <button
                                 type="button"
                                 onClick={() => setResetPasswordModalOpen(false)}
                                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                             >
-                                Cancel
+                                {temporaryPassword ? 'Close' : 'Cancel'}
                             </button>
-                            <button
-                                type="button"
-                                onClick={handleConfirmResetPassword}
-                                disabled={isUpdating}
-                                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300"
-                            >
-                                {isUpdating ? 'Sending...' : 'Send'}
-                            </button>
+                            {!temporaryPassword && (
+                                <button
+                                    type="button"
+                                    onClick={handleConfirmResetPassword}
+                                    disabled={isUpdating}
+                                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300"
+                                >
+                                    {isUpdating ? 'Resetting...' : 'Reset'}
+                                </button>
+                            )}
                         </div>
                     </div>
                 )}
