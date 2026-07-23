@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, fetchUserById, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../api/helpers/UserService/Users/users.js';
 import { fetchRoles } from '../../api/helpers/UserService/Roles/Roles.js';
 import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock, Download } from 'lucide-react';
+
+// Every new/reset account gets this same fixed password until the user
+// completes first login and sets their own — mirrors UserService.cs's
+// DefaultTemporaryPassword constant. Only accurate for accounts where the
+// admin didn't set a custom password at creation.
+const DEFAULT_TEMP_PASSWORD = 'ChangeMe123!';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { ChevronsLeft as ChevronDoubleLeft, ChevronsRight as ChevronDoubleRight } from 'lucide-react';
@@ -56,9 +62,7 @@ const Users = () => {
         lastName: '',
         mobileNumber: '',
         email: '',
-        roleId: '',
-        password: '',
-        twoFactorEnabled: true
+        roleId: ''
     });
     const [isUpdating, setIsUpdating] = useState(false);
     const [modalFeedback, setModalFeedback] = useState({ text: '', type: '' });
@@ -169,9 +173,7 @@ const Users = () => {
             lastName: '',
             mobileNumber: '',
             email: '',
-            roleId: '',
-            password: '',
-            twoFactorEnabled: true
+            roleId: ''
         });
         setEditingUser(null);
         setEditingUserOriginalRoleId('');
@@ -329,9 +331,11 @@ const Users = () => {
         setIsUpdating(true);
         setModalFeedback({ text: '', type: '' });
         try {
-            const result = await resetPassword(selectedUser.id);
+            await resetPassword(selectedUser.id);
             setModalFeedback({ text: 'Password reset successfully!', type: 'success' });
-            setTemporaryPassword(result?.temporaryPassword || result?.TemporaryPassword || '');
+            // Reset always sets the same fixed default password — no need to
+            // parse it back out of the response.
+            setTemporaryPassword(DEFAULT_TEMP_PASSWORD);
             // Left open (no auto-close) so the admin has time to copy the temp
             // password below before dismissing.
         } catch (err) {
@@ -380,7 +384,7 @@ const Users = () => {
     };
 
     const handleUpdateUser = async () => {
-        const { mobileNumberError, roleId, password, twoFactorEnabled, ...userData } = form;
+        const { mobileNumberError, roleId, ...userData } = form;
         await updateUser(editingUser.id, userData);
 
         if (roleId !== editingUserOriginalRoleId) {
@@ -892,32 +896,18 @@ const Users = () => {
                     </div>
 
                     {!editingUser && (
-                        <>
-                            <div>
-                                <label className="text-[10px] font-semibold text-gray-700 mb-1 block">Password</label>
-                                <input
-                                    type="text"
-                                    name="password"
-                                    value={form.password}
-                                    onChange={handleFormChange}
-                                    placeholder="Leave blank to auto-generate"
-                                    className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
-                                />
-                            </div>
-
-                            <div className="flex items-end pb-1.5">
-                                <label className="flex items-center gap-1.5 text-[10px] font-semibold text-gray-700">
-                                    <input
-                                        type="checkbox"
-                                        name="twoFactorEnabled"
-                                        checked={form.twoFactorEnabled}
-                                        onChange={handleFormChange}
-                                        className="h-3.5 w-3.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-                                    />
-                                    Require 2FA on first login
-                                </label>
-                            </div>
-                        </>
+                        <div>
+                            <label className="text-[10px] font-semibold text-gray-700 mb-1 block">Password</label>
+                            <input
+                                type="text"
+                                name="password"
+                                value={DEFAULT_TEMP_PASSWORD}
+                                readOnly
+                                disabled
+                                title="Every new user gets this same default password until they log in and set their own"
+                                className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 bg-amber-50 text-amber-900 font-mono cursor-not-allowed"
+                            />
+                        </div>
                     )}
 
                     <div className="col-span-4 flex gap-2 justify-end mt-1">
@@ -984,6 +974,11 @@ const Users = () => {
                                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${getStatusBadge(user)}`}>
                                         {getStatusText(user)}
                                     </span>
+                                    {user.isFirstLogin && !user.isDeleted && (
+                                        <div className="mt-1 text-[9px] font-mono text-amber-700" title="Hasn't logged in yet — only accurate if no custom password was set at creation">
+                                            {DEFAULT_TEMP_PASSWORD}
+                                        </div>
+                                    )}
                             </td>
                             <td className="px-3 py-2 text-[10px] text-gray-600">
                                 {formatDistanceToNow(parseISO(user.updatedAt), { addSuffix: true })}
