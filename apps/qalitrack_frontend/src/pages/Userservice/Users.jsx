@@ -788,7 +788,7 @@ const Users = () => {
                 <div className="flex items-center gap-2 w-full md:w-auto justify-end">
                     <button
                         onClick={handleDownloadPDF}
-                        className="h-7 px-3 flex items-center gap-1.5 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow-sm transition-all"
+                        className="h-7 px-3 flex items-center gap-1.5 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm transition-all"
                         title="Download Users as PDF"
                     >
                         <Download size={14} />
@@ -918,7 +918,7 @@ const Users = () => {
                             </button>
                         )}
                         <button type="submit" disabled={isUpdating}
-                            className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow-sm transition-all flex items-center gap-1">
+                            className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm transition-all flex items-center gap-1">
                             <PlusCircle className="w-3.5 h-3.5" />
                             {isUpdating ? (editingUser ? 'Updating...' : 'Creating...') : (editingUser ? 'Update User' : 'Add User')}
                         </button>

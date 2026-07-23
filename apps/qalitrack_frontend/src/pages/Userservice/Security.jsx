@@ -30,14 +30,14 @@ export default function Security() {
   return (
     <div className="h-full bg-gray-50 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="mb-3 px-4 sm:px-6 pt-4 sm:pt-6 shrink-0">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-            <Shield className="w-5 h-5 text-white" />
+      <div className="mb-3 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-3 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-lg cs-icon-box flex items-center justify-center shadow-sm">
+            <Shield className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">SECURITY</h1>
-            <p className="text-xs text-amber-700 font-medium">
+            <h1 className="text-2xl font-bold" style={{ color: "var(--cs-appbar-text)" }}>SECURITY</h1>
+            <p className="text-xs font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
               Permissions, roles, password policy, and audit logs
             </p>
           </div>

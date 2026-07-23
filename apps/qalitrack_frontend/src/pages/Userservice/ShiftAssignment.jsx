@@ -652,10 +652,10 @@ const ShiftAssignment = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-base font-bold text-gray-900">Shift Assignment</h2>
+            <div className="px-4 py-3 flex items-center justify-between flex-wrap gap-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                <h2 className="text-base font-bold" style={{ color: "var(--cs-appbar-text)" }}>Shift Assignment</h2>
                 <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
+                    <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
                         <input
                             type="checkbox"
                             checked={showDeleted}
@@ -670,7 +670,7 @@ const ShiftAssignment = () => {
                     <button
                         onClick={handleDownloadPDF}
                         disabled={showDeleted}
-                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'border border-amber-300 text-amber-700 hover:bg-amber-100'}`}
+                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-ghost-btn'}`}
                     >
                         <Download size={13} />
                         <span>PDF</span>

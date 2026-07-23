@@ -20,7 +20,7 @@ const NoRoleAssigned = () => {
                 </p>
                 <button
                     onClick={logout}
-                    className="w-full h-9 text-sm font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow-sm transition-all"
+                    className="w-full h-9 text-sm font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm transition-all"
                 >
                     Log Out
                 </button>

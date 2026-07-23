@@ -52,7 +52,7 @@ const Routes = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-              <MapPin className="w-4 h-4 text-white" />
+              <MapPin className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
               <span className="text-[11px] font-bold text-gray-900 block leading-tight">

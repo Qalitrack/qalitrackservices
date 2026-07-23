@@ -12,42 +12,31 @@
 import { createContext, useContext, useState, useCallback } from "react";
 import { getTicketSettings, getCompanyLogo, saveCompanyLogo } from "../../utils/ticketThemeConfig";
 import { useColorScheme } from "./ColorSchemeContext";
+import { PALETTES } from "../../theme/palettes";
 
-// ── Sidebar themes — one per system color scheme ──────────────────────────────
-export const SIDEBAR_THEMES = {
-  amber: {
-    name: "Amber",
-    description: "Dark with warm amber accents",
-    bg: "#111111",
-    text: "#ffffff",
-    accent: "#f59e0b",
-    hoverBg: "rgba(245,158,11,0.08)",
-    activeBg: "rgba(245,158,11,0.13)",
-    border: "rgba(245,158,11,0.10)",
-  },
-  midnight: {
-    // Same amber/gold accent as the default theme — only the sidebar's dark
-    // base shifts from near-black to navy. A mood variant, not a hue change.
-    name: "Midnight",
-    description: "Deep navy with warm gold accents",
-    bg: "#0f172a",
-    text: "#e2e8f0",
-    accent: "#f59e0b",
-    hoverBg: "rgba(245,158,11,0.08)",
-    activeBg: "rgba(245,158,11,0.13)",
-    border: "rgba(245,158,11,0.10)",
-  },
-  emerald: {
-    name: "Emerald",
-    description: "Dark with refined emerald accents",
-    bg: "#0d1f1a",
-    text: "#ffffff",
-    accent: "#10b981",
-    hoverBg: "rgba(16,185,129,0.08)",
-    activeBg: "rgba(16,185,129,0.13)",
-    border: "rgba(16,185,129,0.10)",
-  },
-};
+// ── Sidebar themes — derived from the shared PALETTES (src/theme/palettes.js)
+// so bg/text/accent never drift out of sync with the color-scheme swatches.
+// `accent` (icon + active-item border/chevron color) uses each scheme's own
+// iconAccent, not necessarily `primary` — see the iconAccent doc comment in
+// palettes.js (Navy and Indigo both keep gold here even though their primary
+// is navy-blue/indigo, since an icon the same hue as its own background
+// would be invisible).
+// hoverBg/activeBg/border use each scheme's own highlightRgb similarly.
+export const SIDEBAR_THEMES = Object.fromEntries(
+  Object.entries(PALETTES).map(([key, p]) => {
+    const rgb = p.highlightRgb;
+    return [key, {
+      name: p.name,
+      description: p.description,
+      bg: p.sidebarBg,
+      text: p.sidebarText,
+      accent: p.iconAccent,
+      hoverBg: `rgba(${rgb},0.08)`,
+      activeBg: `rgba(${rgb},0.13)`,
+      border: `rgba(${rgb},0.10)`,
+    }];
+  })
+);
 
 // ── Default state ─────────────────────────────────────────────────────────────
 const DEFAULT_SIDEBAR_SETTINGS = {
@@ -92,7 +81,7 @@ export function SidebarSettingsProvider({ children }) {
   }, []);
 
   // Sidebar theme follows the system color scheme automatically
-  const resolvedTheme = SIDEBAR_THEMES[colorScheme] ?? SIDEBAR_THEMES.amber;
+  const resolvedTheme = SIDEBAR_THEMES[colorScheme] ?? SIDEBAR_THEMES.midnight;
 
   return (
     <SidebarSettingsContext.Provider

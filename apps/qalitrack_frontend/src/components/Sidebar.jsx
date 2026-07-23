@@ -35,6 +35,12 @@ import useAuth from "../api/helpers/auth";
 import qalitrackLogoFull from "/src/assets/qalitrack_logo_full.png";
 import { useSidebarSettings } from "../components/Context/Sidebarsettingscontext";
 
+// "#rrggbb" -> [r, g, b], for building rgba() strings from a theme's accent hex.
+function hexToRgb(hex) {
+  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex || "");
+  return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : [245, 158, 11];
+}
+
 // A single nav row: icon + label when expanded, icon + hover tooltip when
 // collapsed. Shared by top-level items and by a group's children once
 // flattened in collapsed mode, so both look and behave identically.
@@ -205,6 +211,7 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
 
   // ── Live sidebar settings from Context ─────────────────────────────────────
   const { sidebarSettings, resolvedTheme } = useSidebarSettings();
+  const [accentR, accentG, accentB] = hexToRgb(resolvedTheme.accent);
 
   const user = getCurrentUser();
   const userRoles = user?.userRoles || [];
@@ -432,7 +439,7 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
           scrollbar-color: transparent transparent;
         }
         .sidebar-nav-scroll.is-scrolling {
-          scrollbar-color: rgba(245, 158, 11, 0.35) transparent;
+          scrollbar-color: rgba(${accentR}, ${accentG}, ${accentB}, 0.35) transparent;
         }
         .sidebar-nav-scroll::-webkit-scrollbar {
           width: 6px;
@@ -446,10 +453,10 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
           transition: background-color 0.3s ease;
         }
         .sidebar-nav-scroll.is-scrolling::-webkit-scrollbar-thumb {
-          background-color: rgba(245, 158, 11, 0.35);
+          background-color: rgba(${accentR}, ${accentG}, ${accentB}, 0.35);
         }
         .sidebar-nav-scroll::-webkit-scrollbar-thumb:hover {
-          background-color: rgba(245, 158, 11, 0.55);
+          background-color: rgba(${accentR}, ${accentG}, ${accentB}, 0.55);
         }
       `}</style>
     </aside>

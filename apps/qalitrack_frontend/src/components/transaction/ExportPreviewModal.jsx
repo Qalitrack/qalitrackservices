@@ -59,7 +59,7 @@ export default function ExportPreviewModal({
       title={
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-            <Printer size={13} className="text-white" />
+            <Printer size={13} style={{ color: "var(--cs-icon-accent)" }} />
           </div>
           <span className="text-sm font-bold text-gray-900">
             Ticket Preview — {record?.receiptNo}

@@ -556,7 +556,7 @@ export default function CreateTransactionForm({
 
   const FieldLabel = ({ children, required, suggested }) => (
     <label className="text-[10px] font-bold text-gray-500 uppercase tracking-tight mb-0.5 flex items-center gap-1 truncate">
-      <span className="truncate">{children} {required && <span className="text-red-500">*</span>}</span>
+      <span className="truncate">{children} {required && <span style={{ color: "var(--cs-required)" }}>*</span>}</span>
       {suggested && (
         <Tooltip title="Filled from this vehicle's last trip, not confirmed — please verify">
           <Info size={11} className="text-amber-500 shrink-0 cursor-help" />
@@ -568,9 +568,12 @@ export default function CreateTransactionForm({
   return (
     <>
     <div className="flex flex-col h-full bg-white">
-      {/* WEIGHBRIDGE INFO BAR */}
-      <div className="mb-2 px-3 py-2 bg-slate-800 rounded-lg flex items-center gap-3 shrink-0">
-        <Scale className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+      {/* WEIGHBRIDGE INFO BAR — deliberately stays a fixed dark navy chip regardless
+          of scheme (unlike the big page-header banners, this compact info strip
+          isn't meant to flash bright orange under Amber). This exact shade
+          (#20293a) is what "Navy" scheme's sidebar/app-bar colors are based on. */}
+      <div className="mb-2 px-3 py-2 rounded-lg flex items-center gap-3 shrink-0" style={{ background: "#20293a" }}>
+        <Scale className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "var(--cs-icon-accent)" }} />
         <div className="flex items-center gap-1">
           <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Weighbridge:</span>
           <span className="text-[10px] font-bold text-white uppercase tracking-wide">
@@ -580,7 +583,7 @@ export default function CreateTransactionForm({
         <span className="text-gray-600 text-[10px]">|</span>
         <div className="flex items-center gap-1">
           <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wide">Scale:</span>
-          <span className="text-[10px] font-semibold text-amber-400">
+          <span className="text-[10px] font-semibold" style={{ color: "var(--cs-icon-accent)" }}>
             {formData.scaleName || "—"}
           </span>
         </div>
@@ -925,11 +928,11 @@ export default function CreateTransactionForm({
           {isSecondWeighing ? "CANCEL" : "RESET"}
         </Button>
         <Button
+          type="primary"
           size="large"
           loading={loading}
           onClick={isSecondWeighing ? openFinalizePreview : handleSubmit}
           disabled={isSecondWeighing && !isValid}
-          style={{ backgroundColor: 'var(--cs-500)', borderColor: 'var(--cs-500)', color: 'white' }}
           className="flex-1 font-bold shadow-md"
         >
           {isSecondWeighing ? "FINALIZE TRANSACTION" : "SAVE FIRST WEIGHT"}

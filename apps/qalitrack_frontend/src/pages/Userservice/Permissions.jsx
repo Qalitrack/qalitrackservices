@@ -384,7 +384,7 @@ const Permissions = () => {
             <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-                        <Shield className="w-4 h-4 text-white" />
+                        <Shield className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
                     </div>
                     <div>
                         <span className="text-sm font-bold text-gray-900 block leading-tight">Manage Permissions</span>
@@ -411,7 +411,7 @@ const Permissions = () => {
                     </button>
                     <button
                         onClick={handleAddClick}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all"
                     >
                         <PlusCircle size={13} />
                         <span>Add Permission</span>

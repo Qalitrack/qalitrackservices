@@ -83,14 +83,14 @@ export default function UserManagement() {
     <div className="h-full flex flex-col px-2 py-1.5 gap-1.5 bg-gray-50">
 
       {/* Header */}
-      <div className="shrink-0 flex items-center justify-between gap-2">
+      <div className="shrink-0 flex items-center justify-between gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
         <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-            <Users size={14} className="text-white" />
+          <div className="w-6 h-6 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+            <Users size={14} style={{ color: "var(--cs-icon-accent)" }} />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-gray-900 leading-tight">User Management</h2>
-            <p className="text-xs text-amber-700 font-medium">Users • Roles • Permissions</p>
+            <h2 className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>User Management</h2>
+            <p className="text-xs font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>Users • Roles • Permissions</p>
           </div>
         </div>
 

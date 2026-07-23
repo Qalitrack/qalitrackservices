@@ -154,7 +154,7 @@ export default function WeighbridgesPortal() {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2v20M2 22h20M6 22V12l6-4 6 4v10" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
@@ -196,18 +196,18 @@ export default function WeighbridgesPortal() {
             <div className="grid grid-cols-3 gap-2">
               <div>
                 <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                  <span className="w-1 h-1 bg-blue-500 rounded-full"></span>Location *
+                  <span className="w-1 h-1 bg-amber-500 rounded-full"></span>Location *
                 </label>
                 <input name="location" value={form.location} onChange={handleChange} required placeholder="e.g., Nairobi Main Gate"
-                  className="w-full h-6 text-[10px] rounded border border-blue-300 px-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-200 focus:outline-none" />
+                  className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
               </div>
 
               <div>
                 <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                  <span className="w-1 h-1 bg-emerald-500 rounded-full"></span>Status
+                  <span className="w-1 h-1 bg-amber-500 rounded-full"></span>Status
                 </label>
                 <select name="status" value={form.status} onChange={handleChange}
-                  className="w-full h-6 text-[10px] rounded border border-emerald-300 px-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 focus:outline-none">
+                  className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none">
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
                 </select>
@@ -225,7 +225,7 @@ export default function WeighbridgesPortal() {
             {/* Row 2: Scales */}
             <div>
               <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                <span className="w-1 h-1 bg-violet-500 rounded-full"></span>Scales
+                <span className="w-1 h-1 bg-amber-500 rounded-full"></span>Scales
                 <span className="text-[8px] font-normal text-gray-400 ml-1">(one weighbridge can have multiple scales)</span>
               </label>
               <div className="flex gap-1.5 items-center">
@@ -234,19 +234,19 @@ export default function WeighbridgesPortal() {
                   onChange={(e) => setScaleInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addScale(); } }}
                   placeholder="e.g., Scale A, Platform 1..."
-                  className="flex-1 h-6 text-[10px] rounded border border-violet-300 px-2 focus:border-violet-500 focus:ring-1 focus:ring-violet-200 focus:outline-none"
+                  className="flex-1 h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none"
                 />
                 <button type="button" onClick={addScale}
-                  className="h-6 px-2 text-[10px] font-semibold bg-violet-100 hover:bg-violet-200 text-violet-700 border border-violet-300 rounded transition-all flex items-center gap-1">
+                  className="h-6 px-2 text-[10px] font-semibold bg-amber-100 hover:bg-amber-200 text-amber-700 border border-amber-300 rounded transition-all flex items-center gap-1">
                   <Plus className="w-3 h-3" /> Add
                 </button>
               </div>
               {form.scales.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
                   {form.scales.map((s) => (
-                    <span key={s} className="inline-flex items-center gap-1 bg-violet-100 text-violet-800 text-[9px] font-semibold px-2 py-0.5 rounded-full border border-violet-200">
+                    <span key={s} className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[9px] font-semibold px-2 py-0.5 rounded-full border border-amber-200">
                       {s}
-                      <button type="button" onClick={() => removeScale(s)} className="text-violet-500 hover:text-red-500 transition-colors">
+                      <button type="button" onClick={() => removeScale(s)} className="text-amber-500 hover:text-red-500 transition-colors">
                         <X className="w-2.5 h-2.5" />
                       </button>
                     </span>
@@ -264,7 +264,7 @@ export default function WeighbridgesPortal() {
                 </button>
               )}
               <button type="submit" disabled={loading}
-                className="h-6 px-3 text-[10px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow-sm transition-all flex items-center gap-1">
+                className="h-6 px-3 text-[10px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm transition-all flex items-center gap-1">
                 <Plus className="w-3 h-3" />
                 {editing ? "Update Weighbridge" : "Add Weighbridge"}
               </button>
@@ -321,7 +321,7 @@ export default function WeighbridgesPortal() {
                             {Array.isArray(wb.scales) && wb.scales.length > 0 ? (
                               <div className="flex flex-wrap gap-1">
                                 {wb.scales.map((s) => (
-                                  <span key={s} className="bg-violet-100 text-violet-800 text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-violet-200">{s}</span>
+                                  <span key={s} className="bg-amber-100 text-amber-800 text-[9px] font-semibold px-1.5 py-0.5 rounded-full border border-amber-200">{s}</span>
                                 ))}
                               </div>
                             ) : (

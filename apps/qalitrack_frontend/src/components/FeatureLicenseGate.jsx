@@ -46,7 +46,7 @@ export default function FeatureLicenseGate({ feature, children }) {
       <div className="rounded-2xl border-2 border-dashed border-amber-200 bg-amber-50 p-10 max-w-sm w-full text-center">
         <div className="flex justify-center mb-4">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-lg">
-            <LockIcon className="w-7 h-7 text-white" />
+            <LockIcon className="w-7 h-7" style={{ color: "var(--cs-icon-accent)" }} />
           </div>
         </div>
         <h2 className="text-base font-black text-gray-900 mb-1">

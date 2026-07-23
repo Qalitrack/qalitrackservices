@@ -425,18 +425,18 @@ export default function Vehicles() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200">
+      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-              <Truck className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <Truck className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
                 Vehicles
               </span>
-              <span className="text-[9px] text-amber-700 font-medium">
+              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 {vehicles.length} registered vehicles
               </span>
             </div>
@@ -447,7 +447,7 @@ export default function Vehicles() {
               <input
                 type="text"
                 placeholder="Search by reg/type..."
-                className="w-40 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                className="qt-filter-field w-40 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -457,14 +457,14 @@ export default function Vehicles() {
                 <input
                   type="text"
                   placeholder="RFID Code..."
-                  className="w-32 h-7 px-2 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                  className="qt-filter-field w-32 h-7 px-2 text-[11px] rounded-md border border-gray-300 shadow-sm"
                   value={rfidSearchTerm}
                   onChange={(e) => setRfidSearchTerm(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleRfidSearch()}
                 />
                 <button
                   onClick={handleRfidSearch}
-                  className="h-7 px-2 text-[11px] rounded-md bg-amber-100 hover:bg-amber-200 border-amber-300 text-amber-700 shadow-sm font-medium"
+                  className="h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
                   title="Search by RFID"
                 >
                   🔍 RFID
@@ -474,11 +474,11 @@ export default function Vehicles() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="h-7 px-2 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm bg-white"
+              className="qt-filter-field h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm"
             >
-              <option value="All">All Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              <option value="All" className="text-black">All Status</option>
+              <option value="Active" className="text-black">Active</option>
+              <option value="Inactive" className="text-black">Inactive</option>
             </select>
             <button
               onClick={() => {
@@ -487,7 +487,7 @@ export default function Vehicles() {
                 setPageNumber(1);
                 fetchVehicles();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -522,13 +522,13 @@ export default function Vehicles() {
             <div className="grid grid-cols-4 gap-2">
               <div>
                 <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-                  Registration Number *
+                  Registration Number <span style={{ color: "var(--cs-required)" }}>*</span>
                 </label>
                 <input
                   name="registrationNumber"
                   value={form.registrationNumber}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   required
                   placeholder="e.g., KXX 123Y"
                 />
@@ -536,13 +536,13 @@ export default function Vehicles() {
 
               <div>
                 <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-                  Type *
+                  Type <span style={{ color: "var(--cs-required)" }}>*</span>
                 </label>
                 <input
                   name="type"
                   value={form.type}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   required
                   placeholder="e.g., Truck, Van"
                 />
@@ -556,7 +556,7 @@ export default function Vehicles() {
                   name="make"
                   value={form.make}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   placeholder="e.g., Isuzu"
                 />
               </div>
@@ -569,7 +569,7 @@ export default function Vehicles() {
                   name="model"
                   value={form.model}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   placeholder="e.g., FRR"
                 />
               </div>
@@ -583,7 +583,7 @@ export default function Vehicles() {
                   name="yearOfManufacture"
                   value={form.yearOfManufacture}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   placeholder="e.g., 2020"
                   min="1900"
                   max="2100"
@@ -598,7 +598,7 @@ export default function Vehicles() {
                   name="color"
                   value={form.color}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   placeholder="e.g., White"
                 />
               </div>
@@ -611,7 +611,7 @@ export default function Vehicles() {
                   name="status"
                   value={form.status}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Inactive</option>
@@ -626,7 +626,7 @@ export default function Vehicles() {
                   name="bodyType"
                   value={form.bodyType}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   placeholder="e.g., Flatbed"
                 />
               </div>
@@ -634,13 +634,13 @@ export default function Vehicles() {
               {/* Required fields moved to basic form */}
               <div>
                 <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-                  Owner *
+                  Owner <span style={{ color: "var(--cs-required)" }}>*</span>
                 </label>
                 <select
                   name="ownerId"
                   value={form.ownerId}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   required
                 >
                   <option value="">-- Select Owner --</option>
@@ -654,13 +654,13 @@ export default function Vehicles() {
 
               <div>
                 <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-                  Axle Configuration *
+                  Axle Configuration <span style={{ color: "var(--cs-required)" }}>*</span>
                 </label>
                 <select
                   name="axleConfigurationId"
                   value={form.axleConfigurationId}
                   onChange={handleChange}
-                  className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                  className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                   required
                 >
                   <option value="">-- Select Axle Config --</option>
@@ -687,7 +687,7 @@ export default function Vehicles() {
                     name="rfiDcode"
                     value={form.rfiDcode}
                     onChange={handleChange}
-                    className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                    className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     placeholder={editingVehicle ? "RFID/NFC Code" : "Set after creation"}
                     disabled={!editingVehicle}
                     title={editingVehicle ? "Edit RFID code" : "RFID can only be set when updating a vehicle"}
@@ -712,7 +712,7 @@ export default function Vehicles() {
                       name="chassisNumber"
                       value={form.chassisNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="Chassis #"
                     />
                   </div>
@@ -725,7 +725,7 @@ export default function Vehicles() {
                       name="engineNumber"
                       value={form.engineNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="Engine #"
                     />
                   </div>
@@ -738,7 +738,7 @@ export default function Vehicles() {
                       name="vehicleClass"
                       value={form.vehicleClass}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="Class"
                     />
                   </div>
@@ -752,7 +752,7 @@ export default function Vehicles() {
                       name="seatingCapacity"
                       value={form.seatingCapacity}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="Seats"
                       min="0"
                     />
@@ -773,7 +773,7 @@ export default function Vehicles() {
                       name="grossWeight"
                       value={form.grossWeight}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="kg"
                       min="0"
                     />
@@ -788,7 +788,7 @@ export default function Vehicles() {
                       name="tareWeight"
                       value={form.tareWeight}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="kg"
                       min="0"
                     />
@@ -803,7 +803,7 @@ export default function Vehicles() {
                       name="netWeightCapacity"
                       value={form.netWeightCapacity}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="kg"
                       min="0"
                     />
@@ -818,7 +818,7 @@ export default function Vehicles() {
                       name="fuelTankCapacity"
                       value={form.fuelTankCapacity}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="Liters"
                       min="0"
                     />
@@ -838,7 +838,7 @@ export default function Vehicles() {
                       name="insurancePolicyNumber"
                       value={form.insurancePolicyNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="Policy Number"
                     />
                   </div>
@@ -852,7 +852,7 @@ export default function Vehicles() {
                       name="insuranceExpiryDate"
                       value={form.insuranceExpiryDate}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                     />
                   </div>
 
@@ -864,7 +864,7 @@ export default function Vehicles() {
                       name="roadWorthinessNumber"
                       value={form.roadWorthinessNumber}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                       placeholder="Certificate #"
                     />
                   </div>
@@ -878,7 +878,7 @@ export default function Vehicles() {
                       name="roadWorthinessExpiryDate"
                       value={form.roadWorthinessExpiryDate}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                     />
                   </div>
                 </div>
@@ -896,7 +896,7 @@ export default function Vehicles() {
                       name="supplierId"
                       value={form.supplierId}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                     >
                       <option value="">-- None --</option>
                       {Array.isArray(suppliers) && suppliers.map((s) => (
@@ -915,7 +915,7 @@ export default function Vehicles() {
                       name="transporterId"
                       value={form.transporterId}
                       onChange={handleChange}
-                      className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+                      className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
                     >
                       <option value="">-- None --</option>
                       {Array.isArray(transporters) && transporters.map((t) => (
@@ -945,7 +945,7 @@ export default function Vehicles() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50"
+              className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50"
             >
               <Plus className="w-3 h-3" />
               {editingVehicle ? "Update" : "Add"} Vehicle
@@ -962,7 +962,11 @@ export default function Vehicles() {
           </div>
         ) : vehicles.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">No vehicles found.</p>
+            <div className="text-center">
+              <Truck className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No vehicles found.</p>
+              <p className="text-gray-400 text-xs mt-1">Add a vehicle using the form above</p>
+            </div>
           </div>
         ) : (
           <table className="w-full compact-table">

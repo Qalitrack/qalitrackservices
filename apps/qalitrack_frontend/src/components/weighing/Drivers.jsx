@@ -165,18 +165,18 @@ export default function DriverPortal() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200">
+      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-              <UserPlus className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <UserPlus className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
                 Drivers
               </span>
-              <span className="text-[9px] text-amber-700 font-medium">
+              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 {drivers.length} registered · NFC-enabled
               </span>
             </div>
@@ -187,7 +187,7 @@ export default function DriverPortal() {
               <input
                 type="text"
                 placeholder="Search drivers..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -198,7 +198,7 @@ export default function DriverPortal() {
                 setPage(1);
                 fetchDrivers();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -211,7 +211,7 @@ export default function DriverPortal() {
         <form onSubmit={handleSubmit} className="grid grid-cols-5 gap-2">
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Full Name *
+              Full Name <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               type="text"
@@ -219,14 +219,14 @@ export default function DriverPortal() {
               value={form.fullName}
               onChange={handleChange}
               required
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="Driver name"
             />
           </div>
 
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Phone *
+              Phone <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               type="text"
@@ -234,7 +234,7 @@ export default function DriverPortal() {
               value={form.phone}
               onChange={handleChange}
               required
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="+254 7XX XXX XXX"
             />
           </div>
@@ -248,7 +248,7 @@ export default function DriverPortal() {
               name="idNumber"
               value={form.idNumber}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 font-mono"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2 font-mono"
               placeholder="National ID number"
             />
           </div>
@@ -280,7 +280,7 @@ export default function DriverPortal() {
               name="licenseNumber"
               value={form.licenseNumber}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 font-mono"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2 font-mono"
               placeholder="License number"
             />
           </div>
@@ -294,7 +294,7 @@ export default function DriverPortal() {
               name="licenseExpiryDate"
               value={form.licenseExpiryDate}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -307,7 +307,7 @@ export default function DriverPortal() {
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="email@example.com"
             />
           </div>
@@ -320,7 +320,7 @@ export default function DriverPortal() {
               name="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
@@ -341,7 +341,7 @@ export default function DriverPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <UserPlus className="w-3 h-3" />
               {editingDriver ? "Update" : "Add"} Driver

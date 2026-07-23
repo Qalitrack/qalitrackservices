@@ -119,18 +119,18 @@ export default function OwnersPortal() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200">
+      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-              <UserPlus className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <UserPlus className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
                 Owners
               </span>
-              <span className="text-[9px] text-amber-700 font-medium">
+              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 {filtered.length} registered owners
               </span>
             </div>
@@ -141,7 +141,7 @@ export default function OwnersPortal() {
               <input
                 type="text"
                 placeholder="Search owners..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -151,7 +151,7 @@ export default function OwnersPortal() {
                 setSearch("");
                 fetchOwners();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -164,7 +164,7 @@ export default function OwnersPortal() {
         <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-2">
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Owner Name *
+              Owner Name <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               name="name"
@@ -172,7 +172,7 @@ export default function OwnersPortal() {
               onChange={handleChange}
               required
               placeholder="Owner name"
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -185,7 +185,7 @@ export default function OwnersPortal() {
               value={form.contactPerson}
               onChange={handleChange}
               placeholder="Contact person"
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -198,7 +198,7 @@ export default function OwnersPortal() {
               value={form.phoneNumber}
               onChange={handleChange}
               placeholder="+254 7XX XXX XXX"
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -211,7 +211,7 @@ export default function OwnersPortal() {
               value={form.email}
               onChange={handleChange}
               placeholder="email@example.com"
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -224,7 +224,7 @@ export default function OwnersPortal() {
               value={form.address}
               onChange={handleChange}
               placeholder="Full address"
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -236,7 +236,7 @@ export default function OwnersPortal() {
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             >
               {Object.entries(OWNER_TYPES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
@@ -256,7 +256,7 @@ export default function OwnersPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all flex items-center gap-1"
+              className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all flex items-center gap-1"
             >
               <UserPlus className="w-3 h-3" />
               {editingOwner ? "Update" : "Add"} Owner
@@ -277,7 +277,11 @@ export default function OwnersPortal() {
           </div>
         ) : paginated.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">No owners found.</p>
+            <div className="text-center">
+              <UserPlus className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No owners found.</p>
+              <p className="text-gray-400 text-xs mt-1">Add an owner using the form above</p>
+            </div>
           </div>
         ) : (
           <table className="w-full compact-table">

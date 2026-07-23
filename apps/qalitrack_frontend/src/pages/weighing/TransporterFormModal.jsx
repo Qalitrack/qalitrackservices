@@ -145,16 +145,16 @@ export default function TransportersPortal() {
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
 
-      {/* Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 shrink-0">
+      {/* Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-              <Truck className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <Truck className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <div className="text-[11px] font-bold text-gray-900 leading-tight">Transporters</div>
-              <div className="text-[9px] text-amber-700 font-medium leading-tight">
+              <div className="text-[11px] font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Transporters</div>
+              <div className="text-[9px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 <span className="font-semibold">{filtered.length}</span> registered
               </div>
             </div>
@@ -166,7 +166,7 @@ export default function TransportersPortal() {
               <input
                 type="text"
                 placeholder="Search transporters..."
-                className="w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm focus:outline-none focus:ring-1 focus:ring-amber-500"
+                className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -185,15 +185,15 @@ export default function TransportersPortal() {
 
           <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-2">
             <div>
-              <label className="text-[9px] font-semibold text-amber-700 uppercase mb-0.5 block">Name *</label>
+              <label className="text-[9px] font-semibold text-amber-700 uppercase mb-0.5 block">Name <span style={{ color: "var(--cs-required)" }}>*</span></label>
               <input name="name" value={form.name} onChange={handleChange} required placeholder="Transporter name"
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
+                className="qt-filter-field w-full h-6 text-[10px] rounded border border-gray-300 px-2" />
             </div>
 
             <div>
               <label className="text-[9px] font-semibold text-amber-700 uppercase mb-0.5 block">Status</label>
               <select name="status" value={form.status} onChange={handleChange}
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none">
+                className="qt-filter-field w-full h-6 text-[10px] rounded border border-gray-300 px-2">
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
                 <option value="Suspended">Suspended</option>
@@ -203,25 +203,25 @@ export default function TransportersPortal() {
             <div>
               <label className="text-[9px] font-semibold text-amber-700 uppercase mb-0.5 block">Email</label>
               <input name="email" value={form.email} onChange={handleChange} placeholder="email@example.com"
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
+                className="qt-filter-field w-full h-6 text-[10px] rounded border border-gray-300 px-2" />
             </div>
 
             <div>
               <label className="text-[9px] font-semibold text-amber-700 uppercase mb-0.5 block">Phone</label>
               <input name="phone" value={form.phone} onChange={handleChange} placeholder="+254 7XX XXX XXX"
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
+                className="qt-filter-field w-full h-6 text-[10px] rounded border border-gray-300 px-2" />
             </div>
 
             <div>
               <label className="text-[9px] font-semibold text-amber-700 uppercase mb-0.5 block">License Number</label>
               <input name="licenseNumber" value={form.licenseNumber} onChange={handleChange} placeholder="License no."
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
+                className="qt-filter-field w-full h-6 text-[10px] rounded border border-gray-300 px-2" />
             </div>
 
             <div className="col-span-2">
               <label className="text-[9px] font-semibold text-amber-700 uppercase mb-0.5 block">Address</label>
               <input name="address" value={form.address} onChange={handleChange} placeholder="Full address"
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 focus:outline-none" />
+                className="qt-filter-field w-full h-6 text-[10px] rounded border border-gray-300 px-2" />
             </div>
 
             <div className="col-span-4 flex gap-2 justify-end mt-0.5">
@@ -232,7 +232,7 @@ export default function TransportersPortal() {
                 </button>
               )}
               <button type="submit" disabled={loading}
-                className="h-6 px-3 text-[10px] font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow-sm transition-all flex items-center gap-1">
+                className="h-6 px-3 text-[10px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm transition-all flex items-center gap-1">
                 <Plus className="w-3 h-3" />
                 {editingTransporter ? "Update Transporter" : "Add Transporter"}
               </button>
@@ -250,7 +250,13 @@ export default function TransportersPortal() {
           ) : error ? (
             <div className="flex-1 flex items-center justify-center"><p className="text-red-500 text-sm">Error: {error}</p></div>
           ) : paginated.length === 0 ? (
-            <div className="flex-1 flex items-center justify-center"><p className="text-gray-500 text-sm">No transporters found.</p></div>
+            <div className="flex-1 flex items-center justify-center">
+              <div className="text-center">
+                <Truck className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-500 text-sm">No transporters found.</p>
+                <p className="text-gray-400 text-xs mt-1">Add a transporter using the form above</p>
+              </div>
+            </div>
           ) : (
             <>
               <div className="flex-1 overflow-auto">

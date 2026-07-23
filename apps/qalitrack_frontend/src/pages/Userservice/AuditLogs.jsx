@@ -53,7 +53,7 @@ const AuditLogs = () => {
             <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                     <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-                        <ScrollText className="w-4 h-4 text-white" />
+                        <ScrollText className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
                     </div>
                     <div>
                         <span className="text-sm font-bold text-gray-900 block leading-tight">Audit Logs</span>

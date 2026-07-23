@@ -12,11 +12,23 @@ import {
 } from "recharts";
 import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
-  Activity, Clock, Target, Zap, Award, Filter, X
+  Activity, Clock, Target, Zap, Award, Filter, X, BarChart3
 } from "lucide-react";
 
 dayjs.extend(relativeTime);
 dayjs.extend(isBetween);
+
+// Shared "nothing to chart yet" placeholder — same height as the chart it
+// replaces, so panels don't jump size when data shows up.
+function ChartEmpty({ message = "No data for this period", height = 200 }) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center" style={{ height }}>
+      <BarChart3 className="w-10 h-10 text-gray-300 mb-2" />
+      <p className="text-gray-500 text-sm font-medium">{message}</p>
+      <p className="text-gray-400 text-xs mt-1">Try a different time range or clear your filters</p>
+    </div>
+  );
+}
 
 // Amber color palette
 const AMBER_COLORS = {
@@ -453,28 +465,28 @@ export default function Analytics() {
     <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
 
       {/* HEADER */}
-      <div className="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0">
+      <div className="shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md">
-              <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg cs-icon-box flex items-center justify-center shadow-md">
+              <Activity className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-gray-900">Live Analytics Dashboard</h1>
-              <p className="text-xs text-gray-500 font-medium">
+              <h1 className="text-base sm:text-lg font-bold" style={{ color: "var(--cs-appbar-text)" }}>Live Analytics Dashboard</h1>
+              <p className="text-xs font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 Real-time insights • Auto-refresh every 30s
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <div className="text-[10px] text-gray-500 font-medium">Last updated</div>
-              <div className="text-xs font-bold text-amber-700">{lastUpdated.fromNow()}</div>
+              <div className="text-[10px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.6 }}>Last updated</div>
+              <div className="text-xs font-bold" style={{ color: "var(--cs-appbar-text)" }}>{lastUpdated.fromNow()}</div>
             </div>
             <button
               onClick={loadTransactions}
               disabled={loading}
-              className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-xs font-semibold text-amber-900 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 cs-ghost-btn rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
             >
               <Activity className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
@@ -593,63 +605,66 @@ export default function Analytics() {
                 value: advancedKPIs.totalTx,
                 growth: advancedKPIs.txGrowth,
                 icon: Activity,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#f59e0b",
               },
               {
                 label: "Completed",
                 value: advancedKPIs.completed,
                 icon: CheckCircle,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#10b981",
               },
               {
                 label: "Efficiency",
                 value: `${advancedKPIs.efficiency}%`,
                 icon: Target,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#3b82f6",
               },
               {
                 label: "Capacity",
                 value: `${advancedKPIs.capacityUtilization}%`,
                 icon: Zap,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#8b5cf6",
               },
               {
                 label: "Avg TAT (min)",
                 value: advancedKPIs.avgTurnaround,
                 icon: Clock,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#06b6d4",
               },
               {
                 label: "Total Net (kg)",
                 value: advancedKPIs.totalNetWeight.toLocaleString(),
                 growth: advancedKPIs.weightGrowth,
                 icon: Award,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#d97706",
               },
               {
                 label: "Avg Weight",
                 value: advancedKPIs.avgWeight.toLocaleString(),
                 icon: TrendingUp,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#6366f1",
               },
               {
                 label: "Tx/Hour",
                 value: advancedKPIs.txPerHour,
                 icon: Activity,
-                gradient: "from-amber-100 to-amber-50",
+                accent: "#14b8a6",
               },
-            ].map(({ label, value, growth, icon: Icon, gradient }) => (
+            ].map(({ label, value, growth, icon: Icon, accent }) => (
+              // Same recipe as AdminDashboard's KpiCard: white card, small
+              // accent-colored icon badge (accent is a fixed per-metric
+              // category color, not the app's color scheme — same as the
+              // dashboard's KPIs), bold dark value — instead of a big pale
+              // amber-tinted card that doesn't read as "data" so much as
+              // decoration, and didn't follow the scheme rule elsewhere.
               <div
                 key={label}
-                className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md border border-amber-200 transform transition-transform hover:scale-105`}
+                className="relative bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-100 shadow-sm hover:border-amber-400 hover:shadow-md transition-all"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide opacity-90">
-                    {label}
-                  </div>
-                  <Icon size={14} className="opacity-60" />
+                <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-500 pr-7">
+                  {label}
                 </div>
-                <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1">{value}</div>
+                <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1 text-gray-900">{value}</div>
                 {growth && (
                   <div className={`text-[10px] font-bold mt-1 flex items-center gap-1 ${
                     parseFloat(growth) >= 0 ? "text-green-700" : "text-red-700"
@@ -658,6 +673,9 @@ export default function Analytics() {
                     {Math.abs(parseFloat(growth))}%
                   </div>
                 )}
+                <div className="absolute top-3 right-3 p-1.5 rounded-lg" style={{ backgroundColor: accent + "20" }}>
+                  <Icon size={14} style={{ color: accent }} />
+                </div>
               </div>
             ))}
           </div>
@@ -667,6 +685,7 @@ export default function Analytics() {
             {/* DAILY THROUGHPUT */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Daily Throughput</h3>
+              {dailyTrend.length === 0 ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <ComposedChart data={dailyTrend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -678,11 +697,13 @@ export default function Analytics() {
                   <Line type="monotone" dataKey="weight" stroke={AMBER_COLORS.base} strokeWidth={2} name="Weight (kg)" dot={{ r: 3 }} />
                 </ComposedChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* DRIVER PERFORMANCE RADAR */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Top Driver Performance</h3>
+              {radarData.length === 0 ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <RadarChart data={radarData.length > 0 ? [
                   { metric: "Trips", ...radarData.reduce((acc, d) => ({ ...acc, [d.driver]: d.trips }), {}) },
@@ -706,11 +727,13 @@ export default function Analytics() {
                   <Legend wrapperStyle={{ fontSize: 10 }} />
                 </RadarChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* TURNAROUND TIME TREND */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Average Turnaround Time</h3>
+              {tatTrend.length === 0 ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <AreaChart data={tatTrend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -720,11 +743,13 @@ export default function Analytics() {
                   <Area type="monotone" dataKey="avgTAT" stroke={AMBER_COLORS.darker} fill={AMBER_COLORS.light} fillOpacity={0.6} />
                 </AreaChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* TRANSACTION STATUS PIE */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Transaction Status</h3>
+              {statusPie.every((d) => d.value === 0) ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <PieChart>
                   <Pie
@@ -745,11 +770,13 @@ export default function Analytics() {
                   <Tooltip contentStyle={{ fontSize: 11 }} />
                 </PieChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* HOURLY PERFORMANCE */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Hourly Performance</h3>
+              {hourlyPerformance.every((d) => d.total === 0) ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <BarChart data={hourlyPerformance}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -761,11 +788,13 @@ export default function Analytics() {
                   <Bar dataKey="inProgress" stackId="a" fill={AMBER_COLORS.light} name="In Progress" />
                 </BarChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* TOP DRIVERS TABLE */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Top Drivers</h3>
+              {driverPerformance.length === 0 ? <ChartEmpty height={140} /> : (
               <div className="space-y-2">
                 {driverPerformance.map((driver, idx) => (
                   <div key={driver.driver} className="flex items-center justify-between p-2 bg-amber-50 rounded border border-amber-200">
@@ -782,11 +811,13 @@ export default function Analytics() {
                   </div>
                 ))}
               </div>
+              )}
             </div>
 
             {/* COMMODITIES BAR - FULL WIDTH */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow lg:col-span-2">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Commodities by Weight & Count</h3>
+              {commodityStats.length === 0 ? <ChartEmpty height={220} /> : (
               <ResponsiveContainer width="100%" height={220} className="sm:h-[240px] md:h-[260px]">
                 <ComposedChart data={commodityStats}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -799,6 +830,7 @@ export default function Analytics() {
                   <Line yAxisId="right" type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} name="Count" dot={{ r: 4 }} />
                 </ComposedChart>
               </ResponsiveContainer>
+              )}
             </div>
           </div>
 

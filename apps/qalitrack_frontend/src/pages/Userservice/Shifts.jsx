@@ -621,10 +621,10 @@ const Shifts = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-base font-bold text-gray-900">Shifts</h2>
+            <div className="px-4 py-3 flex items-center justify-between flex-wrap gap-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                <h2 className="text-base font-bold" style={{ color: "var(--cs-appbar-text)" }}>Shifts</h2>
                 <div className="flex items-center gap-2">
-                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
+                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
                         <input
                             id="show-deleted"
                             type="checkbox"
@@ -639,13 +639,14 @@ const Shifts = () => {
                     </label>
                     <button
                         onClick={handleDownloadPDF}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 rounded transition-colors"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-ghost-btn rounded transition-colors"
                     >
                         <Download size={13} />
                         <span>PDF</span>
                     </button>
                     <button
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white rounded shadow transition-all"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow transition-all"
+                        style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
                         onClick={() => setAddModalOpen(true)}
                     >
                         <PlusCircle size={13} />

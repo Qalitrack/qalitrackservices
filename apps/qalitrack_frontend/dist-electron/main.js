@@ -1,102 +1,65 @@
-import require$$0 from "electron";
-import require$$1 from "path";
-import require$$2 from "os";
+import M from "electron";
+import _ from "path";
+import y from "os";
 import "fs";
-import require$$4 from "child_process";
-function getDefaultExportFromCjs(x) {
-  return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
+import S from "child_process";
+function $(e) {
+  return e && e.__esModule && Object.prototype.hasOwnProperty.call(e, "default") ? e.default : e;
 }
-var main$1 = {};
-var hasRequiredMain;
-function requireMain() {
-  if (hasRequiredMain) return main$1;
-  hasRequiredMain = 1;
-  const { app, BrowserWindow, ipcMain } = require$$0;
-  const path = require$$1;
-  const os = require$$2;
-  const isDev = !app.isPackaged;
-  if (process.platform === "linux") {
-    app.commandLine.appendSwitch("no-sandbox");
-    app.commandLine.appendSwitch("no-zygote");
-  }
-  const { execSync } = require$$4;
-  function deriveMachineId() {
-    var _a;
+var f = {}, m;
+function b() {
+  if (m) return f;
+  m = 1;
+  const { app: e, BrowserWindow: c, ipcMain: h } = M, s = _, l = y, d = !e.isPackaged;
+  process.platform === "linux" && (e.commandLine.appendSwitch("no-sandbox"), e.commandLine.appendSwitch("no-zygote"));
+  const { execSync: g } = S;
+  function w() {
+    var r;
     try {
-      const out = execSync(
+      const i = g(
         'reg query "HKLM\\SOFTWARE\\Microsoft\\Cryptography" /v MachineGuid',
         { encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] }
-      );
-      const match = out.match(/MachineGuid\s+REG_SZ\s+([^\r\n]+)/);
-      if (match && match[1]) {
-        return match[1].trim().replace(/[^a-zA-Z0-9\-]/g, "").slice(0, 36);
-      }
-    } catch (_) {
+      ).match(/MachineGuid\s+REG_SZ\s+([^\r\n]+)/);
+      if (i && i[1])
+        return i[1].trim().replace(/[^a-zA-Z0-9\-]/g, "").slice(0, 36);
+    } catch {
     }
-    const ifaces = os.networkInterfaces();
-    const mac = ((_a = Object.values(ifaces).flat().filter((n) => n && !n.internal && n.mac && n.mac !== "00:00:00:00:00:00").sort((a, b) => a.mac.localeCompare(b.mac))[0]) == null ? void 0 : _a.mac) ?? "nomac";
-    return Buffer.from(`${os.hostname()}:${mac}`).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 24);
+    const n = l.networkInterfaces(), p = ((r = Object.values(n).flat().filter((t) => t && !t.internal && t.mac && t.mac !== "00:00:00:00:00:00").sort((t, i) => t.mac.localeCompare(i.mac))[0]) == null ? void 0 : r.mac) ?? "nomac";
+    return Buffer.from(`${l.hostname()}:${p}`).toString("base64").replace(/[^a-zA-Z0-9]/g, "").slice(0, 24);
   }
-  let _cachedMachineId = null;
-  function getMachineId() {
-    if (!_cachedMachineId) _cachedMachineId = deriveMachineId();
-    return _cachedMachineId;
+  let a = null;
+  function v() {
+    return a || (a = w()), a;
   }
-  ipcMain.handle("get-machine-id", () => getMachineId());
-  let mainWindow = null;
-  function createWindow() {
-    const win = new BrowserWindow({
+  h.handle("get-machine-id", () => v());
+  let o = null;
+  function u() {
+    const n = new c({
       width: 1400,
       height: 900,
       webPreferences: {
-        nodeIntegration: false,
-        contextIsolation: true,
-        preload: path.join(__dirname, "preload.cjs"),
-        webSecurity: !isDev
+        nodeIntegration: !1,
+        contextIsolation: !0,
+        preload: s.join(__dirname, "preload.cjs"),
+        webSecurity: !d
       }
     });
-    mainWindow = win;
-    win.on("closed", () => {
-      mainWindow = null;
-    });
-    if (isDev) {
-      win.loadURL(process.env.VITE_DEV_SERVER_URL || "http://localhost:5173");
-      win.webContents.openDevTools();
-    } else {
-      win.loadFile(path.join(__dirname, "../dist/index.html"));
-    }
-    win.webContents.on("before-input-event", (event, input) => {
-      if (input.key === "F12") {
-        win.webContents.toggleDevTools();
-      }
+    o = n, n.on("closed", () => {
+      o = null;
+    }), d ? (n.loadURL(process.env.VITE_DEV_SERVER_URL || "http://localhost:5173"), n.webContents.openDevTools()) : n.loadFile(s.join(__dirname, "../dist/index.html")), n.webContents.on("before-input-event", (p, r) => {
+      r.key === "F12" && n.webContents.toggleDevTools();
     });
   }
-  const gotSingleInstanceLock = app.requestSingleInstanceLock();
-  if (!gotSingleInstanceLock) {
-    app.quit();
-  } else {
-    app.on("second-instance", () => {
-      if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.restore();
-        mainWindow.focus();
-      }
-    });
-    app.whenReady().then(createWindow);
-    app.on("window-all-closed", () => {
-      if (process.platform !== "darwin") {
-        app.quit();
-      }
-    });
-    app.on("activate", () => {
-      if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-      }
-    });
-  }
-  return main$1;
+  return e.requestSingleInstanceLock() ? (e.on("second-instance", () => {
+    o && (o.isMinimized() && o.restore(), o.focus());
+  }), e.whenReady().then(u), e.on("window-all-closed", () => {
+    process.platform !== "darwin" && e.quit();
+  }), e.on("activate", () => {
+    c.getAllWindows().length === 0 && u();
+  })) : e.quit(), f;
 }
-var mainExports = requireMain();
-const main = /* @__PURE__ */ getDefaultExportFromCjs(mainExports);
+var q = b();
+const C = /* @__PURE__ */ $(q);
 export {
-  main as default
+  C as default
 };
