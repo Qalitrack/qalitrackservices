@@ -359,7 +359,7 @@ export default function Transactions() {
 
             <Button
               icon={<ReloadOutlined />}
-              className="h-7 text-[10px] font-semibold cs-ghost-btn shadow-none"
+              className="h-7 text-[10px] font-semibold cs-solid-chip-btn shadow-none"
               onClick={loadTransactions}
               loading={loading}
             >

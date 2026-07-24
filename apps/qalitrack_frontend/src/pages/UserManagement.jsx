@@ -90,7 +90,7 @@ export default function UserManagement() {
           </div>
           <div>
             <h2 className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>User Management</h2>
-            <p className="text-xs font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>Users • Roles • Permissions</p>
+            <p className="text-xs font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>Users • Roles • Permissions</p>
           </div>
         </div>
 

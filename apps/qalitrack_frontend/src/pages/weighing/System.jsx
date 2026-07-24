@@ -363,27 +363,27 @@ export default function SystemSettings() {
     >
       {/* Header */}
       <div
-        className={`px-6 py-4 border-b shrink-0 ${isDark ? "bg-gray-800 border-gray-700" : "border-white/10"}`}
+        className={`px-4 py-2.5 border-b shrink-0 ${isDark ? "bg-gray-800 border-gray-700" : "border-white/10"}`}
         style={isDark ? undefined : { backgroundColor: "var(--cs-appbar-bg)" }}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl cs-icon-box flex items-center justify-center shadow-lg">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-lg shrink-0">
               <Settings className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <h1
-                className="text-xl font-black"
+              <div
+                className="text-sm font-black leading-tight"
                 style={{ color: isDark ? "#ffffff" : "var(--cs-appbar-text)" }}
               >
                 System Settings
-              </h1>
-              <p
-                className="text-xs"
+              </div>
+              <div
+                className="text-[11px] leading-tight"
                 style={{ color: isDark ? "#9ca3af" : "var(--cs-appbar-text)", opacity: isDark ? 1 : 0.7 }}
               >
                 Configure hardware, tickets, kiosk, security, and integrations
-              </p>
+              </div>
             </div>
           </div>
 
@@ -392,7 +392,7 @@ export default function SystemSettings() {
               onClick={handleReset}
               icon={<RotateCcw className="w-4 h-4" />}
               disabled={loading || saving}
-              className={isDark ? "border-gray-700 text-gray-300" : "cs-ghost-btn"}
+              className={isDark ? "border-gray-700 text-gray-300" : "cs-solid-chip-btn"}
             >
               Reset
             </Button>

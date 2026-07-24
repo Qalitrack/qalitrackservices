@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import { Pencil, Trash2, Plus, Search, X, Building2, Check } from "lucide-react";
-import { message, Modal } from "antd";
+import { Pencil, Trash2, Plus, Search, X, Building2 } from "lucide-react";
+import { message, Modal, Switch } from "antd";
 import TablePagination from "../components/TablePagination";
 import { getSaccos, createSacco, updateSacco, deleteSacco } from "../api/MasterData/Saccos";
 
@@ -169,7 +169,7 @@ export default function SaccosPortal() {
             </select>
             <button
               onClick={() => { setSearch(""); setStatusFilter("All"); setPage(1); fetchSaccos(); }}
-              className="h-7 px-3 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
+              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -317,30 +317,11 @@ export default function SaccosPortal() {
                     <td className="px-3 py-2 text-[10px] text-gray-600 max-w-xs truncate">
                       {sacco.otherDetails || "—"}
                     </td>
-                    <td className="px-3 py-2">
-                      <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase border inline-flex items-center gap-0.5 ${
-                        isActive
-                          ? "bg-green-100 text-green-700 border-green-300"
-                          : "bg-red-100 text-red-700 border-red-300"
-                      }`}>
-                        {isActive
-                          ? <><Check className="w-2.5 h-2.5" /> Active</>
-                          : <><X className="w-2.5 h-2.5" /> Inactive</>}
-                      </span>
+                    <td className="px-3 py-2 text-center">
+                      <Switch checked={isActive} onChange={() => handleToggleStatus(sacco)} size="small" />
                     </td>
                     <td className="px-3 py-2">
                       <div className="flex gap-1 justify-center">
-                        <button
-                          onClick={() => handleToggleStatus(sacco)}
-                          className={`p-1 rounded border text-[9px] font-semibold transition-all ${
-                            isActive
-                              ? "text-green-700 border-green-300 hover:bg-green-50"
-                              : "text-red-700 border-red-300 hover:bg-red-50"
-                          }`}
-                          title={isActive ? "Set Inactive" : "Set Active"}
-                        >
-                          {isActive ? "✓" : "✕"}
-                        </button>
                         <button
                           onClick={() => handleEdit(sacco)}
                           className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"

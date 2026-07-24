@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Truck, Plus, Search, X, Users, Check } from "lucide-react";
+import { Pencil, Trash2, Truck, Plus, Search, X, Users } from "lucide-react";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
-import { message, Modal, Select } from "antd";
+import { message, Modal, Select, Switch } from "antd";
 import {
   getVehicles,
   createVehicle,
@@ -487,7 +487,7 @@ export default function Vehicles() {
                 setPageNumber(1);
                 fetchVehicles();
               }}
-              className="h-7 px-3 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
+              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -1025,32 +1025,15 @@ export default function Vehicles() {
                       <span className="text-gray-400 text-[9px]">Not set</span>
                     )}
                   </td>
-                  <td className="px-3 py-2">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase inline-flex items-center gap-0.5 ${
-                        v.status?.toLowerCase() === "active"
-                          ? "bg-green-100 text-green-700 border border-green-300"
-                          : "bg-red-100 text-red-700 border border-red-300"
-                      }`}
-                    >
-                      {v.status?.toLowerCase() === "active"
-                        ? <><Check className="w-2.5 h-2.5" /> Active</>
-                        : <><X className="w-2.5 h-2.5" /> Inactive</>}
-                    </span>
+                  <td className="px-3 py-2 text-center">
+                    <Switch
+                      checked={v.status?.toLowerCase() === "active"}
+                      onChange={() => handleToggleStatus(v)}
+                      size="small"
+                    />
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex gap-1 justify-center">
-                      <button
-                        onClick={() => handleToggleStatus(v)}
-                        className={`p-1 rounded border text-[9px] font-semibold transition-all ${
-                          v.status?.toLowerCase() === "active"
-                            ? "text-green-700 border-green-300 hover:bg-green-50"
-                            : "text-red-700 border-red-300 hover:bg-red-50"
-                        }`}
-                        title={v.status?.toLowerCase() === "active" ? "Set Inactive" : "Set Active"}
-                      >
-                        {v.status?.toLowerCase() === "active" ? "✓" : "✕"}
-                      </button>
                       <button
                         onClick={() => handleEdit(v)}
                         className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"

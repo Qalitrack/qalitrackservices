@@ -332,10 +332,6 @@ using (var scope = app.Services.CreateScope())
         logger.LogInformation("Applying database migrations...");
         await context.Database.MigrateAsync(); // Use async version
         logger.LogInformation("Database migrations applied successfully.");
-        
-        logger.LogInformation("Seeding database...");
-        await DatabaseSeeder.SeedAsync(context);
-        logger.LogInformation("Database seeding completed successfully.");
     }
     catch (Exception ex)
     {

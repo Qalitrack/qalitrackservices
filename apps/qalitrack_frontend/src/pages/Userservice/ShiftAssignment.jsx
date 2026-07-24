@@ -670,7 +670,7 @@ const ShiftAssignment = () => {
                     <button
                         onClick={handleDownloadPDF}
                         disabled={showDeleted}
-                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-ghost-btn'}`}
+                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-solid-chip-btn'}`}
                     >
                         <Download size={13} />
                         <span>PDF</span>

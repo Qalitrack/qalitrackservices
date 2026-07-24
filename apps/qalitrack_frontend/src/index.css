@@ -144,6 +144,20 @@ body { @apply bg-gray-100 text-gray-900; }
   border-color: rgba(31, 41, 55, 0.5);
 }
 
+/* "Solid chip" buttons — white fill, text/icon colored to match the active
+   scheme's app-bar (var(--cs-appbar-bg)), same recipe already used for
+   Save Settings/Add Shift. Unlike .cs-ghost-btn this needs no per-scheme
+   override: white always contrasts against any app-bar color, dark or
+   light, so one rule works for Navy, Indigo, and Amber alike. */
+.cs-solid-chip-btn {
+  background-color: #ffffff;
+  border-color: #ffffff;
+  color: var(--cs-appbar-bg);
+}
+.cs-solid-chip-btn:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
 .cs-appbar-badge {
   background-color: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.25);

@@ -488,15 +488,15 @@ export default function Analytics() {
       {/* HEADER */}
       <div className="shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg cs-icon-box flex items-center justify-center shadow-md">
-              <Activity className="w-4 h-4 sm:w-5 sm:h-5" style={{ color: "var(--cs-icon-accent)" }} />
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-md shrink-0">
+              <Activity className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold" style={{ color: "var(--cs-appbar-text)" }}>Live Analytics Dashboard</h1>
-              <p className="text-xs font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
+              <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Live Analytics Dashboard</div>
+              <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 Real-time insights • Auto-refresh every 30s
-              </p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -507,7 +507,7 @@ export default function Analytics() {
             <button
               onClick={loadTransactions}
               disabled={loading}
-              className="flex items-center gap-2 px-3 py-1.5 border cs-ghost-btn rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 border cs-solid-chip-btn rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
             >
               <Activity className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>

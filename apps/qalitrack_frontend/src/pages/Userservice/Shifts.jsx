@@ -639,7 +639,7 @@ const Shifts = () => {
                     </label>
                     <button
                         onClick={handleDownloadPDF}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-ghost-btn rounded transition-colors"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
                     >
                         <Download size={13} />
                         <span>PDF</span>

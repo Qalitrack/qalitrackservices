@@ -30,16 +30,16 @@ export default function Security() {
   return (
     <div className="h-full bg-gray-50 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="mb-3 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-3 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg cs-icon-box flex items-center justify-center shadow-sm">
+      <div className="mb-3 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-2.5 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-sm shrink-0">
             <Shield className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: "var(--cs-appbar-text)" }}>SECURITY</h1>
-            <p className="text-xs font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
+            <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>SECURITY</div>
+            <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
               Permissions, roles, password policy, and audit logs
-            </p>
+            </div>
           </div>
         </div>
       </div>

@@ -43,9 +43,9 @@ export default function Reports() {
     { id: "customers", label: "Customers", icon: null },
     { id: "commodities", label: "Commodities", icon: null },
     { id: "suppliers", label: "Suppliers", icon: null },
-    { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} />, badge: "NEW" },
-    { id: "comparison", label: "Comparison", icon: <GitCompare size={14} />, badge: "NEW" },
-    { id: "custom", label: "Custom Builder", icon: <Settings size={14} />, badge: "NEW" },
+    { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} /> },
+    { id: "comparison", label: "Comparison", icon: <GitCompare size={14} /> },
+    { id: "custom", label: "Custom Builder", icon: <Settings size={14} /> },
     // { id: "scheduler", label: "Scheduler", icon: <Calendar size={14} />, badge: "NEW" }, // TODO: backend not implemented yet
   ];
 
@@ -649,11 +649,11 @@ export default function Reports() {
   return (
     <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="mb-4 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-3 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-lg cs-icon-box flex items-center justify-center shadow-sm">
+      <div className="mb-4 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-2.5 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-sm shrink-0">
             <svg
-              className="w-6 h-6"
+              className="w-5 h-5"
               style={{ color: "var(--cs-icon-accent)" }}
               fill="none"
               stroke="currentColor"
@@ -668,10 +668,10 @@ export default function Reports() {
             </svg>
           </div>
           <div>
-            <h1 className="text-2xl font-bold" style={{ color: "var(--cs-appbar-text)" }}>REPORTS</h1>
-            <p className="text-xs font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
+            <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>REPORTS</div>
+            <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
               Operational and analytical system reports
-            </p>
+            </div>
           </div>
         </div>
       </div>

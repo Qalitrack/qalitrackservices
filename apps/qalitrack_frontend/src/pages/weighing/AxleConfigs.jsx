@@ -162,7 +162,7 @@ const AxleConfigs = () => {
                 className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
-            <button onClick={fetchConfigs} className="h-7 px-3 text-[11px] font-medium rounded-md cs-ghost-btn shadow-sm transition-all flex items-center gap-1.5">
+            <button onClick={fetchConfigs} className="h-7 px-3 text-[11px] font-medium rounded-md cs-solid-chip-btn shadow-sm transition-all flex items-center gap-1.5">
               <RotateCcw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
             </button>
           </div>

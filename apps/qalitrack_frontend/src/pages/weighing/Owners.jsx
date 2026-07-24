@@ -151,7 +151,7 @@ export default function OwnersPortal() {
                 setSearch("");
                 fetchOwners();
               }}
-              className="h-7 px-3 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
+              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
             >
               Refresh
             </button>
