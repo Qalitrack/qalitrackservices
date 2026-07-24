@@ -1,13 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
-import { Pencil, Trash2, Plus, Search, X, Truck } from "lucide-react";
+import { Pencil, Trash2, Plus, Search, X, Truck, Car, UserCheck } from "lucide-react";
 import { message, Modal } from "antd";
 import TablePagination from "../../components/TablePagination";
+import VehicleRelationModal from "../../components/VehicleRelationModal";
+import DriverRelationModal from "../../components/DriverRelationModal";
 import {
   getTransporters,
   createTransporter,
   updateTransporter,
   deleteTransporter,
 } from "../../api/MasterData/Transporters";
+import { assignDriverToTransporter, unassignDriverFromTransporter } from "../../api/MasterData/Drivers";
 
 const PAGE_SIZE = 5;
 
@@ -18,6 +21,8 @@ export default function TransportersPortal() {
   const [editingTransporter, setEditingTransporter] = useState(null);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [vehiclesTransporter, setVehiclesTransporter] = useState(null);
+  const [driversTransporter, setDriversTransporter] = useState(null);
 
   const [form, setForm] = useState({
     name: "",
@@ -307,6 +312,14 @@ export default function TransportersPortal() {
                           </td>
                           <td className="px-3 py-2">
                             <div className="flex gap-1.5 justify-center">
+                              <button onClick={() => setVehiclesTransporter(t)}
+                                className="p-1 rounded text-gray-600 hover:bg-gray-50 border border-gray-300 hover:border-gray-500 transition-all" title="View Vehicles">
+                                <Car className="w-3 h-3" />
+                              </button>
+                              <button onClick={() => setDriversTransporter(t)}
+                                className="p-1 rounded text-gray-600 hover:bg-gray-50 border border-gray-300 hover:border-gray-500 transition-all" title="View Drivers">
+                                <UserCheck className="w-3 h-3" />
+                              </button>
                               <button onClick={() => handleEdit(t)}
                                 className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all" title="Edit">
                                 <Pencil className="w-3 h-3" />
@@ -330,6 +343,24 @@ export default function TransportersPortal() {
           )}
         </div>
       </div>
+
+      <VehicleRelationModal
+        entity={vehiclesTransporter}
+        relationField="transporterId"
+        relationNameField="transporterName"
+        entityLabel="Transporter"
+        onClose={() => setVehiclesTransporter(null)}
+      />
+
+      <DriverRelationModal
+        entity={driversTransporter}
+        relationField="transporterId"
+        assignFn={assignDriverToTransporter}
+        removeFn={unassignDriverFromTransporter}
+        entityLabel="Transporter"
+        otherEntities={transporters}
+        onClose={() => setDriversTransporter(null)}
+      />
 
       <style>{`
         .compact-table {

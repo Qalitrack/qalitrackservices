@@ -7,11 +7,13 @@ import {
   createOwner,
   updateOwner,
   deleteOwner,
-  getOwnerVehicles,
+  assignVehiclesToOwner,
+  removeVehiclesFromOwner,
 } from "../../api/MasterData/Owners";
+import { getVehicles } from "../../api/MasterData/Vehicles";
 
 const PAGE_SIZE = 5;
-const OWNER_TYPES = { 1: "Individual", 2: "Company", 3: "Government" };
+const OWNER_TYPES = { 1: "Individual", 2: "Company", 3: "Sacco" };
 
 export default function OwnersPortal() {
   const [owners, setOwners] = useState([]);
@@ -21,10 +23,14 @@ export default function OwnersPortal() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  // vehicles modal
+  // vehicles modal — one combined checklist of every vehicle, each showing
+  // whether it's already assigned to this owner, unassigned, or taken by
+  // someone else (disabled in that case, since a vehicle can only have one
+  // owner at a time).
   const [vehiclesOwner, setVehiclesOwner] = useState(null);
-  const [vehicles, setVehicles] = useState([]);
+  const [allVehicles, setAllVehicles] = useState([]);
   const [vehiclesLoading, setVehiclesLoading] = useState(false);
+  const [assignBusy, setAssignBusy] = useState(false);
 
   const [form, setForm] = useState({
     name: "", type: 1, contactPerson: "", phoneNumber: "", email: "", address: "",
@@ -102,14 +108,38 @@ export default function OwnersPortal() {
     });
   };
 
-  const handleViewVehicles = async (owner) => {
-    setVehiclesOwner(owner);
+  const loadAllVehicles = async () => {
     setVehiclesLoading(true);
     try {
-      const data = await getOwnerVehicles(owner.id);
-      setVehicles(data?.data || data || []);
-    } catch { setVehicles([]); }
+      const data = await getVehicles(1, 500, "");
+      const items = data?.items || data?.data?.items || (Array.isArray(data?.data) ? data.data : []) || (Array.isArray(data) ? data : []);
+      setAllVehicles(items);
+    } catch { setAllVehicles([]); }
     finally { setVehiclesLoading(false); }
+  };
+
+  const handleViewVehicles = async (owner) => {
+    setVehiclesOwner(owner);
+    await loadAllVehicles();
+  };
+
+  const handleToggleVehicleAssignment = async (vehicle, shouldAssign) => {
+    if (!vehiclesOwner) return;
+    setAssignBusy(true);
+    try {
+      if (shouldAssign) {
+        await assignVehiclesToOwner(vehiclesOwner.id, [vehicle.id]);
+        message.success("Vehicle assigned");
+      } else {
+        await removeVehiclesFromOwner(vehiclesOwner.id, [vehicle.id]);
+        message.success("Vehicle unassigned");
+      }
+      await loadAllVehicles();
+    } catch (err) {
+      message.error(err.response?.data?.message || err.message || "Failed to update vehicle assignment");
+    } finally {
+      setAssignBusy(false);
+    }
   };
 
   const resetForm = () => {
@@ -351,7 +381,10 @@ export default function OwnersPortal() {
         <TablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
-      {/* Vehicles Modal */}
+      {/* Vehicles Modal — one checklist of every vehicle. Checking a box
+          assigns it to this owner, unchecking removes it. Vehicles already
+          owned by someone else are shown (so you can see who has what) but
+          disabled, since a vehicle can only belong to one owner at a time. */}
       {vehiclesOwner && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-md border-2 border-amber-300">
@@ -369,32 +402,59 @@ export default function OwnersPortal() {
             <div className="p-4">
               {vehiclesLoading ? (
                 <p className="text-gray-500 text-sm text-center py-4">Loading vehicles...</p>
-              ) : vehicles.length === 0 ? (
-                <p className="text-gray-500 text-sm text-center py-4">No vehicles registered for this owner.</p>
+              ) : allVehicles.length === 0 ? (
+                <p className="text-gray-500 text-sm text-center py-4">No vehicles registered in the system.</p>
               ) : (
-                <div className="overflow-auto max-h-64">
+                <div className="overflow-auto max-h-80">
                   <table className="w-full text-sm">
-                    <thead>
+                    <thead className="sticky top-0 bg-white">
                       <tr className="border-b-2 border-amber-200">
+                        <th className="text-center py-2 w-8"></th>
                         <th className="text-left py-2 text-[10px] font-bold text-amber-700 uppercase">Registration</th>
                         <th className="text-left py-2 text-[10px] font-bold text-amber-700 uppercase">Make / Model</th>
+                        <th className="text-left py-2 text-[10px] font-bold text-amber-700 uppercase">Status</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {vehicles.map((v) => (
-                        <tr key={v.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
-                          <td className="py-2">
-                            <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
-                              {v.registrationNumber}
-                            </div>
-                          </td>
-                          <td className="py-2 text-[10px] text-gray-700">{v.make} {v.model}</td>
-                        </tr>
-                      ))}
+                      {allVehicles.map((v) => {
+                        const isThisOwner = v.ownerId === vehiclesOwner.id;
+                        const otherOwnerName = !isThisOwner && v.ownerId
+                          ? (v.ownerName || owners.find((o) => o.id === v.ownerId)?.name || "another owner")
+                          : null;
+                        return (
+                          <tr key={v.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
+                            <td className="py-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={isThisOwner}
+                                disabled={assignBusy || !!otherOwnerName}
+                                onChange={(e) => handleToggleVehicleAssignment(v, e.target.checked)}
+                                className="w-3.5 h-3.5 accent-amber-500 disabled:opacity-40"
+                              />
+                            </td>
+                            <td className="py-2">
+                              <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
+                                {v.registrationNumber}
+                              </div>
+                            </td>
+                            <td className="py-2 text-[10px] text-gray-700">{v.make} {v.model}</td>
+                            <td className="py-2 text-[10px]">
+                              {isThisOwner ? (
+                                <span className="text-green-700 font-semibold">Assigned</span>
+                              ) : otherOwnerName ? (
+                                <span className="text-gray-400 italic">Owned by {otherOwnerName}</span>
+                              ) : (
+                                <span className="text-gray-400">Unassigned</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
               )}
+
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={() => setVehiclesOwner(null)}
