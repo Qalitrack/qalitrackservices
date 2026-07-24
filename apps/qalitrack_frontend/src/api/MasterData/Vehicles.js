@@ -107,7 +107,8 @@ export const updateVehicleStatus = (id, status) => {
 // vehicle payload, so this fetches the current record and resubmits it with
 // just that one field changed. Pass `null` to clear the relationship.
 export const patchVehicleRelation = async (vehicleId, field, value) => {
-  const vehicle = await getVehicleById(vehicleId);
+  const response = await getVehicleById(vehicleId);
+  const vehicle = response?.data || response;
 
   const payload = {
     registrationNumber: vehicle.registrationNumber,

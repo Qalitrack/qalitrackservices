@@ -32,7 +32,7 @@ export default function VehicleRelationModal({ entity, relationField, relationNa
       message.success(checked ? "Vehicle assigned" : "Vehicle unassigned");
       await load();
     } catch (err) {
-      message.error(err.response?.data?.message || err.message || "Failed to update vehicle assignment");
+      message.error(err.response?.data?.message || err.response?.data || err.message || "Failed to update vehicle assignment");
     } finally {
       setBusy(false);
     }

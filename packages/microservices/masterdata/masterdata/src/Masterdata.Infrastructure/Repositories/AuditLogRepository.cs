@@ -12,6 +12,16 @@ namespace Masterdata.Infrastructure.Repositories;
 
 public class AuditLogRepository : IAuditLogRepository
 {
+    // Entities loaded for an update/delete can carry populated navigation
+    // properties that reference each other (e.g. Driver.Transporter.Drivers),
+    // which the default serializer throws on ("possible object cycle
+    // detected") instead of just truncating. Audit logs only need a
+    // best-effort snapshot, so ignore cycles rather than fail the request.
+    private static readonly JsonSerializerOptions AuditJsonOptions = new()
+    {
+        ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
+    };
+
     private readonly MasterdataDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITokenExtractionService _tokenExtractionService;
@@ -33,7 +43,7 @@ public class AuditLogRepository : IAuditLogRepository
             EntityName = typeof(T).Name,
             EntityId = entity.Id,
             Action = "Create",
-            NewValues = JsonSerializer.Serialize(entity),
+            NewValues = JsonSerializer.Serialize(entity, AuditJsonOptions),
             UserId = GetCurrentUserId(),
             UserName = GetCurrentUserName(),
             IpAddress = GetClientIpAddress(),
@@ -72,8 +82,8 @@ public class AuditLogRepository : IAuditLogRepository
                 EntityName = typeof(T).Name,
                 EntityId = updatedEntity.Id,
                 Action = "Update",
-                OldValues = JsonSerializer.Serialize(originalValues),
-                NewValues = JsonSerializer.Serialize(updatedValues),
+                OldValues = JsonSerializer.Serialize(originalValues, AuditJsonOptions),
+                NewValues = JsonSerializer.Serialize(updatedValues, AuditJsonOptions),
                 AffectedProperties = string.Join(", ", changedProperties),
                 UserId = GetCurrentUserId(),
                 UserName = GetCurrentUserName(),
@@ -94,7 +104,7 @@ public class AuditLogRepository : IAuditLogRepository
             EntityName = typeof(T).Name,
             EntityId = entity.Id,
             Action = "Delete",
-            OldValues = JsonSerializer.Serialize(entity),
+            OldValues = JsonSerializer.Serialize(entity, AuditJsonOptions),
             UserId = GetCurrentUserId(),
             UserName = GetCurrentUserName(),
             IpAddress = GetClientIpAddress(),
