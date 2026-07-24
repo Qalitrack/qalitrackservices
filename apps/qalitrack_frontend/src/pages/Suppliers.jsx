@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Building, Search, X } from "lucide-react";
+import { Pencil, Trash2, Building, Search, X, Car, UserCheck } from "lucide-react";
 import { message, Modal } from "antd";
 import TablePagination from "../components/TablePagination";
+import VehicleRelationModal from "../components/VehicleRelationModal";
+import DriverRelationModal from "../components/DriverRelationModal";
 import {
   getSuppliers,
   createSupplier,
   updateSupplier,
   deleteSupplier,
 } from "../api/MasterData/Suppliers";
+import { assignDriverToSupplier, unassignDriverFromSupplier } from "../api/MasterData/Drivers";
 
 export default function SuppliersPortal() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editingSupplier, setEditingSupplier] = useState(null);
+  const [vehiclesSupplier, setVehiclesSupplier] = useState(null);
+  const [driversSupplier, setDriversSupplier] = useState(null);
 
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -307,6 +312,20 @@ export default function SuppliersPortal() {
                   <td className="px-3 py-2">
                     <div className="flex gap-1 justify-center">
                       <button
+                        onClick={() => setVehiclesSupplier(s)}
+                        className="p-1 rounded text-gray-600 hover:bg-gray-50 border border-gray-300 hover:border-gray-500 transition-all"
+                        title="View Vehicles"
+                      >
+                        <Car className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => setDriversSupplier(s)}
+                        className="p-1 rounded text-gray-600 hover:bg-gray-50 border border-gray-300 hover:border-gray-500 transition-all"
+                        title="View Drivers"
+                      >
+                        <UserCheck className="w-3 h-3" />
+                      </button>
+                      <button
                         onClick={() => handleEdit(s)}
                         className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"
                         title="Edit"
@@ -337,6 +356,24 @@ export default function SuppliersPortal() {
           <p className="text-xs font-semibold">{error}</p>
         </div>
       )}
+
+      <VehicleRelationModal
+        entity={vehiclesSupplier}
+        relationField="supplierId"
+        relationNameField="supplierName"
+        entityLabel="Supplier"
+        onClose={() => setVehiclesSupplier(null)}
+      />
+
+      <DriverRelationModal
+        entity={driversSupplier}
+        relationField="supplierId"
+        assignFn={assignDriverToSupplier}
+        removeFn={unassignDriverFromSupplier}
+        entityLabel="Supplier"
+        otherEntities={suppliers}
+        onClose={() => setDriversSupplier(null)}
+      />
 
       <style>{`
         .compact-table {
