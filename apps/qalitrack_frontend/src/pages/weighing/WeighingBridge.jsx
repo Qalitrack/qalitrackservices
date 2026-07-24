@@ -33,7 +33,7 @@ export default function WeighbridgesPortal() {
       setLoading(true);
       setError(null);
       const data = await getWeighbridges(1, 200, "");
-      setWeighbridges(Array.isArray(data) ? data : (data?.items || []));
+      setWeighbridges([...(Array.isArray(data) ? data : (data?.items || []))].reverse());
     } catch (err) {
       setError(err.message || "Failed to fetch weighbridges");
       setWeighbridges([]);
@@ -80,6 +80,7 @@ export default function WeighbridgesPortal() {
       else        await createWeighbridge(form);
 
       resetForm();
+      setPage(1);
       fetchWeighbridges();
     } catch (err) {
       message.error(`Error: ${err.message}`);

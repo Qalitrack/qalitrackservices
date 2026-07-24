@@ -73,6 +73,7 @@ export default function SuppliersPortal() {
         await createSupplier(payload);
       }
       resetForm();
+      setPage(1);
       fetchSuppliersWithSearch();
     } catch (err) {
       message.error(err.message || "Failed to save supplier");

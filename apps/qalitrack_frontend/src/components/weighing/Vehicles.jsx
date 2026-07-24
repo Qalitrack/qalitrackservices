@@ -323,6 +323,7 @@ export default function Vehicles() {
         await createVehicle(payload);
       }
       resetForm();
+      setPageNumber(1);
       await fetchVehicles();
     } catch (error) {
       message.error("Error saving vehicle: " + error.message);

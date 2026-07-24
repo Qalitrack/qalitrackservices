@@ -107,6 +107,7 @@ export default function DriverPortal() {
       } else {
         await createDriver(payload);
       }
+      setPage(1);
       await fetchDrivers();
       resetForm();
     } catch (error) {

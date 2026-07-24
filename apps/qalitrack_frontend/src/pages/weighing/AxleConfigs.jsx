@@ -37,7 +37,7 @@ const AxleConfigs = () => {
       setLoading(true);
       const response = await getAxleConfigs(1, 200);
       const data = response?.data || response;
-      setConfigs(data?.items || []);
+      setConfigs([...(data?.items || [])].reverse());
     } catch (error) {
       message.error("Failed to load axle configurations");
     } finally {
@@ -128,6 +128,7 @@ const AxleConfigs = () => {
         message.success("Axle configuration created successfully");
       }
       resetForm();
+      setPage(1);
       fetchConfigs();
     } catch (error) {
       message.error("Failed to save axle configuration");

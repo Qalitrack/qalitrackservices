@@ -43,7 +43,7 @@ export default function OwnersPortal() {
       setLoading(true);
       setError(null);
       const data = await getOwners(1, 200, "");
-      setOwners(data?.items || data || []);
+      setOwners([...(data?.items || data || [])].reverse());
     } catch (err) {
       setError(err.message || "Failed to load owners");
     } finally {
@@ -79,6 +79,7 @@ export default function OwnersPortal() {
       if (editingOwner) await updateOwner(editingOwner.id, payload);
       else await createOwner(payload);
       resetForm();
+      setPage(1);
       await fetchOwners();
     } catch (err) { message.error(err.message); }
     finally { setLoading(false); }

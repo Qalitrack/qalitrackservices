@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X, Truck, Car, UserCheck } from "lucide-react";
-import { message, Modal } from "antd";
+import { message, Modal, Switch } from "antd";
 import TablePagination from "../../components/TablePagination";
 import VehicleRelationModal from "../../components/VehicleRelationModal";
 import DriverRelationModal from "../../components/DriverRelationModal";
@@ -41,9 +41,9 @@ export default function TransportersPortal() {
     try {
       setLoading(true);
       setError(null);
-      const data = await getTransporters(1, 200, "");
+      const data = await getTransporters({ pageNumber: 1, pageSize: 500, search: "" });
       const items = data?.items || data || [];
-      setTransporters(items);
+      setTransporters([...items].reverse());
     } catch (err) {
       setError(err.message || "Failed to load transporters");
     } finally {
@@ -98,7 +98,8 @@ export default function TransportersPortal() {
       if (editingTransporter) await updateTransporter(editingTransporter.id, payload);
       else await createTransporter(payload);
       resetForm();
-      fetchTransporters();
+      setPage(1);
+      await fetchTransporters();
     } catch (err) {
       message.error(err.message || "Failed to save transporter");
     } finally {
@@ -140,12 +141,15 @@ export default function TransportersPortal() {
     setEditingTransporter(null);
   };
 
-  const statusStyle = (s) => {
-    if (s === "Active")    return "bg-gradient-to-r from-emerald-100 to-green-200 text-emerald-700 border-emerald-300";
-    if (s === "Suspended") return "bg-gradient-to-r from-amber-100 to-amber-200 text-amber-700 border-amber-300";
-    return "bg-gradient-to-r from-red-100 to-rose-200 text-red-700 border-red-300";
+  const handleToggleStatus = async (transporter) => {
+    const newStatus = transporter.status === "Active" ? "Inactive" : "Active";
+    try {
+      await updateTransporter(transporter.id, { name: transporter.name, status: newStatus, contactInfo: transporter.contactInfo });
+      fetchTransporters();
+    } catch (err) {
+      message.error(err.message || "Failed to update status");
+    }
   };
-  const statusIcon = (s) => (s === "Active" ? "✓" : s === "Suspended" ? "⚠" : "✕");
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
@@ -274,7 +278,7 @@ export default function TransportersPortal() {
                         { label: "Phone", align: "text-left" },
                         { label: "Email", align: "text-left" },
                         { label: "License", align: "text-left" },
-                        { label: "Status", align: "text-left" },
+                        { label: "Status", align: "text-center" },
                         { label: "Actions", align: "text-center" },
                       ].map((h) => (
                         <th key={h.label} className={`px-3 py-2 text-[9px] font-bold text-amber-900 uppercase tracking-wide ${h.align}`}>{h.label}</th>
@@ -305,10 +309,8 @@ export default function TransportersPortal() {
                               </span>
                             ) : <span className="text-[10px] text-gray-400">—</span>}
                           </td>
-                          <td className="px-3 py-2">
-                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase border ${statusStyle(t.status)}`}>
-                              {statusIcon(t.status)} {t.status}
-                            </span>
+                          <td className="px-3 py-2 text-center">
+                            <Switch checked={t.status === "Active"} onChange={() => handleToggleStatus(t)} size="small" />
                           </td>
                           <td className="px-3 py-2">
                             <div className="flex gap-1.5 justify-center">

@@ -68,6 +68,7 @@ export default function ProductsPortal() {
       } else {
         await createProduct(form);
       }
+      setPage(1);
       await fetchProducts();
       resetForm();
     } catch (err) {

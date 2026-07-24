@@ -27,7 +27,7 @@ export default function SaccosPortal() {
       setLoading(true);
       setError(null);
       const data = await getSaccos(1, 200, "");
-      setSaccos(Array.isArray(data) ? data : (data?.items || []));
+      setSaccos([...(Array.isArray(data) ? data : (data?.items || []))].reverse());
     } catch (err) {
       setError(err.message || "Failed to fetch saccos");
       setSaccos([]);
@@ -76,6 +76,7 @@ export default function SaccosPortal() {
         await createSacco(payload);
       }
       resetForm();
+      setPage(1);
       fetchSaccos();
     } catch (err) {
       message.error(`Error: ${err.message}`);
