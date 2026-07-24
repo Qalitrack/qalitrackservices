@@ -506,9 +506,9 @@ export default function CommodityReport({ transactions = [], loading }) {
 
 function CompactStat({ label, value }) {
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded px-3 py-2">
-      <p className="text-[10px] text-gray-700 uppercase font-semibold">{label}</p>
-      <p className="text-lg font-bold leading-tight text-amber-900">{value}</p>
+    <div className="bg-white border border-amber-200 rounded px-3 py-2 shadow-sm">
+      <p className="text-[10px] text-gray-600 uppercase font-semibold">{label}</p>
+      <p className="text-lg font-bold leading-tight text-gray-900">{value}</p>
     </div>
   )
 }

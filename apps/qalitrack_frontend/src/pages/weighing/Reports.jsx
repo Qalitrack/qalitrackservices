@@ -591,40 +591,40 @@ export default function Reports() {
       <>
         {/* Summary Cards */}
         <div className="mb-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-3 border border-amber-200 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               Total Transactions
             </div>
-            <div className="text-xl font-bold mt-1 text-amber-900">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.count.toLocaleString()}
             </div>
           </div>
-          <div className="bg-gradient-to-br from-amber-100 to-amber-100 rounded-lg p-3 border border-amber-300 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               Total Net Weight
             </div>
-            <div className="text-xl font-bold mt-1 text-amber-950">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.net.toLocaleString()}
             </div>
-            <div className="text-[10px] text-amber-800">kg</div>
+            <div className="text-[10px] text-gray-500">kg</div>
           </div>
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-3 border border-amber-200 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               First Weight Total
             </div>
-            <div className="text-xl font-bold mt-1 text-amber-600">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.first.toLocaleString()}
             </div>
-            <div className="text-[10px] text-amber-700">kg</div>
+            <div className="text-[10px] text-gray-500">kg</div>
           </div>
-          <div className="bg-gradient-to-br from-amber-100 to-amber-100 rounded-lg p-3 border border-amber-300 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               Second Weight Total
             </div>
-            <div className="text-xl font-bold mt-1 text-green-600">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.second.toLocaleString()}
             </div>
-            <div className="text-[10px] text-amber-800">kg</div>
+            <div className="text-[10px] text-gray-500">kg</div>
           </div>
         </div>
 

@@ -79,8 +79,10 @@ export default function Transactions() {
       pageSize: filters.pageSize,
     };
 
-    if (filters.search) params.search = filters.search;
-
+    // Search is applied client-side below (see filteredTransactions) instead
+    // of sent to the backend — the Transaction endpoint's `search` param only
+    // matches TransactionNumber, so a driver/vehicle/commodity search sent to
+    // the server would come back empty even though matches exist on this page.
     if (filters.dateRange && filters.dateRange[0] && filters.dateRange[1]) {
       params.startDate = filters.dateRange[0].format("YYYY-MM-DD");
       params.endDate = filters.dateRange[1].format("YYYY-MM-DD");
@@ -98,7 +100,6 @@ export default function Transactions() {
     dispatch,
     filters.page,
     filters.pageSize,
-    filters.search,
     filters.dateRange,
     filters.startDate,
     filters.endDate,
@@ -109,6 +110,23 @@ export default function Transactions() {
 
   const filteredTransactions = React.useMemo(() => {
     let filtered = transactions || [];
+
+    if (filters.search) {
+      const q = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (t) =>
+          t.receiptNo?.toLowerCase().includes(q) ||
+          t.noPlate?.toLowerCase().includes(q) ||
+          t.driverName?.toLowerCase().includes(q) ||
+          t.commodityName?.toLowerCase().includes(q) ||
+          t.supplierName?.toLowerCase().includes(q) ||
+          t.transporterName?.toLowerCase().includes(q) ||
+          t.customerName?.toLowerCase().includes(q) ||
+          t.originName?.toLowerCase().includes(q) ||
+          t.destinationName?.toLowerCase().includes(q) ||
+          t.weighBridgeName?.toLowerCase().includes(q)
+      );
+    }
 
     if (filters.status) {
       if (filters.status === "completed") {
@@ -174,8 +192,7 @@ export default function Transactions() {
   }, [transactions, filters]);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => loadTransactions(), filters.search ? 500 : 0);
-    return () => clearTimeout(timeoutId);
+    loadTransactions();
   }, [loadTransactions]);
 
   const activeFilterCount = Object.entries(filters).filter(([key, value]) => {

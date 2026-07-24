@@ -308,10 +308,8 @@ export default function SaccosPortal() {
                     <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">
                       {(page - 1) * PAGE_SIZE + index + 1}
                     </td>
-                    <td className="px-3 py-2">
-                      <div className="inline-block bg-gradient-to-r from-teal-800 to-teal-900 text-teal-200 px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
-                        {sacco.name}
-                      </div>
+                    <td className="px-3 py-2 text-[10px] text-gray-900 font-bold">
+                      {sacco.name}
                     </td>
                     <td className="px-3 py-2 text-[10px] font-mono text-gray-700 font-medium">
                       {sacco.registrationNumber || "—"}

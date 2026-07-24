@@ -58,13 +58,9 @@ function saveColumnVisibility(visibility) {
 export default function IncompleteTransactionsTable({ onAddWeighing }) {
   const dispatch = useDispatch();
 
-  const { transactions = [], loading, serverTotal } = useSelector((state) => {
-    return {
-      transactions: state.weighing?.transactions || [],
-      loading: state.weighing?.loading || false,
-      serverTotal: state.weighing?.total || 0
-    };
-  });
+  const transactions = useSelector((state) => state.weighing?.transactions) || [];
+  const loading = useSelector((state) => state.weighing?.loading) || false;
+  const serverTotal = useSelector((state) => state.weighing?.total) || 0;
 
   const currentUser = useSelector((state) => state.auth?.user);
 

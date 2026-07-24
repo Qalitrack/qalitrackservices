@@ -903,21 +903,21 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
 
       {/* ── KPIs ────────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-4 gap-3">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-gray-700 uppercase font-semibold tracking-wide">Total</p>
-          <p className="text-xl font-bold leading-tight text-amber-900">{kpis.total}</p>
+        <div className="bg-white border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Total</p>
+          <p className="text-xl font-bold leading-tight text-gray-900">{kpis.total}</p>
         </div>
-        <div className="bg-amber-100 border border-amber-300 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-amber-900 uppercase font-semibold tracking-wide">Pending</p>
-          <p className="text-xl font-bold leading-tight text-amber-950">{kpis.pending}</p>
+        <div className="bg-white border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Pending</p>
+          <p className="text-xl font-bold leading-tight text-gray-900">{kpis.pending}</p>
         </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-green-700 uppercase font-semibold tracking-wide">Approved</p>
-          <p className="text-xl font-bold leading-tight text-green-900">{kpis.approved}</p>
+        <div className="bg-white border border-green-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Approved</p>
+          <p className="text-xl font-bold leading-tight text-green-700">{kpis.approved}</p>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-red-700 uppercase font-semibold tracking-wide">Rejected</p>
-          <p className="text-xl font-bold leading-tight text-red-900">{kpis.rejected}</p>
+        <div className="bg-white border border-red-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Rejected</p>
+          <p className="text-xl font-bold leading-tight text-red-700">{kpis.rejected}</p>
         </div>
       </div>
 

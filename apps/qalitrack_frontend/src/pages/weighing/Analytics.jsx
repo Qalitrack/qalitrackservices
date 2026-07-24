@@ -12,7 +12,7 @@ import {
 } from "recharts";
 import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
-  Activity, Clock, Target, Zap, Award, Filter, X, BarChart3
+  Activity, Clock, Filter, X, BarChart3
 } from "lucide-react";
 
 dayjs.extend(relativeTime);
@@ -50,7 +50,7 @@ export default function Analytics() {
   const [lastUpdated, setLastUpdated] = useState(dayjs());
   
   // NEW: Advanced filters
-  const [timeRange, setTimeRange] = useState("today");
+  const [timeRange, setTimeRange] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCommodity, setSelectedCommodity] = useState("all");
   const [selectedDriver, setSelectedDriver] = useState("all");
@@ -68,6 +68,10 @@ export default function Analytics() {
         return { start: now.subtract(14, "day").startOf("day"), end: now.endOf("day") };
       case "month":
         return { start: now.subtract(60, "day").startOf("day"), end: now.endOf("day") };
+      case "twoMonths":
+        return { start: now.subtract(120, "day").startOf("day"), end: now.endOf("day") };
+      case "all":
+        return { start: null, end: null };
       case "today":
       case "yesterday":
       default:
@@ -77,7 +81,12 @@ export default function Analytics() {
 
   const loadTransactions = useCallback(() => {
     const { start, end } = getFetchRange(timeRange);
-    dispatch(fetchTransactions({ startDate: start.toISOString(), endDate: end.toISOString(), pageSize: 10000 }));
+    const params = { pageSize: 10000 };
+    if (start && end) {
+      params.startDate = start.toISOString();
+      params.endDate = end.toISOString();
+    }
+    dispatch(fetchTransactions(params));
     setLastUpdated(dayjs());
   }, [dispatch, timeRange, getFetchRange]);
 
@@ -107,6 +116,10 @@ export default function Analytics() {
       case "month":
         data = data.filter(t => dayjs(t.createdAt).isAfter(now.subtract(30, "day")));
         break;
+      case "twoMonths":
+        data = data.filter(t => dayjs(t.createdAt).isAfter(now.subtract(60, "day")));
+        break;
+      case "all":
       default:
         break;
     }
@@ -199,8 +212,16 @@ export default function Analytics() {
           dayjs(t.createdAt).isBetween(now.subtract(60, "day"), now.subtract(30, "day"))
         );
         break;
+      case "twoMonths":
+        previousPeriodData = transactions.filter(t =>
+          dayjs(t.createdAt).isBetween(now.subtract(120, "day"), now.subtract(60, "day"))
+        );
+        break;
+      case "all":
+        previousPeriodData = [];
+        break;
       default:
-        previousPeriodData = transactions.filter(t => 
+        previousPeriodData = transactions.filter(t =>
           dayjs(t.createdAt).isSame(now.subtract(1, "day"), "day")
         );
     }
@@ -448,14 +469,14 @@ export default function Analytics() {
 
   // NEW: Clear all filters
   const clearFilters = () => {
-    setTimeRange("today");
+    setTimeRange("all");
     setSelectedCommodity("all");
     setSelectedDriver("all");
     setAlertsOnly(false);
   };
 
   const activeFiltersCount = [
-    timeRange !== "today",
+    timeRange !== "all",
     selectedCommodity !== "all",
     selectedDriver !== "all",
     alertsOnly
@@ -486,7 +507,7 @@ export default function Analytics() {
             <button
               onClick={loadTransactions}
               disabled={loading}
-              className="flex items-center gap-2 px-3 py-1.5 cs-ghost-btn rounded-lg text-xs font-semibold transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 border cs-ghost-btn rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
             >
               <Activity className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
@@ -505,10 +526,12 @@ export default function Analytics() {
               onChange={(e) => setTimeRange(e.target.value)}
               className="border border-amber-300 rounded px-2 py-1 text-xs font-medium focus:ring-2 focus:ring-amber-200"
             >
+              <option value="all">All Time</option>
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>
               <option value="week">Last 7 Days</option>
               <option value="month">Last 30 Days</option>
+              <option value="twoMonths">Last 60 Days</option>
             </select>
 
             {/* Toggle Filters */}
@@ -604,78 +627,57 @@ export default function Analytics() {
                 label: "Total Tickets",
                 value: advancedKPIs.totalTx,
                 growth: advancedKPIs.txGrowth,
-                icon: Activity,
-                accent: "#f59e0b",
               },
               {
                 label: "Completed",
                 value: advancedKPIs.completed,
-                icon: CheckCircle,
-                accent: "#10b981",
               },
               {
                 label: "Efficiency",
                 value: `${advancedKPIs.efficiency}%`,
-                icon: Target,
-                accent: "#3b82f6",
               },
               {
                 label: "Capacity",
                 value: `${advancedKPIs.capacityUtilization}%`,
-                icon: Zap,
-                accent: "#8b5cf6",
               },
               {
                 label: "Avg TAT (min)",
                 value: advancedKPIs.avgTurnaround,
-                icon: Clock,
-                accent: "#06b6d4",
               },
               {
                 label: "Total Net (kg)",
                 value: advancedKPIs.totalNetWeight.toLocaleString(),
                 growth: advancedKPIs.weightGrowth,
-                icon: Award,
-                accent: "#d97706",
               },
               {
                 label: "Avg Weight",
                 value: advancedKPIs.avgWeight.toLocaleString(),
-                icon: TrendingUp,
-                accent: "#6366f1",
               },
               {
                 label: "Tx/Hour",
                 value: advancedKPIs.txPerHour,
-                icon: Activity,
-                accent: "#14b8a6",
               },
-            ].map(({ label, value, growth, icon: Icon, accent }) => (
-              // Same recipe as AdminDashboard's KpiCard: white card, small
-              // accent-colored icon badge (accent is a fixed per-metric
-              // category color, not the app's color scheme — same as the
-              // dashboard's KPIs), bold dark value — instead of a big pale
-              // amber-tinted card that doesn't read as "data" so much as
-              // decoration, and didn't follow the scheme rule elsewhere.
+            ].map(({ label, value, growth }) => (
+              // Same recipe as ReportAnalytics' MetricCard: white card, amber
+              // border, growth badge next to the label.
               <div
                 key={label}
-                className="relative bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-100 shadow-sm hover:border-amber-400 hover:shadow-md transition-all"
+                className="bg-white border border-amber-200 rounded-lg p-3 sm:p-4 shadow-sm"
               >
-                <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-500 pr-7">
-                  {label}
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-600">
+                    {label}
+                  </span>
+                  {growth && (
+                    <div className={`text-[10px] font-bold flex items-center gap-1 shrink-0 ${
+                      parseFloat(growth) >= 0 ? "text-green-600" : "text-red-600"
+                    }`}>
+                      {parseFloat(growth) >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                      {Math.abs(parseFloat(growth))}%
+                    </div>
+                  )}
                 </div>
                 <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1 text-gray-900">{value}</div>
-                {growth && (
-                  <div className={`text-[10px] font-bold mt-1 flex items-center gap-1 ${
-                    parseFloat(growth) >= 0 ? "text-green-700" : "text-red-700"
-                  }`}>
-                    {parseFloat(growth) >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                    {Math.abs(parseFloat(growth))}%
-                  </div>
-                )}
-                <div className="absolute top-3 right-3 p-1.5 rounded-lg" style={{ backgroundColor: accent + "20" }}>
-                  <Icon size={14} style={{ color: accent }} />
-                </div>
               </div>
             ))}
           </div>
