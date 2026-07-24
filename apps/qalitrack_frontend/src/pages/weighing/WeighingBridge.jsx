@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { Pencil, Trash2, Plus, Search, X } from "lucide-react";
+import { Pencil, Trash2, Plus, Search, X, Check } from "lucide-react";
 import { message, Modal } from "antd";
 import TablePagination from "../../components/TablePagination";
 import {
@@ -329,12 +329,14 @@ export default function WeighbridgesPortal() {
                             )}
                           </td>
                           <td className="px-3 py-2">
-                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase border ${
+                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase border inline-flex items-center gap-0.5 ${
                               isActive
                                 ? "bg-green-100 text-green-700 border-green-300"
                                 : "bg-red-100 text-red-700 border-red-300"
                             }`}>
-                              {isActive ? "✓ Active" : "✕ Inactive"}
+                              {isActive
+                                ? <><Check className="w-2.5 h-2.5" /> Active</>
+                                : <><X className="w-2.5 h-2.5" /> Inactive</>}
                             </span>
                           </td>
                           <td className="px-3 py-2">

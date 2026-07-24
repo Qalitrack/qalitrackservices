@@ -16,7 +16,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2 } from "lucide-react";
+import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2, Car, Check } from "lucide-react";
 import { message, Modal } from "antd";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
@@ -463,15 +463,19 @@ export default function DriverPortal() {
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1 flex-wrap">
                         {vehicleCount > 0 && (
-                          <span className="px-1.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[9px] font-semibold flex items-center gap-0.5" title={`${vehicleCount} vehicle(s) assigned`}>
-                            🚗 {vehicleCount}
+                          <span className="px-1.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[9px] font-semibold flex items-center gap-0.5">
+                            <Car className="w-2.5 h-2.5" /> {vehicleCount} {vehicleCount === 1 ? "Vehicle" : "Vehicles"}
                           </span>
                         )}
                         {hasTransporter && (
-                          <Truck className="w-3 h-3 text-green-600" title="Assigned to transporter" />
+                          <span className="px-1.5 py-0.5 rounded-full bg-green-50 border border-green-200 text-green-700 text-[9px] font-semibold flex items-center gap-0.5">
+                            <Truck className="w-2.5 h-2.5" /> Transporter
+                          </span>
                         )}
                         {hasSupplier && (
-                          <Building2 className="w-3 h-3 text-amber-600" title="Assigned to supplier" />
+                          <span className="px-1.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-semibold flex items-center gap-0.5">
+                            <Building2 className="w-2.5 h-2.5" /> Supplier
+                          </span>
                         )}
                         {!vehicleCount && !hasTransporter && !hasSupplier && (
                           <span className="text-[9px] text-gray-400 italic">None</span>
@@ -480,13 +484,15 @@ export default function DriverPortal() {
                     </td>
                     <td className="px-3 py-2">
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
+                        className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase inline-flex items-center gap-0.5 ${
                           driver.status?.toLowerCase() === "active"
                             ? "bg-green-100 text-green-700 border border-green-300"
                             : "bg-red-100 text-red-700 border border-red-300"
                         }`}
                       >
-                        {driver.status?.toLowerCase() === "active" ? "✓ Active" : "✕ Inactive"}
+                        {driver.status?.toLowerCase() === "active"
+                          ? <><Check className="w-2.5 h-2.5" /> Active</>
+                          : <><X className="w-2.5 h-2.5" /> Inactive</>}
                       </span>
                     </td>
                     <td className="px-3 py-2">

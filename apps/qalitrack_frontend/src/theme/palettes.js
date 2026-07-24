@@ -30,18 +30,21 @@
  *                       the whole chrome reads as one consistent dark frame;
  *                       Amber keeps its distinct vivid-orange banner instead.
  *   highlightRgb      — the "r,g,b" base color used for the sidebar's
- *                       translucent hover/active nav-item background. Every
- *                       scheme's accent now shares a hue family with its own
- *                       surface color (navy accent on navy surface, indigo on
- *                       indigo, amber on near-black), so this can just match
- *                       `primary` everywhere — a same-hue tinted overlay reads
- *                       clean. (Historical note: when Navy still used the
- *                       amber accent on a navy surface, those were
- *                       near-complementary hues and a translucent overlay of
- *                       one over the other looked muddy/brown — this field
- *                       was added to let Navy use a neutral white overlay
- *                       instead. Kept as an explicit per-scheme field in case
- *                       a future scheme needs the same escape hatch.)
+ *                       translucent hover/active nav-item background. Navy
+ *                       and Indigo both use white here rather than their own
+ *                       `primary` — since `primary` now equals their own
+ *                       sidebar surface color exactly (one canonical color,
+ *                       see appBarBg/Text above), a same-color-on-itself
+ *                       overlay would be invisible. (Historical note: this
+ *                       field exists because an EARLIER Navy attempt used
+ *                       its old gold accent as the overlay on a navy surface
+ *                       — a near-complementary hue pairing that read as
+ *                       muddy/brown — so a neutral white overlay was used
+ *                       instead; that fix generalizes to any scheme whose
+ *                       primary equals its own surface color, which is why
+ *                       Indigo needs it too now.) Amber keeps its own hue
+ *                       here since its primary is a near-black sidebar, not
+ *                       a same-color-as-primary surface.
  */
 export const PALETTES = {
   // Navy is the app's primary/default theme — listed first.
@@ -82,23 +85,29 @@ export const PALETTES = {
     label: "text-amber-700",
   },
   indigo: {
-    // Like Navy: primary/buttons/sidebar/app-bar all stay one consistent
-    // indigo, and iconAccent is pinned to gold (not `primary`) since an
+    // Like Navy: primary/buttons/sidebar/app-bar all use the exact same
+    // #1e1b4b — one canonical dark indigo, not a separate brighter indigo
+    // for "accent"/button purposes (that was the bug: buttons used to be
+    // #6366f1, a noticeably lighter/brighter purple than the header/sidebar,
+    // so a "Save" button looked like a different color from the chrome
+    // around it). iconAccent is pinned to gold (not `primary`) since an
     // indigo icon on an indigo background/white-input would have almost no
     // contrast — gold is the app's consistent "icons pop against a dark
-    // scheme" color, matching Navy's sidebar identity.
+    // scheme" color, matching Navy's sidebar identity. highlightRgb is white
+    // for the same reason as Navy: primary now equals the sidebar's own
+    // surface color, so a same-color overlay would be invisible.
     name: "Indigo",
     description: "Bold indigo accent — modern and professional",
-    primary: "#6366f1",
-    secondary: "#4f46e5",
+    primary: "#1e1b4b",
+    secondary: "#1a1740",
     iconAccent: "#f59e0b",
     onAccent: "#ffffff",
     sidebarBg: "#1e1b4b",
     sidebarText: "#ffffff",
     appBarBg: "#1e1b4b",
     appBarText: "#ffffff",
-    highlightRgb: "99,102,241",
-    preview: ["#6366f1", "#818cf8", "#e0e7ff"],
+    highlightRgb: "255,255,255",
+    preview: ["#1e1b4b", "#1a1740", "#625f81"],
     label: "text-indigo-700",
   },
 };

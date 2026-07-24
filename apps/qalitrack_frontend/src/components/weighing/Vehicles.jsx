@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Truck, Plus, Search, X, Users } from "lucide-react";
+import { Pencil, Trash2, Truck, Plus, Search, X, Users, Check } from "lucide-react";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import { message, Modal, Select } from "antd";
@@ -1027,13 +1027,15 @@ export default function Vehicles() {
                   </td>
                   <td className="px-3 py-2">
                     <span
-                      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
+                      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase inline-flex items-center gap-0.5 ${
                         v.status?.toLowerCase() === "active"
                           ? "bg-green-100 text-green-700 border border-green-300"
                           : "bg-red-100 text-red-700 border border-red-300"
                       }`}
                     >
-                      {v.status?.toLowerCase() === "active" ? "✓ Active" : "✕ Inactive"}
+                      {v.status?.toLowerCase() === "active"
+                        ? <><Check className="w-2.5 h-2.5" /> Active</>
+                        : <><X className="w-2.5 h-2.5" /> Inactive</>}
                     </span>
                   </td>
                   <td className="px-3 py-2">

@@ -599,11 +599,7 @@ export default function CreateTransactionForm({
           <Text className="text-[9px] uppercase font-bold text-gray-400 block leading-none">
             Live Weight
           </Text>
-          <div
-            className={`text-2xl font-black ${
-              isSecondWeighing ? "text-amber-700" : "text-amber-700"
-            }`}
-          >
+          <div className="text-2xl font-black" style={{ color: "var(--cs-live-weight)" }}>
             {capturedWeight || 0} <small className="text-xs font-normal">KG</small>
           </div>
         </div>
