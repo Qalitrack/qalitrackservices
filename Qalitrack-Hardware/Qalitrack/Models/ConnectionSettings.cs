@@ -21,6 +21,11 @@ public class ConnectionSettings
     public int ReadTimeoutMs { get; set; } = 1000;
     public int ReconnectDelayMs { get; set; } = 5000;
 
+    // Force a reconnect if no bytes have arrived from the device for this long,
+    // even though the port/socket still reports itself as open (a "zombie" connection).
+    // Scales stream continuously (even at 0.00 when idle), so any gap this long is abnormal.
+    public int DataStalenessTimeoutMs { get; set; } = 5000;
+
     // TcpListener settings (for configuration binding)
     [JsonIgnore]
     public TcpListenerSettings TcpListener { get; set; } = new();

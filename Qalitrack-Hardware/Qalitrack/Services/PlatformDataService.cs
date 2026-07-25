@@ -21,6 +21,7 @@ public class PlatformDataService : BackgroundService
     private readonly object _connectionLock = new();
     private bool _disposed;
     private readonly StringBuilder _dataBuffer = new();
+    private long _lastDataReceivedTicks = DateTime.UtcNow.Ticks;
 
     private enum ConnectionType { None, Tcp, Serial }
     private ConnectionType _activeConnectionType = ConnectionType.None;
@@ -41,6 +42,10 @@ public class PlatformDataService : BackgroundService
     }
 
     public bool IsConnected() => _tcpClient?.Connected == true || _serialPort?.IsOpen == true;
+
+    // Age of the last byte received from the device — the actual signal of hardware health,
+    // as opposed to IsConnected() which only reflects the socket/port object's own state.
+    public TimeSpan DataAge => TimeSpan.FromTicks(DateTime.UtcNow.Ticks - Interlocked.Read(ref _lastDataReceivedTicks));
 
     public ConnectionSettings GetConnectionSettings() => _settings;
 
@@ -124,10 +129,17 @@ public class PlatformDataService : BackgroundService
                     _logger.LogInformation("✓ {type} connection established and active",
                         _activeConnectionType);
 
+                    Interlocked.Exchange(ref _lastDataReceivedTicks, DateTime.UtcNow.Ticks);
                     await ProcessDataAsync(stoppingToken);
 
                     _logger.LogWarning("{type} connection lost — reconnecting in {delay}ms",
                         _activeConnectionType, _settings.ReconnectDelayMs);
+
+                    // Always tear down the old socket/port before reconnecting — a stale connection
+                    // (e.g. one the watchdog just cancelled because data stopped flowing) can otherwise
+                    // still hold the underlying handle open, causing the next connect attempt to fail.
+                    if (_activeConnectionType == ConnectionType.Tcp) CleanupTcp();
+                    else if (_activeConnectionType == ConnectionType.Serial) CleanupSerial();
 
                     lock (_connectionLock)
                         _activeConnectionType = ConnectionType.None;
@@ -163,10 +175,39 @@ public class PlatformDataService : BackgroundService
 
     private async Task ProcessDataAsync(CancellationToken token)
     {
-        if (_activeConnectionType == ConnectionType.Tcp && _tcpClient?.Connected == true)
-            await ProcessTcpStreamAsync(token);
-        else if (_activeConnectionType == ConnectionType.Serial && _serialPort?.IsOpen == true)
-            await ProcessSerialStreamAsync(token);
+        // The port/socket can stay "open" while the device has gone silent (a zombie connection) —
+        // ReadAsync/BytesToRead polling then never throws and the reconnect path below is never reached.
+        // So run the actual stream reader alongside a watchdog that force-cancels it if too much time
+        // passes without a single byte arriving, letting the outer loop reconnect for real.
+        using var watchdogCts = CancellationTokenSource.CreateLinkedTokenSource(token);
+
+        Task readTask = _activeConnectionType switch
+        {
+            ConnectionType.Tcp when _tcpClient?.Connected == true => ProcessTcpStreamAsync(watchdogCts.Token),
+            ConnectionType.Serial when _serialPort?.IsOpen == true => ProcessSerialStreamAsync(watchdogCts.Token),
+            _ => Task.CompletedTask
+        };
+
+        var staleTimeout = TimeSpan.FromMilliseconds(Math.Max(_settings.DataStalenessTimeoutMs, 1000));
+
+        while (!readTask.IsCompleted)
+        {
+            var checkDelay = Task.Delay(1000, token);
+            var finished = await Task.WhenAny(readTask, checkDelay);
+            if (finished == readTask) break;
+
+            if (DataAge > staleTimeout)
+            {
+                _logger.LogWarning(
+                    "No data received from {type} connection for {seconds}s — forcing reconnect",
+                    _activeConnectionType, staleTimeout.TotalSeconds);
+                watchdogCts.Cancel();
+                break;
+            }
+        }
+
+        try { await readTask; }
+        catch (OperationCanceledException) { /* expected — the watchdog cancelled a stalled read */ }
     }
 
     private async Task<bool> TryConnectTcpAsync(CancellationToken token)
@@ -429,6 +470,8 @@ public class PlatformDataService : BackgroundService
 
     private void ProcessIncomingData(string rawData, string source)
     {
+        Interlocked.Exchange(ref _lastDataReceivedTicks, DateTime.UtcNow.Ticks);
+
         _dataBuffer.Append(rawData);
         var bufferContent = _dataBuffer.ToString();
         var lines = bufferContent.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);

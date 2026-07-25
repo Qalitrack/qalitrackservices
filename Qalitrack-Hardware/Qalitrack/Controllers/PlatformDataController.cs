@@ -51,14 +51,23 @@ public class PlatformDataController : ControllerBase
 
         try
         {
-            // Start heartbeat timer (every 30 seconds)
+            // Heartbeat every 2 seconds — carries real device health (last-data age), not just a
+            // keepalive comment, so the client can tell "hardware went silent" from "still fine".
+            // The scale streams continuously (~100-200ms), so a 2s cadence still catches a stall
+            // almost as fast as it happens, instead of leaving the UI frozen on stale "connected".
             heartbeatTimer = new System.Threading.Timer(async _ =>
             {
                 try
                 {
                     if (!cancellationToken.IsCancellationRequested)
                     {
-                        await Response.WriteAsync(": heartbeat\n\n", cancellationToken);
+                        var dataAgeMs = (long)_platformDataService.DataAge.TotalMilliseconds;
+                        var payload = System.Text.Json.JsonSerializer.Serialize(new
+                        {
+                            connected = _platformDataService.IsConnected() && dataAgeMs < _platformDataService.GetConnectionSettings().DataStalenessTimeoutMs,
+                            dataAgeMs
+                        });
+                        await Response.WriteAsync($"event: heartbeat\ndata: {payload}\n\n", cancellationToken);
                         await Response.Body.FlushAsync(cancellationToken);
                     }
                 }
@@ -71,7 +80,7 @@ public class PlatformDataController : ControllerBase
                     _logger.LogError(ex, "Error sending heartbeat to client {ClientId}", clientId);
                     // Don't rethrow - this is a background operation
                 }
-            }, null, TimeSpan.FromSeconds(30), TimeSpan.FromSeconds(30));
+            }, null, TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(2));
 
             await foreach (var jsonData in stream.WithCancellation(cancellationToken))
             {
