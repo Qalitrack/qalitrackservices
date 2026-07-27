@@ -13,26 +13,21 @@
  *   iconAccent        — sidebar nav icon + active-item border/chevron color,
  *                       AND page-header icon glyphs, AND the focus ring on
  *                       search/filter inputs (all via shared --cs-icon-accent).
- *                       Pinned to gold for every dark scheme (Navy, Indigo)
- *                       rather than reusing `primary` — an icon the same hue
- *                       as its own background (or a white accent on the white
- *                       input fields it's also used on) would be invisible.
- *                       Amber is the one scheme where `iconAccent` still
- *                       equals `primary` (gold-on-gold would be its own
- *                       separate collision — flagged as a follow-up, not yet
- *                       resolved).
+ *                       Pinned to gold for every scheme rather than reusing
+ *                       `primary` — an icon the same hue as its own
+ *                       background (or a white accent on the white input
+ *                       fields it's also used on) would be invisible.
  *   onAccent          — text/icon color for content sitting on a solid
  *                       primary-colored background (e.g. a filled button)
  *   sidebarBg/Text    — the sidebar's own background + text color
  *   appBarBg/Text     — page header banners / info bars (e.g. the dashboard
- *                       header, the weighbridge info bar) — for Navy and
- *                       Indigo this intentionally matches sidebarBg/Text so
- *                       the whole chrome reads as one consistent dark frame;
- *                       Amber keeps its distinct vivid-orange banner instead.
+ *                       header, the weighbridge info bar) — matches
+ *                       sidebarBg/Text for all three schemes now, so the
+ *                       whole chrome reads as one consistent dark frame.
  *   highlightRgb      — the "r,g,b" base color used for the sidebar's
- *                       translucent hover/active nav-item background. Navy
- *                       and Indigo both use white here rather than their own
- *                       `primary` — since `primary` now equals their own
+ *                       translucent hover/active nav-item background. Every
+ *                       scheme uses white here rather than its own `primary`
+ *                       — since `primary` now equals each scheme's own
  *                       sidebar surface color exactly (one canonical color,
  *                       see appBarBg/Text above), a same-color-on-itself
  *                       overlay would be invisible. (Historical note: this
@@ -41,10 +36,7 @@
  *                       — a near-complementary hue pairing that read as
  *                       muddy/brown — so a neutral white overlay was used
  *                       instead; that fix generalizes to any scheme whose
- *                       primary equals its own surface color, which is why
- *                       Indigo needs it too now.) Amber keeps its own hue
- *                       here since its primary is a near-black sidebar, not
- *                       a same-color-as-primary surface.
+ *                       primary equals its own surface color.)
  */
 export const PALETTES = {
   // Navy is the app's primary/default theme — listed first.
@@ -69,20 +61,23 @@ export const PALETTES = {
     preview: ["#20293a", "#1b2331", "#636975"],
     label: "text-slate-700",
   },
+  // Replaces the old "Amber" gold theme — same unified-surface pattern as
+  // Navy/Indigo (one canonical color for primary/sidebar/app-bar) instead of
+  // Amber's old split bright-gold-bar-on-near-black-sidebar look.
   amber: {
-    name: "Amber",
-    description: "Warm golden tones — the signature look",
-    primary: "#f59e0b",
-    secondary: "#d97706",
+    name: "Emerald",
+    description: "One rich emerald, used consistently everywhere",
+    primary: "#065f46",
+    secondary: "#05503b",
     iconAccent: "#f59e0b",
     onAccent: "#ffffff",
-    sidebarBg: "#111111",
+    sidebarBg: "#065f46",
     sidebarText: "#ffffff",
-    appBarBg: "#f59e0b",
-    appBarText: "#1f2937",
-    highlightRgb: "245,158,11",
-    preview: ["#f59e0b", "#fbbf24", "#fef3c7"],
-    label: "text-amber-700",
+    appBarBg: "#065f46",
+    appBarText: "#ffffff",
+    highlightRgb: "255,255,255",
+    preview: ["#065f46", "#05503b", "#518f7e"],
+    label: "text-emerald-700",
   },
   indigo: {
     // Like Navy: primary/buttons/sidebar/app-bar all use the exact same

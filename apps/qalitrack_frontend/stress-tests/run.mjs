@@ -178,7 +178,7 @@ async function realLogin(page, email, password) {
 const CRUD_ENTITIES = [
   {
     key: 'owner',
-    route: '#/operator/weighing/owners',
+    route: '#/operator/fleet/owners',
     formReadySelector: 'input[name="name"]',
     createFields: (unique) => [
       { selector: 'input[name="name"]', value: unique },
@@ -199,7 +199,7 @@ const CRUD_ENTITIES = [
   },
   {
     key: 'driver',
-    route: '#/operator/weighing/drivers',
+    route: '#/operator/fleet/drivers',
     formReadySelector: 'input[name="fullName"]',
     createFields: (unique) => [
       { selector: 'input[name="fullName"]', value: unique },
@@ -220,7 +220,7 @@ const CRUD_ENTITIES = [
   },
   {
     key: 'transporter',
-    route: '#/operator/transporters',
+    route: '#/operator/fleet/transporters',
     formReadySelector: 'input[name="name"]',
     createFields: (unique) => [
       { selector: 'input[name="name"]', value: unique },
@@ -239,7 +239,7 @@ const CRUD_ENTITIES = [
   },
   {
     key: 'supplier',
-    route: '#/operator/suppliers',
+    route: '#/operator/commerce/suppliers',
     formReadySelector: 'input[name="name"]',
     createFields: (unique) => [
       { selector: 'input[name="name"]', value: unique },
@@ -259,7 +259,7 @@ const CRUD_ENTITIES = [
   },
   {
     key: 'product',
-    route: '#/operator/weighing/products',
+    route: '#/operator/commerce/products',
     formReadySelector: 'input[name="name"]',
     createFields: (unique) => [
       { selector: 'input[name="name"]', value: unique },
@@ -278,7 +278,7 @@ const CRUD_ENTITIES = [
   },
   {
     key: 'sacco',
-    route: '#/operator/saccos',
+    route: '#/operator/commerce/saccos',
     formReadySelector: 'input[name="name"]',
     createFields: (unique) => [
       { selector: 'input[name="name"]', value: unique },
@@ -432,28 +432,29 @@ const ALL_ADMIN_ROUTES = [
   '/admin/dashboard',
   '/admin/weighing/factory',
   '/admin/transactions',
-  '/admin/weighing/vehicle',
-  '/admin/weighing/drivers',
+  '/admin/fleet/vehicles',
+  '/admin/fleet/drivers',
+  '/admin/fleet/transporters',
+  '/admin/fleet/owners',
+  '/admin/fleet/axle-config',
   '/admin/automation',
   '/admin/calibrations',
   '/admin/analytics',
   '/admin/reports',
   '/admin/system',
-  '/admin/transporters',
-  '/admin/weighing/axle-config',
-  '/admin/weighing/owners',
-  '/admin/weighing/products',
-  '/admin/suppliers',
-  '/admin/saccos',
+  '/admin/commerce/suppliers',
+  '/admin/commerce/products',
+  '/admin/commerce/saccos',
   '/admin/weighbridges',
   '/admin/routes',
   '/admin/user-management',
   '/admin/security/password-policy',
   '/admin/security/permissions',
   '/admin/security/roles',
-  '/admin/shifts',
-  '/admin/attendance',
-  '/admin/shift-assignment',
+  '/admin/security/audit-logs',
+  '/admin/shifts/shifts',
+  '/admin/shifts/attendance',
+  '/admin/shifts/shift-assignment',
   '/admin/backup/microservice',
   '/admin/profile',
 ];
@@ -502,7 +503,7 @@ async function scenarioRouteSmokeTest(page) {
 // stalls (Long Tasks API — any task >50ms is a dropped-frame-class stall).
 // ─────────────────────────────────────────────────────────────────────────
 async function scenarioFormTyping(page) {
-  await page.evaluate(() => { location.hash = '#/operator/weighing/owners'; });
+  await page.evaluate(() => { location.hash = '#/operator/fleet/owners'; });
   await page.waitForSelector('input[name="name"]', { timeout: 10000 });
 
   await page.evaluate(() => {
@@ -546,9 +547,9 @@ async function scenarioFormTyping(page) {
 // ─────────────────────────────────────────────────────────────────────────
 async function scenarioRouteChurn(page, hardware, durationMs = 150000) {
   const routes = [
-    '#/operator/weighing/owners',
-    '#/operator/weighing/vehicle',
-    '#/operator/weighing/drivers',
+    '#/operator/fleet/owners',
+    '#/operator/fleet/vehicles',
+    '#/operator/fleet/drivers',
     '#/operator/transactions',
     '#/operator/weighing/factory',
   ];

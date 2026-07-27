@@ -3,7 +3,6 @@ import { Pencil, Trash2, Truck, Plus, Search, X, Users } from "lucide-react";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import { message, Modal, Select, Switch } from "antd";
-import PageHeader from "../PageHeader.jsx";
 import {
   getVehicles,
   createVehicle,
@@ -28,7 +27,7 @@ const getWheelCount = (code) => {
   return match ? parseInt(match[1], 10) : null;
 };
 
-export default function Vehicles() {
+export default function Vehicles({ onHeaderActionsChange }) {
   const rfidLicensed = useLicenseFeature(LicenseFeatures.RFID);
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -425,67 +424,66 @@ export default function Vehicles() {
     setShowAdvanced(false);
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <>
+        <div className="relative">
+          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search by reg/type..."
+            className="qt-filter-field w-40 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        {rfidLicensed && (
+          <div className="relative flex gap-1">
+            <input
+              type="text"
+              placeholder="RFID Code..."
+              className="qt-filter-field w-32 h-7 px-2 text-[11px] rounded-md border border-gray-300 shadow-sm"
+              value={rfidSearchTerm}
+              onChange={(e) => setRfidSearchTerm(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleRfidSearch()}
+            />
+            <button
+              onClick={handleRfidSearch}
+              className="h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium flex items-center gap-1"
+              title="Search by RFID"
+            >
+              <Search size={11} /> RFID
+            </button>
+          </div>
+        )}
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="qt-filter-field h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm"
+        >
+          <option value="All" className="text-black">All Status</option>
+          <option value="Active" className="text-black">Active</option>
+          <option value="Inactive" className="text-black">Inactive</option>
+        </select>
+        <button
+          onClick={() => {
+            setSearchTerm("");
+            setRfidSearchTerm("");
+            setPageNumber(1);
+            fetchVehicles();
+          }}
+          className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
+        >
+          Refresh
+        </button>
+      </>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, rfidSearchTerm, statusFilter, rfidLicensed]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <PageHeader
-        flush
-        icon={Truck}
-        title="Vehicles"
-        subtitle={`${vehicles.length} registered vehicles`}
-        actions={
-          <>
-            <div className="relative">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search by reg/type..."
-                className="qt-filter-field w-40 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            {rfidLicensed && (
-              <div className="relative flex gap-1">
-                <input
-                  type="text"
-                  placeholder="RFID Code..."
-                  className="qt-filter-field w-32 h-7 px-2 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                  value={rfidSearchTerm}
-                  onChange={(e) => setRfidSearchTerm(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleRfidSearch()}
-                />
-                <button
-                  onClick={handleRfidSearch}
-                  className="h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm font-medium"
-                  title="Search by RFID"
-                >
-                  🔍 RFID
-                </button>
-              </div>
-            )}
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="qt-filter-field h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm"
-            >
-              <option value="All" className="text-black">All Status</option>
-              <option value="Active" className="text-black">Active</option>
-              <option value="Inactive" className="text-black">Inactive</option>
-            </select>
-            <button
-              onClick={() => {
-                setSearchTerm("");
-                setRfidSearchTerm("");
-                setPageNumber(1);
-                fetchVehicles();
-              }}
-              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
-            >
-              Refresh
-            </button>
-          </>
-        }
-      />
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm max-h-[50vh] overflow-y-auto">
@@ -971,7 +969,7 @@ export default function Vehicles() {
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Owner</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Axle Config</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">RFID</th>
-                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Status</th>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Status</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Actions</th>
               </tr>
             </thead>

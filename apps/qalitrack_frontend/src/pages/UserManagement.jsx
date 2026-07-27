@@ -162,21 +162,12 @@ export default function UserManagement() {
       {/* Main content card */}
       <div className="flex-1 overflow-hidden px-4 sm:px-6 pb-4 sm:pb-6">
         <div className="h-full flex flex-col rounded-lg overflow-hidden bg-white border border-amber-200 shadow-sm">
-          <div className="shrink-0 px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <div className="w-0.5 h-4 bg-gradient-to-b from-amber-500 to-amber-500 rounded-full" />
-              <h3 className="text-xs font-semibold text-gray-900">User Directory</h3>
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-hidden">
-            <UsersComponent
-              compact={true}
-              searchTerm={searchTerm.trim()}
-              selectedRole={selectedRole}
-              selectedStatus={selectedStatus}
-            />
-          </div>
+          <UsersComponent
+            compact={true}
+            searchTerm={searchTerm.trim()}
+            selectedRole={selectedRole}
+            selectedStatus={selectedStatus}
+          />
         </div>
       </div>
     </div>

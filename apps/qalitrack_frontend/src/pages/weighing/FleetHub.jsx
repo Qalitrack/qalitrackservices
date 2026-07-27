@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { Truck, User, Tractor, Users, List } from "lucide-react";
 import PageHeader from "../../components/PageHeader.jsx";
@@ -22,11 +22,26 @@ export default function FleetHub() {
   const { tab } = useParams();
   const initialTab = FLEET_TABS.some((t) => t.id === tab) ? tab : "vehicles";
   const [activeTab, setActiveTab] = useState(initialTab);
+  // Populated by whichever tab is active (its own search/filter/refresh
+  // controls), so they render inside this one shared header instead of each
+  // tab drawing its own duplicate PageHeader underneath.
+  const [tabActions, setTabActions] = useState(null);
+
+  // useState(initialTab) only runs once on mount — sync on later :tab changes too
+  // (browser back/forward, bookmarks, external links) since the component doesn't
+  // remount just because the tab param changed.
+  useEffect(() => {
+    if (tab && FLEET_TABS.some((t) => t.id === tab) && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
 
   const basePath = location.pathname.startsWith("/admin") ? "/admin" : "/operator";
 
   const selectTab = (id) => {
     setActiveTab(id);
+    setTabActions(null);
     navigate(`${basePath}/fleet/${id}`, { replace: true });
   };
 
@@ -34,7 +49,7 @@ export default function FleetHub() {
 
   return (
     <div className="h-full bg-gray-50 overflow-hidden flex flex-col">
-      <PageHeader icon={Truck} title="FLEET & TRANSPORT" subtitle="Vehicles, drivers, transporters, owners, and axle configuration" />
+      <PageHeader icon={Truck} title="FLEET & TRANSPORT" subtitle="Vehicles, drivers, transporters, owners, and axle configuration" actions={tabActions} />
 
       {/* Tabs */}
       <div className="flex items-center gap-5 mb-3 flex-wrap px-4 sm:px-6 border-b border-gray-200 shrink-0">
@@ -56,7 +71,7 @@ export default function FleetHub() {
 
       {/* Active tab content */}
       <div className="flex-1 overflow-hidden px-4 sm:px-6 pb-4 sm:pb-6">
-        {ActiveComponent && <ActiveComponent />}
+        {ActiveComponent && <ActiveComponent onHeaderActionsChange={setTabActions} />}
       </div>
     </div>
   );

@@ -279,7 +279,7 @@ export default function Transactions() {
   };
 
   const columns = React.useMemo(
-    () => getTransactionColumns({ filters, openViewDrawer, setReweighModal }),
+    () => getTransactionColumns({ filters, setReweighModal }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [filters.page, filters.pageSize]
   );
@@ -477,7 +477,7 @@ export default function Transactions() {
             loading={loading}
             size="small"
             className="compact-table"
-            scroll={{ y: "calc(100vh - 120px)", x: 1650 }}
+            scroll={{ y: "calc(100vh - 120px)", x: "max-content" }}
             pagination={{
               current: filters.page,
               pageSize: filters.pageSize,
@@ -492,8 +492,11 @@ export default function Transactions() {
               const hasSecondWeight = record.secondWeight && parseFloat(record.secondWeight) > 0;
               const isCompleted =
                 hasSecondWeight || record.status === "Completed" || record.status === "completed";
-              return isCompleted ? "completed-row" : "incomplete-row";
+              return `${isCompleted ? "completed-row" : "incomplete-row"} cursor-pointer`;
             }}
+            onRow={(record) => ({
+              onClick: () => openViewDrawer(record),
+            })}
           />
         </div>
       </div>

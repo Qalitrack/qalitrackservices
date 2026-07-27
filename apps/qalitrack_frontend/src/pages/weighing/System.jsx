@@ -440,9 +440,9 @@ export default function SystemSettings() {
 }
 
 // Picks readable text (dark or white) for whatever color a card's background
-// happens to be — needed because each scheme's preview[2] swatch varies from
-// near-white (Amber/Indigo) to a mid-tone gray (Navy), so a single hardcoded
-// text-gray-500 reads fine on some schemes and washes out on others.
+// happens to be — needed because each scheme's preview[2] swatch is a
+// different mid-tone, so a single hardcoded text-gray-500 reads fine on some
+// schemes and washes out on others.
 function getContrastTextColor(hex) {
   const c = hex.replace("#", "");
   const r = parseInt(c.substring(0, 2), 16);
@@ -450,6 +450,20 @@ function getContrastTextColor(hex) {
   const b = parseInt(c.substring(4, 6), 16);
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.6 ? "#111827" : "#ffffff";
+}
+
+// Lightens a hex color toward white by `amount` (0-1). Used so the active
+// scheme card's background stays close in hue to preview[2] without being
+// numerically identical to it — otherwise the third swatch dot (filled with
+// the exact same preview[2]) becomes invisible against its own backdrop,
+// leaving only its faint border ring visible (looks like a hollow circle).
+function lightenHex(hex, amount) {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  const mix = (channel) => Math.round(channel + (255 - channel) * amount);
+  return `#${[mix(r), mix(g), mix(b)].map((n) => n.toString(16).padStart(2, "0")).join("")}`;
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -569,7 +583,8 @@ function GeneralTab({ settings, setField, isDark }) {
         <div className="grid grid-cols-3 gap-3">
           {Object.entries(COLOR_SCHEMES).map(([key, scheme]) => {
             const isActive = colorScheme === key;
-            const textColor = isActive ? getContrastTextColor(scheme.preview[2]) : undefined;
+            const activeCardBg = lightenHex(scheme.preview[2], 0.18);
+            const textColor = isActive ? getContrastTextColor(activeCardBg) : undefined;
             return (
               <button
                 key={key}
@@ -583,7 +598,7 @@ function GeneralTab({ settings, setField, isDark }) {
                 `}
                 style={{
                   borderColor: isActive ? scheme.primary : undefined,
-                  background: isActive ? scheme.preview[2] : "#f9fafb",
+                  background: isActive ? activeCardBg : "#f9fafb",
                 }}
               >
                 {isActive && (

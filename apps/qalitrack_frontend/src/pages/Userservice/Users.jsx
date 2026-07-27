@@ -17,7 +17,6 @@ import dayjs from 'dayjs';
 import logoSrc from '../../assets/logo.jpeg';
 import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 import TablePagination from '../../components/TablePagination';
-import PageHeader from '../../components/PageHeader.jsx';
 
 const Modal = ({ children, isOpen, onClose, size = "md" }) => {
     if (!isOpen) return null;
@@ -751,34 +750,26 @@ const Users = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <PageHeader
-                flush
-                icon={UsersIcon}
-                title="Users"
-                actions={
-                    <>
-                        <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
-                            <input
-                                type="checkbox"
-                                id="show-deleted"
-                                checked={showDeleted}
-                                onChange={handleToggleShowDeleted}
-                                className="h-3.5 w-3.5 rounded border-gray-300"
-                            />
-                            Show Deleted
-                        </label>
-                        <button
-                            onClick={handleDownloadPDF}
-                            className="h-7 px-3 flex items-center gap-1.5 text-[11px] font-semibold rounded shadow-sm transition-all"
-                            style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
-                            title="Download Users as PDF"
-                        >
-                            <Download size={14} />
-                            <span className="hidden md:inline">Download PDF</span>
-                        </button>
-                    </>
-                }
-            />
+            <div className="shrink-0 flex items-center justify-end gap-3 px-3 py-2 border-b border-gray-200 bg-gray-50">
+                <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        id="show-deleted"
+                        checked={showDeleted}
+                        onChange={handleToggleShowDeleted}
+                        className="h-3.5 w-3.5 rounded border-gray-300"
+                    />
+                    Show Deleted
+                </label>
+                <button
+                    onClick={handleDownloadPDF}
+                    className="h-7 px-3 flex items-center gap-1.5 text-[11px] font-semibold rounded shadow-sm transition-all border border-amber-300 text-amber-700 bg-white hover:bg-amber-50"
+                    title="Download Users as PDF"
+                >
+                    <Download size={14} />
+                    <span className="hidden md:inline">Download PDF</span>
+                </button>
+            </div>
 
             {feedbackMessage.text && (
                 <div className={`shrink-0 mx-3 mt-2 p-2 rounded text-center text-[11px] font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>

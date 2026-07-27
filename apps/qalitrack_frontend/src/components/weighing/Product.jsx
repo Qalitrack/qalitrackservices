@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Pencil, Trash2, PackagePlus, Search, X } from "lucide-react";
 import { message, Modal, Switch } from "antd";
 import TablePagination from "../TablePagination";
-import PageHeader from "../PageHeader.jsx";
 import {
   getProducts,
   createProduct,
@@ -10,7 +9,7 @@ import {
   deleteProduct,
 } from "../../api/MasterData/Products";
 
-export default function ProductsPortal() {
+export default function ProductsPortal({ onHeaderActionsChange }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -130,38 +129,37 @@ export default function ProductsPortal() {
     setEditingProduct(null);
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <>
+        <div className="relative">
+          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <button
+          onClick={() => {
+            setSearch("");
+            setPage(1);
+            fetchProducts();
+          }}
+          className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
+        >
+          Refresh
+        </button>
+      </>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <PageHeader
-        flush
-        icon={PackagePlus}
-        title="Products"
-        subtitle={`${products.length} products available`}
-        actions={
-          <>
-            <div className="relative">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <button
-              onClick={() => {
-                setSearch("");
-                setPage(1);
-                fetchProducts();
-              }}
-              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
-            >
-              Refresh
-            </button>
-          </>
-        }
-      />
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">

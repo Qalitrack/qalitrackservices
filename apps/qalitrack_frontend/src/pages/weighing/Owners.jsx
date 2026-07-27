@@ -11,12 +11,11 @@ import {
   removeVehiclesFromOwner,
 } from "../../api/MasterData/Owners";
 import { getVehicles } from "../../api/MasterData/Vehicles";
-import PageHeader from "../../components/PageHeader.jsx";
 
 const PAGE_SIZE = 5;
 const OWNER_TYPES = { 1: "Individual", 2: "Company", 3: "Sacco" };
 
-export default function OwnersPortal() {
+export default function OwnersPortal({ onHeaderActionsChange }) {
   const [owners, setOwners] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -149,37 +148,36 @@ export default function OwnersPortal() {
     setEditingOwner(null);
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <>
+        <div className="relative">
+          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search owners..."
+            className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <button
+          onClick={() => {
+            setSearch("");
+            fetchOwners();
+          }}
+          className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
+        >
+          Refresh
+        </button>
+      </>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <PageHeader
-        flush
-        icon={UserPlus}
-        title="Owners"
-        subtitle={`${filtered.length} registered owners`}
-        actions={
-          <>
-            <div className="relative">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search owners..."
-                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <button
-              onClick={() => {
-                setSearch("");
-                fetchOwners();
-              }}
-              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
-            >
-              Refresh
-            </button>
-          </>
-        }
-      />
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">

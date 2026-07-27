@@ -4,7 +4,6 @@ import { message, Modal } from "antd";
 import TablePagination from "../components/TablePagination";
 import VehicleRelationModal from "../components/VehicleRelationModal";
 import DriverRelationModal from "../components/DriverRelationModal";
-import PageHeader from "../components/PageHeader.jsx";
 import {
   getSuppliers,
   createSupplier,
@@ -13,7 +12,7 @@ import {
 } from "../api/MasterData/Suppliers";
 import { assignDriverToSupplier, unassignDriverFromSupplier } from "../api/MasterData/Drivers";
 
-export default function SuppliersPortal() {
+export default function SuppliersPortal({ onHeaderActionsChange }) {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -123,38 +122,37 @@ export default function SuppliersPortal() {
     setEditingSupplier(null);
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <>
+        <div className="relative">
+          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search suppliers..."
+            className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setPage(1);
+            fetchSuppliersWithSearch();
+          }}
+          className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
+        >
+          Search
+        </button>
+      </>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <PageHeader
-        flush
-        icon={Building}
-        title="Suppliers"
-        subtitle={`${suppliers.length} registered suppliers`}
-        actions={
-          <>
-            <div className="relative">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search suppliers..."
-                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                setPage(1);
-                fetchSuppliersWithSearch();
-              }}
-              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
-            >
-              Search
-            </button>
-          </>
-        }
-      />
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">

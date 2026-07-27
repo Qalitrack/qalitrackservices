@@ -8,6 +8,7 @@ import {
   Activity, BarChart3, AlertTriangle, LayoutDashboard,
 } from "lucide-react";
 import PageHeader from "../../components/PageHeader.jsx";
+import { useColorScheme } from "../../components/Context/ColorSchemeContext.jsx";
 import CountUp from "react-countup";
 import Chart from "react-apexcharts";
 import { fetchUsers } from "../../api/helpers/UserService/Users/users.js";
@@ -43,6 +44,48 @@ const barOpts = (cats, color = "#f59e0b") => ({
   dataLabels: { enabled: false },
   tooltip: { theme: "light", style: { fontSize: "10px" } },
 });
+
+function hexToHsl(hex) {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16) / 255;
+  const g = parseInt(c.substring(2, 4), 16) / 255;
+  const b = parseInt(c.substring(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  let h = 0, s = 0;
+  if (max !== min) {
+    const d = max - min;
+    s = d / (1 - Math.abs(2 * l - 1));
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h *= 60;
+    if (h < 0) h += 360;
+  }
+  return [h, s * 100, l * 100];
+}
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const k = (n) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  const toHex = (x) => Math.round(x * 255).toString(16).padStart(2, "0");
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+
+// Chart bars need a vivid, readable-on-white color — a scheme's own preview
+// swatches are tuned for subtle UI accents (dots, borders), not solid fills,
+// so bump saturation/lightness from the scheme's hue instead of using them
+// directly. Saturation is clamped on both ends — floored so muted hues (Navy,
+// Indigo) still pop, capped so already-vivid hues (Emerald's green reads
+// neon at high saturation + high lightness) don't blow out; lightness is
+// kept a bit lower than a "medium" 50% for the same reason.
+function vibrantAccent(hex) {
+  const [h, s] = hexToHsl(hex);
+  const sat = Math.min(Math.max(s, 60), 75);
+  return hslToHex(h, sat, 42);
+}
 
 const hbarOpts = (cats, color = "#f59e0b") => ({
   chart: baseChart("bar"),
@@ -110,6 +153,9 @@ const Spinner = () => (
 export default function AdminDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { colorScheme, COLOR_SCHEMES } = useColorScheme();
+  const schemeColors = COLOR_SCHEMES[colorScheme];
+  const chartAccent = useMemo(() => vibrantAccent(schemeColors.primary), [schemeColors.primary]);
 
   // Redux state — transactions (last 8, for the Recent Transactions table)
   const { transactions: txs, loading: txLoading } = useSelector((s) => s.weighing);
@@ -235,10 +281,11 @@ export default function AdminDashboard() {
 
   const recentTxs   = useMemo(() => [...txList].sort((a, b) => new Date(b.firstWeightDate || b.createdAt) - new Date(a.firstWeightDate || a.createdAt)).slice(0, 8), [txList]);
 
-  // Chart options (memoized)
-  const weekBarChart    = useMemo(() => barOpts(weekTrend.labels, "#f59e0b"), [weekTrend.labels]);
-  const platesHbarChart = useMemo(() => hbarOpts(topPlates.map((p) => p[0]), "#f59e0b"), [topPlates]);
-  const commodityChart  = useMemo(() => barOpts(commodityMix.labels, "#d97706"), [commodityMix.labels]);
+  // Chart options (memoized) — bar colors follow the active color scheme via
+  // chartAccent (a vivid derivative of `primary`), not the muted preview swatch.
+  const weekBarChart    = useMemo(() => barOpts(weekTrend.labels, chartAccent), [weekTrend.labels, chartAccent]);
+  const platesHbarChart = useMemo(() => hbarOpts(topPlates.map((p) => p[0]), chartAccent), [topPlates, chartAccent]);
+  const commodityChart  = useMemo(() => barOpts(commodityMix.labels, chartAccent), [commodityMix.labels, chartAccent]);
 
   const kpis = [
     { icon: Truck,        label: "Total Tickets",  value: totalCount,          sub: `${thisWeekCount} this week`,    accent: "#f59e0b" },
@@ -401,7 +448,7 @@ export default function AdminDashboard() {
                           <span className="text-[10px] text-gray-600 font-medium">{r.name}</span>
                           <span className="text-[10px] font-bold text-amber-600">{r.value} <span className="text-gray-400 font-normal">({pct}%)</span></span>
                         </div>
-                        <MiniBar pct={pct} color="#f59e0b" />
+                        <MiniBar pct={pct} color={chartAccent} />
                       </div>
                     );
                   })}

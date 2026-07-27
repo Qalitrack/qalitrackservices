@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Drawer, Button, Input, Tag } from "antd";
 import { EditOutlined, SaveOutlined, CloseOutlined } from "@ant-design/icons";
-import { Printer } from "lucide-react";
+import {
+  Printer, ClipboardList, Building2, MapPin, Scale, FileText,
+  RotateCcw, Clock, CheckCircle2, Hourglass, MessageSquare,
+} from "lucide-react";
 import dayjs from "dayjs";
 import { TICKET_THEMES } from "../../utils/ticketThemeConfig";
 
@@ -49,7 +52,7 @@ export default function TransactionDrawer({
       title={
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-            <span className="text-white text-xs font-bold">📋</span>
+            <ClipboardList className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
           </div>
           <span className="text-sm font-bold text-gray-900">
             Ticket: {record?.receiptNo}
@@ -156,7 +159,7 @@ export default function TransactionDrawer({
           <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">📋</span>
+                <ClipboardList className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
               <span className="text-sm font-bold text-amber-900">BASIC INFORMATION</span>
             </div>
@@ -191,7 +194,7 @@ export default function TransactionDrawer({
           <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">🏢</span>
+                <Building2 className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
               <span className="text-sm font-bold text-amber-900">PARTIES</span>
             </div>
@@ -223,7 +226,7 @@ export default function TransactionDrawer({
           <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">📍</span>
+                <MapPin className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
               <span className="text-sm font-bold text-amber-900">LOCATIONS</span>
             </div>
@@ -255,7 +258,7 @@ export default function TransactionDrawer({
           <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">⚖️</span>
+                <Scale className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
               <span className="text-sm font-bold text-amber-900">WEIGHT SUMMARY</span>
             </div>
@@ -284,7 +287,7 @@ export default function TransactionDrawer({
             </div>
             {reweighRecords.length > 0 && (
               <div className="flex items-center gap-2 mb-2.5 px-3 py-2 bg-violet-50 border-2 border-violet-300 rounded-lg shadow-sm">
-                <span className="text-violet-600 text-base">🔄</span>
+                <RotateCcw className="w-4 h-4 text-violet-600" strokeWidth={2.5} />
                 <span className="text-[11px] font-black text-violet-800 uppercase tracking-wide">REWEIGHED</span>
                 {reweighRecords.length > 1 && (
                   <span className="text-[9px] font-bold text-violet-600 bg-violet-100 border border-violet-300 px-1.5 py-0.5 rounded-full">
@@ -297,7 +300,9 @@ export default function TransactionDrawer({
               </div>
             )}
             <div className="bg-white rounded-lg px-3 py-2.5 border-2 border-amber-300 flex items-center justify-between">
-              <span className="text-[11px] text-amber-800 font-bold">⏱️ TURNAROUND TIME:</span>
+              <span className="text-[11px] text-amber-800 font-bold flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" strokeWidth={2.5} /> TURNAROUND TIME:
+              </span>
               <span className="text-sm font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full">
                 {formatTurnaroundTime(record.firstWeightDate, record.secondWeightDate, record.turnaroundTime)}
               </span>
@@ -308,7 +313,7 @@ export default function TransactionDrawer({
           <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
               <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-                <span className="text-white text-sm font-bold">📝</span>
+                <FileText className="w-4 h-4 text-white" strokeWidth={2.5} />
               </div>
               <span className="text-sm font-bold text-amber-900">STATUS & REMARKS</span>
             </div>
@@ -322,19 +327,21 @@ export default function TransactionDrawer({
                       ? "success"
                       : "warning"
                   }
-                  className="text-xs font-bold px-3 py-1 shadow-sm m-0"
+                  className="text-xs font-bold px-3 py-1 shadow-sm m-0 inline-flex items-center gap-1"
                 >
                   {(record.secondWeight && parseFloat(record.secondWeight) > 0) ||
-                  record.status === "Completed"
-                    ? "✅ COMPLETED"
-                    : "⏳ IN PROGRESS"}
+                  record.status === "Completed" ? (
+                    <><CheckCircle2 className="w-3.5 h-3.5" strokeWidth={2.5} /> COMPLETED</>
+                  ) : (
+                    <><Hourglass className="w-3.5 h-3.5" strokeWidth={2.5} /> IN PROGRESS</>
+                  )}
                 </Tag>
                 {reweighRecords.length > 0 && (
                   <Tag
                     color="purple"
-                    className="text-xs font-bold px-3 py-1 shadow-sm m-0 uppercase tracking-wide"
+                    className="text-xs font-bold px-3 py-1 shadow-sm m-0 uppercase tracking-wide inline-flex items-center gap-1"
                   >
-                    🔄 REWEIGHED ×{reweighRecords.length}
+                    <RotateCcw className="w-3.5 h-3.5" strokeWidth={2.5} /> REWEIGHED ×{reweighRecords.length}
                   </Tag>
                 )}
               </div>
@@ -350,7 +357,11 @@ export default function TransactionDrawer({
                 />
               ) : (
                 <div className="text-gray-900 bg-white p-2.5 rounded-lg border-2 border-amber-200 text-xs font-medium">
-                  {record.remarks || record.notes || "💭 No remarks available"}
+                  {record.remarks || record.notes || (
+                    <span className="inline-flex items-center gap-1.5 text-gray-400">
+                      <MessageSquare className="w-3.5 h-3.5" strokeWidth={2.5} /> No remarks available
+                    </span>
+                  )}
                 </div>
               )}
             </div>

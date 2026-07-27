@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useState } from "react";
 import dayjs from "dayjs";
+import { Check, Hourglass } from "lucide-react";
 import { useTheme } from "../Context/ThemeContext.jsx";
 import logo from "../../assets/qalitrack_logo_full.png";
 
@@ -189,12 +190,14 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
                 </div>
 
                 {/* Status banner */}
-                <div className={`rounded-xl px-4 py-2.5 text-center text-xs font-bold ${
+                <div className={`inline-flex items-center justify-center gap-1.5 w-full rounded-xl px-4 py-2.5 text-center text-xs font-bold ${
                   isComplete
                     ? "bg-green-100 text-green-700 border border-green-200"
                     : "bg-amber-50 text-amber-700 border border-amber-200"
                 }`}>
-                  {isComplete ? "✓ TRANSACTION COMPLETE" : "⏳ PENDING 2ND WEIGHT — Return after unloading"}
+                  {isComplete
+                    ? <><Check className="w-3.5 h-3.5" strokeWidth={3} /> TRANSACTION COMPLETE</>
+                    : <><Hourglass className="w-3.5 h-3.5" strokeWidth={2.5} /> PENDING 2ND WEIGHT — Return after unloading</>}
                 </div>
               </div>
             </div>

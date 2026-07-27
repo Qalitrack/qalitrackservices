@@ -3,7 +3,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission, fetchDeletedPermissions, restorePermission } from '../../api/helpers/UserService/Permissions/permissions.js';
 import { Edit, Trash2, Shield, ShieldAlert, PlusCircle, Users, RefreshCw, Download, Lock } from 'lucide-react';
 import TablePagination from '../../components/TablePagination';
-import PageHeader from '../../components/PageHeader.jsx';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -361,41 +360,32 @@ const Permissions = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <PageHeader
-                flush
-                icon={Shield}
-                title="Manage Permissions"
-                subtitle="Fine-grained access controls used by role authorization"
-                actions={
-                    <>
-                        <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
-                            <input
-                                type="checkbox"
-                                id="show-deleted"
-                                checked={showDeleted}
-                                onChange={handleToggleShowDeleted}
-                                className="h-3.5 w-3.5 rounded border-gray-300"
-                            />
-                            Show Deleted
-                        </label>
-                        <button
-                            onClick={handleDownloadPDF}
-                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
-                        >
-                            <Download size={13} />
-                            <span>PDF</span>
-                        </button>
-                        <button
-                            onClick={handleAddClick}
-                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow transition-all"
-                            style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
-                        >
-                            <PlusCircle size={13} />
-                            <span>Add Permission</span>
-                        </button>
-                    </>
-                }
-            />
+            <div className="shrink-0 flex items-center justify-end gap-3 px-3 py-2 border-b border-gray-200 bg-gray-50">
+                <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        id="show-deleted"
+                        checked={showDeleted}
+                        onChange={handleToggleShowDeleted}
+                        className="h-3.5 w-3.5 rounded border-gray-300"
+                    />
+                    Show Deleted
+                </label>
+                <button
+                    onClick={handleDownloadPDF}
+                    className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded border border-amber-300 text-amber-700 bg-white hover:bg-amber-50 transition-colors"
+                >
+                    <Download size={13} />
+                    <span>PDF</span>
+                </button>
+                <button
+                    onClick={handleAddClick}
+                    className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow-sm transition-all bg-amber-500 hover:bg-amber-600 text-white"
+                >
+                    <PlusCircle size={13} />
+                    <span>Add Permission</span>
+                </button>
+            </div>
 
             {feedbackMessage.text && (
                 <div className={`mx-4 mt-2 px-3 py-2 rounded-md text-xs font-medium border ${feedbackMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>

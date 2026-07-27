@@ -21,7 +21,6 @@ import { message, Modal, Switch } from "antd";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import TablePagination from "../TablePagination";
-import PageHeader from "../PageHeader.jsx";
 import {
   getDrivers,
   createDriver,
@@ -29,7 +28,7 @@ import {
   deleteDriver,
 } from "../../api/MasterData/Drivers";
 
-export default function DriverPortal() {
+export default function DriverPortal({ onHeaderActionsChange }) {
   const nfcLicensed = useLicenseFeature(LicenseFeatures.NFC);
   const [drivers, setDrivers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -175,38 +174,37 @@ export default function DriverPortal() {
     setEditingDriver(null);
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <>
+        <div className="relative">
+          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search drivers..."
+            className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <button
+          onClick={() => {
+            setSearch("");
+            setPage(1);
+            fetchDrivers();
+          }}
+          className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
+        >
+          Refresh
+        </button>
+      </>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <PageHeader
-        flush
-        icon={UserPlus}
-        title="Drivers"
-        subtitle={`${drivers.length} registered · NFC-enabled`}
-        actions={
-          <>
-            <div className="relative">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search drivers..."
-                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <button
-              onClick={() => {
-                setSearch("");
-                setPage(1);
-                fetchDrivers();
-              }}
-              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
-            >
-              Refresh
-            </button>
-          </>
-        }
-      />
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">

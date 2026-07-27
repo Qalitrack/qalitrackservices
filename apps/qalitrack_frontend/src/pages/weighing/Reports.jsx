@@ -15,7 +15,8 @@ import CrossEntityComparison from "./CrossEntityComparison";
 import { getTransactions } from "../../api/Transaction/Transaction.js";
 import {
   RotateCcw, FileDown, FileSpreadsheet, Filter, X, FileText,
-  BarChart3, Settings, Calendar, GitCompare
+  BarChart3, Settings, Calendar, GitCompare,
+  Receipt, User, Users, Package, Building2, Check, Hourglass
 } from "lucide-react";
 import dayjs from "dayjs";
 
@@ -38,12 +39,12 @@ export default function Reports() {
   const [loading, setLoading] = useState(true);
 
   const REPORT_TABS = [
-    { id: "transactions", label: "Transactions", icon: null },
-    { id: "reweighed", label: "Reweighed Transactions", icon: null },
-    { id: "drivers", label: "Drivers", icon: null },
-    { id: "customers", label: "Customers", icon: null },
-    { id: "commodities", label: "Commodities", icon: null },
-    { id: "suppliers", label: "Suppliers", icon: null },
+    { id: "transactions", label: "Transactions", icon: <Receipt size={14} /> },
+    { id: "reweighed", label: "Reweighed Transactions", icon: <RotateCcw size={14} /> },
+    { id: "drivers", label: "Drivers", icon: <User size={14} /> },
+    { id: "customers", label: "Customers", icon: <Users size={14} /> },
+    { id: "commodities", label: "Commodities", icon: <Package size={14} /> },
+    { id: "suppliers", label: "Suppliers", icon: <Building2 size={14} /> },
     { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} /> },
     { id: "comparison", label: "Comparison", icon: <GitCompare size={14} /> },
     { id: "custom", label: "Custom Builder", icon: <Settings size={14} /> },
@@ -960,13 +961,15 @@ export default function Reports() {
                           </td>
                           <td className="p-2">
                             <span
-                              className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold border ${
                                 isCompleted
                                   ? "bg-green-100 text-green-800 border-green-300"
                                   : "bg-amber-50 text-amber-800 border-amber-200"
                               }`}
                             >
-                              {isCompleted ? "✓ COMPLETED" : "⏳ IN PROGRESS"}
+                              {isCompleted
+                                ? <><Check className="w-3 h-3" strokeWidth={3} /> COMPLETED</>
+                                : <><Hourglass className="w-3 h-3" strokeWidth={2.5} /> IN PROGRESS</>}
                             </span>
                           </td>
                         </tr>

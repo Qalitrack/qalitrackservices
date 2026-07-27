@@ -15,6 +15,7 @@ import {
   Activity, Clock, Filter, X, BarChart3
 } from "lucide-react";
 import PageHeader from "../../components/PageHeader.jsx";
+import { useColorScheme } from "../../components/Context/ColorSchemeContext.jsx";
 
 dayjs.extend(relativeTime);
 dayjs.extend(isBetween);
@@ -31,25 +32,61 @@ function ChartEmpty({ message = "No data for this period", height = 200 }) {
   );
 }
 
-// Amber color palette
-const AMBER_COLORS = {
-  darkest: "#78350f",
-  darker: "#92400e",
-  dark: "#b45309",
-  medium: "#d97706",
-  base: "#f59e0b",
-  light: "#fbbf24",
-  lighter: "#fcd34d",
-  lightest: "#fde68a",
-};
+const RAMP_LIGHTNESS = { darkest: 24, darker: 32, dark: 40, medium: 48, base: 54, light: 64, lighter: 74, lightest: 84 };
 
-const PIE_COLORS = [AMBER_COLORS.medium, AMBER_COLORS.light, "#10b981", "#3b82f6", "#ef4444"];
+function hexToHsl(hex) {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16) / 255;
+  const g = parseInt(c.substring(2, 4), 16) / 255;
+  const b = parseInt(c.substring(4, 6), 16) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  const l = (max + min) / 2;
+  let h = 0, s = 0;
+  if (max !== min) {
+    const d = max - min;
+    s = d / (1 - Math.abs(2 * l - 1));
+    if (max === r) h = ((g - b) / d) % 6;
+    else if (max === g) h = (b - r) / d + 2;
+    else h = (r - g) / d + 4;
+    h *= 60;
+    if (h < 0) h += 360;
+  }
+  return [h, s * 100, l * 100];
+}
+
+function hslToHex(h, s, l) {
+  s /= 100; l /= 100;
+  const k = (n) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  const toHex = (x) => Math.round(x * 255).toString(16).padStart(2, "0");
+  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
+}
+
+// Derives an 8-step light-to-dark chart ramp from the active scheme's own hue.
+function buildRamp(baseHex) {
+  const [h, s] = hexToHsl(baseHex);
+  const sat = Math.min(Math.max(s, 65), 75);
+  return Object.fromEntries(
+    Object.entries(RAMP_LIGHTNESS).map(([key, l]) => [key, hslToHex(h, sat, l)])
+  );
+}
 
 export default function Analytics() {
   const dispatch = useDispatch();
   const { transactions, loading } = useSelector((state) => state.weighing);
   const [lastUpdated, setLastUpdated] = useState(dayjs());
-  
+
+  const { colorScheme, COLOR_SCHEMES } = useColorScheme();
+  const chartColors = useMemo(
+    () => buildRamp(COLOR_SCHEMES[colorScheme].primary),
+    [colorScheme, COLOR_SCHEMES]
+  );
+  const pieColors = useMemo(
+    () => [chartColors.medium, chartColors.light, "#10b981", "#3b82f6", "#ef4444"],
+    [chartColors]
+  );
+
   // NEW: Advanced filters
   const [timeRange, setTimeRange] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
@@ -687,8 +724,8 @@ export default function Analytics() {
                   <YAxis tick={{ fontSize: 10 }} className="sm:text-xs" />
                   <Tooltip contentStyle={{ fontSize: 11, backgroundColor: '#fff', border: '1px solid #e5e7eb' }} />
                   <Legend wrapperStyle={{ fontSize: 10 }} />
-                  <Area type="monotone" dataKey="count" fill={AMBER_COLORS.lighter} stroke={AMBER_COLORS.dark} name="Tickets" />
-                  <Line type="monotone" dataKey="weight" stroke={AMBER_COLORS.base} strokeWidth={2} name="Weight (kg)" dot={{ r: 3 }} />
+                  <Area type="monotone" dataKey="count" fill={chartColors.lighter} stroke={chartColors.dark} name="Tickets" />
+                  <Line type="monotone" dataKey="weight" stroke={chartColors.base} strokeWidth={2} name="Weight (kg)" dot={{ r: 3 }} />
                 </ComposedChart>
               </ResponsiveContainer>
               )}
@@ -713,8 +750,8 @@ export default function Analytics() {
                       key={driver.driver}
                       name={driver.driver}
                       dataKey={driver.driver}
-                      stroke={PIE_COLORS[idx]}
-                      fill={PIE_COLORS[idx]}
+                      stroke={pieColors[idx]}
+                      fill={pieColors[idx]}
                       fillOpacity={0.3}
                     />
                   ))}
@@ -734,7 +771,7 @@ export default function Analytics() {
                   <XAxis dataKey="day" tick={{ fontSize: 10 }} interval="preserveStartEnd" />
                   <YAxis tick={{ fontSize: 10 }} label={{ value: 'Minutes', angle: -90, position: 'insideLeft', style: { fontSize: 10 } }} />
                   <Tooltip contentStyle={{ fontSize: 11 }} formatter={(value) => [`${value} min`, 'Avg TAT']} />
-                  <Area type="monotone" dataKey="avgTAT" stroke={AMBER_COLORS.darker} fill={AMBER_COLORS.light} fillOpacity={0.6} />
+                  <Area type="monotone" dataKey="avgTAT" stroke={chartColors.darker} fill={chartColors.light} fillOpacity={0.6} />
                 </AreaChart>
               </ResponsiveContainer>
               )}
@@ -758,7 +795,7 @@ export default function Analytics() {
                     labelStyle={{ fontSize: 10, fontWeight: 600 }}
                   >
                     {statusPie.map((_, i) => (
-                      <Cell key={i} fill={PIE_COLORS[i]} />
+                      <Cell key={i} fill={pieColors[i]} />
                     ))}
                   </Pie>
                   <Tooltip contentStyle={{ fontSize: 11 }} />
@@ -778,8 +815,8 @@ export default function Analytics() {
                   <YAxis tick={{ fontSize: 10 }} />
                   <Tooltip contentStyle={{ fontSize: 11 }} />
                   <Legend wrapperStyle={{ fontSize: 10 }} />
-                  <Bar dataKey="completed" stackId="a" fill={AMBER_COLORS.dark} name="Completed" />
-                  <Bar dataKey="inProgress" stackId="a" fill={AMBER_COLORS.light} name="In Progress" />
+                  <Bar dataKey="completed" stackId="a" fill={chartColors.dark} name="Completed" />
+                  <Bar dataKey="inProgress" stackId="a" fill={chartColors.light} name="In Progress" />
                 </BarChart>
               </ResponsiveContainer>
               )}
@@ -820,7 +857,7 @@ export default function Analytics() {
                   <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10 }} />
                   <Tooltip contentStyle={{ fontSize: 11 }} />
                   <Legend wrapperStyle={{ fontSize: 10 }} />
-                  <Bar yAxisId="left" dataKey="weight" fill={AMBER_COLORS.medium} radius={[6, 6, 0, 0]} name="Weight (kg)" />
+                  <Bar yAxisId="left" dataKey="weight" fill={chartColors.medium} radius={[6, 6, 0, 0]} name="Weight (kg)" />
                   <Line yAxisId="right" type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} name="Count" dot={{ r: 4 }} />
                 </ComposedChart>
               </ResponsiveContainer>

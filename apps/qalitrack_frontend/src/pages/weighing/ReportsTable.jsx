@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ArrowUpDown, ArrowUp, ArrowDown, FileDown } from "lucide-react";
+import { ArrowUpDown, ArrowUp, ArrowDown, FileDown, Check, Hourglass } from "lucide-react";
 import dayjs from "dayjs";
 
 export default function ReportsTable({
@@ -90,7 +90,10 @@ export default function ReportsTable({
     return sortedFull.slice(start, start + pageSize);
   }, [sortedFull, currentPage, pageSize]);
 
-  const getRowNumber = (record) => sortedFull.findIndex(r => r.id === record.id) + 1;
+  const getRowNumber = (record) => {
+    const key = record.ticketID || record.id;
+    return sortedFull.findIndex(r => (r.ticketID || r.id) === key) + 1;
+  };
 
   const isCompleted = (r) =>
     (r?.secondWeight && parseFloat(r.secondWeight) > 0) ||
@@ -131,11 +134,7 @@ export default function ReportsTable({
     const value = record[key];
 
     if (key === "__rowNum__") {
-      return (
-        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 text-[9px] font-extrabold text-amber-900 border border-amber-300 shadow-sm">
-          {rowNum}
-        </span>
-      );
+      return <span className="text-[9px] font-bold text-gray-500">{rowNum}</span>;
     }
 
     switch (key) {
@@ -163,10 +162,7 @@ export default function ReportsTable({
 
       case "noPlate":
         return (
-          <span
-            title={value || ""}
-            className="block truncate bg-gray-900 text-white px-1 py-0.5 rounded text-[9px] font-bold text-center"
-          >
+          <span title={value || ""} className="block truncate text-[9px] font-bold text-gray-800 text-center">
             {value || "-"}
           </span>
         );
@@ -204,12 +200,12 @@ export default function ReportsTable({
       case "status": {
         const done = isCompleted(record);
         return (
-          <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full text-[9px] font-bold border shadow-sm mx-auto ${
+          <span className={`inline-flex items-center justify-center w-5 h-5 rounded-full border shadow-sm mx-auto ${
             done
               ? "bg-green-100 text-green-800 border-green-300"
               : "bg-amber-50 text-amber-800 border-amber-200"
           }`}>
-            {done ? "✓" : "⏳"}
+            {done ? <Check className="w-3 h-3" strokeWidth={3} /> : <Hourglass className="w-3 h-3" strokeWidth={2.5} />}
           </span>
         );
       }

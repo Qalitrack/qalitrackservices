@@ -2,7 +2,6 @@ import React, { useEffect, useState, useMemo } from "react";
 import { message, Modal, Switch } from "antd";
 import { Plus, Pencil, Trash2, Search, RotateCcw, X, Settings2 } from "lucide-react";
 import TablePagination from "../../components/TablePagination";
-import PageHeader from "../../components/PageHeader.jsx";
 import {
   getAxleConfigs,
   createAxleConfig,
@@ -24,7 +23,7 @@ const getWheelCount = (code) => {
 
 const EMPTY_FORM = { code: "", description: "", axleCount: "", maxLoadCapacity: "", isActive: true };
 
-const AxleConfigs = () => {
+const AxleConfigs = ({ onHeaderActionsChange }) => {
   const [configs, setConfigs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -138,27 +137,26 @@ const AxleConfigs = () => {
     }
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <>
+        <div className="relative">
+          <Search size={10} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input type="text" placeholder="Search configs..."
+            className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+            value={search} onChange={(e) => setSearch(e.target.value)} />
+        </div>
+        <button onClick={fetchConfigs} className="h-7 px-3 text-[11px] font-medium rounded-md cs-solid-chip-btn shadow-sm transition-all flex items-center gap-1.5">
+          <RotateCcw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
+        </button>
+      </>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, loading]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <PageHeader
-        flush
-        icon={Settings2}
-        title="Axle Configurations"
-        subtitle={<><span className="font-semibold">{filtered.length}</span> configurations</>}
-        actions={
-          <>
-            <div className="relative">
-              <Search size={10} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input type="text" placeholder="Search configs..."
-                className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={search} onChange={(e) => setSearch(e.target.value)} />
-            </div>
-            <button onClick={fetchConfigs} className="h-7 px-3 text-[11px] font-medium rounded-md cs-solid-chip-btn shadow-sm transition-all flex items-center gap-1.5">
-              <RotateCcw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
-            </button>
-          </>
-        }
-      />
 
       {/* Inline Form */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm shrink-0">

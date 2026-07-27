@@ -4,7 +4,6 @@ import { message, Modal, Switch } from "antd";
 import TablePagination from "../../components/TablePagination";
 import VehicleRelationModal from "../../components/VehicleRelationModal";
 import DriverRelationModal from "../../components/DriverRelationModal";
-import PageHeader from "../../components/PageHeader.jsx";
 import {
   getTransporters,
   createTransporter,
@@ -15,7 +14,7 @@ import { assignDriverToTransporter, unassignDriverFromTransporter } from "../../
 
 const PAGE_SIZE = 5;
 
-export default function TransportersPortal() {
+export default function TransportersPortal({ onHeaderActionsChange }) {
   const [transporters, setTransporters] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -152,27 +151,25 @@ export default function TransportersPortal() {
     }
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <div className="relative">
+        <Search size={10} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search transporters..."
+          className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-
-      <PageHeader
-        flush
-        icon={Truck}
-        title="Transporters"
-        subtitle={<><span className="font-semibold">{filtered.length}</span> registered</>}
-        actions={
-          <div className="relative">
-            <Search size={10} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search transporters..."
-              className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        }
-      />
 
       {/* Inline Form */}
       <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20 border-b border-amber-200 px-3 py-2.5 shrink-0">

@@ -50,20 +50,15 @@ const AuditLogs = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <PageHeader
-                flush
-                icon={ScrollText}
-                title="Audit Logs"
-                subtitle="Every create/update/delete request captured at the gateway — read-only traffic isn't logged"
-                actions={
-                    <button
-                        onClick={() => loadLogs(page)}
-                        className="h-7 px-3 text-xs font-semibold rounded transition-colors cs-solid-chip-btn"
-                    >
-                        Refresh
-                    </button>
-                }
-            />
+            <div className="shrink-0 flex items-center justify-between gap-3 px-3 py-2 border-b border-gray-200 bg-gray-50">
+                <p className="text-[11px] text-gray-500">Every create/update/delete request captured at the gateway — read-only traffic isn't logged</p>
+                <button
+                    onClick={() => loadLogs(page)}
+                    className="h-7 px-3 text-xs font-semibold rounded border border-amber-300 text-amber-700 bg-white hover:bg-amber-50 transition-colors shrink-0"
+                >
+                    Refresh
+                </button>
+            </div>
 
             {error && (
                 <div className="mx-4 mt-3 px-4 py-2 rounded-md text-sm font-medium border bg-red-50 border-red-200 text-red-700">

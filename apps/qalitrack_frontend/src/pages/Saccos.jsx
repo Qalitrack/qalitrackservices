@@ -2,12 +2,11 @@ import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, Plus, Search, X, Building2 } from "lucide-react";
 import { message, Modal, Switch } from "antd";
 import TablePagination from "../components/TablePagination";
-import PageHeader from "../components/PageHeader.jsx";
 import { getSaccos, createSacco, updateSacco, deleteSacco } from "../api/MasterData/Saccos";
 
 const PAGE_SIZE = 10;
 
-export default function SaccosPortal() {
+export default function SaccosPortal({ onHeaderActionsChange }) {
   const [saccos, setSaccos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -131,44 +130,42 @@ export default function SaccosPortal() {
     setEditing(null);
   };
 
+  useEffect(() => {
+    onHeaderActionsChange?.(
+      <>
+        <div className="relative">
+          <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search saccos..."
+            className="qt-filter-field w-44 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="qt-filter-field h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm"
+        >
+          <option value="All" className="text-black">All Status</option>
+          <option value="Active" className="text-black">Active</option>
+          <option value="Inactive" className="text-black">Inactive</option>
+        </select>
+        <button
+          onClick={() => { setSearch(""); setStatusFilter("All"); setPage(1); fetchSaccos(); }}
+          className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
+        >
+          Refresh
+        </button>
+      </>
+    );
+    return () => onHeaderActionsChange?.(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, statusFilter]);
+
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-
-      <PageHeader
-        flush
-        icon={Building2}
-        title="Saccos"
-        subtitle={`${filtered.length} registered saccos`}
-        actions={
-          <>
-            <div className="relative">
-              <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search saccos..."
-                className="qt-filter-field w-44 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="qt-filter-field h-7 px-2 text-[11px] rounded-md cs-ghost-btn shadow-sm"
-            >
-              <option value="All" className="text-black">All Status</option>
-              <option value="Active" className="text-black">Active</option>
-              <option value="Inactive" className="text-black">Inactive</option>
-            </select>
-            <button
-              onClick={() => { setSearch(""); setStatusFilter("All"); setPage(1); fetchSaccos(); }}
-              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
-            >
-              Refresh
-            </button>
-          </>
-        }
-      />
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm">

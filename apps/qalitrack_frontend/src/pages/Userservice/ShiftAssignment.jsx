@@ -18,7 +18,6 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 import TablePagination from '../../components/TablePagination';
-import PageHeader from '../../components/PageHeader.jsx';
 
 function isValidDateString(dateString) {
     if (!dateString) return false;
@@ -79,7 +78,7 @@ const ConfirmationModal = ({
     );
 };
 
-const ShiftAssignment = () => {
+const ShiftAssignment = ({ onHeaderActionsChange }) => {
     const { state } = useLocation();
     const [shifts, setShifts] = useState([]);
     const [pagination, setPagination] = useState({
@@ -643,6 +642,35 @@ const ShiftAssignment = () => {
         }
     };
 
+    useEffect(() => {
+        onHeaderActionsChange?.(
+            <>
+                <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
+                    <input
+                        type="checkbox"
+                        checked={showDeleted}
+                        onChange={(e) => {
+                            setShowDeleted(e.target.checked);
+                            setPagination((p) => ({ ...p, page: 1 }));
+                        }}
+                        className="h-3.5 w-3.5 rounded border-gray-300"
+                    />
+                    Show Deleted
+                </label>
+                <button
+                    onClick={handleDownloadPDF}
+                    disabled={showDeleted}
+                    className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-solid-chip-btn'}`}
+                >
+                    <Download size={13} />
+                    <span>PDF</span>
+                </button>
+            </>
+        );
+        return () => onHeaderActionsChange?.(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showDeleted]);
+
     // Loading / Error states
     if (loading) {
         return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
@@ -653,37 +681,6 @@ const ShiftAssignment = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <PageHeader
-                flush
-                icon={UserCog}
-                title="Shift Assignment"
-                subtitle={`${pagination.totalCount} shifts total`}
-                actions={
-                    <>
-                        <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
-                            <input
-                                type="checkbox"
-                                checked={showDeleted}
-                                onChange={(e) => {
-                                    setShowDeleted(e.target.checked);
-                                    setPagination((p) => ({ ...p, page: 1 }));
-                                }}
-                                className="h-3.5 w-3.5 rounded border-gray-300"
-                            />
-                            Show Deleted
-                        </label>
-                        <button
-                            onClick={handleDownloadPDF}
-                            disabled={showDeleted}
-                            className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-solid-chip-btn'}`}
-                        >
-                            <Download size={13} />
-                            <span>PDF</span>
-                        </button>
-                    </>
-                }
-            />
-
             <div className="flex-1 overflow-auto">
                 <table className="min-w-full">
                     <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">

@@ -1,7 +1,7 @@
 import React from "react";
 import { Tag, Button } from "antd";
 import { ClockCircleOutlined, RetweetOutlined } from "@ant-design/icons";
-import { Eye } from "lucide-react";
+import { Check, Hourglass } from "lucide-react";
 import dayjs from "dayjs";
 
 export const calculateTurnaroundTime = (firstWeightDate, secondWeightDate, turnaroundTime) => {
@@ -65,7 +65,7 @@ export const formatTurnaroundTimeSimple = (firstWeightDate, secondWeightDate, tu
   return diffMin < 60 ? `${diffMin}m` : `${Math.floor(diffMin / 60)}h ${diffMin % 60}m`;
 };
 
-export const getTransactionColumns = ({ filters, openViewDrawer, setReweighModal }) => [
+export const getTransactionColumns = ({ filters, setReweighModal }) => [
   {
     title: "#",
     width: 40,
@@ -74,9 +74,7 @@ export const getTransactionColumns = ({ filters, openViewDrawer, setReweighModal
       const rowNumber = (filters.page - 1) * filters.pageSize + index + 1;
       return (
         <div className="flex items-center justify-center">
-          <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 text-[10px] font-extrabold text-amber-900 border border-amber-300 shadow-sm">
-            {rowNumber}
-          </span>
+          <span className="text-[10px] font-bold text-gray-500">{rowNumber}</span>
         </div>
       );
     },
@@ -106,11 +104,7 @@ export const getTransactionColumns = ({ filters, openViewDrawer, setReweighModal
     title: "Vehicle",
     dataIndex: "noPlate",
     width: 70,
-    render: (t) => (
-      <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold">
-        {t || "-"}
-      </div>
-    ),
+    render: (t) => <span className="text-[10px] font-bold text-gray-800">{t || "-"}</span>,
   },
   {
     title: "Driver",
@@ -249,16 +243,16 @@ export const getTransactionColumns = ({ filters, openViewDrawer, setReweighModal
       return (
         <Tag
           color={isCompleted ? "success" : "warning"}
-          className="text-[9px] font-bold px-2 py-0.5 m-0 uppercase rounded-full shadow-sm leading-tight"
+          className="text-[9px] font-bold px-2 py-0.5 m-0 uppercase rounded-full shadow-sm leading-tight inline-flex items-center justify-center"
         >
-          {isCompleted ? "✓" : "⏳"}
+          {isCompleted ? <Check className="w-3 h-3" strokeWidth={3} /> : <Hourglass className="w-3 h-3" strokeWidth={2.5} />}
         </Tag>
       );
     },
   },
   {
     title: "",
-    width: 80,
+    width: 36,
     fixed: "right",
     render: (_, r) => {
       const status = r.status?.toLowerCase();
@@ -266,26 +260,19 @@ export const getTransactionColumns = ({ filters, openViewDrawer, setReweighModal
         status === "completed" ||
         status === "reweighrequested" ||
         (r.secondWeight && parseFloat(r.secondWeight) > 0);
+      if (!isReweighable) return null;
       return (
-        <div className="flex items-center gap-1">
-          <Button
-            size="small"
-            type="text"
-            icon={<Eye size={12} />}
-            onClick={() => openViewDrawer(r)}
-            className="text-amber-600 hover:bg-amber-50 hover:text-amber-700 h-6 px-1.5 text-[10px] font-semibold transition-all"
-          />
-          {isReweighable && (
-            <Button
-              size="small"
-              type="text"
-              icon={<RetweetOutlined style={{ fontSize: 11 }} />}
-              onClick={() => setReweighModal({ visible: true, transaction: r })}
-              className="text-blue-500 hover:bg-blue-50 hover:text-blue-700 h-6 px-1.5 text-[10px] font-semibold transition-all"
-              title="Reweigh"
-            />
-          )}
-        </div>
+        <Button
+          size="small"
+          type="text"
+          icon={<RetweetOutlined style={{ fontSize: 11 }} />}
+          onClick={(e) => {
+            e.stopPropagation();
+            setReweighModal({ visible: true, transaction: r });
+          }}
+          className="text-blue-500 hover:bg-blue-50 hover:text-blue-700 h-6 px-1.5 text-[10px] font-semibold transition-all"
+          title="Reweigh"
+        />
       );
     },
   },

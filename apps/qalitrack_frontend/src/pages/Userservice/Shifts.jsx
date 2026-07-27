@@ -14,7 +14,6 @@ import {
     Download,
     CalendarClock,
 } from 'lucide-react';
-import PageHeader from '../../components/PageHeader.jsx';
 import TablePagination from '../../components/TablePagination';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
@@ -82,7 +81,7 @@ const getProgressBarColor = (percentage) => {
     return '#EF4444'; // Red when just starting
 };
 
-const Shifts = ({ onViewAttendance }) => {
+const Shifts = ({ onViewAttendance, onHeaderActionsChange }) => {
     const [shifts, setShifts] = useState([]);
     const [pagination, setPagination] = useState({
         page: 1,
@@ -391,6 +390,35 @@ const Shifts = ({ onViewAttendance }) => {
         }
     };
 
+    useEffect(() => {
+        onHeaderActionsChange?.(
+            <>
+                <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
+                    <input
+                        id="show-deleted"
+                        type="checkbox"
+                        checked={showDeleted}
+                        onChange={(e) => {
+                            setShowDeleted(e.target.checked);
+                            setPagination((p) => ({ ...p, page: 1 }));
+                        }}
+                        className="h-3.5 w-3.5 rounded border-gray-300"
+                    />
+                    Show Deleted
+                </label>
+                <button
+                    onClick={handleDownloadPDF}
+                    className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
+                >
+                    <Download size={13} />
+                    <span>PDF</span>
+                </button>
+            </>
+        );
+        return () => onHeaderActionsChange?.(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showDeleted]);
+
     if (loading) {
         return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
@@ -401,36 +429,6 @@ const Shifts = ({ onViewAttendance }) => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <PageHeader
-                flush
-                icon={CalendarClock}
-                title="Shifts"
-                subtitle={`${pagination.totalCount} shifts total`}
-                actions={
-                    <>
-                        <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
-                            <input
-                                id="show-deleted"
-                                type="checkbox"
-                                checked={showDeleted}
-                                onChange={(e) => {
-                                    setShowDeleted(e.target.checked);
-                                    setPagination((p) => ({ ...p, page: 1 }));
-                                }}
-                                className="h-3.5 w-3.5 rounded border-gray-300"
-                            />
-                            Show Deleted
-                        </label>
-                        <button
-                            onClick={handleDownloadPDF}
-                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
-                        >
-                            <Download size={13} />
-                            <span>PDF</span>
-                        </button>
-                    </>
-                }
-            />
 
             {feedbackMessage.text && (
                 <div className={`mx-4 mt-2 px-3 py-2 rounded-md text-xs font-medium border ${feedbackMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>

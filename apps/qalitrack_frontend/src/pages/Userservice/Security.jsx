@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Shield, Users, Lock, ScrollText } from "lucide-react";
 import PageHeader from "../../components/PageHeader.jsx";
@@ -22,6 +22,16 @@ export default function Security() {
   const initialTab = SECURITY_TABS.some((t) => t.id === tab) ? tab : "permissions";
   const [activeTab, setActiveTab] = useState(initialTab);
   const ActiveComponent = SECURITY_TABS.find((t) => t.id === activeTab)?.Component;
+
+  // useState(initialTab) only runs once on mount — sync on later :tab changes too
+  // (browser back/forward, bookmarks, external links) since the component doesn't
+  // remount just because the tab param changed.
+  useEffect(() => {
+    if (tab && SECURITY_TABS.some((t) => t.id === tab) && tab !== activeTab) {
+      setActiveTab(tab);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tab]);
 
   const selectTab = (id) => {
     setActiveTab(id);
