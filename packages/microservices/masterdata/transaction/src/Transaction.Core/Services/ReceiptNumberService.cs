@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Transaction.Core.Interfaces;
 
 namespace Transaction.Core.Services;
@@ -13,17 +14,19 @@ public class ReceiptNumberService : IReceiptNumberService
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly ITimeService _timeService;
-    private const string Prefix = "NCCU";
+    private readonly string _prefix;
     private const int SequenceLength = 6;
 
     public ReceiptNumberService(
-        ITransactionRepository transactionRepository, 
-        ITimeService timeService)
+        ITransactionRepository transactionRepository,
+        ITimeService timeService,
+        IConfiguration configuration)
     {
-        _transactionRepository = transactionRepository ?? 
+        _transactionRepository = transactionRepository ??
             throw new ArgumentNullException(nameof(transactionRepository));
-        _timeService = timeService ?? 
+        _timeService = timeService ??
             throw new ArgumentNullException(nameof(timeService));
+        _prefix = configuration?["Transaction:ReceiptPrefix"] ?? "NCCU";
     }
 
     /// <summary>
@@ -38,7 +41,7 @@ public class ReceiptNumberService : IReceiptNumberService
         var datePart = now.ToString("yyyyMMdd");
         
         // Get the latest receipt number for today
-        var searchPattern = $"{Prefix}-{datePart}";
+        var searchPattern = $"{_prefix}-{datePart}";
         var latestReceipt = await _transactionRepository.GetLatestReceiptNumberAsync(searchPattern);
         
         int sequenceNumber = 1;
@@ -61,6 +64,6 @@ public class ReceiptNumberService : IReceiptNumberService
         
         // Format: QSL-YYYYMMDD-XXXXXX
         var sequenceFormatted = sequenceNumber.ToString().PadLeft(SequenceLength, '0');
-        return $"{Prefix}-{datePart}-{sequenceFormatted}";
+        return $"{_prefix}-{datePart}-{sequenceFormatted}";
     }
 }

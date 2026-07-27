@@ -3,6 +3,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
 using Yarp.ReverseProxy.Model;
 using System.Net;
+using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -67,6 +69,15 @@ builder.Services
     .AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+// Outbound client for forwarding audit log entries to user-service — the
+// gateway itself has no database, so it's just a fire-and-forget HTTP call.
+builder.Services.AddHttpClient("AuditLog", client =>
+{
+    var auditLogBaseUrl = builder.Configuration["AuditLog:UserServiceBaseUrl"] ?? "http://user-service-prod:80";
+    client.BaseAddress = new Uri(auditLogBaseUrl);
+    client.Timeout = TimeSpan.FromSeconds(5);
+});
+
 // Configure CORS
 var corsSection = builder.Configuration.GetSection("Cors");
 var allowedOrigins = corsSection.GetSection("AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
@@ -124,6 +135,61 @@ app.UseCors();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Audit log: record every mutating request (GET is skipped — read traffic
+// isn't audited) after auth so HttpContext.User claims are populated. The
+// gateway has no database, so this forwards a fire-and-forget HTTP call to
+// user-service; a slow or failed audit write never delays or breaks the
+// actual proxied request.
+app.Use(async (context, next) =>
+{
+    if (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method))
+    {
+        await next();
+        return;
+    }
+
+    var method = context.Request.Method;
+    var path = context.Request.Path.Value ?? string.Empty;
+    var queryString = context.Request.QueryString.Value ?? string.Empty;
+    var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+
+    await next();
+
+    stopwatch.Stop();
+
+    var statusCode = context.Response.StatusCode;
+    var userId = context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var userName = context.User?.FindFirst(ClaimTypes.Email)?.Value;
+
+    var httpClientFactory = context.RequestServices.GetRequiredService<IHttpClientFactory>();
+    var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+
+    _ = Task.Run(async () =>
+    {
+        try
+        {
+            var client = httpClientFactory.CreateClient("AuditLog");
+            var payload = new
+            {
+                method,
+                path,
+                queryString,
+                statusCode,
+                userId,
+                userName,
+                ipAddress,
+                durationMs = stopwatch.ElapsedMilliseconds
+            };
+            await client.PostAsJsonAsync("/AuditLogs", payload);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "[Audit] Failed to record audit log for {Method} {Path}", method, path);
+        }
+    });
+});
 
 // Expose a simple health endpoint (anonymous)
 app.MapGet("/", () => Results.Ok(new { status = "ok", service = "QaliTrack Gateway" }))

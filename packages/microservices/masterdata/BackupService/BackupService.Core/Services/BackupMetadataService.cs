@@ -13,26 +13,32 @@ namespace BackupService.Core.Services
         private readonly IFileSystem _fileSystem;
         private readonly ILogger<JsonBackupMetadataService> _logger;
         private readonly string _metadataFilePath;
+        private readonly string _backupDirectory;
         private BackupMetadata _metadata;
         private bool _isLoaded = false;
 
         public JsonBackupMetadataService(
             IFileSystem fileSystem,
             ILogger<JsonBackupMetadataService> logger,
-            string metadataDirectory = "/app/backup-metadata")
+            string metadataDirectory = "/app/backup-metadata",
+            // Was hardcoded to "/app/backups" (lowercase) inside GetAvailableBackupsAsync,
+            // independent of this constructor — see BackupCreationService for the same
+            // fix and why the case mismatch against the docker-compose volume mattered.
+            string backupDirectory = "/app/backups")
         {
             _fileSystem = fileSystem;
             _logger = logger;
-            
+            _backupDirectory = backupDirectory;
+
             // Ensure the directory exists
             if (!_fileSystem.Directory.Exists(metadataDirectory))
             {
                 _fileSystem.Directory.CreateDirectory(metadataDirectory);
             }
-            
+
             _metadataFilePath = Path.Combine(metadataDirectory, "backup_metadata.json");
             _metadata = new BackupMetadata { Chains = new List<BackupChain>() };
-            
+
             _logger.LogInformation("Using metadata file at: {MetadataPath}", _metadataFilePath);
         }
 
@@ -121,16 +127,32 @@ namespace BackupService.Core.Services
         public async Task<List<BackupFileInfo>> GetAvailableBackupsAsync(string? microservice = null, CancellationToken ct = default)
         {
             await EnsureMetadataLoaded(ct);
-            
-            var chains = microservice == null 
-                ? _metadata.Chains 
+
+            var chains = microservice == null
+                ? _metadata.Chains
                 : _metadata.Chains.Where(c => c.MicroserviceName == microservice).ToList();
 
             var result = new List<BackupFileInfo>();
-            
-            var backupRoot = "/app/backups"; // Should match the path used in BackupCreationService
-            
-            foreach (var chain in chains)
+
+            var backupRoot = _backupDirectory;
+
+            // Metadata can outlive the file it describes — e.g. the backups volume
+            // gets wiped/reset without also clearing this JSON — so a chain only
+            // counts as "available" once we confirm its full-backup file actually
+            // exists on disk. Otherwise the API reports phantom backups that a
+            // user can see and try to restore/download but that don't exist.
+            var validChains = chains
+                .Where(c => _fileSystem.File.Exists(Path.Combine(backupRoot, c.FullBackupFile)))
+                .ToList();
+
+            foreach (var missing in chains.Except(validChains))
+            {
+                _logger.LogWarning(
+                    "Skipping backup chain {ChainId} for {Microservice} — file not found: {Path}",
+                    missing.Id, missing.MicroserviceName, Path.Combine(backupRoot, missing.FullBackupFile));
+            }
+
+            foreach (var chain in validChains)
             {
                 var fullBackupPath = Path.Combine(backupRoot, chain.FullBackupFile);
                 result.Add(new BackupFileInfo
@@ -140,25 +162,32 @@ namespace BackupService.Core.Services
                     BackupType = BackupType.Full,
                     CreatedAt = chain.Timestamp,
                     ChainId = chain.ChainId ?? chain.Id.ToString(),
-                    IsLatest = IsLatestChain(chain),
+                    IsLatest = IsLatestChain(chain, validChains),
                     ServiceName = chain.MicroserviceName
                 });
 
                 foreach (var inc in chain.Incrementals)
                 {
                     var fullIncPath = Path.Combine(backupRoot, inc);
+                    if (!_fileSystem.File.Exists(fullIncPath))
+                    {
+                        _logger.LogWarning(
+                            "Skipping incremental backup {File} for chain {ChainId} — file not found: {Path}",
+                            inc, chain.Id, fullIncPath);
+                        continue;
+                    }
                     result.Add(new BackupFileInfo
                     {
                         BackupId = Path.GetFileNameWithoutExtension(inc),
                         FileName = fullIncPath,
                         CreatedAt = chain.Timestamp, // Use chain timestamp as approximation
                         ChainId = chain.ChainId ?? chain.Id.ToString(),
-                        IsLatest = IsLatestChain(chain),
+                        IsLatest = IsLatestChain(chain, validChains),
                         ServiceName = chain.MicroserviceName
                     });
                 }
             }
-            
+
             return result;
         }
         
@@ -185,9 +214,9 @@ namespace BackupService.Core.Services
             return _metadata.Chains.Any() ? _metadata.Chains.Max(c => c.Id) + 1 : 1;
         }
 
-        private bool IsLatestChain(BackupChain chain)
+        private bool IsLatestChain(BackupChain chain, List<BackupChain> candidates)
         {
-            return _metadata.Chains
+            return candidates
                 .Where(c => c.MicroserviceName == chain.MicroserviceName)
                 .OrderByDescending(c => c.Timestamp)
                 .FirstOrDefault()?.Id == chain.Id;

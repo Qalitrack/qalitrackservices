@@ -112,14 +112,22 @@ export default function DriverReport({ transactions = [], loading }) {
       const img = await new Promise((resolve, reject) => {
         const i = new Image(); i.onload = () => resolve(i); i.onerror = reject; i.src = settings.companyLogo || logoSrc
       })
-      const sz = Math.min(img.naturalWidth, img.naturalHeight)
+      const sz  = 200
+      const pad = sz * 0.06
       const cv = document.createElement("canvas")
       cv.width = sz; cv.height = sz
       const ctx = cv.getContext("2d")
-      ctx.beginPath(); ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); ctx.clip()
-      const srcX = (img.naturalWidth - sz) / 2
-      const srcY = (img.naturalHeight - sz) / 2
-      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz)
+      const avail  = sz - pad * 2
+      const aspect = img.naturalWidth / img.naturalHeight
+      const drawW  = aspect >= 1 ? avail : avail * aspect
+      const drawH  = aspect >= 1 ? avail / aspect : avail
+      ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH)
+      const imgData = ctx.getImageData(0, 0, sz, sz)
+      const px = imgData.data
+      for (let p = 0; p < px.length; p += 4) {
+        if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0
+      }
+      ctx.putImageData(imgData, 0, 0)
       circularLogo = cv.toDataURL("image/png")
     } catch (_) {}
 
@@ -166,7 +174,6 @@ export default function DriverReport({ transactions = [], loading }) {
       body: driverSummary.map((d) => [d.driverName, d.trips, d.vehicles, d.totalNetWeight.toLocaleString()]),
       styles: { fontSize: 8, cellPadding: 2, textColor: black, lineColor: borderCol },
       headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 8.5, halign: "center", lineColor: accentDark },
-      alternateRowStyles: { fillColor: [252, 252, 252] },
       columnStyles: { 1: { halign: "center" }, 2: { halign: "center" }, 3: { halign: "right", fontStyle: "bold" } },
     })
 
@@ -276,7 +283,7 @@ export default function DriverReport({ transactions = [], loading }) {
     <div className="space-y-3">
       {/* FILTERS */}
       {!selectedDriver && (
-        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border border-amber-200 rounded-lg p-3">
+        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20 border border-amber-200 rounded-lg p-3">
           <div className="flex justify-between items-center mb-2">
             <span className="text-[10px] font-bold text-gray-900 uppercase tracking-wide">Filter Options</span>
             <Button 
@@ -380,18 +387,18 @@ export default function DriverReport({ transactions = [], loading }) {
       {/* SUMMARY KPIs */}
       {!selectedDriver && (
         <div className="grid grid-cols-3 gap-3">
-          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
-            <p className="text-[10px] text-gray-700 uppercase font-semibold tracking-wide">Drivers</p>
-            <p className="text-xl font-bold leading-tight text-amber-900">{totalDrivers}</p>
+          <div className="bg-white border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Drivers</p>
+            <p className="text-xl font-bold leading-tight text-gray-900">{totalDrivers}</p>
           </div>
-          <div className="bg-amber-100 border border-amber-300 rounded-lg px-3 py-2 shadow-sm">
-            <p className="text-[10px] text-amber-900 uppercase font-semibold tracking-wide">Trips</p>
-            <p className="text-xl font-bold leading-tight text-amber-950">{totalTrips}</p>
+          <div className="bg-white border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Trips</p>
+            <p className="text-xl font-bold leading-tight text-gray-900">{totalTrips}</p>
           </div>
-          <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
-            <p className="text-[10px] text-gray-700 uppercase font-semibold tracking-wide">Net Weight</p>
-            <p className="text-xl font-bold leading-tight text-amber-900">{totalWeight.toLocaleString()}</p>
-            <p className="text-[9px] text-amber-700">kg</p>
+          <div className="bg-white border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+            <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Net Weight</p>
+            <p className="text-xl font-bold leading-tight text-gray-900">{totalWeight.toLocaleString()}</p>
+            <p className="text-[9px] text-gray-500">kg</p>
           </div>
         </div>
       )}
@@ -415,7 +422,7 @@ export default function DriverReport({ transactions = [], loading }) {
       {/* DRIVER DETAIL PAGE */}
       {selectedDriver && (
         <>
-          <div className="flex items-center gap-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-200 rounded-lg p-2">
+          <div className="flex items-center gap-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border border-amber-200 rounded-lg p-2">
             <button
               onClick={() => setSelectedDriver(null)}
               className="flex items-center gap-1 text-[10px] border border-amber-300 rounded px-2 py-1 hover:bg-amber-50 font-medium"
@@ -430,23 +437,23 @@ export default function DriverReport({ transactions = [], loading }) {
 
           {/* DRIVER KPIs */}
           <div className="grid grid-cols-4 gap-3">
-            <div className="bg-amber-50 border border-amber-200 rounded px-3 py-2">
-              <p className="text-[10px] text-gray-700 uppercase font-semibold">Trips</p>
-              <p className="text-lg font-bold leading-tight text-amber-900">{driverTotals.trips}</p>
+            <div className="bg-white border border-amber-200 rounded px-3 py-2 shadow-sm">
+              <p className="text-[10px] text-gray-600 uppercase font-semibold">Trips</p>
+              <p className="text-lg font-bold leading-tight text-gray-900">{driverTotals.trips}</p>
             </div>
-            <div className="bg-amber-100 border border-amber-300 rounded px-3 py-2">
-              <p className="text-[10px] text-amber-900 uppercase font-semibold">Total Net</p>
-              <p className="text-lg font-bold leading-tight text-amber-950">{driverTotals.totalNet.toLocaleString()}</p>
-              <p className="text-[9px] text-amber-800">kg</p>
+            <div className="bg-white border border-amber-200 rounded px-3 py-2 shadow-sm">
+              <p className="text-[10px] text-gray-600 uppercase font-semibold">Total Net</p>
+              <p className="text-lg font-bold leading-tight text-gray-900">{driverTotals.totalNet.toLocaleString()}</p>
+              <p className="text-[9px] text-gray-500">kg</p>
             </div>
-            <div className="bg-amber-50 border border-amber-200 rounded px-3 py-2">
-              <p className="text-[10px] text-gray-700 uppercase font-semibold">Vehicles</p>
-              <p className="text-lg font-bold leading-tight text-amber-900">{driverTotals.vehicles}</p>
+            <div className="bg-white border border-amber-200 rounded px-3 py-2 shadow-sm">
+              <p className="text-[10px] text-gray-600 uppercase font-semibold">Vehicles</p>
+              <p className="text-lg font-bold leading-tight text-gray-900">{driverTotals.vehicles}</p>
             </div>
-            <div className="bg-amber-100 border border-amber-300 rounded px-3 py-2">
-              <p className="text-[10px] text-amber-900 uppercase font-semibold">Avg Net</p>
-              <p className="text-lg font-bold leading-tight text-amber-950">{driverTotals.avgNet.toLocaleString()}</p>
-              <p className="text-[9px] text-amber-800">kg</p>
+            <div className="bg-white border border-amber-200 rounded px-3 py-2 shadow-sm">
+              <p className="text-[10px] text-gray-600 uppercase font-semibold">Avg Net</p>
+              <p className="text-lg font-bold leading-tight text-gray-900">{driverTotals.avgNet.toLocaleString()}</p>
+              <p className="text-[9px] text-gray-500">kg</p>
             </div>
           </div>
 

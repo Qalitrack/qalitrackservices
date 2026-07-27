@@ -521,7 +521,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className={`block w-full rounded-md shadow-sm ${errors.name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} sm:text-sm`}
+                                        className={`block w-full rounded-md border shadow-sm ${errors.name ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} sm:text-sm`}
                                         placeholder="e.g., Morning Shift"
                                         disabled={isLoading}
                                     />
@@ -541,7 +541,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         name="description"
                                         value={formData.description}
                                         onChange={handleChange}
-                                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-300 focus:ring-amber-500 sm:text-sm"
+                                        className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-amber-300 focus:ring-amber-500 sm:text-sm"
                                         placeholder="Optional description"
                                         disabled={isLoading}
                                     />
@@ -566,7 +566,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         name="startDate"
                                         value={formData.startDate}
                                         onChange={handleChange}
-                                        className={`block w-full pl-10 rounded-md ${errors.startDate ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
+                                        className={`block w-full pl-10 rounded-md border ${errors.startDate ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
                                         disabled={isLoading}
                                     />
                                 </div>
@@ -590,7 +590,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         name="endDate"
                                         value={formData.endDate}
                                         onChange={handleChange}
-                                        className={`block w-full pl-10 rounded-md ${errors.endDate ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
+                                        className={`block w-full pl-10 rounded-md border ${errors.endDate ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
                                         disabled={isLoading}
                                     />
                                 </div>
@@ -614,7 +614,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         name="startTime"
                                         value={formatTimeForDisplay(formData.startTime)}
                                         onChange={(e) => handleTimeChange(e, 'start')}
-                                        className={`block w-full pl-10 rounded-md ${errors.startTime ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
+                                        className={`block w-full pl-10 rounded-md border ${errors.startTime ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
                                         disabled={isLoading}
                                     />
                                 </div>
@@ -638,7 +638,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         name="endTime"
                                         value={formatTimeForDisplay(formData.endTime)}
                                         onChange={(e) => handleTimeChange(e, 'end')}
-                                        className={`block w-full pl-10 rounded-md ${errors.endTime ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
+                                        className={`block w-full pl-10 rounded-md border ${errors.endTime ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} sm:text-sm`}
                                         disabled={isLoading}
                                     />
                                 </div>
@@ -685,7 +685,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                     name="mode"
                                     value={formData.mode}
                                     onChange={handleChange}
-                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-amber-400 focus:border-amber-500 sm:text-sm rounded-md"
+                                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-amber-400 focus:border-amber-500 sm:text-sm rounded-md"
                                     disabled={isLoading}
                                 >
                                     <option value={ShiftMode.Open}>Open (Anyone can check in)</option>
@@ -709,7 +709,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         name="recurrenceType"
                                         value={formData.recurrenceType}
                                         onChange={handleChange}
-                                        className={`mt-1 block w-full pl-3 pr-10 py-2 text-base ${errors.recurrenceType ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} focus:outline-none sm:text-sm rounded-md`}
+                                        className={`mt-1 block w-full pl-3 pr-10 py-2 text-base border ${errors.recurrenceType ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-amber-500 focus:border-amber-500'} focus:outline-none sm:text-sm rounded-md`}
                                         disabled={isLoading}
                                     >
                                         <option value={RecurrenceType.None}>Does not repeat</option>
@@ -807,7 +807,7 @@ const ShiftEdit = ({ isOpen, onClose, shift, onSave }) => {
                                         type="date"
                                         value={newExceptionDate}
                                         onChange={(e) => setNewExceptionDate(e.target.value)}
-                                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                                        className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
                                         disabled={isLoading}
                                     />
                                 </div>

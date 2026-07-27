@@ -205,7 +205,7 @@ namespace UserService.Infrastructure.Repositories
                     if (string.IsNullOrWhiteSpace(user.Password) || !user.Password.StartsWith("$2a$"))
                     {
                         // If password hash is invalid, set a default password that needs to be changed
-                        user.Password = BCrypt.Net.BCrypt.HashPassword("ChangeMe123!");
+                        user.Password = BCrypt.Net.BCrypt.HashPassword(global::UserService.Core.Services.UserService.DefaultTemporaryPassword);
                         user.IsFirstLogin = true;
                     }
 
@@ -529,7 +529,7 @@ public async Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId)
             return false;
             
         // Set default password and mark as first login
-        const string defaultPassword = "ChangeMe123!";
+        const string defaultPassword = global::UserService.Core.Services.UserService.DefaultTemporaryPassword;
         user.Password = BCrypt.Net.BCrypt.HashPassword(defaultPassword);
         user.IsFirstLogin = true;
         user.UpdatedAt = DateTime.UtcNow;

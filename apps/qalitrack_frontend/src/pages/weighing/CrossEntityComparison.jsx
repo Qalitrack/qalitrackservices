@@ -449,15 +449,15 @@ export default function CrossEntityComparison({ transactions = [] }) {
 
 function StatCard({ label, value, color = "amber" }) {
   const colors = {
-    amber: "bg-amber-50 border-amber-200",
-    blue: "bg-blue-50 border-blue-200",
-    green: "bg-green-50 border-green-200",
-    purple: "bg-purple-50 border-purple-200",
-    orange: "bg-orange-50 border-orange-200",
+    amber: "border-amber-200",
+    blue: "border-blue-200",
+    green: "border-green-200",
+    purple: "border-purple-200",
+    orange: "border-amber-200",
   };
 
   return (
-    <div className={`border rounded-lg p-3 ${colors[color]}`}>
+    <div className={`bg-white border rounded-lg p-3 shadow-sm ${colors[color]}`}>
       <div className="text-[10px] font-semibold text-gray-600 uppercase tracking-wide mb-1">
         {label}
       </div>

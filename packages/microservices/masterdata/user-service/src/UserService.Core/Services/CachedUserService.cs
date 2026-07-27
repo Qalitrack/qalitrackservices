@@ -625,7 +625,7 @@ public class CachedUserService(IUserService userService, ICacheService cacheServ
         return roles;
     }
 
-    public async Task<bool> ResetUserPasswordAsync(string userId)
+    public async Task<string?> ResetUserPasswordAsync(string userId)
     {
         var lockKey = $"lock:user:{userId}";
         bool acquired = await cacheService.AcquireLockAsync(lockKey, TimeSpan.FromSeconds(10));
@@ -641,8 +641,8 @@ public class CachedUserService(IUserService userService, ICacheService cacheServ
             await InvalidateUserCachesAsync(userId);
             
             var result = await userService.ResetUserPasswordAsync(userId);
-            
-            if (result)
+
+            if (result != null)
             {
                 
                 await InvalidateUserCachesAsync(userId);

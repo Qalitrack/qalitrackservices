@@ -64,6 +64,15 @@ export const createTransaction = async (payload) => {
 };
 
 /**
+ * GET /api/Transaction/Transaction/stats
+ * Aggregated dashboard stats (counts, net weight sums, top vehicles/commodities,
+ * weekly trend) computed server-side instead of pulling the whole table.
+ */
+export const getTransactionStats = async (signal) => {
+  return handleRequest(transactionsClient.get(`${BASE}/stats`, { signal }));
+};
+
+/**
  * GET /api/Transaction/Transaction/{ticketId}
  */
 export const getTransactionById = async (ticketId) => {

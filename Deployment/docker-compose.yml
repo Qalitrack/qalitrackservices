@@ -193,6 +193,7 @@ services:
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
       - Transaction__MetadataPath=/app/transaction-metadata
+      - Transaction__ReceiptPrefix=${RECEIPT_PREFIX:-NCCU}
     volumes:
       - ./transaction-service/data:/app/data
       - ./transaction-service/logs:/app/logs

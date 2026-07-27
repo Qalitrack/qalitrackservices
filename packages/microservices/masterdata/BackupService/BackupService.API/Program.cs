@@ -103,8 +103,12 @@ builder.Services.AddQuartzHostedService(options =>
 // The framework handles this automatically
 
 // Get metadata directory from configuration or use default
-var metadataDirectory = builder.Configuration.GetValue<string>("Backup:MetadataDirectory") 
+var metadataDirectory = builder.Configuration.GetValue<string>("Backup:MetadataDirectory")
                        ?? Path.Combine(Directory.GetCurrentDirectory(), "backup-metadata");
+// Backup__Path is already set correctly in docker-compose (matching the mounted
+// volume) but was previously never read anywhere — GetAvailableBackupsAsync had
+// its own hardcoded, differently-cased "/app/backups" instead.
+var backupDirectory = builder.Configuration.GetValue<string>("Backup:Path") ?? "/app/backups";
 
 // Add backup services with proper dependency injection
 builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
@@ -120,7 +124,7 @@ builder.Services.AddScoped<IBackupMetadataService>(provider =>
 {
     var fileSystem = provider.GetRequiredService<IFileSystem>();
     var logger = provider.GetRequiredService<ILogger<JsonBackupMetadataService>>();
-    return new JsonBackupMetadataService(fileSystem, logger, metadataDirectory);
+    return new JsonBackupMetadataService(fileSystem, logger, metadataDirectory, backupDirectory);
 });
 
 // Register DatabaseSeeder for dependency injection

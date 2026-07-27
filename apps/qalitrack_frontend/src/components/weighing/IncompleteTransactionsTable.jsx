@@ -58,12 +58,9 @@ function saveColumnVisibility(visibility) {
 export default function IncompleteTransactionsTable({ onAddWeighing }) {
   const dispatch = useDispatch();
 
-  const { transactions = [], loading } = useSelector((state) => {
-    return {
-      transactions: state.weighing?.transactions || [],
-      loading: state.weighing?.loading || false
-    };
-  });
+  const transactions = useSelector((state) => state.weighing?.transactions) || [];
+  const loading = useSelector((state) => state.weighing?.loading) || false;
+  const serverTotal = useSelector((state) => state.weighing?.total) || 0;
 
   const currentUser = useSelector((state) => state.auth?.user);
 
@@ -176,7 +173,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     return data;
   }, [transactions, searchText]);
 
-  useEffect(() => { setPagination(prev => ({ ...prev, total: filteredData.length })); }, [filteredData]);
+  useEffect(() => { setPagination(prev => ({ ...prev, total: serverTotal })); }, [serverTotal]);
 
   const isEditing = (record) => record.ticketID === editingKey || record.id === editingKey;
   const edit = (record) => { setEditingKey(record.ticketID || record.id); setEditedData({ ...record }); };
@@ -283,7 +280,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
         const name = text || currentUser?.fullName || currentUser?.name || currentUser?.username || 'N/A';
         return (
           <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
+            <div className="w-5 h-5 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-white text-[9px] font-bold shadow-sm">
               {name !== 'N/A' ? name.charAt(0).toUpperCase() : <UserOutlined className="text-[8px]" />}
             </div>
             <Text className="text-[10px] text-gray-700 font-medium truncate max-w-[55px]">{name}</Text>
@@ -310,7 +307,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
       key: "firstWeight", title: '1st Weight', dataIndex: 'firstWeight', width: 80, align: 'right',
       render: (weight) => (
         <div className="flex flex-col items-end leading-tight">
-          <Text className="text-[10px] font-semibold text-orange-600">{weight ? `${parseFloat(weight).toLocaleString()}` : '-'}</Text>
+          <Text className="text-[10px] font-semibold text-amber-600">{weight ? `${parseFloat(weight).toLocaleString()}` : '-'}</Text>
           <Text className="text-[8px] text-gray-500">kg</Text>
         </div>
       ),
@@ -513,10 +510,10 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       {/* Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200">
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
               <span className="text-white text-sm font-bold">{filteredData.length}</span>
             </div>
             <div>
@@ -633,7 +630,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
               <span className="text-gray-400 mx-2">•</span>
               <span className="text-green-600">🟢 &lt;30m</span>
               <span className="text-gray-400 mx-1">•</span>
-              <span className="text-orange-600">🟠 30-60m</span>
+              <span className="text-amber-600">🟠 30-60m</span>
               <span className="text-gray-400 mx-1">•</span>
               <span className="text-red-600">🔴 &gt;60m</span>
               {hiddenCount > 0 && (

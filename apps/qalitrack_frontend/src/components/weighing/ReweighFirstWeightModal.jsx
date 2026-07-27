@@ -82,7 +82,7 @@ export default function ReweighFirstWeightModal({
     <Modal
       title={
         <div className="flex items-center gap-2">
-          <MonitorOutlined className="text-orange-500" />
+          <MonitorOutlined className="text-amber-500" />
           <span className="text-sm font-black uppercase tracking-tight">
             Re-enter First Weight
           </span>
@@ -136,9 +136,9 @@ export default function ReweighFirstWeightModal({
           </div>
 
           {/* Info banner */}
-          <div className="flex items-start gap-2 p-3 bg-orange-50 rounded-lg border border-orange-100">
-            <InfoCircleOutlined className="text-orange-500 mt-0.5 flex-shrink-0" />
-            <Text className="text-[11px] text-orange-700 leading-relaxed">
+          <div className="flex items-start gap-2 p-3 bg-amber-50 rounded-lg border border-amber-100">
+            <InfoCircleOutlined className="text-amber-500 mt-0.5 flex-shrink-0" />
+            <Text className="text-[11px] text-amber-700 leading-relaxed">
               All transaction details are pre-filled. Enter the new first weight reading from
               the scale, then proceed to capture the second weight.
             </Text>
@@ -155,7 +155,7 @@ export default function ReweighFirstWeightModal({
                 placeholder="0.00"
                 size="large"
                 autoFocus
-                className="font-mono text-2xl font-black flex-1 border-orange-200 focus:border-orange-400"
+                className="font-mono text-2xl font-black flex-1 border-amber-200 focus:border-amber-400"
                 suffix={<span className="text-gray-400 text-sm">KG</span>}
               />
               {capturedWeight && (
@@ -164,7 +164,7 @@ export default function ReweighFirstWeightModal({
                     icon={<SyncOutlined />}
                     onClick={() => setWeight(capturedWeight)}
                     size="large"
-                    className="h-auto px-4 border-orange-300 text-orange-600"
+                    className="h-auto px-4 border-amber-300 text-amber-600"
                   />
                 </Tooltip>
               )}
@@ -218,7 +218,7 @@ export default function ReweighFirstWeightModal({
               loading={loading}
               disabled={!isValid}
               onClick={handleSubmit}
-              className="rounded-lg font-bold shadow-lg border-none bg-orange-500 hover:bg-orange-600"
+              className="rounded-lg font-bold shadow-lg border-none bg-amber-500 hover:bg-amber-600"
             >
               Save W1 → Enter W2
             </Button>

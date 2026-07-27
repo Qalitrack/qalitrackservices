@@ -59,12 +59,8 @@ public class DriverService : IDriverService
         var driverIds = driverDtos.Select(d => d.Id).ToList();
 
         // Get all vehicle assignments for the current page
-        var allAssignments = new List<DriverVehicle>();
-        foreach (var driverId in driverIds)
-        {
-            var driverAssignments = await _driverVehicleRepository.GetByIdsAsync(new[] { driverId });
-            allAssignments.AddRange(driverAssignments);
-        }
+        var allAssignments = (await _driverVehicleRepository.GetAllByPredicateAsync(
+            dv => driverIds.Contains(dv.DriverId))).ToList();
 
         // Group assignments by driver ID for efficient lookup
         var assignmentsByDriver = allAssignments
@@ -103,11 +99,10 @@ public class DriverService : IDriverService
             return null;
 
         // Get the assigned vehicles
-        var assignedVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { id });
+        var assignedVehicles = await _driverVehicleRepository.GetAllByPredicateAsync(dv => dv.DriverId == id);
 
         var dto = _mapper.Map<DriverReadDto>(driver);
         dto.AssignedVehicleIds = assignedVehicles
-            .Where(dv => dv.DriverId == id)
             .Select(dv => dv.VehicleId)
             .ToList();
 
@@ -129,11 +124,10 @@ public class DriverService : IDriverService
         }
 
         // Get the assigned vehicles
-        var assignedVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { driver.Id });
+        var assignedVehicles = await _driverVehicleRepository.GetAllByPredicateAsync(dv => dv.DriverId == driver.Id);
 
         var dto = _mapper.Map<DriverReadDto>(driver);
         dto.AssignedVehicleIds = assignedVehicles
-            .Where(dv => dv.DriverId == driver.Id)
             .Select(dv => dv.VehicleId)
             .ToList();
 

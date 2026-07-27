@@ -83,6 +83,9 @@ EMAIL_SMTP_PORT=587
 EMAIL_SMTP_USERNAME=you@gmail.com
 EMAIL_SMTP_PASSWORD=<app password>
 EMAIL_ENABLE_SSL=true
+
+# Receipt numbering (Transaction Service) — optional, defaults to NCCU
+RECEIPT_PREFIX=NCCU
 ```
 
 ---

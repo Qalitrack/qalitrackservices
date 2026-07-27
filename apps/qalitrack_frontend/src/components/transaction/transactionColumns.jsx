@@ -183,7 +183,7 @@ export const getTransactionColumns = ({ filters, openViewDrawer, setReweighModal
     width: 65,
     align: "right",
     render: (w) => (
-      <span className="text-[10px] font-bold text-orange-600">
+      <span className="text-[10px] font-bold text-amber-600">
         {w ? `${parseFloat(w).toLocaleString()}` : "-"}
       </span>
     ),

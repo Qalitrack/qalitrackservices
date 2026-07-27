@@ -35,55 +35,103 @@ namespace UserService.Infrastructure.Data
 
         private static async Task SeedData(UserServiceDbContext context)
         {
-            // Seed Roles
-            if (!context.Roles.Any())
+            // Ensure system roles exist. Per-role existence check (not gated on the
+            // whole table being empty) so adding/renaming a system role here still
+            // takes effect on an already-seeded database, not just a fresh install.
+            var systemRoleDefs = new (string Name, string Description)[]
             {
-                var roles = new[]
+                ("Admin", "Administrator role with full access"),
+                ("Manager", "Manager role with elevated access"),
+                ("Supervisor", "Supervisor role with oversight capabilities"),
+                ("Operator", "Frontline weighbridge operator role — factory floor operations only"),
+            };
+            foreach (var (name, description) in systemRoleDefs)
+            {
+                var roleExists = await context.Roles.AnyAsync(r => r.Name == name);
+                if (!roleExists)
                 {
-                    new Role { Id = Guid.NewGuid().ToString(), Name = "Admin", Description = "Administrator role with full access", CreatedAt = DateTime.UtcNow },
-                    new Role { Id = Guid.NewGuid().ToString(), Name = "User", Description = "Standard user role with limited access", CreatedAt = DateTime.UtcNow },
-                    new Role { Id = Guid.NewGuid().ToString(), Name = "Manager", Description = "Manager role with elevated access", CreatedAt = DateTime.UtcNow },
-                    new Role { Id = Guid.NewGuid().ToString(), Name = "Supervisor", Description = "Supervisor role with oversight capabilities", CreatedAt = DateTime.UtcNow },
-                    new Role { Id = Guid.NewGuid().ToString(), Name = "Analyst", Description = "Analyst role with data access", CreatedAt = DateTime.UtcNow }
-                };
-                await context.Roles.AddRangeAsync(roles);
-                await context.SaveChangesAsync();
+                    await context.Roles.AddAsync(new Role
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = name,
+                        Description = description,
+                        IsSystem = true,
+                        CreatedAt = DateTime.UtcNow
+                    });
+                }
             }
+            await context.SaveChangesAsync();
 
             // Seed Permissions
-            if (!context.Permissions.Any())
+            // Ensure system permissions exist. Per-permission existence check (like
+            // the roles above) so adding a new permission here — e.g. audit.view —
+            // still takes effect on an already-seeded database.
+            var systemPermissionDefs = new (string Name, string Description)[]
             {
-                var permissions = new[]
+                ("CreateUser", "Permission to create users"),
+                ("EditUser", "Permission to edit users"),
+                ("DeleteUser", "Permission to delete users"),
+                ("ViewReports", "Permission to view reports"),
+                ("shifts.view", "Permission to view shifts"),
+                ("shifts.manage", "Permission to manage shifts"),
+                ("shifts.assign", "Permission to assign shifts"),
+                ("roles.view", "Permission to view roles"),
+                ("roles.manage", "Permission to manage roles"),
+                ("roles.assign", "Permission to assign roles"),
+                ("users.view", "Permission to view users"),
+                ("users.manage", "Permission to manage users"),
+                ("users.assign", "Permission to assign users"),
+                ("users.delete", "Permission to delete users"),
+                ("users.create", "Permission to create users"),
+                ("reports.view", "Permission to view reports"),
+                ("reports.manage", "Permission to manage reports"),
+                ("reports.assign", "Permission to assign reports"),
+                ("permissions.view", "Permission to view permissions"),
+                ("permissions.manage", "Permission to manage permissions"),
+                ("permissions.assign", "Permission to assign permissions"),
+                ("audit.view", "Permission to view audit logs"),
+            };
+            foreach (var (name, description) in systemPermissionDefs)
+            {
+                var permissionExists = await context.Permissions.AnyAsync(p => p.Name == name);
+                if (!permissionExists)
                 {
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "CreateUser", Description = "Permission to create users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "EditUser", Description = "Permission to edit users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "DeleteUser", Description = "Permission to delete users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "ViewReports", Description = "Permission to view reports", CreatedAt = DateTime.UtcNow },
-                    //shiftpermissions
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "shifts.view", Description = "Permission to view shifts", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "shifts.manage", Description = "Permission to manage shifts", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "shifts.assign", Description = "Permission to assign shifts", CreatedAt = DateTime.UtcNow },
-                    //Roles Permissions
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "roles.view", Description = "Permission to view roles", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "roles.manage", Description = "Permission to manage roles", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "roles.assign", Description = "Permission to assign roles", CreatedAt = DateTime.UtcNow },
-                    //Users Permissions
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "users.view", Description = "Permission to view users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "users.manage", Description = "Permission to manage users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "users.assign", Description = "Permission to assign users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "users.delete", Description = "Permission to delete users", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "users.create", Description = "Permission to create users", CreatedAt = DateTime.UtcNow },
-                    //Reports Permissions
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "reports.view", Description = "Permission to view reports", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "reports.manage", Description = "Permission to manage reports", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "reports.assign", Description = "Permission to assign reports", CreatedAt = DateTime.UtcNow },
-                    //Permissions Permissions
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "permissions.view", Description = "Permission to view permissions", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "permissions.manage", Description = "Permission to manage permissions", CreatedAt = DateTime.UtcNow },
-                    new Permission { Id = Guid.NewGuid().ToString(), Name = "permissions.assign", Description = "Permission to assign permissions", CreatedAt = DateTime.UtcNow }
-                    //end
-                };
-                await context.Permissions.AddRangeAsync(permissions);
+                    await context.Permissions.AddAsync(new Permission
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        Name = name,
+                        Description = description,
+                        IsSystem = true,
+                        CreatedAt = DateTime.UtcNow
+                    });
+                }
+            }
+            await context.SaveChangesAsync();
+
+            // Backfill IsSystem on databases that were seeded before this flag existed,
+            // so upgrading doesn't leave already-seeded Admin/roles.manage etc. editable.
+            var systemRoleNames = new[] { "Admin", "Manager", "Supervisor", "Operator" };
+            var rolesToProtect = await context.Roles
+                .Where(r => systemRoleNames.Contains(r.Name) && !r.IsSystem)
+                .ToListAsync();
+            foreach (var role in rolesToProtect) role.IsSystem = true;
+
+            var systemPermissionNames = new[]
+            {
+                "CreateUser", "EditUser", "DeleteUser", "ViewReports",
+                "shifts.view", "shifts.manage", "shifts.assign",
+                "roles.view", "roles.manage", "roles.assign",
+                "users.view", "users.manage", "users.assign", "users.delete", "users.create",
+                "reports.view", "reports.manage", "reports.assign",
+                "permissions.view", "permissions.manage", "permissions.assign"
+            };
+            var permissionsToProtect = await context.Permissions
+                .Where(p => systemPermissionNames.Contains(p.Name) && !p.IsSystem)
+                .ToListAsync();
+            foreach (var permission in permissionsToProtect) permission.IsSystem = true;
+
+            if (rolesToProtect.Any() || permissionsToProtect.Any())
+            {
                 await context.SaveChangesAsync();
             }
 
@@ -230,23 +278,34 @@ namespace UserService.Infrastructure.Data
                 await context.SaveChangesAsync();
             }
 
-            // Seed RolePermissions
-            if (!context.RolePermissions.Any())
+            // Ensure Admin has every permission. Per-pair existence check (not
+            // gated on the whole table being empty) so a newly added permission —
+            // e.g. audit.view — actually reaches Admin on an already-seeded database,
+            // not just a fresh install.
+            var adminRoleForPermissions = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
+            if (adminRoleForPermissions != null)
             {
-                var adminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin");
-                var permissions = await context.Permissions.ToListAsync();
+                var allPermissions = await context.Permissions.ToListAsync();
+                var existingAdminPermissionIds = (await context.RolePermissions
+                    .Where(rp => rp.RoleId == adminRoleForPermissions.Id)
+                    .Select(rp => rp.PermissionId)
+                    .ToListAsync())
+                    .ToHashSet();
 
-                if (adminRole != null && permissions.Any())
-                {
-                    var rolePermissions = permissions.Select(p => new RolePermission
+                var missingRolePermissions = allPermissions
+                    .Where(p => !existingAdminPermissionIds.Contains(p.Id))
+                    .Select(p => new RolePermission
                     {
                         Id = Guid.NewGuid().ToString(),
-                        RoleId = adminRole.Id,
+                        RoleId = adminRoleForPermissions.Id,
                         PermissionId = p.Id,
                         CreatedAt = DateTime.UtcNow
-                    }).ToList();
+                    })
+                    .ToList();
 
-                    await context.RolePermissions.AddRangeAsync(rolePermissions);
+                if (missingRolePermissions.Any())
+                {
+                    await context.RolePermissions.AddRangeAsync(missingRolePermissions);
                     await context.SaveChangesAsync();
                 }
             }
@@ -258,10 +317,8 @@ namespace UserService.Infrastructure.Data
                 var users = await context.Users.ToListAsync();
 
                 var adminRole = roles.FirstOrDefault(r => r.Name == "Admin");
-                var userRole = roles.FirstOrDefault(r => r.Name == "User");
                 var managerRole = roles.FirstOrDefault(r => r.Name == "Manager");
                 var supervisorRole = roles.FirstOrDefault(r => r.Name == "Supervisor");
-                var analystRole = roles.FirstOrDefault(r => r.Name == "Analyst");
 
                 var userRoles = new List<UserRole>();
 
@@ -284,23 +341,13 @@ namespace UserService.Infrastructure.Data
                     }));
                 }
 
-                // Assign User role to 3 users + 5 additional
-                var userRoleUsers = users.Where(u => u.Email.Contains("john.doe") || u.Email.Contains("jane.smith") || u.Email.Contains("bob.johnson") ||
+                // Assign Manager role — the baseline non-admin role — to the general
+                // staff seed users plus the 3 originally-manager-labelled ones.
+                var managerUsers = users.Where(u => u.Email.Contains("alice.brown") || u.Email.Contains("charlie.davis") || u.Email.Contains("emma.wilson") ||
+                                                    u.Email.Contains("john.doe") || u.Email.Contains("jane.smith") || u.Email.Contains("bob.johnson") ||
                                                     u.Email.Contains("tom.lee") || u.Email.Contains("olivia.hernandez") || u.Email.Contains("william.lopez") ||
-                                                    u.Email.Contains("sophia.gonzalez") || u.Email.Contains("daniel.perez")).ToList();
-                if (userRole != null)
-                {
-                    userRoles.AddRange(userRoleUsers.Select(u => new UserRole
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserId = u.Id,
-                        RoleId = userRole.Id,
-                        CreatedAt = DateTime.UtcNow
-                    }));
-                }
-
-                // Assign Manager role to 3 users
-                var managerUsers = users.Where(u => u.Email.Contains("alice.brown") || u.Email.Contains("charlie.davis") || u.Email.Contains("emma.wilson")).ToList();
+                                                    u.Email.Contains("sophia.gonzalez") || u.Email.Contains("daniel.perez") ||
+                                                    u.Email.Contains("laura.martinez") || u.Email.Contains("james.garcia") || u.Email.Contains("emily.rodriguez")).ToList();
                 if (managerRole != null)
                 {
                     userRoles.AddRange(managerUsers.Select(u => new UserRole
@@ -321,19 +368,6 @@ namespace UserService.Infrastructure.Data
                         Id = Guid.NewGuid().ToString(),
                         UserId = u.Id,
                         RoleId = supervisorRole.Id,
-                        CreatedAt = DateTime.UtcNow
-                    }));
-                }
-
-                // Assign Analyst role to 3 users
-                var analystUsers = users.Where(u => u.Email.Contains("laura.martinez") || u.Email.Contains("james.garcia") || u.Email.Contains("emily.rodriguez")).ToList();
-                if (analystRole != null)
-                {
-                    userRoles.AddRange(analystUsers.Select(u => new UserRole
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserId = u.Id,
-                        RoleId = analystRole.Id,
                         CreatedAt = DateTime.UtcNow
                     }));
                 }
@@ -370,11 +404,11 @@ namespace UserService.Infrastructure.Data
                 var passwordPolicy = new PasswordPolicy
                 {
                     Id = Guid.NewGuid().ToString(),
-                    MinimumLength = 8,
-                    RequireUppercase = true,
-                    RequireLowercase = true,
-                    RequireDigit = true,
-                    RequireSpecialCharacter = true,
+                    MinimumLength = 6,
+                    RequireUppercase = false,
+                    RequireLowercase = false,
+                    RequireDigit = false,
+                    RequireSpecialCharacter = false,
                     CreatedAt = DateTime.UtcNow
                 };
                 await context.PasswordPolicies.AddAsync(passwordPolicy);

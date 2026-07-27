@@ -130,8 +130,8 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
       {/* WEIGHT */}
       <div className="text-center flex-1 flex items-center justify-center overflow-hidden px-1">
         <span
-          className={`font-mono font-black leading-none w-full text-center block ${connected ? "text-amber-500" : "text-red-500 text-2xl"}`}
-          style={connected ? { fontSize: ["7rem","7rem","7rem","7rem","5rem","4rem","3.5rem"][Math.min(String(totalWeight).length, 6)] } : {}}
+          className={`font-mono font-black leading-none w-full text-center block ${connected ? "" : "text-red-500 text-2xl"}`}
+          style={connected ? { color: "var(--cs-live-weight)", fontSize: ["7rem","7rem","7rem","7rem","5rem","4rem","3.5rem"][Math.min(String(totalWeight).length, 6)] } : {}}
         >
           {connected ? totalWeight : "NO SIGNAL"}
         </span>

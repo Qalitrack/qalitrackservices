@@ -16,10 +16,11 @@
  */
 
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2 } from "lucide-react";
-import { message } from "antd";
+import { Pencil, Trash2, UserPlus, Search, X, CreditCard, Truck, Building2, Car } from "lucide-react";
+import { message, Modal, Switch } from "antd";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
+import TablePagination from "../TablePagination";
 import {
   getDrivers,
   createDriver,
@@ -106,12 +107,23 @@ export default function DriverPortal() {
       } else {
         await createDriver(payload);
       }
+      setPage(1);
       await fetchDrivers();
       resetForm();
     } catch (error) {
       message.error(`Error: ${error.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (driver) => {
+    const newStatus = driver.status?.toLowerCase() === "active" ? "inactive" : "active";
+    try {
+      await updateDriver(driver.id, { ...driver, status: newStatus });
+      await fetchDrivers();
+    } catch (error) {
+      message.error(`Failed to update status: ${error.message}`);
     }
   };
 
@@ -129,17 +141,23 @@ export default function DriverPortal() {
     setEditingDriver(driver);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this driver?")) return;
-    setLoading(true);
-    try {
-      await deleteDriver(id);
-      await fetchDrivers();
-    } catch (error) {
-      message.error(`Delete failed: ${error.message}`);
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this driver?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        setLoading(true);
+        try {
+          await deleteDriver(id);
+          await fetchDrivers();
+        } catch (error) {
+          message.error(`Delete failed: ${error.message}`);
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const resetForm = () => {
@@ -158,18 +176,18 @@ export default function DriverPortal() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
-              <UserPlus className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <UserPlus className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
                 Drivers
               </span>
-              <span className="text-[9px] text-amber-700 font-medium">
+              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 {drivers.length} registered · NFC-enabled
               </span>
             </div>
@@ -180,7 +198,7 @@ export default function DriverPortal() {
               <input
                 type="text"
                 placeholder="Search drivers..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -191,7 +209,7 @@ export default function DriverPortal() {
                 setPage(1);
                 fetchDrivers();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -204,7 +222,7 @@ export default function DriverPortal() {
         <form onSubmit={handleSubmit} className="grid grid-cols-5 gap-2">
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Full Name *
+              Full Name <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               type="text"
@@ -212,14 +230,14 @@ export default function DriverPortal() {
               value={form.fullName}
               onChange={handleChange}
               required
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="Driver name"
             />
           </div>
 
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Phone *
+              Phone <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               type="text"
@@ -227,7 +245,7 @@ export default function DriverPortal() {
               value={form.phone}
               onChange={handleChange}
               required
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="+254 7XX XXX XXX"
             />
           </div>
@@ -241,7 +259,7 @@ export default function DriverPortal() {
               name="idNumber"
               value={form.idNumber}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 font-mono"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2 font-mono"
               placeholder="National ID number"
             />
           </div>
@@ -273,7 +291,7 @@ export default function DriverPortal() {
               name="licenseNumber"
               value={form.licenseNumber}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 font-mono"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2 font-mono"
               placeholder="License number"
             />
           </div>
@@ -287,7 +305,7 @@ export default function DriverPortal() {
               name="licenseExpiryDate"
               value={form.licenseExpiryDate}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -300,7 +318,7 @@ export default function DriverPortal() {
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="email@example.com"
             />
           </div>
@@ -313,7 +331,7 @@ export default function DriverPortal() {
               name="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             >
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
@@ -334,7 +352,7 @@ export default function DriverPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <UserPlus className="w-3 h-3" />
               {editingDriver ? "Update" : "Add"} Driver
@@ -369,7 +387,7 @@ export default function DriverPortal() {
           </div>
         ) : (
           <table className="w-full compact-table">
-            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
               <tr>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
@@ -404,7 +422,7 @@ export default function DriverPortal() {
                 return (
                   <tr
                     key={driver.id}
-                    className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                    className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
                       index % 2 === 0 ? "bg-white" : "bg-gray-50"
                     }`}
                   >
@@ -456,31 +474,31 @@ export default function DriverPortal() {
                     <td className="px-3 py-2">
                       <div className="flex items-center gap-1 flex-wrap">
                         {vehicleCount > 0 && (
-                          <span className="px-1.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[9px] font-semibold flex items-center gap-0.5" title={`${vehicleCount} vehicle(s) assigned`}>
-                            🚗 {vehicleCount}
+                          <span className="px-1.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-[9px] font-semibold flex items-center gap-0.5">
+                            <Car className="w-2.5 h-2.5" /> {vehicleCount} {vehicleCount === 1 ? "Vehicle" : "Vehicles"}
                           </span>
                         )}
                         {hasTransporter && (
-                          <Truck className="w-3 h-3 text-green-600" title="Assigned to transporter" />
+                          <span className="px-1.5 py-0.5 rounded-full bg-green-50 border border-green-200 text-green-700 text-[9px] font-semibold flex items-center gap-0.5">
+                            <Truck className="w-2.5 h-2.5" /> Transporter
+                          </span>
                         )}
                         {hasSupplier && (
-                          <Building2 className="w-3 h-3 text-orange-600" title="Assigned to supplier" />
+                          <span className="px-1.5 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-[9px] font-semibold flex items-center gap-0.5">
+                            <Building2 className="w-2.5 h-2.5" /> Supplier
+                          </span>
                         )}
                         {!vehicleCount && !hasTransporter && !hasSupplier && (
                           <span className="text-[9px] text-gray-400 italic">None</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-3 py-2">
-                      <span
-                        className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
-                          driver.status?.toLowerCase() === "active"
-                            ? "bg-green-100 text-green-700 border border-green-300"
-                            : "bg-red-100 text-red-700 border border-red-300"
-                        }`}
-                      >
-                        {driver.status?.toLowerCase() === "active" ? "✓ Active" : "✕ Inactive"}
-                      </span>
+                    <td className="px-3 py-2 text-center">
+                      <Switch
+                        checked={driver.status?.toLowerCase() === "active"}
+                        onChange={() => handleToggleStatus(driver)}
+                        size="small"
+                      />
                     </td>
                     <td className="px-3 py-2">
                       <div className="flex gap-1 justify-center">
@@ -506,32 +524,15 @@ export default function DriverPortal() {
             </tbody>
           </table>
         )}
-      </div>
 
-      {/* Footer with Pagination */}
-      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-        <span className="text-[10px] text-gray-600 font-medium">
-          Page <span className="font-semibold text-amber-600">{page}</span> of{" "}
-          <span className="font-semibold text-amber-600">{totalPages}</span>
-          {" · "}
-          <span className="text-gray-500">{drivers.length} drivers shown</span>
-        </span>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Next
-          </button>
-        </div>
+        {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+        <TablePagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          itemCount={drivers.length}
+          itemLabel="drivers shown"
+        />
       </div>
 
       <style>{`

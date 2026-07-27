@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pencil, Trash2, PackagePlus, Search, X } from "lucide-react";
-import { message } from "antd";
+import { message, Modal, Switch } from "antd";
+import TablePagination from "../TablePagination";
 import {
   getProducts,
   createProduct,
@@ -67,12 +68,23 @@ export default function ProductsPortal() {
       } else {
         await createProduct(form);
       }
+      setPage(1);
       await fetchProducts();
       resetForm();
     } catch (err) {
       message.error(`Error: ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleToggleStatus = async (product) => {
+    const newStatus = product.status === "Active" ? "Inactive" : "Active";
+    try {
+      await updateProduct(product.id, { ...product, status: newStatus });
+      await fetchProducts();
+    } catch (error) {
+      message.error(`Failed to update status: ${error.message}`);
     }
   };
 
@@ -87,17 +99,23 @@ export default function ProductsPortal() {
     setEditingProduct(product);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
-
-    setLoading(true);
-    try {
-      await deleteProduct(id);
-      await fetchProducts();
-    } catch (err) {
-    } finally {
-      setLoading(false);
-    }
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Are you sure you want to delete this product?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        setLoading(true);
+        try {
+          await deleteProduct(id);
+          await fetchProducts();
+        } catch (err) {
+          message.error(err.message || "Failed to delete product");
+        } finally {
+          setLoading(false);
+        }
+      },
+    });
   };
 
   const resetForm = () => {
@@ -113,18 +131,18 @@ export default function ProductsPortal() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
-              <PackagePlus className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <PackagePlus className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
                 Products
               </span>
-              <span className="text-[9px] text-amber-700 font-medium">
+              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 {products.length} products available
               </span>
             </div>
@@ -135,7 +153,7 @@ export default function ProductsPortal() {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -146,7 +164,7 @@ export default function ProductsPortal() {
                 setPage(1);
                 fetchProducts();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -159,14 +177,14 @@ export default function ProductsPortal() {
         <form onSubmit={handleSubmit} className="grid grid-cols-4 gap-2">
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Product Name *
+              Product Name <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="Product name"
             />
           </div>
@@ -179,7 +197,7 @@ export default function ProductsPortal() {
               name="code"
               value={form.code}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="Product code"
             />
           </div>
@@ -192,7 +210,7 @@ export default function ProductsPortal() {
               name="unit"
               value={form.unit}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="e.g., kg, pcs"
             />
           </div>
@@ -205,7 +223,7 @@ export default function ProductsPortal() {
               name="status"
               value={form.status}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             >
               <option value="Active">Active</option>
               <option value="Inactive">Inactive</option>
@@ -221,7 +239,7 @@ export default function ProductsPortal() {
               value={form.description}
               onChange={handleChange}
               rows={2}
-              className="w-full text-[11px] rounded border-amber-300 px-2 py-1 focus:border-amber-500 focus:ring-1 focus:ring-amber-200 resize-none"
+              className="qt-filter-field w-full text-[11px] rounded border border-gray-300 px-2 py-1 resize-none"
               placeholder="Product description"
             />
           </div>
@@ -240,7 +258,7 @@ export default function ProductsPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1"
+              className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all flex items-center gap-1"
             >
               <PackagePlus className="w-3 h-3" />
               {editingProduct ? "Update" : "Add"} Product
@@ -261,11 +279,15 @@ export default function ProductsPortal() {
           </div>
         ) : products.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">No products found.</p>
+            <div className="text-center">
+              <PackagePlus className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No products found.</p>
+              <p className="text-gray-400 text-xs mt-1">Add a product using the form above</p>
+            </div>
           </div>
         ) : (
           <table className="w-full compact-table">
-            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
               <tr>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Code</th>
@@ -279,7 +301,7 @@ export default function ProductsPortal() {
               {products.map((p, index) => (
                 <tr
                   key={p.id}
-                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
                     index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
@@ -287,16 +309,12 @@ export default function ProductsPortal() {
                   <td className="px-3 py-2 text-[10px] text-gray-600 font-mono font-medium">{p.code || "-"}</td>
                   <td className="px-3 py-2 text-[10px] text-gray-600">{p.unit || "-"}</td>
                   <td className="px-3 py-2 text-[10px] text-gray-600 max-w-xs truncate">{p.description || "-"}</td>
-                  <td className="px-3 py-2">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase ${
-                        p.status === "Active"
-                          ? "bg-green-100 text-green-700 border border-green-300"
-                          : "bg-red-100 text-red-700 border border-red-300"
-                      }`}
-                    >
-                      {p.status === "Active" ? "✓ Active" : "✕ Inactive"}
-                    </span>
+                  <td className="px-3 py-2 text-center">
+                    <Switch
+                      checked={p.status === "Active"}
+                      onChange={() => handleToggleStatus(p)}
+                      size="small"
+                    />
                   </td>
                   <td className="px-3 py-2">
                     <div className="flex gap-1 justify-center">
@@ -321,30 +339,9 @@ export default function ProductsPortal() {
             </tbody>
           </table>
         )}
-      </div>
 
-      {/* Footer with Pagination */}
-      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-        <span className="text-[10px] text-gray-600 font-medium">
-          Page <span className="font-semibold text-amber-600">{page}</span> of{" "}
-          <span className="font-semibold text-amber-600">{totalPages}</span>
-        </span>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Next
-          </button>
-        </div>
+        {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+        <TablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       <style>{`

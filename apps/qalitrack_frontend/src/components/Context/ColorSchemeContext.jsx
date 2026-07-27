@@ -1,39 +1,20 @@
 /**
  * ColorSchemeContext.jsx
  *
- * Manages the global primary color scheme: amber | green | blue.
+ * Manages the global primary color scheme: midnight (Navy, default) | amber | indigo.
  * On change, writes `data-color-scheme` to <html> and persists to localStorage.
- * CSS overrides in index.css then remap Tailwind amber-* classes to the active palette.
+ * amber-* Tailwind classes resolve through CSS variables (tailwind.config.cjs +
+ * index.css), so every amber-* utility follows the active scheme automatically.
+ *
+ * The actual per-scheme colors (primary/secondary/sidebar/app-bar/text) live
+ * in one place, src/theme/palettes.js — re-exported here as COLOR_SCHEMES for
+ * existing consumers.
  */
 
 import { createContext, useContext, useState, useEffect } from "react";
+import { PALETTES } from "../../theme/palettes";
 
-export const COLOR_SCHEMES = {
-  amber: {
-    name: "Amber",
-    description: "Warm golden tones",
-    primary:  "#f59e0b",
-    secondary: "#d97706",
-    preview:  ["#f59e0b", "#fbbf24", "#fef3c7"],
-    label:    "text-amber-700",
-  },
-  green: {
-    name: "Green",
-    description: "Natural & fresh",
-    primary:  "#22c55e",
-    secondary: "#16a34a",
-    preview:  ["#22c55e", "#4ade80", "#dcfce7"],
-    label:    "text-green-700",
-  },
-  blue: {
-    name: "Blue",
-    description: "Professional & calm",
-    primary:  "#3b82f6",
-    secondary: "#2563eb",
-    preview:  ["#3b82f6", "#60a5fa", "#dbeafe"],
-    label:    "text-blue-700",
-  },
-};
+export const COLOR_SCHEMES = PALETTES;
 
 const ColorSchemeContext = createContext(null);
 
@@ -43,7 +24,7 @@ function applyScheme(scheme) {
 
 export function ColorSchemeProvider({ children }) {
   const [colorScheme, setColorScheme] = useState(() => {
-    return localStorage.getItem("color-scheme") || "amber";
+    return localStorage.getItem("color-scheme") || "midnight";
   });
 
   // Apply immediately on mount and whenever it changes

@@ -29,6 +29,12 @@ namespace UserService.Core.Services
         private readonly PasswordPolicyService _passwordPolicyService = passwordPolicyService ?? throw new ArgumentNullException(nameof(passwordPolicyService));
         private readonly IEmailQueueService _emailQueueService = emailQueueService ?? throw new ArgumentNullException(nameof(emailQueueService));
 
+        // The temp password assigned on user creation and on password reset — a fixed
+        // constant, not generated per-user. Welcome/reset emails don't always arrive
+        // (remote users, flaky SMTP), so callers also surface this to the admin
+        // directly so it can be relayed out-of-band (phone/SMS) when email fails.
+        public const string DefaultTemporaryPassword = "ChangeMe123!";
+
         public async Task<bool> RestoreAsync(string id)
         {
             return await userRepository.RestoreAsync(id);
@@ -49,11 +55,21 @@ namespace UserService.Core.Services
         public async Task<UserReadDto> CreateAsync(CreateUserDto dto)
         {
             var currentUserId = AuthUtils.GetUserIdFromClaims(httpContextAccessor.HttpContext?.User);
-            
-            // Set default password
-            const string defaultPassword = "ChangeMe123!";
-            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(defaultPassword);
-            
+
+            // An admin-provided password still has to clear the org password
+            // policy — only the *source* of the password is optional, not the
+            // strength requirement.
+            var passwordToUse = string.IsNullOrWhiteSpace(dto.Password) ? DefaultTemporaryPassword : dto.Password;
+            if (!string.IsNullOrWhiteSpace(dto.Password))
+            {
+                var validationResult = await _passwordPolicyService.ValidatePasswordAsync(dto.Password);
+                if (!validationResult.IsValid)
+                {
+                    throw new InvalidOperationException($"Password does not meet policy requirements: {string.Join(", ", validationResult.Errors)}");
+                }
+            }
+            var hashedPassword = BCrypt.Net.BCrypt.HashPassword(passwordToUse);
+
             var user = new User
             {
                 FirstName = dto.FirstName,
@@ -61,6 +77,7 @@ namespace UserService.Core.Services
                 MobileNumber = dto.MobileNumber,
                 Email = dto.Email,
                 Password = hashedPassword,
+                TwoFactorEnabled = dto.TwoFactorEnabled ?? true,
                 IsFirstLogin = true,
                 IsActive = false,
                 CreatedAt = DateTime.UtcNow,
@@ -79,7 +96,7 @@ namespace UserService.Core.Services
                     <p>Your account has been successfully created.</p>
                     <p>You can log in using the following credentials:</p>
                     <p><strong>Email:</strong> {dto.Email}</p>
-                    <p><strong>Password:</strong> {defaultPassword}</p>
+                    <p><strong>Password:</strong> {passwordToUse}</p>
                     <p>Please change your password after your first login for security reasons.</p>
                     <p>Best regards,<br/>The Team</p>
                     """;
@@ -317,7 +334,7 @@ namespace UserService.Core.Services
             return await userRepository.GetUserRolesByUserIdAsync(userId);
         }
 
-        public async Task<bool> ResetUserPasswordAsync(string userId)
+        public async Task<string?> ResetUserPasswordAsync(string userId)
         {
             if (string.IsNullOrEmpty(userId))
                 throw new ArgumentException("User ID is required", nameof(userId));
@@ -330,11 +347,11 @@ namespace UserService.Core.Services
                 {
                     throw new KeyNotFoundException("User not found.");
                 }
-                
+
 
                 // Reset password using repository method
                 var result = await userRepository.ResetUserPasswordAsync(userId, _emailQueueService);
-        
+
                 if (result)
                 {
                     _logger.LogInformation("Password reset successfully initiated for user {UserId}", userId);
@@ -344,7 +361,7 @@ namespace UserService.Core.Services
                     _logger.LogWarning("Password reset failed for user {UserId}", userId);
                 }
 
-                return result;
+                return result ? DefaultTemporaryPassword : null;
             }
             catch (Exception ex)
             {

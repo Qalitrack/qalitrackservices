@@ -10,13 +10,14 @@ import {
     fetchDeletedUserShifts,
     fetchShiftById,
 } from "../../api/helpers/UserService/Shifts/shiftAssignment.js";
-import { ChevronLeft, ChevronRight, Users, Tag, Download } from "lucide-react";
+import { Users, Tag, Download } from "lucide-react";
 import { fetchUsers } from "../../api/helpers/UserService/Users/users.js";
 import { fetchRoles } from "../../api/helpers/UserService/Roles/Roles.js";
 import { format, parseISO } from "date-fns";
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
+import TablePagination from '../../components/TablePagination';
 
 function isValidDateString(dateString) {
     if (!dateString) return false;
@@ -237,17 +238,6 @@ const ShiftAssignment = () => {
         loadData(pagination.page);
     }, [pagination.page, showDeleted]);
 
-    // Pagination handlers
-    const handlePreviousPage = () => {
-        if (pagination.hasPreviousPage) {
-            setPagination((p) => ({ ...p, page: p.page - 1 }));
-        }
-    };
-    const handleNextPage = () => {
-        if (pagination.hasNextPage) {
-            setPagination((p) => ({ ...p, page: p.page + 1 }));
-        }
-    };
     const handlePageClick = (page) => {
         setPagination((p) => ({ ...p, page }));
     };
@@ -603,9 +593,6 @@ const ShiftAssignment = () => {
                     fontSize: 9
                 },
                 columnStyles,
-                alternateRowStyles: {
-                    fillColor: [245, 245, 245]
-                },
                 margin: {
                     top: 40,
                     right: 10,
@@ -665,10 +652,10 @@ const ShiftAssignment = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-base font-bold text-gray-900">Shift Assignment</h2>
+            <div className="px-4 py-3 flex items-center justify-between flex-wrap gap-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                <h2 className="text-base font-bold" style={{ color: "var(--cs-appbar-text)" }}>Shift Assignment</h2>
                 <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
+                    <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
                         <input
                             type="checkbox"
                             checked={showDeleted}
@@ -683,7 +670,7 @@ const ShiftAssignment = () => {
                     <button
                         onClick={handleDownloadPDF}
                         disabled={showDeleted}
-                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'border border-amber-300 text-amber-700 hover:bg-amber-100'}`}
+                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-solid-chip-btn'}`}
                     >
                         <Download size={13} />
                         <span>PDF</span>
@@ -693,42 +680,42 @@ const ShiftAssignment = () => {
 
             <div className="flex-1 overflow-auto">
                 <table className="min-w-full">
-                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
+                        <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Name</th>
                         {!showDeleted && (
                             <>
-                                <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Start Time</th>
-                                <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">End Time</th>
+                                <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Start Time</th>
+                                <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">End Time</th>
                             </>
                         )}
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Mode</th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Users</th>
-                        <th className="px-4 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Roles</th>
+                        <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Mode</th>
+                        <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Users</th>
+                        <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Roles</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                     {shifts.map((shift) => (
                         <tr key={shift.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
-                            <td className="px-4 py-3 text-sm font-semibold text-gray-900">{shift.name}</td>
+                            <td className="px-3 py-2 text-[11px] font-semibold text-gray-900">{shift.name}</td>
                             {!showDeleted && (
                                 <>
-                                    <td className="px-4 py-3 text-sm text-gray-700">
+                                    <td className="px-3 py-2 text-[10px] text-gray-700">
                                         {isValidDateString(shift.startTime)
                                             ? format(parseISO(shift.startTime), "PPP p")
                                             : formatTimeOnlyString(shift.startTime) || '-'}
                                     </td>
-                                    <td className="px-4 py-3 text-sm text-gray-700">
+                                    <td className="px-3 py-2 text-[10px] text-gray-700">
                                         {isValidDateString(shift.endTime)
                                             ? format(parseISO(shift.endTime), "PPP p")
                                             : formatTimeOnlyString(shift.endTime) || '-'}
                                     </td>
                                 </>
                             )}
-                            <td className="px-4 py-3 text-sm text-gray-700">
+                            <td className="px-3 py-2 text-[10px] text-gray-700">
                                 {shift.mode === 0 ? 'Open' : shift.mode === 1 ? 'Closed' : shift.mode || 'N/A'}
                             </td>
-                            <td className="px-4 py-3 text-sm">
+                            <td className="px-3 py-2 text-[10px]">
                                 <button
                                     onClick={() => handleViewUsersClick(shift)}
                                     className={`flex items-center gap-1 hover:underline ${(shift.assignedUsersCount || 0) > 0 ? "text-green-600 font-semibold" : "text-amber-500"}`}
@@ -737,7 +724,7 @@ const ShiftAssignment = () => {
                                     {shift.assignedUsersCount || 0}
                                 </button>
                             </td>
-                            <td className="px-4 py-3 text-sm">
+                            <td className="px-3 py-2 text-[10px]">
                                 <button
                                     onClick={() => handleViewRolesClick(shift)}
                                     disabled={showDeleted}
@@ -751,52 +738,15 @@ const ShiftAssignment = () => {
                     ))}
                     </tbody>
                 </table>
-            </div>
 
-            {/* Pagination */}
-            <div className="px-4 py-2.5 border-t border-amber-100 bg-white flex justify-between items-center text-xs text-gray-700">
-                <p>
-          <span className="font-medium">
-            {pagination.page * pagination.pageSize - pagination.pageSize + 1}
-          </span>{" "}
-                    to{" "}
-                    <span className="font-medium">
-            {Math.min(
-                pagination.page * pagination.pageSize,
-                pagination.totalCount
-            )}
-          </span>{" "}
-                    of <span className="font-medium">{pagination.totalCount}</span> rows
-                </p>
-                <div className="flex items-center gap-1">
-                    <button
-                        onClick={handlePreviousPage}
-                        disabled={!pagination.hasPreviousPage || loading}
-                        className="p-2 border rounded-md text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                    >
-                        <ChevronLeft size={16} />
-                    </button>
-                    {[...Array(pagination.totalPages).keys()].map((index) => (
-                        <button
-                            key={index}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                                pagination.page === index + 1
-                                    ? "bg-amber-500 text-white"
-                                    : "bg-white text-gray-700 hover:bg-gray-100"
-                            }`}
-                            onClick={() => handlePageClick(index + 1)}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                    <button
-                        onClick={handleNextPage}
-                        disabled={!pagination.hasNextPage || loading}
-                        className="p-2 border rounded-md text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                    >
-                        <ChevronRight size={16} />
-                    </button>
-                </div>
+                {/* Pagination — inside the scroll area, immediately after the table */}
+                <TablePagination
+                    page={pagination.page}
+                    totalPages={pagination.totalPages}
+                    onPageChange={handlePageClick}
+                    itemCount={pagination.totalCount}
+                    itemLabel="shifts total"
+                />
             </div>
 
             {/* Users Modal */}

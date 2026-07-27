@@ -101,6 +101,13 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             query = query.Where(t => t.Status == filter.Status);
         }
 
+        if (filter.IsCompleted.HasValue)
+        {
+            query = filter.IsCompleted.Value
+                ? query.Where(t => t.Status == "Completed")
+                : query.Where(t => t.Status != "Completed");
+        }
+
         if (filter.StartDate.HasValue)
         {
             query = query.Where(t => t.FirstWeightDate >= filter.StartDate.Value);
@@ -143,6 +150,88 @@ public class TransactionRepository : Repository<WeighbridgeTransaction>, ITransa
             TotalCount = totalCount,
             PageNumber = filter.PageNumber,
             PageSize = filter.PageSize
+        };
+    }
+
+    private static readonly TimeSpan StuckThreshold = TimeSpan.FromHours(2);
+
+    public async Task<TransactionStatsDto> GetStatsAsync()
+    {
+        var now = DateTime.Now;
+        var today = now.Date;
+        var weekStart = today.AddDays(-6);
+
+        // Project only the columns needed for aggregation instead of the full
+        // ~30-column entity — this used to be shipped as raw rows (up to 10,000
+        // of them) to the browser for the dashboard/analytics pages to sum/group
+        // client-side; NetWeight is stored as text so the sum still has to happen
+        // in memory rather than via a SQL SUM.
+        var rows = await _dbSet
+            .Where(t => !t.IsDeleted)
+            .Select(t => new
+            {
+                t.NoPlate,
+                t.CommodityName,
+                t.NetWeight,
+                t.FirstWeightDate,
+                t.Status
+            })
+            .ToListAsync();
+
+        static decimal ParseWeight(string? w) => decimal.TryParse(w, out var v) ? v : 0m;
+
+        var completedCount = rows.Count(r => r.Status == "Completed");
+        var activeCount = rows.Count(r => r.Status == "Active");
+        var todayRows = rows.Where(r => r.FirstWeightDate.Date == today).ToList();
+        var weekRows = rows.Where(r => r.FirstWeightDate.Date >= weekStart).ToList();
+
+        var weeklyTrend = Enumerable.Range(0, 7)
+            .Select(i => weekStart.AddDays(i))
+            .Select(d => new DailyCountDto { Date = d, Count = rows.Count(r => r.FirstWeightDate.Date == d) })
+            .ToList();
+
+        var topVehicles = rows
+            .Where(r => !string.IsNullOrWhiteSpace(r.NoPlate))
+            .GroupBy(r => r.NoPlate)
+            .Select(g => new NameCountDto { Name = g.Key, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(5)
+            .ToList();
+
+        var commodityMix = rows
+            .Where(r => !string.IsNullOrWhiteSpace(r.CommodityName))
+            .GroupBy(r => r.CommodityName)
+            .Select(g => new NameCountDto { Name = g.Key!, Count = g.Count() })
+            .OrderByDescending(x => x.Count)
+            .Take(5)
+            .ToList();
+
+        // Aging: how many still-Active tickets have been waiting past a
+        // reasonable turnaround threshold, and how old the longest-waiting one
+        // is — a raw "Pending W2" count doesn't tell an operator whether those
+        // tickets are 5 minutes old (normal) or 5 hours old (something's stuck).
+        var activeRows = rows.Where(r => r.Status == "Active").ToList();
+        var stuckCount = activeRows.Count(r => now - r.FirstWeightDate >= StuckThreshold);
+        var oldestActiveAgeMinutes = activeRows.Count > 0
+            ? (int)(now - activeRows.Min(r => r.FirstWeightDate)).TotalMinutes
+            : (int?)null;
+
+        return new TransactionStatsDto
+        {
+            TotalCount = rows.Count,
+            CompletedCount = completedCount,
+            ActiveCount = activeCount,
+            OtherCount = rows.Count - completedCount - activeCount,
+            TodayCount = todayRows.Count,
+            TodayCompletedCount = todayRows.Count(r => r.Status == "Completed"),
+            ThisWeekCount = weekRows.Count,
+            TotalNetWeight = rows.Sum(r => ParseWeight(r.NetWeight)),
+            TodayNetWeight = todayRows.Sum(r => ParseWeight(r.NetWeight)),
+            WeeklyTrend = weeklyTrend,
+            TopVehicles = topVehicles,
+            CommodityMix = commodityMix,
+            StuckCount = stuckCount,
+            OldestActiveAgeMinutes = oldestActiveAgeMinutes
         };
     }
 

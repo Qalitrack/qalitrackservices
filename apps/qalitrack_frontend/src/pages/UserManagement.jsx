@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Users, Search, Filter, X, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, Search, Filter, X, ChevronDown } from "lucide-react";
 import { fetchRoles } from "../api/helpers/UserService/Roles/Roles.js";
 import UsersComponent from "../pages/Userservice/Users.jsx";
 
@@ -43,11 +43,6 @@ export default function UserManagement() {
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ── Pagination ──
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5; // ← changed to 5 users per page
-  const [totalUsers, setTotalUsers] = useState(0);
-
   useEffect(() => {
     const loadRoles = async () => {
       try {
@@ -68,7 +63,6 @@ export default function UserManagement() {
     setSearchTerm("");
     setSelectedRole("");
     setSelectedStatus("");
-    setCurrentPage(1);
   };
 
   const statusOptions = useMemo(
@@ -85,41 +79,18 @@ export default function UserManagement() {
     [roles]
   );
 
-  // Calculate pagination numbers to show
-  const totalPages = Math.ceil(totalUsers / pageSize);
-  const maxVisiblePages = 7;
-  
-  let pages = [];
-  if (totalPages <= maxVisiblePages) {
-    pages = Array.from({ length: totalPages }, (_, i) => i + 1);
-  } else {
-    if (currentPage <= 4) {
-      pages = [1, 2, 3, 4, 5, "...", totalPages];
-    } else if (currentPage >= totalPages - 3) {
-      pages = [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
-    } else {
-      pages = [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
-    }
-  }
-
-  const goToPage = (page) => {
-    if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
-    }
-  };
-
   return (
     <div className="h-full flex flex-col px-2 py-1.5 gap-1.5 bg-gray-50">
 
       {/* Header */}
-      <div className="shrink-0 flex items-center justify-between gap-2">
+      <div className="shrink-0 flex items-center justify-between gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
         <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
-            <Users size={14} className="text-white" />
+          <div className="w-6 h-6 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+            <Users size={14} style={{ color: "var(--cs-icon-accent)" }} />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-gray-900 leading-tight">User Management</h2>
-            <p className="text-xs text-amber-700 font-medium">Users • Roles • Permissions</p>
+            <h2 className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>User Management</h2>
+            <p className="text-xs font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>Users • Roles • Permissions</p>
           </div>
         </div>
 
@@ -130,10 +101,7 @@ export default function UserManagement() {
               type="text"
               placeholder="Name, email, username..."
               value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="
                 w-full pl-7 pr-2.5 py-1 text-xs rounded-md
                 border border-amber-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-300/40
@@ -144,10 +112,7 @@ export default function UserManagement() {
 
           <FilterSelect
             value={selectedRole}
-            onChange={(v) => {
-              setSelectedRole(v);
-              setCurrentPage(1);
-            }}
+            onChange={setSelectedRole}
             options={roleOptions}
             placeholder={loading ? "Loading..." : "All Roles"}
             icon={Filter}
@@ -157,10 +122,7 @@ export default function UserManagement() {
 
           <FilterSelect
             value={selectedStatus}
-            onChange={(v) => {
-              setSelectedStatus(v);
-              setCurrentPage(1);
-            }}
+            onChange={setSelectedStatus}
             options={statusOptions}
             placeholder="All Status"
             className="min-w-[95px]"
@@ -207,74 +169,19 @@ export default function UserManagement() {
       <div className="flex-1 flex flex-col rounded-lg overflow-hidden bg-white border border-amber-200 shadow-sm">
         <div className="shrink-0 px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <div className="w-0.5 h-4 bg-gradient-to-b from-amber-500 to-orange-500 rounded-full" />
+            <div className="w-0.5 h-4 bg-gradient-to-b from-amber-500 to-amber-500 rounded-full" />
             <h3 className="text-xs font-semibold text-gray-900">User Directory</h3>
           </div>
-          <span className="text-xs font-medium text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-            5 per page
-          </span>
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-hidden">
           <UsersComponent
             compact={true}
-            pageSize={pageSize}
-            currentPage={currentPage}
             searchTerm={searchTerm.trim()}
             selectedRole={selectedRole}
             selectedStatus={selectedStatus}
-            showRowNumbers={true}           // ← new prop suggestion
-            onPageChange={setCurrentPage}
-            onTotalChange={setTotalUsers}
           />
         </div>
-
-        {/* Pagination with page numbers */}
-        {totalUsers > 0 && totalPages > 1 && (
-          <div className="shrink-0 px-2 py-1.5 border-t border-amber-200 bg-amber-50/60 flex items-center justify-between text-xs">
-            <div className="text-gray-700 font-medium">
-              {totalUsers} users • page {currentPage} of {totalPages}
-            </div>
-
-            <div className="flex items-center gap-1">
-              <button
-                disabled={currentPage === 1}
-                onClick={() => goToPage(currentPage - 1)}
-                className="p-1 rounded hover:bg-amber-100 disabled:opacity-40 transition-colors"
-              >
-                <ChevronLeft size={14} className="text-amber-700" />
-              </button>
-
-              {pages.map((page, idx) => (
-                <React.Fragment key={idx}>
-                  {page === "..." ? (
-                    <span className="px-2 py-1 text-gray-500">...</span>
-                  ) : (
-                    <button
-                      onClick={() => goToPage(page)}
-                      className={`
-                        min-w-[24px] h-6 flex items-center justify-center rounded text-xs font-medium
-                        ${currentPage === page 
-                          ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-sm" 
-                          : "hover:bg-amber-100 text-amber-800"}
-                      `}
-                    >
-                      {page}
-                    </button>
-                  )}
-                </React.Fragment>
-              ))}
-
-              <button
-                disabled={currentPage === totalPages}
-                onClick={() => goToPage(currentPage + 1)}
-                className="p-1 rounded hover:bg-amber-100 disabled:opacity-40 transition-colors"
-              >
-                <ChevronRight size={14} className="text-amber-700" />
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

@@ -8,8 +8,6 @@ import {
 } from '../../api/helpers/UserService/Shifts/Shifts.js';
 import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
 import {
-    ChevronLeft,
-    ChevronRight,
     Edit,
     Trash2,
     PlusCircle,
@@ -18,6 +16,7 @@ import {
     Unlock,
     Download,
 } from 'lucide-react';
+import TablePagination from '../../components/TablePagination';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -171,18 +170,6 @@ const Shifts = () => {
         loadData(pagination.page, showDeleted);
         // eslint-disable-next-line
     }, [pagination.page, showDeleted]);
-
-    const handlePreviousPage = () => {
-        if (pagination.hasPreviousPage) {
-            setPagination((p) => ({ ...p, page: p.page - 1 }));
-        }
-    };
-
-    const handleNextPage = () => {
-        if (pagination.hasNextPage) {
-            setPagination((p) => ({ ...p, page: p.page + 1 }));
-        }
-    };
 
     const handlePageClick = (page) => {
         setPagination((p) => ({ ...p, page }));
@@ -479,16 +466,18 @@ const Shifts = () => {
                     i.onerror = reject;
                     i.src = settings.companyLogo || logoSrc;
                 });
-                const sz = Math.min(img.naturalWidth, img.naturalHeight);
+                const sz  = 200;
+                const pad = sz * 0.06;
                 const cv = document.createElement('canvas');
                 cv.width = sz; cv.height = sz;
                 const ctx = cv.getContext('2d');
-                ctx.beginPath();
-                ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
-                ctx.clip();
-                const srcX = (img.naturalWidth - sz) / 2;
-                const srcY = (img.naturalHeight - sz) / 2;
-                ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, sz, sz);
+                const avail  = sz - pad * 2;
+                const aspect = img.naturalWidth / img.naturalHeight;
+                const drawW  = aspect >= 1 ? avail : avail * aspect;
+                const drawH  = aspect >= 1 ? avail / aspect : avail;
+                ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH);
                 circularLogo = cv.toDataURL('image/png');
             } catch (_) {}
 
@@ -557,7 +546,6 @@ const Shifts = () => {
                 body,
                 styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
                 headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: 'bold', fontSize: 7, halign: 'center', lineColor: accentDark },
-                alternateRowStyles: { fillColor: [252, 252, 252] },
                 columnStyles: {
                     0: { halign: 'center', cellWidth: 8 },
                     6: { halign: 'center' },
@@ -568,7 +556,7 @@ const Shifts = () => {
                     if (data.column.index === 6 && data.section === 'body') {
                         const raw = String(data.cell.raw || '');
                         if (raw === 'ACTIVE')    { data.cell.styles.textColor = green;      data.cell.styles.fontStyle = 'bold'; }
-                        else if (raw === 'PUBLISHED') { data.cell.styles.textColor = amberDark; data.cell.styles.fontStyle = 'bold'; }
+                        else if (raw === 'PUBLISHED') { data.cell.styles.textColor = accentDark; data.cell.styles.fontStyle = 'bold'; }
                     }
                 },
             });
@@ -633,10 +621,10 @@ const Shifts = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <h2 className="text-base font-bold text-gray-900">Shifts</h2>
+            <div className="px-4 py-3 flex items-center justify-between flex-wrap gap-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+                <h2 className="text-base font-bold" style={{ color: "var(--cs-appbar-text)" }}>Shifts</h2>
                 <div className="flex items-center gap-2">
-                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-700 cursor-pointer">
+                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
                         <input
                             id="show-deleted"
                             type="checkbox"
@@ -651,13 +639,14 @@ const Shifts = () => {
                     </label>
                     <button
                         onClick={handleDownloadPDF}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 rounded transition-colors"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
                     >
                         <Download size={13} />
                         <span>PDF</span>
                     </button>
                     <button
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all"
+                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow transition-all"
+                        style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
                         onClick={() => setAddModalOpen(true)}
                     >
                         <PlusCircle size={13} />
@@ -674,15 +663,15 @@ const Shifts = () => {
 
             <div className="flex-1 overflow-auto">
                 <table className="min-w-full">
-                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+                    <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
-                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Name</th>
-                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Time</th>
-                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Date Range</th>
-                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Type</th>
-                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Status</th>
-                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider w-48">Staff</th>
-                        <th scope="col" className="px-3 py-2.5 text-left text-xs font-semibold text-amber-900 uppercase tracking-wider">Actions</th>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Name</th>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Time</th>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Date Range</th>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Type</th>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Status</th>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide w-48">Staff</th>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Actions</th>
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
@@ -694,11 +683,11 @@ const Shifts = () => {
                         return (
                             <tr key={shift.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
                                 <td
-                                    className="px-3 py-4 whitespace-nowrap relative"
+                                    className="px-3 py-2 whitespace-nowrap relative"
                                     onMouseEnter={() => setHoveredShiftId(shift.id)}
                                     onMouseLeave={() => setHoveredShiftId(null)}
                                 >
-                                    <div className="text-sm font-medium text-gray-900">{shift.name}</div>
+                                    <div className="text-[11px] font-semibold text-gray-900">{shift.name}</div>
                                     {hoveredShiftId === shift.id && shift.description && (
                                         <div className="absolute z-10 w-64 p-2 text-sm leading-tight text-amber-800 bg-amber-100 border border-amber-200 rounded-lg shadow-lg bottom-full left-0 mb-2">
                                             {shift.description}
@@ -725,27 +714,27 @@ const Shifts = () => {
                                     </div>
                                 </td>
 
-                                <td className="px-3 py-4 whitespace-nowrap">
-                                    <div className="text-sm">
+                                <td className="px-3 py-2 whitespace-nowrap">
+                                    <div className="text-[10px]">
                                         <div className="font-medium">{formatTimeOnlyString(shift.startTime) || '--:--'}</div>
                                         <div className="font-medium text-gray-700">to {formatTimeOnlyString(shift.endTime) || '--:--'}</div>
                                     </div>
                                 </td>
 
-                                <td className="px-3 py-4 whitespace-nowrap">
-                                    <div className="text-sm">
+                                <td className="px-3 py-2 whitespace-nowrap">
+                                    <div className="text-[10px]">
                                         <div>{startDate.toLocaleDateString()}</div>
                                         {isRecurring && (
-                                            <div className="text-sm text-gray-600">
+                                            <div className="text-[10px] text-gray-600">
                                                 to {endDate.toLocaleDateString()}
                                             </div>
                                         )}
                                     </div>
                                 </td>
 
-                                <td className="px-3 py-4 whitespace-nowrap">
+                                <td className="px-3 py-2 whitespace-nowrap">
                                     <div className="flex flex-col space-y-1">
-                      <span className="text-sm text-gray-900">
+                      <span className="text-[10px] text-gray-900">
                         {shift.type === 1 ? 'Single' : shift.type === 2 ? 'Recurring' : ''}
                       </span>
                                         {isRecurring && (
@@ -759,13 +748,13 @@ const Shifts = () => {
                                     </div>
                                 </td>
 
-                                <td className="px-3 py-4 whitespace-nowrap">
+                                <td className="px-3 py-2 whitespace-nowrap">
                                     <div className="flex flex-col space-y-1">
                       <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                           shift.status === 3
                               ? 'bg-green-100 text-green-800'
                               : shift.status === 2
-                                  ? 'bg-blue-100 text-amber-500'
+                                  ? 'bg-blue-100 text-blue-800'
                                   : 'bg-gray-100 text-gray-800'
                       }`}>
                         {shift.status === 3 ? 'Active' : shift.status === 1 ? 'completed' : 'Draft'}
@@ -778,7 +767,7 @@ const Shifts = () => {
                                     </div>
                                 </td>
 
-                                <td className="pl-4 pr-3 py-4 whitespace-nowrap">
+                                <td className="pl-4 pr-3 py-2 whitespace-nowrap">
                                     <div className="flex items-center w-full">
                                         <div
                                             className="flex items-center w-32 cursor-pointer group relative"
@@ -813,7 +802,7 @@ const Shifts = () => {
                                         </div>
                                     </div>
                                 </td>
-                                <td className="px-3 py-4 text-sm font-medium space-x-2">
+                                <td className="px-3 py-2 text-[10px] font-medium space-x-2">
                                     <div className="flex items-center space-x-2">
                                         <button
                                             className="text-blue-600 hover:text-blue-800 transition-colors"
@@ -931,30 +920,15 @@ const Shifts = () => {
                         </div>
                     ))}
                 </div>
-            </div>
 
-            {/* Pagination */}
-            <div className="px-4 py-2.5 border-t border-amber-100 bg-white flex flex-wrap justify-between items-center gap-2 text-xs text-gray-600">
-                <p>
-                    <span className="font-medium">{pagination.page * pagination.pageSize - pagination.pageSize + 1}</span>{' '}
-                    to{' '}
-                    <span className="font-medium">{Math.min(pagination.page * pagination.pageSize, pagination.totalCount)}</span>{' '}
-                    of <span className="font-medium">{pagination.totalCount}</span> rows
-                </p>
-                <div className="flex items-center gap-1">
-                    <button onClick={handlePreviousPage} disabled={!pagination.hasPreviousPage || loading} className="p-1.5 border rounded text-gray-500 hover:bg-amber-50 disabled:opacity-50">
-                        <ChevronLeft size={14} />
-                    </button>
-                    {[...Array(pagination.totalPages).keys()].map((index) => (
-                        <button key={index} onClick={() => handlePageClick(index + 1)}
-                            className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium ${pagination.page === index + 1 ? 'bg-amber-500 text-white' : 'text-gray-700 hover:bg-amber-100'}`}>
-                            {index + 1}
-                        </button>
-                    ))}
-                    <button onClick={handleNextPage} disabled={!pagination.hasNextPage || loading} className="p-1.5 border rounded text-gray-500 hover:bg-amber-50 disabled:opacity-50">
-                        <ChevronRight size={14} />
-                    </button>
-                </div>
+                {/* Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+                <TablePagination
+                    page={pagination.page}
+                    totalPages={pagination.totalPages}
+                    onPageChange={handlePageClick}
+                    itemCount={pagination.totalCount}
+                    itemLabel="shifts total"
+                />
             </div>
 
             <Modal isOpen={isViewUsersModalOpen}>

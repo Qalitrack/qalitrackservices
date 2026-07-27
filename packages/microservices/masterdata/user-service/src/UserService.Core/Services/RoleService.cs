@@ -98,6 +98,11 @@ public async Task<RoleDto?> UpdateAsync(string id, DTOs.Roles.UpdateRoleDto dto)
         throw new KeyNotFoundException("Role not found.");
     }
 
+    if (existingRole.IsSystem)
+    {
+        throw new InvalidOperationException("System roles cannot be modified.");
+    }
+
     // Check if another role with the same name exists
     var roleWithSameName = await _roleRepository.GetByNameAsync(dto.Name);
     if (roleWithSameName != null && roleWithSameName.Id != id)
@@ -149,7 +154,12 @@ public async Task<bool> DeleteAsync(string id)
     {
         return false;
     }
-     
+
+    if (role.IsSystem)
+    {
+        throw new InvalidOperationException("System roles cannot be deleted.");
+    }
+
     await _roleRepository.DeleteAsync(id);
     await _roleRepository.SaveChangesAsync();
     return true;

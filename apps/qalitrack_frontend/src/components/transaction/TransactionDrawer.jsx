@@ -48,7 +48,7 @@ export default function TransactionDrawer({
     <Drawer
       title={
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+          <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
             <span className="text-white text-xs font-bold">📋</span>
           </div>
           <span className="text-sm font-bold text-gray-900">
@@ -153,9 +153,9 @@ export default function TransactionDrawer({
       {record && (
         <div className="space-y-3 text-xs">
           {/* Basic Info */}
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
+          <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                 <span className="text-white text-sm font-bold">📋</span>
               </div>
               <span className="text-sm font-bold text-amber-900">BASIC INFORMATION</span>
@@ -188,9 +188,9 @@ export default function TransactionDrawer({
           </div>
 
           {/* Parties */}
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
+          <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                 <span className="text-white text-sm font-bold">🏢</span>
               </div>
               <span className="text-sm font-bold text-amber-900">PARTIES</span>
@@ -220,9 +220,9 @@ export default function TransactionDrawer({
           </div>
 
           {/* Locations */}
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
+          <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                 <span className="text-white text-sm font-bold">📍</span>
               </div>
               <span className="text-sm font-bold text-amber-900">LOCATIONS</span>
@@ -252,9 +252,9 @@ export default function TransactionDrawer({
           </div>
 
           {/* Weight Summary */}
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
+          <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                 <span className="text-white text-sm font-bold">⚖️</span>
               </div>
               <span className="text-sm font-bold text-amber-900">WEIGHT SUMMARY</span>
@@ -262,7 +262,7 @@ export default function TransactionDrawer({
             <div className="grid grid-cols-3 gap-2.5 mb-3">
               <div className="bg-white rounded-lg p-2.5 border-2 border-amber-200 shadow-sm">
                 <div className="text-[10px] text-amber-700 font-bold uppercase mb-1">1st Weight</div>
-                <div className="text-base font-extrabold text-orange-600">{record.firstWeight || 0}</div>
+                <div className="text-base font-extrabold text-amber-600">{record.firstWeight || 0}</div>
                 <div className="text-[9px] text-amber-600 font-semibold">KILOGRAMS</div>
                 <div className="text-[9px] text-gray-500 mt-1">
                   {record.firstWeightDate ? dayjs(record.firstWeightDate).format("DD-MM-YY HH:mm") : "N/A"}
@@ -276,7 +276,7 @@ export default function TransactionDrawer({
                   {record.secondWeightDate ? dayjs(record.secondWeightDate).format("DD-MM-YY HH:mm") : "N/A"}
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-amber-200 via-amber-300 to-orange-300 rounded-lg p-2.5 border-2 border-amber-500 shadow-lg">
+              <div className="bg-gradient-to-br from-amber-200 via-amber-300 to-amber-300 rounded-lg p-2.5 border-2 border-amber-500 shadow-lg">
                 <div className="text-[10px] text-amber-900 font-extrabold uppercase mb-1">Net Weight</div>
                 <div className="text-lg font-black text-amber-950">{record.netWeight || 0}</div>
                 <div className="text-[9px] text-amber-800 font-bold">KILOGRAMS</div>
@@ -305,9 +305,9 @@ export default function TransactionDrawer({
           </div>
 
           {/* Status & Remarks */}
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
+          <div className="bg-gradient-to-br from-amber-50 via-amber-50 to-amber-100 rounded-lg p-3 border-2 border-amber-300 shadow-md">
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+              <div className="w-7 h-7 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
                 <span className="text-white text-sm font-bold">📝</span>
               </div>
               <span className="text-sm font-bold text-amber-900">STATUS & REMARKS</span>

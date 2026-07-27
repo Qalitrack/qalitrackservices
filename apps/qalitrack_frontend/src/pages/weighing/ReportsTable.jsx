@@ -174,7 +174,7 @@ export default function ReportsTable({
       case "firstWeight":
         return (
           <div className="flex flex-col items-end leading-tight">
-            <span className="text-[10px] font-bold text-orange-600">
+            <span className="text-[10px] font-bold text-amber-600">
               {value ? parseFloat(value).toLocaleString() : "-"}
             </span>
             {value && <span className="text-[8px] text-amber-500 font-semibold">kg</span>}
@@ -243,11 +243,11 @@ export default function ReportsTable({
         if (done) {
           if (td.minutes < 30)  cls = "bg-green-100 text-green-700 border-green-300";
           else if (td.minutes < 60)  cls = "bg-blue-100 text-blue-700 border-blue-200";
-          else if (td.minutes < 120) cls = "bg-orange-100 text-orange-700 border-orange-300";
+          else if (td.minutes < 120) cls = "bg-amber-100 text-amber-700 border-amber-300";
           else cls = "bg-red-100 text-red-700 border-red-300";
         } else {
           if (td.minutes < 30) cls = "bg-green-100 text-green-700 border-green-300";
-          else if (td.minutes < 60) cls = "bg-orange-100 text-orange-700 border-orange-300";
+          else if (td.minutes < 60) cls = "bg-amber-100 text-amber-700 border-amber-300";
           else cls = "bg-red-100 text-red-700 border-red-300";
         }
         return (
@@ -308,9 +308,9 @@ export default function ReportsTable({
     <div className="bg-white rounded-lg border border-amber-200 shadow-sm overflow-hidden flex flex-col">
 
       {/* Header bar */}
-      <div className="px-3 py-2 border-b bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b-amber-200 shrink-0">
+      <div className="px-3 py-2 border-b bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b-amber-200 shrink-0">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm shrink-0">
+          <div className="w-6 h-6 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm shrink-0">
             <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -318,7 +318,7 @@ export default function ReportsTable({
           </div>
           <div>
             <h2 className="text-[11px] font-bold text-gray-900 leading-tight">Transactions Report</h2>
-            <p className="text-[9px] text-amber-700 font-medium leading-tight">
+            <p className="text-[9px] text-amber-700 font-medium leading-tight mt-0.5">
               Showing <span className="font-semibold">{processedData.length}</span> of{" "}
               <span className="font-semibold">{totalRecords}</span> records
             </p>

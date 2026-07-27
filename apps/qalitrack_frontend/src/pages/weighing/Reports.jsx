@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import ReportsTable from "./ReportsTable";
 import DriverReport from "./reportFiles/DriverReport";
 import ReweighedTransactionsReport from "./reportFiles/ReweighedTransactionsReport";
@@ -13,7 +12,7 @@ import CustomReportBuilder from "./CustomReportBuilder";
 // import ReportScheduler from "./ReportScheduler"; // TODO: backend not implemented yet
 import CrossEntityComparison from "./CrossEntityComparison";
 
-import { fetchTransactions } from "../../store/weighingSlice";
+import { getTransactions } from "../../api/Transaction/Transaction.js";
 import {
   RotateCcw, FileDown, FileSpreadsheet, Filter, X,
   BarChart3, Settings, Calendar, GitCompare
@@ -21,14 +20,21 @@ import {
 import dayjs from "dayjs";
 
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import logoSrc from "../../assets/logo.jpeg";
 import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
 
 export default function Reports() {
-  const dispatch = useDispatch();
-  const { transactions, loading } = useSelector((state) => state.weighing);
+  // Reports.jsx fetches its own data independently instead of reading/writing
+  // the shared `weighing.transactions` Redux slice — that slice is also used
+  // by the Dashboard/Analytics/Transactions pages, and the Reweighed
+  // Transactions tab below needs the true, always-unfiltered transaction set
+  // regardless of whatever date/status filter is currently applied here, so
+  // sharing state with pages that filter/replace that slice risked corrupting
+  // it for everyone else.
+  const [allTransactions, setAllTransactions] = useState([]);
+  const [scopedTransactions, setScopedTransactions] = useState(null); // non-null once a server-side date/status filter is active
+  const [loading, setLoading] = useState(true);
 
   const REPORT_TABS = [
     { id: "transactions", label: "Transactions", icon: null },
@@ -37,9 +43,9 @@ export default function Reports() {
     { id: "customers", label: "Customers", icon: null },
     { id: "commodities", label: "Commodities", icon: null },
     { id: "suppliers", label: "Suppliers", icon: null },
-    { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} />, badge: "NEW" },
-    { id: "comparison", label: "Comparison", icon: <GitCompare size={14} />, badge: "NEW" },
-    { id: "custom", label: "Custom Builder", icon: <Settings size={14} />, badge: "NEW" },
+    { id: "report-analytics", label: "Report Analytics", icon: <BarChart3 size={14} /> },
+    { id: "comparison", label: "Comparison", icon: <GitCompare size={14} /> },
+    { id: "custom", label: "Custom Builder", icon: <Settings size={14} /> },
     // { id: "scheduler", label: "Scheduler", icon: <Calendar size={14} />, badge: "NEW" }, // TODO: backend not implemented yet
   ];
 
@@ -66,9 +72,59 @@ export default function Reports() {
   const [showExportPreview, setShowExportPreview] = useState(false);
   const [exportType, setExportType] = useState(null);
 
+  const extractItems = (res) => res?.data?.items || res?.items || (Array.isArray(res?.data) ? res.data : []) || [];
+
+  // The true, always-unfiltered set — fetched once per page visit (this page
+  // has no 30-second poller, unlike Dashboard/Analytics, so a single bulk
+  // load here isn't a growing/recurring cost). Powers the Reweighed
+  // Transactions tab and is the fallback source everywhere else when no
+  // date/status filter is active.
   useEffect(() => {
-    dispatch(fetchTransactions({ pageSize: 10000 }));
-  }, [dispatch]);
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const res = await getTransactions({ pageSize: 10000 });
+        if (!cancelled) setAllTransactions(extractItems(res));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // When the user picks a date range or status, ask the server for just that
+  // slice instead of re-filtering the already-fetched 10,000 rows in JS —
+  // this is the part that previously always operated on the full pull.
+  useEffect(() => {
+    const hasServerFilter = filters.startDate || filters.endDate || filters.status;
+    if (!hasServerFilter) {
+      setScopedTransactions(null);
+      return;
+    }
+    let cancelled = false;
+    (async () => {
+      setLoading(true);
+      try {
+        const params = { pageSize: 10000 };
+        if (filters.startDate) params.startDate = `${filters.startDate}T${filters.startTime || "00:00"}`;
+        if (filters.endDate) params.endDate = `${filters.endDate}T${filters.endTime || "23:59"}`;
+        if (filters.status.toLowerCase() === "completed") params.isCompleted = true;
+        if (filters.status.toLowerCase() === "in progress") params.isCompleted = false;
+        const res = await getTransactions(params);
+        if (!cancelled) setScopedTransactions(extractItems(res));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [filters.startDate, filters.endDate, filters.startTime, filters.endTime, filters.status]);
+
+  // Server-scoped when a date/status filter is active, else the full set —
+  // date/status filtering itself now happens server-side; only free-text
+  // search (which the backend doesn't support as a single multi-field OR) is
+  // still applied client-side below.
+  const transactions = scopedTransactions ?? allTransactions;
 
   useEffect(() => {
     setCurrentPage(1);
@@ -103,31 +159,10 @@ export default function Reports() {
   const filteredTransactions = useMemo(() => {
     let data = [...transactions];
 
-    if (filters.startDate) {
-      const start = new Date(`${filters.startDate}T${filters.startTime || "00:00"}`);
-      data = data.filter((t) => new Date(t.createdAt) >= start);
-    }
-    if (filters.endDate) {
-      const end = new Date(`${filters.endDate}T${filters.endTime || "23:59"}`);
-      data = data.filter((t) => new Date(t.createdAt) <= end);
-    }
-    if (filters.status) {
-      if (filters.status.toLowerCase() === "completed") {
-        data = data.filter(
-          (t) =>
-            (t.secondWeight && parseFloat(t.secondWeight) > 0) ||
-            t.status === "Completed" ||
-            t.status === "completed"
-        );
-      } else if (filters.status.toLowerCase() === "in progress") {
-        data = data.filter(
-          (t) =>
-            (!t.secondWeight || parseFloat(t.secondWeight) === 0) &&
-            t.status !== "Completed" &&
-            t.status !== "completed"
-        );
-      }
-    }
+    // Date range and status are now applied server-side (see the fetch
+    // effects above) — `transactions` already reflects them when active.
+    // Only free-text search still needs a client-side pass, since the
+    // backend doesn't support a single multi-field OR search.
     if (filters.search) {
       const q = filters.search.toLowerCase();
       data = data.filter(
@@ -185,7 +220,9 @@ export default function Reports() {
     const borderCol  = [229, 231, 235];
     const green      = [21,  128, 61];
 
-    // ── Pre-load logo (circular crop via canvas) ──────────────────────────
+    // ── Pre-load logo — scaled to fit, never cropped ───────────────────────
+    // Previously clipped to a circle via ctx.arc()+ctx.clip(), which cut off
+    // any part of the (non-circular) logo that fell outside that circle.
     let circularLogo = null;
     try {
       const img = await new Promise((resolve, reject) => {
@@ -194,16 +231,22 @@ export default function Reports() {
         i.onerror = reject;
         i.src = settings.companyLogo || logoSrc;
       });
-      const sz = Math.min(img.naturalWidth, img.naturalHeight);
+      const sz  = 200;
+      const pad = sz * 0.06;
       const cv = document.createElement("canvas");
       cv.width = sz; cv.height = sz;
       const ctx = cv.getContext("2d");
-      ctx.beginPath();
-      ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2);
-      ctx.clip();
-      const srcX = (img.naturalWidth - sz) / 2;
-      const srcY = (img.naturalHeight - sz) / 2;
-      ctx.drawImage(img, srcX, srcY, sz, sz, 0, 0, sz, sz);
+      const avail  = sz - pad * 2;
+      const aspect = img.naturalWidth / img.naturalHeight;
+      const drawW  = aspect >= 1 ? avail : avail * aspect;
+      const drawH  = aspect >= 1 ? avail / aspect : avail;
+      ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH);
+      const imgData = ctx.getImageData(0, 0, sz, sz);
+      const px = imgData.data;
+      for (let p = 0; p < px.length; p += 4) {
+        if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0;
+      }
+      ctx.putImageData(imgData, 0, 0);
       circularLogo = cv.toDataURL("image/png");
     } catch (_) { /* logo unavailable */ }
 
@@ -266,81 +309,137 @@ export default function Reports() {
 
     y += 14;
 
-    // ── DATA TABLE ────────────────────────────────────────────────────────
-    autoTable(doc, {
-      startY: y,
-      margin: { left: L, right: L },
-      head: [[
-        "#", "Date & Time", "Receipt", "Vehicle", "Driver", "Commodity",
-        "Supplier", "Transporter", "Customer", "Origin", "Destination",
-        "Weighbridge", "Scale", "Mode", "Operation", "Operator",
-        "First Wt (kg)", "Second Wt (kg)", "Net Wt (kg)", "TAT", "Status",
-      ]],
-      body: filteredTransactions.map((t, idx) => {
-        const hasSecondWeight = t.secondWeight && parseFloat(t.secondWeight) > 0;
-        const isCompleted =
-          hasSecondWeight || t.status === "Completed" || t.status === "completed";
-        return [
-          idx + 1,
-          dayjs(t.createdAt).format("DD MMM YY HH:mm"),
-          t.receiptNo          || "-",
-          t.noPlate            || "-",
-          t.driverName         || "-",
-          t.commodityName      || "-",
-          t.supplierName       || "-",
-          t.transporterName    || "-",
-          t.customerName       || "-",
-          t.originName         || "-",
-          t.destinationName    || "-",
-          t.weighBridgeName    || "-",
-          t.scaleName          || "-",
-          t.weighMode          || "-",
-          t.operation          || "-",
-          t.operatorName || t.firstWeightOperator || "-",
-          t.firstWeight  ? parseFloat(t.firstWeight).toLocaleString()  : "-",
-          t.secondWeight ? parseFloat(t.secondWeight).toLocaleString() : "-",
-          t.netWeight    ? parseFloat(t.netWeight).toLocaleString()    : "-",
-          calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime),
-          isCompleted ? "COMPLETED" : "IN PROGRESS",
-        ];
-      }),
-      styles: {
-        fontSize: 6.5,
-        cellPadding: 1.5,
-        textColor: black,
-        lineColor: borderCol,
-      },
-      headStyles: {
-        fillColor: accent,
-        textColor: accentHeaderText,
-        fontStyle: "bold",
-        fontSize: 7,
-        halign: "center",
-        lineColor: accentDark,
-      },
-      alternateRowStyles: { fillColor: [252, 252, 252] },
-      columnStyles: {
-        0:  { halign: "center", cellWidth: 6 },
-        16: { halign: "right" },
-        17: { halign: "right" },
-        18: { halign: "right", fontStyle: "bold" },
-        20: { halign: "center", cellWidth: 18 },
-      },
-      didParseCell: (data) => {
-        if (data.column.index === 20 && data.section === "body") {
-          if (data.cell.raw === "COMPLETED") {
-            data.cell.styles.textColor = green;
-            data.cell.styles.fontStyle = "bold";
-          } else {
-            data.cell.styles.textColor = accentDark;
-            data.cell.styles.fontStyle = "bold";
-          }
+    // ── DATA — one record card per transaction, every field, never truncated ──
+    // A flat table with all ~17 non-identity fields (269mm / 17 ≈ 16mm per
+    // column) still forces truncation on names/dates no matter how the widths
+    // are tuned. Each transaction gets its own bordered card with a 3-column
+    // label:value grid instead — every field gets ~64mm of value space, more
+    // than enough for anything in this data set. Trade-off: ~3-4 cards fit per
+    // landscape page instead of ~20 table rows, so this report runs longer.
+    const PH      = doc.internal.pageSize.getHeight();
+    const colW    = TW / 3;
+    const rowH    = 5.2;
+    const headerH = 7;
+    const bodyRows = 5; // 15 label:value slots (14 fields + 1 spare)
+    const cardH   = headerH + bodyRows * rowH + 8; // +8 for the weight row band
+    const cardGap = 3;
+    const bottomReserve = 12; // keep clear of the page edge; footer only draws once, after the last card
+
+    const drawContinuationHeader = () => {
+      doc.setFontSize(9);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...black);
+      doc.text(companyName, L, 10);
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...gray);
+      doc.text("Transactions Report (continued)", R, 10, { align: "right" });
+      doc.setDrawColor(...accent);
+      doc.setLineWidth(0.5);
+      doc.line(L, 13, R, 13);
+      return 18;
+    };
+
+    const drawField = (label, value, cx, cy, colWidth) => {
+      if (!label) return;
+      doc.setFontSize(7.5);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...gray);
+      doc.text(`${label}:`, cx, cy);
+      const labelW = doc.getTextWidth(`${label}: `);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(...black);
+      const maxValW = colWidth - labelW - 4;
+      const valText = doc.splitTextToSize(String(value ?? "-") || "-", maxValW)[0];
+      doc.text(valText, cx + labelW, cy);
+    };
+
+    const drawTransactionCard = (t, idx, yStart) => {
+      const hasSecondWeight = t.secondWeight && parseFloat(t.secondWeight) > 0;
+      const isCompleted =
+        hasSecondWeight || t.status === "Completed" || t.status === "completed";
+      const isOutbound = t.operation === "Outbound Product Dispatch";
+      const party = isOutbound ? t.customerName : t.supplierName;
+      const partyLabel = isOutbound ? "Customer" : "Supplier";
+
+      doc.setFillColor(255, 255, 255);
+      doc.setDrawColor(...accentDark);
+      doc.setLineWidth(0.3);
+      doc.rect(L, yStart, TW, cardH, "FD");
+
+      // Header band: # / receipt / date+time / status badge
+      doc.setFillColor(...accent);
+      doc.rect(L, yStart, TW, headerH, "F");
+      doc.setFontSize(8);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(...accentHeaderText);
+      doc.text(`#${idx + 1}`, L + 3, yStart + headerH / 2 + 1.3);
+      doc.text(t.receiptNo || "-", L + 16, yStart + headerH / 2 + 1.3);
+      doc.text(dayjs(t.createdAt).format("DD MMM YYYY, HH:mm"), L + TW / 2, yStart + headerH / 2 + 1.3, { align: "center" });
+
+      const badgeW = 30;
+      doc.setFillColor(...(isCompleted ? green : accentDark));
+      doc.roundedRect(R - badgeW - 2, yStart + 1.2, badgeW, headerH - 2.4, 1.2, 1.2, "F");
+      doc.setFontSize(7);
+      doc.setTextColor(255, 255, 255);
+      doc.text(isCompleted ? "COMPLETED" : "IN PROGRESS", R - badgeW / 2 - 2, yStart + headerH / 2 + 1, { align: "center" });
+
+      // Body grid — every field the original report had, none dropped
+      const fields = [
+        ["Vehicle", t.noPlate], ["Driver", t.driverName], ["Commodity", t.commodityName],
+        ["Transporter", t.transporterName], [partyLabel, party], ["Origin", t.originName],
+        ["Destination", t.destinationName], ["Weighbridge", t.weighBridgeName], ["Scale", t.scaleName],
+        ["Mode", t.weighMode], ["Operation", t.operation], ["Operator", t.operatorName || t.firstWeightOperator],
+        ["TAT", calculateTurnaroundTime(t.firstWeightDate, t.secondWeightDate, t.turnaroundTime)], [null, null], [null, null],
+      ];
+      let fy = yStart + headerH + 3.8;
+      for (let r = 0; r < bodyRows; r++) {
+        for (let c = 0; c < 3; c++) {
+          const [label, value] = fields[r * 3 + c];
+          drawField(label, value, L + c * colW + 2.5, fy, colW);
         }
-      },
+        fy += rowH;
+      }
+
+      // Weight row — visually separated + bolded, mirrors the summary table
+      const wy = yStart + headerH + bodyRows * rowH + 5.5;
+      doc.setDrawColor(...borderCol);
+      doc.setLineWidth(0.2);
+      doc.line(L + 2, wy - 3.6, R - 2, wy - 3.6);
+      const weightFields = [
+        ["Gross Wt", t.firstWeight  ? `${parseFloat(t.firstWeight).toLocaleString()} kg`  : "-"],
+        ["Second Wt", t.secondWeight ? `${parseFloat(t.secondWeight).toLocaleString()} kg` : "-"],
+        ["Net Wt", t.netWeight    ? `${parseFloat(t.netWeight).toLocaleString()} kg`    : "-"],
+      ];
+      weightFields.forEach(([label, value], c) => {
+        const cx = L + c * colW + 2.5;
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(...gray);
+        doc.text(`${label}:`, cx, wy);
+        const labelW = doc.getTextWidth(`${label}: `);
+        doc.setFontSize(9);
+        doc.setTextColor(...(c === 2 ? accentDark : black));
+        doc.text(value, cx + labelW, wy);
+      });
+
+      return yStart + cardH;
+    };
+
+    filteredTransactions.forEach((t, idx) => {
+      if (y + cardH > PH - bottomReserve) {
+        doc.addPage();
+        y = drawContinuationHeader();
+      }
+      y = drawTransactionCard(t, idx, y) + cardGap;
     });
 
     // ── FOOTER ────────────────────────────────────────────────────────────
-    const footerY = doc.lastAutoTable.finalY + 4;
+    if (y + 2 + 10 > PH - 5) {
+      doc.addPage();
+      y = drawContinuationHeader();
+    }
+    const footerY = y + 2;
     doc.setFillColor(...accentLight);
     doc.setDrawColor(...accentDark);
     doc.setLineWidth(0.3);
@@ -361,7 +460,6 @@ export default function Reports() {
     if (circularLogo) {
       try {
         const wmSize = 90;
-        const PH = doc.internal.pageSize.getHeight();
         const wmCanvas = document.createElement("canvas");
         wmCanvas.width = 200; wmCanvas.height = 200;
         const wmCtx = wmCanvas.getContext("2d");
@@ -470,10 +568,11 @@ export default function Reports() {
     //   return <ReportScheduler transactions={filteredTransactions} />;
     // }
 
-    // REWEIGHED TRANSACTIONS REPORT — pass ALL unfiltered transactions so parent
-    // date/status filters don't accidentally exclude ReweighRequested records
+    // REWEIGHED TRANSACTIONS REPORT — pass the true unfiltered set so the
+    // date/status filters above (now applied server-side) can't accidentally
+    // exclude ReweighRequested records
     if (activeTab === "reweighed") {
-      return <ReweighedTransactionsReport transactions={transactions} loading={loading} />;
+      return <ReweighedTransactionsReport transactions={allTransactions} loading={loading} />;
     }
 
     // EXISTING REPORTS
@@ -492,40 +591,40 @@ export default function Reports() {
       <>
         {/* Summary Cards */}
         <div className="mb-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-3 border border-amber-200 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               Total Transactions
             </div>
-            <div className="text-xl font-bold mt-1 text-amber-900">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.count.toLocaleString()}
             </div>
           </div>
-          <div className="bg-gradient-to-br from-amber-100 to-orange-100 rounded-lg p-3 border border-amber-300 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               Total Net Weight
             </div>
-            <div className="text-xl font-bold mt-1 text-amber-950">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.net.toLocaleString()}
             </div>
-            <div className="text-[10px] text-amber-800">kg</div>
+            <div className="text-[10px] text-gray-500">kg</div>
           </div>
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-3 border border-amber-200 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               First Weight Total
             </div>
-            <div className="text-xl font-bold mt-1 text-orange-600">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.first.toLocaleString()}
             </div>
-            <div className="text-[10px] text-amber-700">kg</div>
+            <div className="text-[10px] text-gray-500">kg</div>
           </div>
-          <div className="bg-gradient-to-br from-amber-100 to-orange-100 rounded-lg p-3 border border-amber-300 shadow-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+          <div className="bg-white border border-amber-200 rounded-lg p-3 shadow-sm">
+            <div className="text-[10px] font-semibold uppercase tracking-wide text-gray-600">
               Second Weight Total
             </div>
-            <div className="text-xl font-bold mt-1 text-green-600">
+            <div className="text-xl font-bold mt-1 text-gray-900">
               {totals.second.toLocaleString()}
             </div>
-            <div className="text-[10px] text-amber-800">kg</div>
+            <div className="text-[10px] text-gray-500">kg</div>
           </div>
         </div>
 
@@ -548,13 +647,14 @@ export default function Reports() {
   ].includes(activeTab);
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
+    <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="mb-4 px-4 sm:px-6 pt-4 sm:pt-6 shrink-0">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
+      <div className="mb-4 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-2.5 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
+        <div className="flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-sm shrink-0">
             <svg
-              className="w-6 h-6 text-white"
+              className="w-5 h-5"
+              style={{ color: "var(--cs-icon-accent)" }}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -568,10 +668,10 @@ export default function Reports() {
             </svg>
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">REPORTS</h1>
-            <p className="text-xs text-amber-700 font-medium">
+            <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>REPORTS</div>
+            <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
               Operational and analytical system reports
-            </p>
+            </div>
           </div>
         </div>
       </div>
@@ -584,7 +684,7 @@ export default function Reports() {
             onClick={() => setActiveTab(tab.id)}
             className={`relative px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all flex items-center gap-1.5 ${
               activeTab === tab.id
-                ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border border-amber-500 shadow-sm"
+                ? "bg-amber-500 text-white border border-amber-500 shadow-sm"
                 : "bg-white text-gray-700 hover:bg-amber-50 border border-gray-200"
             }`}
           >
@@ -605,7 +705,7 @@ export default function Reports() {
         {showFiltersPanel && (
         <div className="bg-white border border-amber-200 rounded-lg shadow-sm mb-4">
           {/* Filter bar header */}
-          <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 flex items-center justify-between rounded-t-lg">
+          <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between rounded-t-lg">
             <div className="flex items-center gap-2">
               {/* Search — always visible */}
               <div className="relative">
@@ -666,7 +766,7 @@ export default function Reports() {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 h-7 px-3 rounded-md text-[11px] font-medium border transition-all ${
                   showFilters
-                    ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-500 shadow-sm"
+                    ? "bg-amber-500 text-white border-amber-500 shadow-sm"
                     : "border-gray-300 text-gray-700 hover:border-amber-400 hover:text-amber-700"
                 }`}
               >
@@ -703,7 +803,7 @@ export default function Reports() {
 
           {/* Collapsible filter panel */}
           {showFilters && (
-            <div className="px-3 py-3 bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20">
+            <div className="px-3 py-3 bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {/* Start Date */}
                 <div className="space-y-1">
@@ -782,7 +882,7 @@ export default function Reports() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-7xl max-h-[90vh] flex flex-col shadow-2xl">
             {/* Modal Header */}
-            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50">
+            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-bold text-gray-900">
@@ -871,7 +971,7 @@ export default function Reports() {
                           <td className="p-2 font-medium text-gray-700">
                             {t.operatorName || t.firstWeightOperator || "-"}
                           </td>
-                          <td className="p-2 text-right font-bold text-orange-600">
+                          <td className="p-2 text-right font-bold text-amber-600">
                             {t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}
                           </td>
                           <td className="p-2 text-right font-bold text-green-600">
@@ -903,7 +1003,7 @@ export default function Reports() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 flex justify-end gap-2">
+            <div className="p-4 border-t bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 flex justify-end gap-2">
               <button
                 onClick={() => setShowExportPreview(false)}
                 className="px-4 py-2 border border-gray-300 rounded-lg text-xs font-medium hover:bg-white transition-colors"
@@ -915,7 +1015,7 @@ export default function Reports() {
                   exportType === "pdf" ? exportPDF() : exportExcel();
                   setShowExportPreview(false);
                 }}
-                className="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg text-xs font-semibold hover:from-amber-600 hover:to-orange-700 transition-all shadow-sm"
+                className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white rounded-lg text-xs font-semibold hover:from-amber-600 hover:to-amber-700 transition-all shadow-sm"
               >
                 Download {exportType?.toUpperCase()}
               </button>

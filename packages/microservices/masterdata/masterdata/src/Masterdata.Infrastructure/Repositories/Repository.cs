@@ -70,8 +70,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
             {
                 var parameter = Expression.Parameter(typeof(T), "e");
                 Expression? searchExpression = null;
-                var likeMethod = typeof(DbFunctionsExtensions).GetMethod(
-                    nameof(DbFunctionsExtensions.Like),
+                // Postgres's native case-insensitive ILIKE — EF Core silently drops a
+                // reflection-built .ToLower() call inside EF.Functions.Like(), which made
+                // every real-world (properly-capitalized) search term match nothing.
+                // ILIKE sidesteps that translation gap entirely.
+                var likeMethod = typeof(NpgsqlDbFunctionsExtensions).GetMethod(
+                    nameof(NpgsqlDbFunctionsExtensions.ILike),
                     new[] { typeof(DbFunctions), typeof(string), typeof(string) });
 
                 foreach (var propertyName in searchProperties)
@@ -80,16 +84,11 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
                     if (property != null && property.PropertyType == typeof(string))
                     {
                         var propertyExpression = Expression.Property(parameter, property);
-                        // Lower-case the property value so the comparison is case-insensitive,
-                        // matching the searchTerm which is already lower-cased above.
-                        var toLowerMethod = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes);
-                        var lowerPropertyExpression = Expression.Call(propertyExpression, toLowerMethod!);
-                        // Create the EF.Functions.Like call
                         var likeCall = Expression.Call(
                             null,
                             likeMethod!,
                             Expression.Property(null, typeof(EF).GetProperty(nameof(EF.Functions))!),
-                            lowerPropertyExpression,
+                            propertyExpression,
                             Expression.Constant($"%{searchTerm}%"));
 
                         searchExpression = searchExpression == null ? likeCall : Expression.OrElse(searchExpression, likeCall);
@@ -105,7 +104,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
             else
             {
                 // Default to searching by Id
-                query = query.Where(e => EF.Functions.Like(e.Id.ToLower(), $"%{searchTerm}%"));
+                query = query.Where(e => EF.Functions.ILike(e.Id, $"%{searchTerm}%"));
             }
         }
 
@@ -314,6 +313,14 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return await DbSet
             .Where(e => !e.IsDeleted)
             .FirstOrDefaultAsync(predicate);
+    }
+
+    public virtual async Task<IEnumerable<T>> GetAllByPredicateAsync(Expression<Func<T, bool>> predicate)
+    {
+        return await DbSet
+            .Where(e => !e.IsDeleted)
+            .Where(predicate)
+            .ToListAsync();
     }
 
     public virtual async Task<bool> ExistsByPredicateAsync(Expression<Func<T, bool>> predicate)

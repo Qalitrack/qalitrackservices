@@ -363,24 +363,27 @@ export default function SystemSettings() {
     >
       {/* Header */}
       <div
-        className={`px-6 py-4 border-b shrink-0 ${
-          isDark
-            ? "bg-gray-800 border-gray-700"
-            : "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-200"
-        }`}
+        className={`px-4 py-2.5 border-b shrink-0 ${isDark ? "bg-gray-800 border-gray-700" : "border-white/10"}`}
+        style={isDark ? undefined : { backgroundColor: "var(--cs-appbar-bg)" }}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
-              <Settings className="w-5 h-5 text-white" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-lg shrink-0">
+              <Settings className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <h1 className={`text-xl font-black ${isDark ? "text-white" : "text-gray-900"}`}>
+              <div
+                className="text-sm font-black leading-tight"
+                style={{ color: isDark ? "#ffffff" : "var(--cs-appbar-text)" }}
+              >
                 System Settings
-              </h1>
-              <p className={`text-xs ${isDark ? "text-gray-400" : "text-gray-500"}`}>
+              </div>
+              <div
+                className="text-[11px] leading-tight"
+                style={{ color: isDark ? "#9ca3af" : "var(--cs-appbar-text)", opacity: isDark ? 1 : 0.7 }}
+              >
                 Configure hardware, tickets, kiosk, security, and integrations
-              </p>
+              </div>
             </div>
           </div>
 
@@ -389,17 +392,17 @@ export default function SystemSettings() {
               onClick={handleReset}
               icon={<RotateCcw className="w-4 h-4" />}
               disabled={loading || saving}
-              className={`${isDark ? "border-gray-700 text-gray-300" : ""}`}
+              className={isDark ? "border-gray-700 text-gray-300" : "cs-solid-chip-btn"}
             >
               Reset
             </Button>
             <Button
-              type="primary"
               onClick={handleSave}
               loading={saving}
               disabled={loading}
               icon={<Save className="w-4 h-4" />}
-              className="bg-gradient-to-r from-amber-500 to-orange-600 border-0 shadow-md"
+              className="border-0 shadow-md"
+              style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
             >
               Save Settings
             </Button>
@@ -434,6 +437,19 @@ export default function SystemSettings() {
       </div>
     </div>
   );
+}
+
+// Picks readable text (dark or white) for whatever color a card's background
+// happens to be — needed because each scheme's preview[2] swatch varies from
+// near-white (Amber/Indigo) to a mid-tone gray (Navy), so a single hardcoded
+// text-gray-500 reads fine on some schemes and washes out on others.
+function getContrastTextColor(hex) {
+  const c = hex.replace("#", "");
+  const r = parseInt(c.substring(0, 2), 16);
+  const g = parseInt(c.substring(2, 4), 16);
+  const b = parseInt(c.substring(4, 6), 16);
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  return luminance > 0.6 ? "#111827" : "#ffffff";
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
@@ -553,6 +569,7 @@ function GeneralTab({ settings, setField, isDark }) {
         <div className="grid grid-cols-3 gap-3">
           {Object.entries(COLOR_SCHEMES).map(([key, scheme]) => {
             const isActive = colorScheme === key;
+            const textColor = isActive ? getContrastTextColor(scheme.preview[2]) : undefined;
             return (
               <button
                 key={key}
@@ -593,8 +610,8 @@ function GeneralTab({ settings, setField, isDark }) {
                   ))}
                 </div>
 
-                <p className="text-sm font-bold text-gray-800">{scheme.name}</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">{scheme.description}</p>
+                <p className="text-sm font-bold" style={{ color: textColor ?? "#1f2937" }}>{scheme.name}</p>
+                <p className="text-[10px] mt-0.5" style={{ color: textColor ?? "#6b7280", opacity: textColor ? 0.75 : 1 }}>{scheme.description}</p>
               </button>
             );
           })}
@@ -1080,7 +1097,7 @@ function InfoRow({ label, value, badge }) {
         {badge && (
           <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full
             ${badge.color === "green"  ? "bg-green-100 text-green-700"  : ""}
-            ${badge.color === "orange" ? "bg-orange-100 text-orange-700" : ""}
+            ${badge.color === "orange" ? "bg-amber-100 text-amber-700" : ""}
             ${badge.color === "red"    ? "bg-red-100 text-red-700"      : ""}
           `}>
             {badge.text}
@@ -1132,7 +1149,7 @@ const borderColorMap = {
   green: "border-green-200",
   purple: "border-purple-200",
   blue: "border-blue-200",
-  orange: "border-orange-200",
+  orange: "border-amber-200",
   indigo: "border-indigo-200",
 };
 

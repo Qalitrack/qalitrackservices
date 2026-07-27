@@ -160,7 +160,7 @@ function PlateCard({ cameraId, onPlateConfirmed }) {
 function StatusBadge({ label, color, pulse }) {
   const colors = {
     amber: "bg-amber-500 text-black",
-    orange: "bg-orange-500 text-black",
+    orange: "bg-amber-500 text-black",
     yellow: "bg-yellow-600 text-white",
     red: "bg-red-600 text-white",
   };
@@ -181,7 +181,7 @@ function StatusBadge({ label, color, pulse }) {
 function FooterText({ main, sub, color }) {
   const colors = {
     amber: "text-amber-400",
-    orange: "text-orange-400",
+    orange: "text-amber-400",
     yellow: "text-yellow-400",
   };
 

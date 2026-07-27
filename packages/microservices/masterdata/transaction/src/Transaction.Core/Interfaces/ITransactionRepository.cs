@@ -12,6 +12,9 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
     
     // Paginated queries with filters
     Task<PagedResult<WeighbridgeTransaction>> GetPagedAsync(WeighbridgeTransactionFilter filter);
+
+    // Aggregated dashboard stats — computed server-side instead of shipping raw rows to the client
+    Task<TransactionStatsDto> GetStatsAsync();
     
     // Get incomplete transactions for a vehicle (to allow continuation)
     Task<List<WeighbridgeTransaction>> GetIncompleteTransactionsByVehicleAsync(string noPlate);

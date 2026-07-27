@@ -100,3 +100,44 @@ export const getVehicleDrivers = (id) =>
 export const updateVehicleStatus = (id, status) => {
   return handleRequest(apiClient.post(`/MasterData/Vehicles/${id}/status`, { status }));
 };
+
+// ✅ Patch a single relationship field (transporterId or supplierId) on a
+// vehicle. There's no dedicated backend endpoint for this (unlike owners,
+// which has /vehicles/assign) — the update endpoint requires the full
+// vehicle payload, so this fetches the current record and resubmits it with
+// just that one field changed. Pass `null` to clear the relationship.
+export const patchVehicleRelation = async (vehicleId, field, value) => {
+  const response = await getVehicleById(vehicleId);
+  const vehicle = response?.data || response;
+
+  const payload = {
+    registrationNumber: vehicle.registrationNumber,
+    type: vehicle.type,
+    status: vehicle.status || "Active",
+    ownerId: vehicle.ownerId,
+    axleConfigurationId: vehicle.axleConfigurationId,
+    supplierId: vehicle.supplierId || undefined,
+    transporterId: vehicle.transporterId || undefined,
+    make: vehicle.make || undefined,
+    model: vehicle.model || undefined,
+    color: vehicle.color || undefined,
+    chassisNumber: vehicle.chassisNumber || undefined,
+    engineNumber: vehicle.engineNumber || undefined,
+    vehicleClass: vehicle.vehicleClass || undefined,
+    bodyType: vehicle.bodyType || undefined,
+    insurancePolicyNumber: vehicle.insurancePolicyNumber || undefined,
+    roadWorthinessNumber: vehicle.roadWorthinessNumber || undefined,
+    yearOfManufacture: vehicle.yearOfManufacture || undefined,
+    grossWeight: vehicle.grossWeight || undefined,
+    tareWeight: vehicle.tareWeight || undefined,
+    netWeightCapacity: vehicle.netWeightCapacity || undefined,
+    seatingCapacity: vehicle.seatingCapacity || undefined,
+    fuelTankCapacity: vehicle.fuelTankCapacity || undefined,
+    insuranceExpiryDate: vehicle.insuranceExpiryDate || undefined,
+    roadWorthinessExpiryDate: vehicle.roadWorthinessExpiryDate || undefined,
+    driverIds: vehicle.driverIds?.length ? vehicle.driverIds : undefined,
+    [field]: value ?? null,
+  };
+
+  return updateVehicle(vehicleId, payload);
+};

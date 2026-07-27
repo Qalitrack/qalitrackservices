@@ -46,16 +46,37 @@ namespace UserService.Api.Controllers
             try
             {
                 var user = await _userService.CreateAsync(createUserDto);
-                return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+                return CreatedAtAction(nameof(GetById), new { id = user.Id }, new
+                {
+                    user,
+                    // Welcome emails don't always arrive (remote users, flaky SMTP) —
+                    // surface the password here so the admin can relay it out-of-band.
+                    // Echoes back whichever password ends up set: the admin's own
+                    // custom one, or the default when they left it blank.
+                    temporaryPassword = string.IsNullOrWhiteSpace(createUserDto.Password)
+                        ? global::UserService.Core.Services.UserService.DefaultTemporaryPassword
+                        : createUserDto.Password
+                });
             }
             catch (System.ComponentModel.DataAnnotations.ValidationException ex)
             {
                 _logger.LogWarning(ex, "Validation error creating user");
-                return BadRequest(new { 
-                    Success = false, 
-                    Message = ex.Message, 
-                    Errors = (string[]?)null, 
-                    StatusCode = 400 
+                return BadRequest(new {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[]?)null,
+                    StatusCode = 400
+                });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Thrown when an admin-supplied password fails the org password policy.
+                _logger.LogWarning(ex, "Password policy violation creating user");
+                return BadRequest(new {
+                    Success = false,
+                    Message = ex.Message,
+                    Errors = (string[]?)null,
+                    StatusCode = 400
                 });
             }
             catch (Microsoft.EntityFrameworkCore.DbUpdateException ex) when (ex.InnerException is Npgsql.PostgresException pgEx)
@@ -288,8 +309,8 @@ namespace UserService.Api.Controllers
         {
             try
             {
-                var result = await _userService.ResetUserPasswordAsync(userId);
-                if (!result)
+                var temporaryPassword = await _userService.ResetUserPasswordAsync(userId);
+                if (temporaryPassword == null)
                 {
                     return NotFound(new
                     {
@@ -302,7 +323,10 @@ namespace UserService.Api.Controllers
                 return Ok(new
                 {
                     Success = true,
-                    Message = "Password reset initiated successfully"
+                    Message = "Password reset initiated successfully",
+                    // Reset emails don't always arrive (remote users, flaky SMTP) —
+                    // surface the temp password so the admin can relay it out-of-band.
+                    TemporaryPassword = temporaryPassword
                 });
             }
             catch (KeyNotFoundException ex)

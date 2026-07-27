@@ -253,7 +253,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
               <p className={`text-sm mb-1 ${isDark ? "text-gray-400" : "text-gray-500"}`}>{streamError}</p>
               <p className="text-xs font-mono mb-5 text-gray-400">{nfcStreamUrl}</p>
               <button onClick={handleReconnect}
-                className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-amber-500 to-orange-500 shadow-md hover:shadow-lg transition-all">
+                className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-amber-500 to-amber-500 shadow-md hover:shadow-lg transition-all">
                 Reconnect
               </button>
             </div>
@@ -270,7 +270,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
                       style={{ borderColor: "rgba(217,119,6,0.25)", transform: `scale(${1 + (ph / 3) * 0.6})`, opacity: 1 - (ph / 3) * 0.85 }} />
                   );
                 })}
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-2xl">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-2xl">
                   <svg className="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 017.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 011.06 0z" />
                   </svg>
@@ -292,7 +292,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
           {/* Looking up */}
           {lookupStatus === "loading" && (
             <div className="text-center py-10">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-xl">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-xl">
                 <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
               </div>
               <h4 className={`text-xl font-bold mb-1 ${isDark ? "text-white" : "text-gray-900"}`}>Authenticating…</h4>
@@ -319,7 +319,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
 
               <div className={`rounded-2xl border-2 p-5 ${isDark ? "bg-gray-800 border-green-800" : "bg-green-50 border-green-200"}`}>
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center flex-shrink-0 shadow-lg">
                     <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                     </svg>
@@ -369,7 +369,7 @@ export default function AuthenticationMethodModal({ visible, onClose, onSelectNF
               <p className="font-mono text-sm mb-5 px-3 py-1.5 rounded-lg inline-block bg-amber-50 text-amber-700 border border-amber-200">{nfcCode}</p>
               <br />
               <button onClick={handleRetry}
-                className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-amber-500 to-orange-500 shadow-md hover:shadow-lg transition-all">
+                className="px-5 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r from-amber-500 to-amber-500 shadow-md hover:shadow-lg transition-all">
                 Try Again
               </button>
             </div>

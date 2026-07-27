@@ -11,7 +11,7 @@ import {
   updateTransactionApi,
   fetchReweighRecords,
 } from "../store/weighingSlice";
-import { Eye, Search, Filter, X } from "lucide-react";
+import { Eye, Search, Filter, X, CheckCircle2 } from "lucide-react";
 import TransactionDrawer from "../components/transaction/TransactionDrawer";
 import ExportPreviewModal from "../components/transaction/ExportPreviewModal";
 import { getTransactionColumns, formatTurnaroundTimeSimple } from "../components/transaction/transactionColumns";
@@ -19,7 +19,6 @@ import { getTransactionColumns, formatTurnaroundTimeSimple } from "../components
 // ─── Theme utilities ──────────────────────────────────────────────────────────
 import {
   getTicketSettings,
-  TICKET_THEMES,
 } from "../utils/ticketThemeConfig";
 
 const { RangePicker } = DatePicker;
@@ -80,8 +79,10 @@ export default function Transactions() {
       pageSize: filters.pageSize,
     };
 
-    if (filters.search) params.search = filters.search;
-
+    // Search is applied client-side below (see filteredTransactions) instead
+    // of sent to the backend — the Transaction endpoint's `search` param only
+    // matches TransactionNumber, so a driver/vehicle/commodity search sent to
+    // the server would come back empty even though matches exist on this page.
     if (filters.dateRange && filters.dateRange[0] && filters.dateRange[1]) {
       params.startDate = filters.dateRange[0].format("YYYY-MM-DD");
       params.endDate = filters.dateRange[1].format("YYYY-MM-DD");
@@ -99,7 +100,6 @@ export default function Transactions() {
     dispatch,
     filters.page,
     filters.pageSize,
-    filters.search,
     filters.dateRange,
     filters.startDate,
     filters.endDate,
@@ -110,6 +110,23 @@ export default function Transactions() {
 
   const filteredTransactions = React.useMemo(() => {
     let filtered = transactions || [];
+
+    if (filters.search) {
+      const q = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (t) =>
+          t.receiptNo?.toLowerCase().includes(q) ||
+          t.noPlate?.toLowerCase().includes(q) ||
+          t.driverName?.toLowerCase().includes(q) ||
+          t.commodityName?.toLowerCase().includes(q) ||
+          t.supplierName?.toLowerCase().includes(q) ||
+          t.transporterName?.toLowerCase().includes(q) ||
+          t.customerName?.toLowerCase().includes(q) ||
+          t.originName?.toLowerCase().includes(q) ||
+          t.destinationName?.toLowerCase().includes(q) ||
+          t.weighBridgeName?.toLowerCase().includes(q)
+      );
+    }
 
     if (filters.status) {
       if (filters.status === "completed") {
@@ -175,8 +192,7 @@ export default function Transactions() {
   }, [transactions, filters]);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => loadTransactions(), filters.search ? 500 : 0);
-    return () => clearTimeout(timeoutId);
+    loadTransactions();
   }, [loadTransactions]);
 
   const activeFilterCount = Object.entries(filters).filter(([key, value]) => {
@@ -261,11 +277,6 @@ export default function Transactions() {
     loadTransactions();
   };
 
-  const { currentThemeMeta, themePreviewColor } = React.useMemo(() => {
-    const meta = TICKET_THEMES[ticketSettings.ticketTheme] || TICKET_THEMES.modern;
-    return { currentThemeMeta: meta, themePreviewColor: meta.preview.header };
-  }, [ticketSettings.ticketTheme]);
-
   const columns = React.useMemo(
     () => getTransactionColumns({ filters, openViewDrawer, setReweighModal }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -273,41 +284,27 @@ export default function Transactions() {
   );
 
   return (
-    <div className="h-screen flex flex-col bg-white">
-      {/* Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200 shrink-0">
+    <div className="h-full flex flex-col bg-white">
+      {/* Header — experiment: app bar filled with the scheme's primary color */}
+      <div
+        className="px-3 py-2 shrink-0"
+        style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}
+      >
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
-              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <svg className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
             </div>
             <div>
-              <div className="text-[11px] font-bold text-gray-900 leading-tight">Transactions</div>
-              <div className="text-[9px] text-amber-700 font-medium leading-tight">
+              <div className="text-[11px] font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Transactions</div>
+              <div className="text-[9px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 <span className="font-semibold">{filteredTransactions.length}</span> of{" "}
                 <span className="font-semibold">{total || 0}</span>
               </div>
-            </div>
-
-            {/* Live theme indicator */}
-            <div
-              className="flex items-center gap-1.5 ml-2 px-2 py-0.5 rounded-full border text-[9px] font-bold"
-              style={{
-                borderColor: themePreviewColor,
-                color: themePreviewColor,
-                backgroundColor: `${themePreviewColor}15`,
-              }}
-              title="Active ticket theme — change in System Settings → Tickets & Printing"
-            >
-              <span
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: themePreviewColor }}
-              />
-              {currentThemeMeta.name} theme
             </div>
           </div>
 
@@ -316,45 +313,53 @@ export default function Transactions() {
               allowClear
               placeholder="Search..."
               prefix={<Search size={10} className="text-gray-400" />}
-              className="w-52 h-7 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+              className="qt-filter-field w-52 h-7 text-[11px] rounded-md border-gray-300 shadow-sm"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })}
             />
 
+            <Button
+              icon={<Filter size={14} />}
+              className={`h-7 text-[11px] font-medium border shadow-none ${showFilters ? "" : "cs-ghost-btn"}`}
+              style={
+                showFilters
+                  // Inverted chip (white fill + the bar's own dark color as text) instead of
+                  // filling with --cs-icon-accent: for Navy, iconAccent (gold) happens to
+                  // differ from appBarBg (navy) so a gold fill would've popped, but Indigo's
+                  // iconAccent === its own primary === its own appBarBg, so that fill would
+                  // vanish into the bar. White-on-dark-bar-color works for any dark app-bar,
+                  // and (since text follows appBarBg) amber-on-white for Amber's bright bar too.
+                  ? { backgroundColor: "#ffffff", borderColor: "#ffffff", color: "var(--cs-appbar-bg)" }
+                  : undefined
+              }
+              onClick={() => setShowFilters(!showFilters)}
+            >
+              Filters
+            </Button>
+
             {activeFilterCount > 0 && (
-              <span className="text-[9px] text-amber-900 font-bold bg-gradient-to-r from-amber-100 to-amber-200 px-2 py-0.5 rounded-full border border-amber-300 shadow-sm">
-                🎯 {activeFilterCount} active
+              <span className="h-7 text-[10px] font-bold px-3 rounded border shadow-sm flex items-center gap-1 cs-appbar-badge">
+                <CheckCircle2 size={10} style={{ color: "var(--cs-icon-accent)" }} />
+                {activeFilterCount} active
               </span>
             )}
 
             {activeFilterCount > 0 && (
               <Button
                 size="small"
-                danger
                 icon={<X size={12} />}
                 onClick={clearFilters}
-                className="h-7 text-[10px] font-semibold shadow-sm rounded bg-red-50 border-red-300 text-red-700 hover:bg-red-100"
+                className="h-7 text-[10px] font-semibold shadow-sm rounded cs-ghost-btn"
               >
                 Clear
               </Button>
             )}
 
-            <Button
-              icon={<Filter size={14} />}
-              className={`h-7 text-[11px] font-medium ${
-                showFilters
-                  ? "bg-gradient-to-r from-amber-500 to-orange-600 text-white border-amber-500"
-                  : "border-gray-300 hover:border-amber-500 hover:text-amber-600"
-              }`}
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              Filters
-            </Button>
+            <div className="w-px h-5 mx-1 cs-appbar-divider" />
 
             <Button
-              type="primary"
               icon={<ReloadOutlined />}
-              className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 border-0 h-7 text-[10px] font-semibold text-white shadow-sm"
+              className="h-7 text-[10px] font-semibold cs-solid-chip-btn shadow-none"
               onClick={loadTransactions}
               loading={loading}
             >
@@ -364,17 +369,19 @@ export default function Transactions() {
         </div>
       </div>
 
-      {/* Filters Panel */}
+
+      {/* Filters Panel — one consistent 5-column grid throughout so every
+          field's edges line up across rows, and 15 fields fill exactly
+          3 rows of 5 with no leftover space. */}
       {showFilters && (
-        <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border-b border-amber-200 px-3 py-2 shrink-0">
-          {/* Row 1 */}
-          <div className="grid grid-cols-5 gap-2 mb-2">
+        <div className="bg-gray-50 border-b border-gray-200 px-4 py-4 shrink-0">
+          <div className="grid grid-cols-5 gap-3 mb-3">
             <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                 <span className="w-1 h-1 bg-amber-500 rounded-full" /> Date Range
               </label>
               <RangePicker
-                className="w-full h-6 text-[10px] border-amber-300"
+                className="qt-filter-field w-full h-8 text-[11px] rounded-lg border-gray-300"
                 value={filters.dateRange}
                 onChange={(d) =>
                   setFilters({ ...filters, dateRange: d, startDate: "", endDate: "", page: 1 })
@@ -384,33 +391,33 @@ export default function Transactions() {
               />
             </div>
             <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                 <span className="w-1 h-1 bg-amber-500 rounded-full" /> Start Time
               </label>
               <input
                 type="time"
                 value={filters.startTime}
                 onChange={(e) => setFilters({ ...filters, startTime: e.target.value, page: 1 })}
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2"
+                className="qt-filter-field w-full h-8 text-[11px] rounded-lg border border-gray-300 px-2"
               />
             </div>
             <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                 <span className="w-1 h-1 bg-amber-500 rounded-full" /> End Time
               </label>
               <input
                 type="time"
                 value={filters.endTime}
                 onChange={(e) => setFilters({ ...filters, endTime: e.target.value, page: 1 })}
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2"
+                className="qt-filter-field w-full h-8 text-[11px] rounded-lg border border-gray-300 px-2"
               />
             </div>
             <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                 <span className="w-1 h-1 bg-amber-500 rounded-full" /> Status
               </label>
               <select
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2"
+                className="qt-filter-field w-full h-8 text-[11px] rounded-lg border border-gray-300 px-2"
                 value={filters.status || ""}
                 onChange={(e) => setFilters({ ...filters, status: e.target.value || null, page: 1 })}
               >
@@ -420,12 +427,12 @@ export default function Transactions() {
               </select>
             </div>
             <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                 <span className="w-1 h-1 bg-amber-500 rounded-full" /> Vehicle
               </label>
               <Input
                 placeholder="Vehicle..."
-                className="h-6 text-[10px] border-amber-300"
+                className="qt-filter-field h-8 text-[11px] rounded-lg border-gray-300"
                 value={filters.vehicle || ""}
                 onChange={(e) => setFilters({ ...filters, vehicle: e.target.value, page: 1 })}
                 allowClear
@@ -433,69 +440,47 @@ export default function Transactions() {
             </div>
           </div>
 
-          {/* Row 2 */}
-          <div className="grid grid-cols-6 gap-2 mb-2">
+          <div className="grid grid-cols-5 gap-3">
             {[
-              ["driver", "Driver"],
-              ["commodity", "Commodity"],
-              ["supplier", "Supplier"],
-              ["transporter", "Transporter"],
-              ["customer", "Customer"],
-              ["operator", "Operator"],
-            ].map(([key, label]) => (
+              ["driver", "Driver", "text"],
+              ["commodity", "Commodity", "text"],
+              ["supplier", "Supplier", "text"],
+              ["transporter", "Transporter", "text"],
+              ["customer", "Customer", "text"],
+              ["operator", "Operator", "text"],
+              ["origin", "Origin", "text"],
+              ["destination", "Destination", "text"],
+              ["weighbridge", "Weighbridge", "text"],
+              ["weighMode", "Mode", "select"],
+            ].map(([key, label, type]) => (
               <div key={key}>
-                <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
+                <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                   <span className="w-1 h-1 bg-amber-500 rounded-full" /> {label}
                 </label>
-                <Input
-                  placeholder={`${label}...`}
-                  className="h-6 text-[10px] border-amber-300"
-                  value={filters[key] || ""}
-                  onChange={(e) => setFilters({ ...filters, [key]: e.target.value, page: 1 })}
-                  allowClear
-                />
+                {type === "select" ? (
+                  <select
+                    className="qt-filter-field w-full h-8 text-[11px] rounded-lg border border-gray-300 px-2"
+                    value={filters.weighMode || ""}
+                    onChange={(e) =>
+                      setFilters({ ...filters, weighMode: e.target.value || null, page: 1 })
+                    }
+                  >
+                    <option value="">All</option>
+                    <option value="single">Single</option>
+                    <option value="double">Double</option>
+                    <option value="auto">Auto</option>
+                  </select>
+                ) : (
+                  <Input
+                    placeholder={`${label}...`}
+                    className="qt-filter-field h-8 text-[11px] rounded-lg border-gray-300"
+                    value={filters[key] || ""}
+                    onChange={(e) => setFilters({ ...filters, [key]: e.target.value, page: 1 })}
+                    allowClear
+                  />
+                )}
               </div>
             ))}
-          </div>
-
-          {/* Row 3 */}
-          <div className="grid grid-cols-6 gap-2">
-            {[
-              ["origin", "Origin"],
-              ["destination", "Destination"],
-              ["weighbridge", "Weighbridge"],
-            ].map(([key, label]) => (
-              <div key={key}>
-                <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                  <span className="w-1 h-1 bg-amber-500 rounded-full" /> {label}
-                </label>
-                <Input
-                  placeholder={`${label}...`}
-                  className="h-6 text-[10px] border-amber-300"
-                  value={filters[key] || ""}
-                  onChange={(e) => setFilters({ ...filters, [key]: e.target.value, page: 1 })}
-                  allowClear
-                />
-              </div>
-            ))}
-            <div>
-              <label className="text-[9px] font-semibold text-gray-700 mb-0.5 block flex items-center gap-1">
-                <span className="w-1 h-1 bg-amber-500 rounded-full" /> Mode
-              </label>
-              <select
-                className="w-full h-6 text-[10px] rounded border border-amber-300 px-2"
-                value={filters.weighMode || ""}
-                onChange={(e) =>
-                  setFilters({ ...filters, weighMode: e.target.value || null, page: 1 })
-                }
-              >
-                <option value="">All</option>
-                <option value="single">Single</option>
-                <option value="double">Double</option>
-                <option value="auto">Auto</option>
-              </select>
-            </div>
-            <div className="col-span-2" />
           </div>
         </div>
       )}
@@ -514,7 +499,7 @@ export default function Transactions() {
             pagination={{
               current: filters.page,
               pageSize: filters.pageSize,
-              total: filteredTransactions.length,
+              total: total || 0,
               showSizeChanger: true,
               showTotal: (total) => `${total} records`,
               size: "small",

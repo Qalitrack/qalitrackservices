@@ -58,6 +58,8 @@ ipcMain.handle('get-machine-id', () => getMachineId());
 
 // ─────────────────────────────────────────────────────────────────────────────
 
+let mainWindow = null;
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
@@ -69,6 +71,9 @@ function createWindow() {
       webSecurity: !isDev,
     }
   });
+
+  mainWindow = win;
+  win.on('closed', () => { mainWindow = null; });
 
   if (isDev) {
     win.loadURL(process.env.VITE_DEV_SERVER_URL || 'http://localhost:5173');
@@ -85,16 +90,35 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+// A second launch of the app opens its own Electron process pointed at the
+// same userData profile. The two processes then race to open Chromium's
+// LevelDB-backed localStorage store — the loser silently falls back to an
+// empty store for that session, so a license already activated in the first
+// window reads back as "not activated" in the second. Enforcing a single
+// instance and focusing the existing window instead avoids the race entirely.
+const gotSingleInstanceLock = app.requestSingleInstanceLock();
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
+if (!gotSingleInstanceLock) {
+  app.quit();
+} else {
+  app.on('second-instance', () => {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
+  app.whenReady().then(createWindow);
+
+  app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+      app.quit();
+    }
+  });
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+}

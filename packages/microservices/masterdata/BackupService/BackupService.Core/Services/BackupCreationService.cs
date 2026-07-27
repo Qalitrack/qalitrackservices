@@ -21,6 +21,7 @@ public class BackupCreationService : IBackupCreationService
     private readonly SemaphoreSlim _operationLock = new(1, 1);
     private readonly int _commandTimeoutMinutes;
     private readonly int _connectionTestTimeoutSeconds;
+    private readonly string _backupPath;
 
     private static class PostgreSQLCommands
     {
@@ -49,11 +50,17 @@ public class BackupCreationService : IBackupCreationService
         _logger = logger;
         _commandTimeoutMinutes = configuration.GetValue<int>("Backup:CommandTimeoutMinutes", 30);
         _connectionTestTimeoutSeconds = configuration.GetValue<int>("Backup:ConnectionTestTimeoutSeconds", 10);
+        // Was hardcoded to "/app/backups" (lowercase), ignoring the Backup__Path
+        // env var entirely — which docker-compose sets to "/app/Backups"
+        // (capital B, matching the mounted volume). On Linux those are two
+        // different directories, so backups were being written outside the
+        // persisted volume and lost on container restart/recreate.
+        _backupPath = configuration.GetValue<string>("Backup:Path", "/app/backups")!;
     }
 
     public async Task<BackupResult> CreateBackupAsync(BackupType backupType, string microservice, CancellationToken ct = default)
     {
-        var saveLocation = "/app/backups";
+        var saveLocation = _backupPath;
         await CheckPostgreSqlToolVersionsAsync(ct);
         if (backupType != BackupType.Full)
         {

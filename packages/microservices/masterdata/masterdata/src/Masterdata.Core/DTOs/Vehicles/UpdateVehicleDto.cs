@@ -73,8 +73,11 @@ public class UpdateVehicleDto
     public string? SupplierId { get; set; }
     public string? TransporterId { get; set; }
 
-    [Required(ErrorMessage = "Owner ID is required")]
-    public string OwnerId { get; set; } = null!;
+    // Not [Required]: Vehicle.OwnerId is nullable on the entity (a vehicle
+    // can be unassigned from an owner via /Owners/{id}/vehicles/remove),
+    // so the update endpoint must accept saving an already-ownerless
+    // vehicle. Creation still requires an owner (CreateVehicleDto).
+    public string? OwnerId { get; set; }
 
     [Required(ErrorMessage = "Axle configuration ID is required")]
     public string AxleConfigurationId { get; set; } = null!;

@@ -216,7 +216,7 @@ export default function ReportScheduler({ transactions = [] }) {
 
       {/* SCHEDULES LIST */}
       <div className="bg-white border border-amber-200 rounded-lg overflow-hidden">
-        <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-200">
+        <div className="p-3 bg-gradient-to-r from-amber-50 to-amber-50 border-b border-amber-200">
           <h3 className="text-sm font-bold text-gray-900">Scheduled Reports</h3>
         </div>
 

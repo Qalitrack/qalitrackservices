@@ -84,17 +84,27 @@ function groupIntoCycles(records) {
   return cycles
 }
 
-// ─── CIRCULAR LOGO HELPER ─────────────────────────────────────────────────────
+// ─── LOGO HELPER — scaled to fit, never cropped ──────────────────────────────
 async function buildCircularLogo(src) {
   try {
     const img = await new Promise((res, rej) => {
       const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src
     })
-    const sz = Math.min(img.naturalWidth, img.naturalHeight)
+    const sz  = 200
+    const pad = sz * 0.06
     const cv = document.createElement("canvas"); cv.width = sz; cv.height = sz
     const ctx = cv.getContext("2d")
-    ctx.beginPath(); ctx.arc(sz / 2, sz / 2, sz / 2, 0, Math.PI * 2); ctx.clip()
-    ctx.drawImage(img, (img.naturalWidth - sz) / 2, (img.naturalHeight - sz) / 2, sz, sz, 0, 0, sz, sz)
+    const avail  = sz - pad * 2
+    const aspect = img.naturalWidth / img.naturalHeight
+    const drawW  = aspect >= 1 ? avail : avail * aspect
+    const drawH  = aspect >= 1 ? avail / aspect : avail
+    ctx.drawImage(img, (sz - drawW) / 2, (sz - drawH) / 2, drawW, drawH)
+    const imgData = ctx.getImageData(0, 0, sz, sz)
+    const px = imgData.data
+    for (let p = 0; p < px.length; p += 4) {
+      if (px[p] > 240 && px[p + 1] > 240 && px[p + 2] > 240) px[p + 3] = 0
+    }
+    ctx.putImageData(imgData, 0, 0)
     return cv.toDataURL("image/png")
   } catch (_) { return null }
 }
@@ -405,7 +415,6 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
       }),
       styles: { fontSize: 6.5, cellPadding: 1.5, textColor: black, lineColor: borderCol },
       headStyles: { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 7, halign: "center", lineColor: accentDark },
-      alternateRowStyles: { fillColor: [252, 252, 252] },
       columnStyles: {
         0:  { halign: "center", cellWidth: 6 },
         6:  { halign: "right" },
@@ -588,7 +597,6 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
         }),
         styles:           { fontSize: 6.5, cellPadding: 1.8, textColor: black, lineColor: lgray },
         headStyles:       { fillColor: accent, textColor: accentHeaderText, fontStyle: "bold", fontSize: 7, halign: "center", lineColor: accentDark },
-        alternateRowStyles: { fillColor: [250, 250, 250] },
         columnStyles: {
           0: { halign: "center", cellWidth: 7 },
           1: { halign: "center", cellWidth: 17 },
@@ -792,7 +800,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
     <div className="space-y-3">
 
       {/* ── FILTER BAR ──────────────────────────────────────────────────────── */}
-      <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-orange-50/20 border border-amber-200 rounded-lg p-3">
+      <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20 border border-amber-200 rounded-lg p-3">
         <div className="flex justify-between items-center mb-2">
           <span className="text-[10px] font-bold text-gray-900 uppercase tracking-wide">
             Reweigh Transactions
@@ -895,21 +903,21 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
 
       {/* ── KPIs ────────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-4 gap-3">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-gray-700 uppercase font-semibold tracking-wide">Total</p>
-          <p className="text-xl font-bold leading-tight text-amber-900">{kpis.total}</p>
+        <div className="bg-white border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Total</p>
+          <p className="text-xl font-bold leading-tight text-gray-900">{kpis.total}</p>
         </div>
-        <div className="bg-amber-100 border border-amber-300 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-amber-900 uppercase font-semibold tracking-wide">Pending</p>
-          <p className="text-xl font-bold leading-tight text-amber-950">{kpis.pending}</p>
+        <div className="bg-white border border-amber-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Pending</p>
+          <p className="text-xl font-bold leading-tight text-gray-900">{kpis.pending}</p>
         </div>
-        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-green-700 uppercase font-semibold tracking-wide">Approved</p>
-          <p className="text-xl font-bold leading-tight text-green-900">{kpis.approved}</p>
+        <div className="bg-white border border-green-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Approved</p>
+          <p className="text-xl font-bold leading-tight text-green-700">{kpis.approved}</p>
         </div>
-        <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 shadow-sm">
-          <p className="text-[10px] text-red-700 uppercase font-semibold tracking-wide">Rejected</p>
-          <p className="text-xl font-bold leading-tight text-red-900">{kpis.rejected}</p>
+        <div className="bg-white border border-red-200 rounded-lg px-3 py-2 shadow-sm">
+          <p className="text-[10px] text-gray-600 uppercase font-semibold tracking-wide">Rejected</p>
+          <p className="text-xl font-bold leading-tight text-red-700">{kpis.rejected}</p>
         </div>
       </div>
 
@@ -963,7 +971,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                     </td>
                     <td className="p-2 text-[10px] font-medium">{t.driverName || "-"}</td>
                     <td className="p-2 text-[10px] text-gray-600">{t.commodityName || "-"}</td>
-                    <td className="p-2 text-right text-[10px] font-bold text-orange-600">
+                    <td className="p-2 text-right text-[10px] font-bold text-amber-600">
                       {t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}
                     </td>
                     <td className="p-2 text-right text-[10px] font-bold text-blue-600">
@@ -1072,7 +1080,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                           <td className="p-2 font-medium">{t.driverName || "-"}</td>
                           <td className="p-2 text-gray-600">{t.commodityName || "-"}</td>
                           <td className="p-2 text-gray-600 max-w-[140px] truncate">{row.requestRecord?.reason || t.reweighPermission || "-"}</td>
-                          <td className="p-2 text-right font-bold text-orange-600">{t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}</td>
+                          <td className="p-2 text-right font-bold text-amber-600">{t.firstWeight ? parseFloat(t.firstWeight).toLocaleString() : "-"}</td>
                           <td className="p-2 text-right font-bold text-blue-600">{t.secondWeight ? parseFloat(t.secondWeight).toLocaleString() : "-"}</td>
                           <td className="p-2 text-right font-bold text-amber-700">{t.netWeight ? parseFloat(t.netWeight).toLocaleString() : "-"}</td>
                           <td className="p-2 font-medium">{row.record?.performedBy || "-"}</td>
@@ -1107,7 +1115,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
           <div className="bg-white rounded-xl w-full max-w-3xl max-h-[90vh] flex flex-col shadow-2xl">
 
             {/* Modal header */}
-            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 rounded-t-xl">
+            <div className="p-4 border-b bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 rounded-t-xl">
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-base font-black text-gray-900">Reweigh Details</h2>

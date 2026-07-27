@@ -297,7 +297,7 @@ const Attendance = () => {
                             id="page-size"
                             value={pagination.pageSize}
                             onChange={handlePageSizeChange}
-                            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
+                            className="block w-full rounded-md border border-gray-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm"
                         >
                             <option value={5}>5</option>
                             <option value={10}>10</option>

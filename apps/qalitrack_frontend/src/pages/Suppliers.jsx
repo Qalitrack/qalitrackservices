@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
-import { Pencil, Trash2, Building, Search, X } from "lucide-react";
+import { Pencil, Trash2, Building, Search, X, Car, UserCheck } from "lucide-react";
+import { message, Modal } from "antd";
+import TablePagination from "../components/TablePagination";
+import VehicleRelationModal from "../components/VehicleRelationModal";
+import DriverRelationModal from "../components/DriverRelationModal";
 import {
   getSuppliers,
   createSupplier,
   updateSupplier,
   deleteSupplier,
 } from "../api/MasterData/Suppliers";
+import { assignDriverToSupplier, unassignDriverFromSupplier } from "../api/MasterData/Drivers";
 
 export default function SuppliersPortal() {
   const [suppliers, setSuppliers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editingSupplier, setEditingSupplier] = useState(null);
+  const [vehiclesSupplier, setVehiclesSupplier] = useState(null);
+  const [driversSupplier, setDriversSupplier] = useState(null);
 
   const [page, setPage] = useState(1);
   const pageSize = 10;
@@ -66,9 +73,10 @@ export default function SuppliersPortal() {
         await createSupplier(payload);
       }
       resetForm();
+      setPage(1);
       fetchSuppliersWithSearch();
     } catch (err) {
-      alert(err.message || "Failed to save supplier");
+      message.error(err.message || "Failed to save supplier");
     } finally {
       setLoading(false);
     }
@@ -86,10 +94,20 @@ export default function SuppliersPortal() {
     setEditingSupplier(supplier);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this supplier?")) return;
-    await deleteSupplier(id);
-    fetchSuppliersWithSearch();
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete this supplier?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteSupplier(id);
+          fetchSuppliersWithSearch();
+        } catch (err) {
+          message.error(err.message || "Failed to delete supplier");
+        }
+      },
+    });
   };
 
   const resetForm = () => {
@@ -106,18 +124,18 @@ export default function SuppliersPortal() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
-              <Building className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <Building className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
                 Suppliers
               </span>
-              <span className="text-[9px] text-amber-700 font-medium">
+              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 {suppliers.length} registered suppliers
               </span>
             </div>
@@ -128,7 +146,7 @@ export default function SuppliersPortal() {
               <input
                 type="text"
                 placeholder="Search suppliers..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 focus:border-amber-500 shadow-sm"
+                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -139,7 +157,7 @@ export default function SuppliersPortal() {
                 setPage(1);
                 fetchSuppliersWithSearch();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
             >
               Search
             </button>
@@ -152,14 +170,14 @@ export default function SuppliersPortal() {
         <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-2">
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Supplier Name *
+              Supplier Name <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
               required
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="Company name"
             />
           </div>
@@ -172,7 +190,7 @@ export default function SuppliersPortal() {
               name="contactPerson"
               value={form.contactPerson}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="Contact name"
             />
           </div>
@@ -185,7 +203,7 @@ export default function SuppliersPortal() {
               name="phone"
               value={form.phone}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="+254 7XX XXX XXX"
             />
           </div>
@@ -198,7 +216,7 @@ export default function SuppliersPortal() {
               name="email"
               value={form.email}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="email@example.com"
             />
           </div>
@@ -211,7 +229,7 @@ export default function SuppliersPortal() {
               name="city"
               value={form.city}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="City"
             />
           </div>
@@ -224,7 +242,7 @@ export default function SuppliersPortal() {
               name="address"
               value={form.address}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
               placeholder="Full address"
             />
           </div>
@@ -242,7 +260,7 @@ export default function SuppliersPortal() {
             )}
             <button
               type="submit"
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1"
+              className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all flex items-center gap-1"
             >
               <Building className="w-3 h-3" />
               {editingSupplier ? "Update" : "Add"} Supplier
@@ -259,11 +277,15 @@ export default function SuppliersPortal() {
           </div>
         ) : suppliers.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">No suppliers found.</p>
+            <div className="text-center">
+              <Building className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No suppliers found.</p>
+              <p className="text-gray-400 text-xs mt-1">Add a supplier using the form above</p>
+            </div>
           </div>
         ) : (
           <table className="w-full compact-table">
-            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
               <tr>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Contact Person</th>
@@ -278,7 +300,7 @@ export default function SuppliersPortal() {
               {suppliers.map((s, index) => (
                 <tr
                   key={s.id}
-                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
                     index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
@@ -290,6 +312,20 @@ export default function SuppliersPortal() {
                   <td className="px-3 py-2 text-[10px] text-gray-600 max-w-xs truncate">{s.address || "-"}</td>
                   <td className="px-3 py-2">
                     <div className="flex gap-1 justify-center">
+                      <button
+                        onClick={() => setVehiclesSupplier(s)}
+                        className="p-1 rounded text-gray-600 hover:bg-gray-50 border border-gray-300 hover:border-gray-500 transition-all"
+                        title="View Vehicles"
+                      >
+                        <Car className="w-3 h-3" />
+                      </button>
+                      <button
+                        onClick={() => setDriversSupplier(s)}
+                        className="p-1 rounded text-gray-600 hover:bg-gray-50 border border-gray-300 hover:border-gray-500 transition-all"
+                        title="View Drivers"
+                      >
+                        <UserCheck className="w-3 h-3" />
+                      </button>
                       <button
                         onClick={() => handleEdit(s)}
                         className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all"
@@ -311,30 +347,9 @@ export default function SuppliersPortal() {
             </tbody>
           </table>
         )}
-      </div>
 
-      {/* Footer with Pagination */}
-      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-        <span className="text-[10px] text-gray-600 font-medium">
-          Page <span className="font-semibold text-amber-600">{page}</span> of{" "}
-          <span className="font-semibold text-amber-600">{totalPages}</span>
-        </span>
-        <div className="flex gap-2">
-          <button
-            disabled={page === 1}
-            onClick={() => setPage((p) => p - 1)}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Previous
-          </button>
-          <button
-            disabled={page === totalPages}
-            onClick={() => setPage((p) => p + 1)}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Next
-          </button>
-        </div>
+        {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+        <TablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       {error && (
@@ -342,6 +357,24 @@ export default function SuppliersPortal() {
           <p className="text-xs font-semibold">{error}</p>
         </div>
       )}
+
+      <VehicleRelationModal
+        entity={vehiclesSupplier}
+        relationField="supplierId"
+        relationNameField="supplierName"
+        entityLabel="Supplier"
+        onClose={() => setVehiclesSupplier(null)}
+      />
+
+      <DriverRelationModal
+        entity={driversSupplier}
+        relationField="supplierId"
+        assignFn={assignDriverToSupplier}
+        removeFn={unassignDriverFromSupplier}
+        entityLabel="Supplier"
+        otherEntities={suppliers}
+        onClose={() => setDriversSupplier(null)}
+      />
 
       <style>{`
         .compact-table {

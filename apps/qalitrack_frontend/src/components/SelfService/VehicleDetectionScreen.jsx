@@ -354,8 +354,8 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
             <div className={`h-1.5 w-full transition-colors duration-500 ${
               streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? "bg-red-500"
               : vehicleStatus === "found"   ? "bg-gradient-to-r from-green-400 to-emerald-500"
-              : vehicleStatus === "loading" ? "bg-gradient-to-r from-amber-400 to-orange-500"
-              : "bg-gradient-to-r from-amber-400 to-orange-500"
+              : vehicleStatus === "loading" ? "bg-gradient-to-r from-amber-400 to-amber-500"
+              : "bg-gradient-to-r from-amber-400 to-amber-500"
             }`} />
 
             <div className="p-8 flex flex-col sm:flex-row items-center gap-8">
@@ -370,8 +370,8 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
                 <div className={`w-32 h-32 rounded-full flex items-center justify-center shadow-2xl transition-all duration-500 ${
                   streamFailed || vehicleStatus === "not_found" || vehicleStatus === "error" ? "bg-red-600"
                   : vehicleStatus === "found"   ? "bg-gradient-to-br from-green-400 to-emerald-600"
-                  : vehicleStatus === "loading" ? "bg-gradient-to-br from-amber-400 to-orange-500"
-                  : "bg-gradient-to-br from-amber-500 to-orange-600"
+                  : vehicleStatus === "loading" ? "bg-gradient-to-br from-amber-400 to-amber-500"
+                  : "bg-gradient-to-br from-amber-500 to-amber-600"
                 }`}>
                   {vehicleStatus === "loading" ? (
                     <div className="w-10 h-10 border-4 border-white/30 border-t-white rounded-full animate-spin" />
@@ -493,7 +493,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
             <div className={`rounded-3xl border shadow-xl overflow-hidden ${isDark ? "bg-gray-900 border-green-800" : "bg-white border-green-200"}`}>
               <div className={`px-8 py-5 flex items-center justify-between ${
                 pendingTxn
-                  ? "bg-gradient-to-r from-amber-500 via-orange-500 to-red-500"
+                  ? "bg-gradient-to-r from-amber-500 via-amber-500 to-red-500"
                   : "bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500"
               }`}>
                 <div>
@@ -502,7 +502,7 @@ export default function VehicleDetectionScreen({ onVehicleDetected, error: exter
                   </p>
                   <p className="text-white text-3xl font-black tracking-widest">{vehicleData.registrationNumber}</p>
                   {pendingTxn && (
-                    <p className="text-orange-100 text-xs mt-1">
+                    <p className="text-amber-100 text-xs mt-1">
                       Completing transaction from {pendingTxn.createdAt ? new Date(pendingTxn.createdAt).toLocaleString() : "earlier"}
                       {" · "}First weight: <strong>{pendingTxn.firstWeight ?? pendingTxn.grossWeight ?? "—"} kg</strong>
                     </p>

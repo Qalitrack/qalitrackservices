@@ -37,14 +37,13 @@ public class VehicleService : IVehicleService
         if (vehicle == null || vehicle.IsDeleted) return null;
 
         var dto = _mapper.Map<VehicleReadDto>(vehicle);
-        
-        // Get assigned drivers using GetByIdsAsync
-        var driverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { id });
+
+        // Get assigned drivers
+        var driverVehicles = await _driverVehicleRepository.GetAllByPredicateAsync(dv => dv.VehicleId == id);
         dto.AssignedDriverIds = driverVehicles
-            .Where(dv => dv.VehicleId == id && !dv.IsDeleted)
             .Select(dv => dv.DriverId)
             .ToList();
-        
+
         return dto;
     }
 
@@ -63,14 +62,13 @@ public class VehicleService : IVehicleService
         }
 
         var dto = _mapper.Map<VehicleReadDto>(vehicle);
-        
+
         // Get assigned drivers
-        var driverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { vehicle.Id });
+        var driverVehicles = await _driverVehicleRepository.GetAllByPredicateAsync(dv => dv.VehicleId == vehicle.Id);
         dto.AssignedDriverIds = driverVehicles
-            .Where(dv => dv.VehicleId == vehicle.Id && !dv.IsDeleted)
             .Select(dv => dv.DriverId)
             .ToList();
-        
+
         return dto;
     }
 
@@ -110,10 +108,10 @@ public class VehicleService : IVehicleService
 
         var vehicleDtos = _mapper.Map<IEnumerable<VehicleReadDto>>(pagedResult.Items).ToList();
 
-        // Get assigned drivers for all vehicles efficiently using GetByIdsAsync
+        // Get assigned drivers for all vehicles on this page
         var vehicleIds = vehicleDtos.Select(v => v.Id).ToList();
-        var allDriverVehicles = await _driverVehicleRepository.GetByIdsAsync(vehicleIds);
-        
+        var allDriverVehicles = await _driverVehicleRepository.GetAllByPredicateAsync(dv => vehicleIds.Contains(dv.VehicleId));
+
         // Group by vehicle ID and filter out deleted assignments
         var assignedDriversLookup = allDriverVehicles
             .Where(dv => !dv.IsDeleted)
@@ -199,11 +197,8 @@ public class VehicleService : IVehicleService
             return false;
         }
 
-        // Get all driver assignments for this vehicle using GetByIdsAsync
-        var driverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { id });
-        var assignments = driverVehicles
-            .Where(dv => dv.VehicleId == id && !dv.IsDeleted)
-            .ToList();
+        // Get all driver assignments for this vehicle
+        var assignments = (await _driverVehicleRepository.GetAllByPredicateAsync(dv => dv.VehicleId == id)).ToList();
 
         // Delete all driver assignments - these will be automatically audited
         foreach (var assignment in assignments)
@@ -246,12 +241,9 @@ public class VehicleService : IVehicleService
 
         try
         {
-            // Get all driver-vehicle assignments for this vehicle using GetByIdsAsync
-            var allDriverVehicles = await _driverVehicleRepository.GetByIdsAsync(new[] { vehicleId });
-            var assignments = allDriverVehicles
-                .Where(dv => dv.VehicleId == vehicleId && !dv.IsDeleted)
-                .ToList();
-            
+            // Get all driver-vehicle assignments for this vehicle
+            var assignments = (await _driverVehicleRepository.GetAllByPredicateAsync(dv => dv.VehicleId == vehicleId)).ToList();
+
             return assignments
                 .Where(a => !string.IsNullOrEmpty(a.DriverId))
                 .Select(a => a.DriverId)

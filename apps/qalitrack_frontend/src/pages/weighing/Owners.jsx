@@ -1,16 +1,19 @@
 import { useEffect, useState, useMemo } from "react";
 import { Pencil, Trash2, UserPlus, Search, X, Car } from "lucide-react";
-import { message } from "antd";
+import { message, Modal } from "antd";
+import TablePagination from "../../components/TablePagination";
 import {
   getOwners,
   createOwner,
   updateOwner,
   deleteOwner,
-  getOwnerVehicles,
+  assignVehiclesToOwner,
+  removeVehiclesFromOwner,
 } from "../../api/MasterData/Owners";
+import { getVehicles } from "../../api/MasterData/Vehicles";
 
 const PAGE_SIZE = 5;
-const OWNER_TYPES = { 1: "Individual", 2: "Company", 3: "Government" };
+const OWNER_TYPES = { 1: "Individual", 2: "Company", 3: "Sacco" };
 
 export default function OwnersPortal() {
   const [owners, setOwners] = useState([]);
@@ -20,10 +23,14 @@ export default function OwnersPortal() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  // vehicles modal
+  // vehicles modal — one combined checklist of every vehicle, each showing
+  // whether it's already assigned to this owner, unassigned, or taken by
+  // someone else (disabled in that case, since a vehicle can only have one
+  // owner at a time).
   const [vehiclesOwner, setVehiclesOwner] = useState(null);
-  const [vehicles, setVehicles] = useState([]);
+  const [allVehicles, setAllVehicles] = useState([]);
   const [vehiclesLoading, setVehiclesLoading] = useState(false);
+  const [assignBusy, setAssignBusy] = useState(false);
 
   const [form, setForm] = useState({
     name: "", type: 1, contactPerson: "", phoneNumber: "", email: "", address: "",
@@ -36,7 +43,7 @@ export default function OwnersPortal() {
       setLoading(true);
       setError(null);
       const data = await getOwners(1, 200, "");
-      setOwners(data?.items || data || []);
+      setOwners([...(data?.items || data || [])].reverse());
     } catch (err) {
       setError(err.message || "Failed to load owners");
     } finally {
@@ -72,6 +79,7 @@ export default function OwnersPortal() {
       if (editingOwner) await updateOwner(editingOwner.id, payload);
       else await createOwner(payload);
       resetForm();
+      setPage(1);
       await fetchOwners();
     } catch (err) { message.error(err.message); }
     finally { setLoading(false); }
@@ -85,20 +93,54 @@ export default function OwnersPortal() {
     setEditingOwner(owner);
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Delete this owner?")) return;
-    await deleteOwner(id);
-    await fetchOwners();
+  const handleDelete = (id) => {
+    Modal.confirm({
+      title: "Delete this owner?",
+      okText: "Delete",
+      okButtonProps: { danger: true },
+      onOk: async () => {
+        try {
+          await deleteOwner(id);
+          await fetchOwners();
+        } catch (err) {
+          message.error(err.message || "Failed to delete owner");
+        }
+      },
+    });
+  };
+
+  const loadAllVehicles = async () => {
+    setVehiclesLoading(true);
+    try {
+      const data = await getVehicles(1, 500, "");
+      const items = data?.items || data?.data?.items || (Array.isArray(data?.data) ? data.data : []) || (Array.isArray(data) ? data : []);
+      setAllVehicles(items);
+    } catch { setAllVehicles([]); }
+    finally { setVehiclesLoading(false); }
   };
 
   const handleViewVehicles = async (owner) => {
     setVehiclesOwner(owner);
-    setVehiclesLoading(true);
+    await loadAllVehicles();
+  };
+
+  const handleToggleVehicleAssignment = async (vehicle, shouldAssign) => {
+    if (!vehiclesOwner) return;
+    setAssignBusy(true);
     try {
-      const data = await getOwnerVehicles(owner.id);
-      setVehicles(data?.data || data || []);
-    } catch { setVehicles([]); }
-    finally { setVehiclesLoading(false); }
+      if (shouldAssign) {
+        await assignVehiclesToOwner(vehiclesOwner.id, [vehicle.id]);
+        message.success("Vehicle assigned");
+      } else {
+        await removeVehiclesFromOwner(vehiclesOwner.id, [vehicle.id]);
+        message.success("Vehicle unassigned");
+      }
+      await loadAllVehicles();
+    } catch (err) {
+      message.error(err.response?.data?.message || err.message || "Failed to update vehicle assignment");
+    } finally {
+      setAssignBusy(false);
+    }
   };
 
   const resetForm = () => {
@@ -108,18 +150,18 @@ export default function OwnersPortal() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header */}
-      <div className="px-3 py-2 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-b border-amber-200">
+      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
+      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-sm">
-              <UserPlus className="w-4 h-4 text-white" />
+            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
+              <UserPlus className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <span className="text-[11px] font-bold text-gray-900 block leading-tight">
+              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
                 Owners
               </span>
-              <span className="text-[9px] text-amber-700 font-medium">
+              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 {filtered.length} registered owners
               </span>
             </div>
@@ -130,7 +172,7 @@ export default function OwnersPortal() {
               <input
                 type="text"
                 placeholder="Search owners..."
-                className="w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border-gray-300 focus:border-amber-500 shadow-sm"
+                className="qt-filter-field w-52 h-7 pl-8 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -140,7 +182,7 @@ export default function OwnersPortal() {
                 setSearch("");
                 fetchOwners();
               }}
-              className="h-7 px-3 text-[11px] rounded-md border-gray-300 hover:border-amber-500 hover:text-amber-600 shadow-sm font-medium bg-white"
+              className="h-7 px-3 text-[11px] rounded-md cs-solid-chip-btn shadow-sm font-medium"
             >
               Refresh
             </button>
@@ -153,7 +195,7 @@ export default function OwnersPortal() {
         <form onSubmit={handleSubmit} className="grid grid-cols-3 gap-2">
           <div>
             <label className="text-[10px] font-semibold text-gray-700 mb-1 block">
-              Owner Name *
+              Owner Name <span style={{ color: "var(--cs-required)" }}>*</span>
             </label>
             <input
               name="name"
@@ -161,7 +203,7 @@ export default function OwnersPortal() {
               onChange={handleChange}
               required
               placeholder="Owner name"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -174,7 +216,7 @@ export default function OwnersPortal() {
               value={form.contactPerson}
               onChange={handleChange}
               placeholder="Contact person"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -187,7 +229,7 @@ export default function OwnersPortal() {
               value={form.phoneNumber}
               onChange={handleChange}
               placeholder="+254 7XX XXX XXX"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -200,7 +242,7 @@ export default function OwnersPortal() {
               value={form.email}
               onChange={handleChange}
               placeholder="email@example.com"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -213,7 +255,7 @@ export default function OwnersPortal() {
               value={form.address}
               onChange={handleChange}
               placeholder="Full address"
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             />
           </div>
 
@@ -225,7 +267,7 @@ export default function OwnersPortal() {
               name="type"
               value={form.type}
               onChange={handleChange}
-              className="w-full h-7 text-[11px] rounded border-amber-300 px-2 focus:border-amber-500 focus:ring-1 focus:ring-amber-200"
+              className="qt-filter-field w-full h-7 text-[11px] rounded border border-gray-300 px-2"
             >
               {Object.entries(OWNER_TYPES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
@@ -245,7 +287,7 @@ export default function OwnersPortal() {
             <button
               type="submit"
               disabled={loading}
-              className="h-7 px-3 text-[11px] font-semibold bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white rounded shadow transition-all flex items-center gap-1"
+              className="h-7 px-3 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all flex items-center gap-1"
             >
               <UserPlus className="w-3 h-3" />
               {editingOwner ? "Update" : "Add"} Owner
@@ -266,11 +308,15 @@ export default function OwnersPortal() {
           </div>
         ) : paginated.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">No owners found.</p>
+            <div className="text-center">
+              <UserPlus className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No owners found.</p>
+              <p className="text-gray-400 text-xs mt-1">Add an owner using the form above</p>
+            </div>
           </div>
         ) : (
           <table className="w-full compact-table">
-            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-orange-50 border-b-2 border-amber-200">
+            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
               <tr>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
@@ -285,7 +331,7 @@ export default function OwnersPortal() {
               {paginated.map((o, i) => (
                 <tr
                   key={o.id}
-                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-orange-50 transition-all ${
+                  className={`border-b border-gray-100 hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-50 transition-all ${
                     i % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
@@ -294,13 +340,7 @@ export default function OwnersPortal() {
                   </td>
                   <td className="px-3 py-2 text-[10px] text-gray-900 font-bold">{o.name}</td>
                   <td className="px-3 py-2">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase shadow-sm border ${
-                        o.type === 1 ? "bg-blue-100 text-blue-700 border-blue-300" :
-                        o.type === 2 ? "bg-purple-100 text-purple-700 border-purple-300" :
-                        "bg-green-100 text-green-700 border-green-300"
-                      }`}
-                    >
+                    <span className="px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase shadow-sm border bg-blue-100 text-blue-700 border-blue-300">
                       {OWNER_TYPES[o.type] || "—"}
                     </span>
                   </td>
@@ -337,37 +377,19 @@ export default function OwnersPortal() {
             </tbody>
           </table>
         )}
+
+        {/* Footer with Pagination — inside the scroll area so it sits immediately after the table instead of pinned to the bottom of the page */}
+        <TablePagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
-      {/* Footer with Pagination */}
-      <div className="px-3 py-2 border-t border-gray-200 bg-gray-50 flex justify-between items-center">
-        <span className="text-[10px] text-gray-600 font-medium">
-          Page <span className="font-semibold text-amber-600">{page}</span> of{" "}
-          <span className="font-semibold text-amber-600">{totalPages}</span>
-        </span>
-        <div className="flex gap-2">
-          <button
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Previous
-          </button>
-          <button
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            className="h-6 px-2 text-[10px] font-semibold border border-gray-300 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-amber-50 hover:border-amber-500 transition-all"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-
-      {/* Vehicles Modal */}
+      {/* Vehicles Modal — one checklist of every vehicle. Checking a box
+          assigns it to this owner, unchecking removes it. Vehicles already
+          owned by someone else are shown (so you can see who has what) but
+          disabled, since a vehicle can only belong to one owner at a time. */}
       {vehiclesOwner && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 backdrop-blur-sm">
           <div className="bg-white rounded-lg shadow-2xl w-full max-w-md border-2 border-amber-300">
-            <div className="bg-gradient-to-r from-amber-500 to-orange-600 px-4 py-2.5 rounded-t-lg flex items-center justify-between">
+            <div className="bg-gradient-to-r from-amber-500 to-amber-600 px-4 py-2.5 rounded-t-lg flex items-center justify-between">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <Car className="w-4 h-4" /> Vehicles – {vehiclesOwner.name}
               </h3>
@@ -381,32 +403,59 @@ export default function OwnersPortal() {
             <div className="p-4">
               {vehiclesLoading ? (
                 <p className="text-gray-500 text-sm text-center py-4">Loading vehicles...</p>
-              ) : vehicles.length === 0 ? (
-                <p className="text-gray-500 text-sm text-center py-4">No vehicles registered for this owner.</p>
+              ) : allVehicles.length === 0 ? (
+                <p className="text-gray-500 text-sm text-center py-4">No vehicles registered in the system.</p>
               ) : (
-                <div className="overflow-auto max-h-64">
+                <div className="overflow-auto max-h-80">
                   <table className="w-full text-sm">
-                    <thead>
+                    <thead className="sticky top-0 bg-white">
                       <tr className="border-b-2 border-amber-200">
+                        <th className="text-center py-2 w-8"></th>
                         <th className="text-left py-2 text-[10px] font-bold text-amber-700 uppercase">Registration</th>
                         <th className="text-left py-2 text-[10px] font-bold text-amber-700 uppercase">Make / Model</th>
+                        <th className="text-left py-2 text-[10px] font-bold text-amber-700 uppercase">Status</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {vehicles.map((v) => (
-                        <tr key={v.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
-                          <td className="py-2">
-                            <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
-                              {v.registrationNumber}
-                            </div>
-                          </td>
-                          <td className="py-2 text-[10px] text-gray-700">{v.make} {v.model}</td>
-                        </tr>
-                      ))}
+                      {allVehicles.map((v) => {
+                        const isThisOwner = v.ownerId === vehiclesOwner.id;
+                        const otherOwnerName = !isThisOwner && v.ownerId
+                          ? (v.ownerName || owners.find((o) => o.id === v.ownerId)?.name || "another owner")
+                          : null;
+                        return (
+                          <tr key={v.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
+                            <td className="py-2 text-center">
+                              <input
+                                type="checkbox"
+                                checked={isThisOwner}
+                                disabled={assignBusy || !!otherOwnerName}
+                                onChange={(e) => handleToggleVehicleAssignment(v, e.target.checked)}
+                                className="w-3.5 h-3.5 accent-amber-500 disabled:opacity-40"
+                              />
+                            </td>
+                            <td className="py-2">
+                              <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
+                                {v.registrationNumber}
+                              </div>
+                            </td>
+                            <td className="py-2 text-[10px] text-gray-700">{v.make} {v.model}</td>
+                            <td className="py-2 text-[10px]">
+                              {isThisOwner ? (
+                                <span className="text-green-700 font-semibold">Assigned</span>
+                              ) : otherOwnerName ? (
+                                <span className="text-gray-400 italic">Owned by {otherOwnerName}</span>
+                              ) : (
+                                <span className="text-gray-400">Unassigned</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
                     </tbody>
                   </table>
                 </div>
               )}
+
               <div className="mt-4 flex justify-end">
                 <button
                   onClick={() => setVehiclesOwner(null)}

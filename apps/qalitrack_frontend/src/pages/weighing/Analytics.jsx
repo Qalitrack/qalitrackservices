@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from "../../store/weighingSlice";
 import dayjs from "dayjs";
@@ -12,11 +12,23 @@ import {
 } from "recharts";
 import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
-  Activity, Clock, Target, Zap, Award, Filter, X
+  Activity, Clock, Filter, X, BarChart3
 } from "lucide-react";
 
 dayjs.extend(relativeTime);
 dayjs.extend(isBetween);
+
+// Shared "nothing to chart yet" placeholder — same height as the chart it
+// replaces, so panels don't jump size when data shows up.
+function ChartEmpty({ message = "No data for this period", height = 200 }) {
+  return (
+    <div className="flex flex-col items-center justify-center text-center" style={{ height }}>
+      <BarChart3 className="w-10 h-10 text-gray-300 mb-2" />
+      <p className="text-gray-500 text-sm font-medium">{message}</p>
+      <p className="text-gray-400 text-xs mt-1">Try a different time range or clear your filters</p>
+    </div>
+  );
+}
 
 // Amber color palette
 const AMBER_COLORS = {
@@ -38,24 +50,52 @@ export default function Analytics() {
   const [lastUpdated, setLastUpdated] = useState(dayjs());
   
   // NEW: Advanced filters
-  const [timeRange, setTimeRange] = useState("today");
+  const [timeRange, setTimeRange] = useState("all");
   const [showFilters, setShowFilters] = useState(false);
   const [selectedCommodity, setSelectedCommodity] = useState("all");
   const [selectedDriver, setSelectedDriver] = useState("all");
   const [alertsOnly, setAlertsOnly] = useState(false);
 
+  // This used to unconditionally pull { pageSize: 10000 } — the entire
+  // transaction table — every 30 seconds regardless of which time range was
+  // selected, so the payload only grows as more tickets are recorded. Instead,
+  // fetch a window sized to what the view actually needs: the selected range
+  // plus the corresponding "previous period" used below for growth comparisons.
+  const getFetchRange = useCallback((range) => {
+    const now = dayjs();
+    switch (range) {
+      case "week":
+        return { start: now.subtract(14, "day").startOf("day"), end: now.endOf("day") };
+      case "month":
+        return { start: now.subtract(60, "day").startOf("day"), end: now.endOf("day") };
+      case "twoMonths":
+        return { start: now.subtract(120, "day").startOf("day"), end: now.endOf("day") };
+      case "all":
+        return { start: null, end: null };
+      case "today":
+      case "yesterday":
+      default:
+        return { start: now.subtract(2, "day").startOf("day"), end: now.endOf("day") };
+    }
+  }, []);
+
+  const loadTransactions = useCallback(() => {
+    const { start, end } = getFetchRange(timeRange);
+    const params = { pageSize: 10000 };
+    if (start && end) {
+      params.startDate = start.toISOString();
+      params.endDate = end.toISOString();
+    }
+    dispatch(fetchTransactions(params));
+    setLastUpdated(dayjs());
+  }, [dispatch, timeRange, getFetchRange]);
+
   // Auto-refresh every 30 seconds
   useEffect(() => {
-    dispatch(fetchTransactions({ pageSize: 10000 }));
-    setLastUpdated(dayjs());
-
-    const interval = setInterval(() => {
-      dispatch(fetchTransactions({ pageSize: 10000 }));
-      setLastUpdated(dayjs());
-    }, 30000);
-
+    loadTransactions();
+    const interval = setInterval(loadTransactions, 30000);
     return () => clearInterval(interval);
-  }, [dispatch]);
+  }, [loadTransactions]);
 
   // NEW: Filtered transactions based on time range and filters
   const filteredTransactions = useMemo(() => {
@@ -76,6 +116,10 @@ export default function Analytics() {
       case "month":
         data = data.filter(t => dayjs(t.createdAt).isAfter(now.subtract(30, "day")));
         break;
+      case "twoMonths":
+        data = data.filter(t => dayjs(t.createdAt).isAfter(now.subtract(60, "day")));
+        break;
+      case "all":
       default:
         break;
     }
@@ -168,8 +212,16 @@ export default function Analytics() {
           dayjs(t.createdAt).isBetween(now.subtract(60, "day"), now.subtract(30, "day"))
         );
         break;
+      case "twoMonths":
+        previousPeriodData = transactions.filter(t =>
+          dayjs(t.createdAt).isBetween(now.subtract(120, "day"), now.subtract(60, "day"))
+        );
+        break;
+      case "all":
+        previousPeriodData = [];
+        break;
       default:
-        previousPeriodData = transactions.filter(t => 
+        previousPeriodData = transactions.filter(t =>
           dayjs(t.createdAt).isSame(now.subtract(1, "day"), "day")
         );
     }
@@ -417,48 +469,45 @@ export default function Analytics() {
 
   // NEW: Clear all filters
   const clearFilters = () => {
-    setTimeRange("today");
+    setTimeRange("all");
     setSelectedCommodity("all");
     setSelectedDriver("all");
     setAlertsOnly(false);
   };
 
   const activeFiltersCount = [
-    timeRange !== "today",
+    timeRange !== "all",
     selectedCommodity !== "all",
     selectedDriver !== "all",
     alertsOnly
   ].filter(Boolean).length;
 
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
+    <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
 
       {/* HEADER */}
-      <div className="bg-white border-b border-gray-200 shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0">
+      <div className="shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-md">
-              <Activity className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-md shrink-0">
+              <Activity className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
             </div>
             <div>
-              <h1 className="text-base sm:text-lg font-bold text-gray-900">Live Analytics Dashboard</h1>
-              <p className="text-xs text-gray-500 font-medium">
+              <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Live Analytics Dashboard</div>
+              <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
                 Real-time insights • Auto-refresh every 30s
-              </p>
+              </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <div className="text-[10px] text-gray-500 font-medium">Last updated</div>
-              <div className="text-xs font-bold text-amber-700">{lastUpdated.fromNow()}</div>
+              <div className="text-[10px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.6 }}>Last updated</div>
+              <div className="text-xs font-bold" style={{ color: "var(--cs-appbar-text)" }}>{lastUpdated.fromNow()}</div>
             </div>
             <button
-              onClick={() => {
-                dispatch(fetchTransactions({ pageSize: 10000 }));
-                setLastUpdated(dayjs());
-              }}
+              onClick={loadTransactions}
               disabled={loading}
-              className="flex items-center gap-2 px-3 py-1.5 bg-amber-100 hover:bg-amber-200 border border-amber-300 rounded-lg text-xs font-semibold text-amber-900 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 border cs-solid-chip-btn rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
             >
               <Activity className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
@@ -477,10 +526,12 @@ export default function Analytics() {
               onChange={(e) => setTimeRange(e.target.value)}
               className="border border-amber-300 rounded px-2 py-1 text-xs font-medium focus:ring-2 focus:ring-amber-200"
             >
+              <option value="all">All Time</option>
               <option value="today">Today</option>
               <option value="yesterday">Yesterday</option>
               <option value="week">Last 7 Days</option>
               <option value="month">Last 30 Days</option>
+              <option value="twoMonths">Last 60 Days</option>
             </select>
 
             {/* Toggle Filters */}
@@ -576,72 +627,57 @@ export default function Analytics() {
                 label: "Total Tickets",
                 value: advancedKPIs.totalTx,
                 growth: advancedKPIs.txGrowth,
-                icon: Activity,
-                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Completed",
                 value: advancedKPIs.completed,
-                icon: CheckCircle,
-                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Efficiency",
                 value: `${advancedKPIs.efficiency}%`,
-                icon: Target,
-                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Capacity",
                 value: `${advancedKPIs.capacityUtilization}%`,
-                icon: Zap,
-                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Avg TAT (min)",
                 value: advancedKPIs.avgTurnaround,
-                icon: Clock,
-                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Total Net (kg)",
                 value: advancedKPIs.totalNetWeight.toLocaleString(),
                 growth: advancedKPIs.weightGrowth,
-                icon: Award,
-                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Avg Weight",
                 value: advancedKPIs.avgWeight.toLocaleString(),
-                icon: TrendingUp,
-                gradient: "from-amber-100 to-amber-50",
               },
               {
                 label: "Tx/Hour",
                 value: advancedKPIs.txPerHour,
-                icon: Activity,
-                gradient: "from-amber-100 to-amber-50",
               },
-            ].map(({ label, value, growth, icon: Icon, gradient }) => (
+            ].map(({ label, value, growth }) => (
+              // Same recipe as ReportAnalytics' MetricCard: white card, amber
+              // border, growth badge next to the label.
               <div
                 key={label}
-                className={`bg-gradient-to-br ${gradient} rounded-lg p-3 sm:p-4 shadow-md border border-amber-200 transform transition-transform hover:scale-105`}
+                className="bg-white border border-amber-200 rounded-lg p-3 sm:p-4 shadow-sm"
               >
-                <div className="flex items-center justify-between mb-1">
-                  <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide opacity-90">
+                <div className="flex items-center justify-between gap-1">
+                  <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-gray-600">
                     {label}
-                  </div>
-                  <Icon size={14} className="opacity-60" />
+                  </span>
+                  {growth && (
+                    <div className={`text-[10px] font-bold flex items-center gap-1 shrink-0 ${
+                      parseFloat(growth) >= 0 ? "text-green-600" : "text-red-600"
+                    }`}>
+                      {parseFloat(growth) >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                      {Math.abs(parseFloat(growth))}%
+                    </div>
+                  )}
                 </div>
-                <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1">{value}</div>
-                {growth && (
-                  <div className={`text-[10px] font-bold mt-1 flex items-center gap-1 ${
-                    parseFloat(growth) >= 0 ? "text-green-700" : "text-red-700"
-                  }`}>
-                    {parseFloat(growth) >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                    {Math.abs(parseFloat(growth))}%
-                  </div>
-                )}
+                <div className="text-lg sm:text-xl md:text-2xl font-bold mt-1 text-gray-900">{value}</div>
               </div>
             ))}
           </div>
@@ -651,6 +687,7 @@ export default function Analytics() {
             {/* DAILY THROUGHPUT */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Daily Throughput</h3>
+              {dailyTrend.length === 0 ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <ComposedChart data={dailyTrend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -662,11 +699,13 @@ export default function Analytics() {
                   <Line type="monotone" dataKey="weight" stroke={AMBER_COLORS.base} strokeWidth={2} name="Weight (kg)" dot={{ r: 3 }} />
                 </ComposedChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* DRIVER PERFORMANCE RADAR */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Top Driver Performance</h3>
+              {radarData.length === 0 ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <RadarChart data={radarData.length > 0 ? [
                   { metric: "Trips", ...radarData.reduce((acc, d) => ({ ...acc, [d.driver]: d.trips }), {}) },
@@ -690,11 +729,13 @@ export default function Analytics() {
                   <Legend wrapperStyle={{ fontSize: 10 }} />
                 </RadarChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* TURNAROUND TIME TREND */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Average Turnaround Time</h3>
+              {tatTrend.length === 0 ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <AreaChart data={tatTrend}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -704,11 +745,13 @@ export default function Analytics() {
                   <Area type="monotone" dataKey="avgTAT" stroke={AMBER_COLORS.darker} fill={AMBER_COLORS.light} fillOpacity={0.6} />
                 </AreaChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* TRANSACTION STATUS PIE */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Transaction Status</h3>
+              {statusPie.every((d) => d.value === 0) ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <PieChart>
                   <Pie
@@ -729,11 +772,13 @@ export default function Analytics() {
                   <Tooltip contentStyle={{ fontSize: 11 }} />
                 </PieChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* HOURLY PERFORMANCE */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Hourly Performance</h3>
+              {hourlyPerformance.every((d) => d.total === 0) ? <ChartEmpty /> : (
               <ResponsiveContainer width="100%" height={200} className="sm:h-[220px] md:h-[240px]">
                 <BarChart data={hourlyPerformance}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -745,11 +790,13 @@ export default function Analytics() {
                   <Bar dataKey="inProgress" stackId="a" fill={AMBER_COLORS.light} name="In Progress" />
                 </BarChart>
               </ResponsiveContainer>
+              )}
             </div>
 
             {/* TOP DRIVERS TABLE */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Top Drivers</h3>
+              {driverPerformance.length === 0 ? <ChartEmpty height={140} /> : (
               <div className="space-y-2">
                 {driverPerformance.map((driver, idx) => (
                   <div key={driver.driver} className="flex items-center justify-between p-2 bg-amber-50 rounded border border-amber-200">
@@ -766,11 +813,13 @@ export default function Analytics() {
                   </div>
                 ))}
               </div>
+              )}
             </div>
 
             {/* COMMODITIES BAR - FULL WIDTH */}
             <div className="bg-white p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow lg:col-span-2">
               <h3 className="font-semibold text-sm sm:text-base mb-3 text-gray-900">Commodities by Weight & Count</h3>
+              {commodityStats.length === 0 ? <ChartEmpty height={220} /> : (
               <ResponsiveContainer width="100%" height={220} className="sm:h-[240px] md:h-[260px]">
                 <ComposedChart data={commodityStats}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -783,6 +832,7 @@ export default function Analytics() {
                   <Line yAxisId="right" type="monotone" dataKey="count" stroke="#3b82f6" strokeWidth={2} name="Count" dot={{ r: 4 }} />
                 </ComposedChart>
               </ResponsiveContainer>
+              )}
             </div>
           </div>
 
