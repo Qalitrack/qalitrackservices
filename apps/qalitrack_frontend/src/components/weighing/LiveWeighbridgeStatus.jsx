@@ -20,7 +20,7 @@ function normalizeWeight(raw) {
 export default function LiveWeighbridgeStatus({ onManualCapture }) {
   const [totalWeight, setTotalWeight] = useState("---");
   const [isStable, setIsStable] = useState(false);
-  const [connected, setConnected] = useState(true);
+  const [connected, setConnected] = useState(false);
 
   const bufferRef = useRef(null);
   const lastStableRef = useRef(null);
@@ -33,8 +33,20 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
   useEffect(() => {
     const source = new EventSource(getHardwareConfig().scaleStreamUrl);
 
-    source.onopen = () => setConnected(true);
+    // Don't trust onopen — it only means the HTTP connection exists, not that the
+    // hardware is actually sending data. Rely on the backend's heartbeat event instead,
+    // which reports real device health (last-data age), plus onmessage for immediate proof of life.
     source.onerror = () => { setConnected(false); setIsStable(false); };
+
+    source.addEventListener("heartbeat", (event) => {
+      try {
+        const status = JSON.parse(event.data);
+        setConnected(!!status.connected);
+        if (!status.connected) setIsStable(false);
+      } catch {
+        // malformed heartbeat payload — leave connected state as-is
+      }
+    });
 
     source.onmessage = (event) => {
       setConnected(true);

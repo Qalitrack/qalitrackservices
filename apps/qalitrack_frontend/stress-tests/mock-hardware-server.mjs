@@ -19,6 +19,7 @@
 //   node stress-tests/mock-hardware-server.mjs
 
 import http from 'node:http';
+import { pathToFileURL } from 'node:url';
 
 // Tiny 64x36 placeholder JPEG (generated once via jimp) — content doesn't
 // matter for a stress test, only that a real image/jpeg stream is flowing.
@@ -168,7 +169,9 @@ export function start(port = 5000) {
 }
 
 // Allow running standalone: `node stress-tests/mock-hardware-server.mjs`
-if (import.meta.url === `file://${process.argv[1]}`) {
+// (a plain `file://${process.argv[1]}` comparison breaks on Windows, where
+// argv[1] is a bare "C:\..." path — pathToFileURL() normalizes it correctly.)
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   const { server } = await start(5000);
   console.log('Mock hardware server listening on http://localhost:5000');
   process.on('SIGINT', () => server.close(() => process.exit(0)));
