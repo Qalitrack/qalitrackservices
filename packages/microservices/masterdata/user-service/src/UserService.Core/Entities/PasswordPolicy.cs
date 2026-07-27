@@ -8,4 +8,5 @@ public class PasswordPolicy: BaseEntity
     public bool RequireDigit { get; set; }
     public bool RequireSpecialCharacter { get; set; }
     public int MaxAgeDays { get; set; }
+    public bool TwoFactorEnabled { get; set; }
 }

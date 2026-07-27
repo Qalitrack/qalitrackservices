@@ -3,6 +3,7 @@ import { Pencil, Trash2, Truck, Plus, Search, X, Users } from "lucide-react";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
 import { message, Modal, Select, Switch } from "antd";
+import PageHeader from "../PageHeader.jsx";
 import {
   getVehicles,
   createVehicle,
@@ -426,23 +427,13 @@ export default function Vehicles() {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Compact Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
-      <div className="px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
-              <Truck className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
-            </div>
-            <div>
-              <span className="text-[11px] font-bold block leading-tight" style={{ color: "var(--cs-appbar-text)" }}>
-                Vehicles
-              </span>
-              <span className="text-[9px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
-                {vehicles.length} registered vehicles
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
+      <PageHeader
+        flush
+        icon={Truck}
+        title="Vehicles"
+        subtitle={`${vehicles.length} registered vehicles`}
+        actions={
+          <>
             <div className="relative">
               <Search size={12} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
@@ -492,9 +483,9 @@ export default function Vehicles() {
             >
               Refresh
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Form Section */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm max-h-[50vh] overflow-y-auto">

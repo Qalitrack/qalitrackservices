@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { message, Modal, Switch } from "antd";
 import { Plus, Pencil, Trash2, Search, RotateCcw, X, Settings2 } from "lucide-react";
 import TablePagination from "../../components/TablePagination";
+import PageHeader from "../../components/PageHeader.jsx";
 import {
   getAxleConfigs,
   createAxleConfig,
@@ -139,24 +140,13 @@ const AxleConfigs = () => {
 
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      {/* Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
-      <div className="px-3 py-2 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
-              <svg className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="3" strokeWidth={2.5} />
-                <path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12" strokeWidth={2} strokeLinecap="round" />
-              </svg>
-            </div>
-            <div>
-              <div className="text-[11px] font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Axle Configurations</div>
-              <div className="text-[9px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
-                <span className="font-semibold">{filtered.length}</span> configurations
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-2 items-center">
+      <PageHeader
+        flush
+        icon={Settings2}
+        title="Axle Configurations"
+        subtitle={<><span className="font-semibold">{filtered.length}</span> configurations</>}
+        actions={
+          <>
             <div className="relative">
               <Search size={10} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input type="text" placeholder="Search configs..."
@@ -166,9 +156,9 @@ const AxleConfigs = () => {
             <button onClick={fetchConfigs} className="h-7 px-3 text-[11px] font-medium rounded-md cs-solid-chip-btn shadow-sm transition-all flex items-center gap-1.5">
               <RotateCcw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Refresh
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Inline Form */}
       <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-amber-50/30 border-b border-amber-200 shadow-sm shrink-0">

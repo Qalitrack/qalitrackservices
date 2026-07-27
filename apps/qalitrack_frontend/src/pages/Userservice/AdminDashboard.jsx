@@ -5,8 +5,9 @@ import { fetchTransactions } from "../../store/weighingSlice";
 import {
   Users, RefreshCw, Shield, Clock,
   ChevronRight, Truck, CheckCircle2, Hourglass, Weight,
-  Activity, BarChart3, AlertTriangle,
+  Activity, BarChart3, AlertTriangle, LayoutDashboard,
 } from "lucide-react";
+import PageHeader from "../../components/PageHeader.jsx";
 import CountUp from "react-countup";
 import Chart from "react-apexcharts";
 import { fetchUsers } from "../../api/helpers/UserService/Users/users.js";
@@ -253,28 +254,26 @@ export default function AdminDashboard() {
   return (
     <div className="h-full overflow-y-auto bg-gray-50">
 
-      {/* ── Accent header band — bg/text follow the active color scheme via
-          --cs-appbar-*, so this matches the sidebar under Navy/Indigo instead
-          of always staying the Amber-only orange it used to be hardcoded to. */}
-      <div className="px-5 py-4" style={{ background: "var(--cs-appbar-bg)" }}>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-sm font-black tracking-tight" style={{ color: "var(--cs-appbar-text)" }}>Qalitrack Dashboard</h1>
-            <p className="text-[10px] flex items-center gap-1 mt-0.5 opacity-80" style={{ color: "var(--cs-appbar-text)" }}>
-              <Clock size={10} />
-              {lastUpdated
-                ? `Updated ${lastUpdated.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
-                : "Loading…"}
-              {!loading && <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--cs-appbar-text)" }} />}
-            </p>
-          </div>
+      <PageHeader
+        icon={LayoutDashboard}
+        title="Qalitrack Dashboard"
+        subtitle={
+          <span className="flex items-center gap-1">
+            <Clock size={10} />
+            {lastUpdated
+              ? `Updated ${lastUpdated.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`
+              : "Loading…"}
+            {!loading && <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--cs-appbar-text)" }} />}
+          </span>
+        }
+        actions={
           <button onClick={refresh} disabled={loading}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95 transition-all disabled:opacity-50 border"
             style={{ background: "rgba(128,128,128,0.15)", color: "var(--cs-appbar-text)", borderColor: "rgba(128,128,128,0.2)" }}>
             <RefreshCw size={11} className={loading ? "animate-spin" : ""} /> Refresh
           </button>
-        </div>
-      </div>
+        }
+      />
 
       <div className="p-5 space-y-4 min-w-0">
 

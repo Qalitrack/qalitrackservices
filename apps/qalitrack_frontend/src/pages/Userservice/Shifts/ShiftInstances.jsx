@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
-import { useNavigate } from 'react-router-dom';
 import { fetchShiftInstances } from '../../../api/helpers/UserService/Shifts/Shifts';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import jsPDF from 'jspdf';
 import { getTicketSettings, resolveReportColors } from '../../../utils/ticketThemeConfig';
 
-const ShiftInstances = ({ shiftId }) => {
-    const navigate = useNavigate();
+const ShiftInstances = ({ shiftId, onViewAttendance }) => {
     const [instances, setInstances] = useState([]);
     const [shiftName, setShiftName] = useState('');
     const [loading, setLoading] = useState(true);
@@ -281,14 +279,13 @@ const ShiftInstances = ({ shiftId }) => {
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                         <button
                                             onClick={() => {
-                                                // Navigate to the attendance page with instance data and shiftId
-                                                navigate('/Admin/attendance', { 
-                                                    state: { 
-                                                        instanceData: instance,
-                                                        instanceId: instance.id,
-                                                        shiftId: shiftId,
-                                                        shiftName: shiftName  // Add this line
-                                                    } 
+                                                // Switch to the Attendance tab (sibling within the Shifts hub,
+                                                // not a separate route) scoped to this instance.
+                                                onViewAttendance?.({
+                                                    instanceData: instance,
+                                                    instanceId: instance.id,
+                                                    shiftId: shiftId,
+                                                    shiftName: shiftName,
                                                 });
                                             }}
                                             className="text-amber-600 hover:text-amber-900 flex items-center space-x-1"

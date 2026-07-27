@@ -409,6 +409,7 @@ namespace UserService.Infrastructure.Data
                     RequireLowercase = false,
                     RequireDigit = false,
                     RequireSpecialCharacter = false,
+                    TwoFactorEnabled = false,
                     CreatedAt = DateTime.UtcNow
                 };
                 await context.PasswordPolicies.AddAsync(passwordPolicy);

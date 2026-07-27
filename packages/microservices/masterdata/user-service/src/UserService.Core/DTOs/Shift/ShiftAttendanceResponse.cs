@@ -50,6 +50,9 @@ namespace UserService.Core.DTOs.Shift
         public string EmployeeId { get; set; } = string.Empty;
         public string EmployeeName { get; set; } = string.Empty;
         public string EmployeeEmail { get; set; } = string.Empty;
+        public string ShiftInstanceId { get; set; } = string.Empty;
+        public string? ShiftId { get; set; }
+        public string? ShiftName { get; set; }
         public DateTime? ClockInTime { get; set; }
         public DateTime? ClockOutTime { get; set; }
         public AttendanceStatus Status { get; set; }

@@ -12,7 +12,7 @@ import { createPortal } from "react-dom";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
-  Scale,
+  ShoppingBag,
   Cog,
   BarChart3,
   FileText,
@@ -23,11 +23,7 @@ import {
   Factory,
   Truck,
   User,
-  Tractor,
-  Satellite,
-  List,
   Users,
-  User2,
   Shield,
   Database,
 } from "lucide-react";
@@ -236,33 +232,21 @@ export default function UnifiedSidebar({ isCollapsed, onToggle }) {
   const allMenuItems = [
     // Dashboard — all roles except Operator
     { key: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={18} />, path: `${basePath}/dashboard`, roles: null, excludeRoles: ["Operator"] },
-    {
-      // Weighing group — visible to all authenticated users
-      key: "weighing",
-      label: "Weighing",
-      icon: <Scale size={18} />,
-      roles: null,
-      children: [
-        { key: "weighing-factory",     label: "Factory Weighing",  icon: <Factory size={16} />,        path: `${basePath}/weighing/factory`,    roles: null },
-        { key: "transactions",         label: "Transactions",      icon: <LayoutDashboard size={16} />, path: `${basePath}/transactions`,        roles: null },
-        { key: "weighing-vehicles",    label: "Vehicles",          icon: <Truck size={16} />,           path: `${basePath}/weighing/vehicle`,    roles: null },
-        { key: "weighing-drivers",     label: "Drivers",           icon: <User size={16} />,            path: `${basePath}/weighing/drivers`,    roles: null },
-        { key: "weighing-transporters",label: "Transporters",      icon: <Tractor size={16} />,         path: `${basePath}/transporters`,        roles: null },
-        { key: "weighing-owners",      label: "Owners",            icon: <Users size={16} />,           path: `${basePath}/weighing/owners`,     roles: null },
-        { key: "suppliers",            label: "Suppliers",         icon: <Satellite size={16} />,       path: `${basePath}/suppliers`,           roles: null },
-        { key: "weighing-products",    label: "Products",          icon: <BarChart3 size={16} />,       path: `${basePath}/weighing/products`,   roles: null },
-        { key: "weighing-axle-config", label: "Axle Configuration",icon: <List size={16} />,           path: `${basePath}/weighing/axle-config`,roles: null },
-        { key: "weighing-saccos",      label: "Saccos",            icon: <User2 size={16} />,           path: `${basePath}/saccos`,              roles: null },
-      ],
-    },
+    // Weighing — flat items, no submenus. Vehicles/Drivers/Transporters/Owners/
+    // Axle Configuration live as tabs inside Fleet & Transport; Suppliers/
+    // Products/Saccos live as tabs inside Commerce.
+    { key: "weighing-factory", label: "Factory Weighing", icon: <Factory size={18} />,        path: `${basePath}/weighing/factory`, roles: null },
+    { key: "transactions",     label: "Transactions",     icon: <LayoutDashboard size={18} />, path: `${basePath}/transactions`,     roles: null },
+    { key: "fleet",            label: "Fleet & Transport",icon: <Truck size={18} />,           path: `${basePath}/fleet`,            roles: null },
+    { key: "commerce",         label: "Commerce",         icon: <ShoppingBag size={18} />,     path: `${basePath}/commerce`,         roles: null },
     // User Management — Supervisor and Admin only (Manager does not get staff admin)
     { key: "user-management",  label: "User Management",  icon: <Users size={18} />,    path: `${basePath}/user-management`,   roles: ["Admin", "Supervisor"] },
     // Analytics, Reports — everyone except Operator (reporting, not master data)
     { key: "analytics",        label: "Analytics",         icon: <BarChart3 size={18} />,path: `${basePath}/analytics`,        roles: null, excludeRoles: ["Operator"] },
     { key: "reports",          label: "Reports",           icon: <FileText size={18} />, path: `${basePath}/reports`,          roles: null, excludeRoles: ["Operator"] },
-    // Shifts / Shift Assignment — Manager, Supervisor, Admin (staff scheduling)
+    // Shifts — Manager, Supervisor, Admin (staff scheduling). Attendance and
+    // Shift Assignment live as tabs inside this page now instead of separate nav items.
     { key: "shifts",           label: "Shifts",            icon: <User size={18} />,     path: `${basePath}/shifts`,           roles: ["Admin", "Manager", "Supervisor"] },
-    { key: "shift-assignment", label: "Shift Assignment",  icon: <Users size={18} />,    path: `${basePath}/shift-assignment`, roles: ["Admin", "Manager", "Supervisor"] },
     // Security — Permissions/Roles/Password Policy/Audit Logs live as tabs
     // inside a single page now instead of separate nav items.
     { key: "security", label: "Security", icon: <Shield size={18} />, path: `${basePath}/security`, roles: ["Admin"] },

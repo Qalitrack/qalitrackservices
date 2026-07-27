@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
 
 import { fetchPermissions, updatePermission, deletePermission, createPermission, fetchRolesForPermission, fetchDeletedPermissions, restorePermission } from '../../api/helpers/UserService/Permissions/permissions.js';
-import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
-import { Edit, Trash2, Shield, ShieldAlert, PlusCircle, Users, FileText, RefreshCw, Download, Lock } from 'lucide-react';
+import { Edit, Trash2, Shield, ShieldAlert, PlusCircle, Users, RefreshCw, Download, Lock } from 'lucide-react';
 import TablePagination from '../../components/TablePagination';
+import PageHeader from '../../components/PageHeader.jsx';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -39,14 +39,12 @@ const Permissions = () => {
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [isAddModalOpen, setAddModalOpen] = useState(false);
     const [isRolesModalOpen, setRolesModalOpen] = useState(false);
-    const [isLogsModalOpen, setLogsModalOpen] = useState(false);
     const [selectedPermission, setSelectedPermission] = useState(null);
     const [rolesForPermission, setRolesForPermission] = useState([]);
     const [newPermission, setNewPermission] = useState({ name: '', description: '' });
     const [isUpdating, setIsUpdating] = useState(false);
     const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: '' });
     const [modalFeedback, setModalFeedback] = useState({ text: '', type: '' });
-    const [userDetails, setUserDetails] = useState({});
 
     const showMessage = (text, type) => {
         setFeedbackMessage({ text, type });
@@ -247,17 +245,6 @@ const Permissions = () => {
         }
     };
 
-    const loadUserDetails = async (userId) => {
-        if (!userId || userDetails[userId]) return; // Don't fetch if no ID or already fetched
-
-        try {
-            const user = await fetchUserById(userId);
-            setUserDetails(prev => ({ ...prev, [userId]: user.email }));
-        } catch (error) {
-            setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' })); // Handle error case
-        }
-    };
-
     // Handlers for opening modals
     const handleAddClick = () => {
         setNewPermission({ name: '', description: '' });
@@ -280,13 +267,6 @@ const Permissions = () => {
     const handleToggleShowDeleted = () => {
         setShowDeleted(prev => !prev);
         setPage(1);
-    };
-
-    const handleLogsClick = (permission) => {
-        setSelectedPermission(permission);
-        loadUserDetails(permission.createdBy);
-        loadUserDetails(permission.updatedBy);
-        setLogsModalOpen(true);
     };
 
     const handleViewRolesClick = async (permission) => {
@@ -381,43 +361,41 @@ const Permissions = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-                        <Shield className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
-                    </div>
-                    <div>
-                        <span className="text-sm font-bold text-gray-900 block leading-tight">Manage Permissions</span>
-                        <span className="text-xs text-amber-800 font-medium">Fine-grained access controls used by role authorization</span>
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium text-gray-600 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            id="show-deleted"
-                            checked={showDeleted}
-                            onChange={handleToggleShowDeleted}
-                            className="h-3.5 w-3.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-                        />
-                        Show Deleted
-                    </label>
-                    <button
-                        onClick={handleDownloadPDF}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 rounded transition-colors"
-                    >
-                        <Download size={13} />
-                        <span>PDF</span>
-                    </button>
-                    <button
-                        onClick={handleAddClick}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow transition-all"
-                    >
-                        <PlusCircle size={13} />
-                        <span>Add Permission</span>
-                    </button>
-                </div>
-            </div>
+            <PageHeader
+                flush
+                icon={Shield}
+                title="Manage Permissions"
+                subtitle="Fine-grained access controls used by role authorization"
+                actions={
+                    <>
+                        <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
+                            <input
+                                type="checkbox"
+                                id="show-deleted"
+                                checked={showDeleted}
+                                onChange={handleToggleShowDeleted}
+                                className="h-3.5 w-3.5 rounded border-gray-300"
+                            />
+                            Show Deleted
+                        </label>
+                        <button
+                            onClick={handleDownloadPDF}
+                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
+                        >
+                            <Download size={13} />
+                            <span>PDF</span>
+                        </button>
+                        <button
+                            onClick={handleAddClick}
+                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow transition-all"
+                            style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
+                        >
+                            <PlusCircle size={13} />
+                            <span>Add Permission</span>
+                        </button>
+                    </>
+                }
+            />
 
             {feedbackMessage.text && (
                 <div className={`mx-4 mt-2 px-3 py-2 rounded-md text-xs font-medium border ${feedbackMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
@@ -462,9 +440,6 @@ const Permissions = () => {
                             </td>
                             <td className="px-3 py-2">
                                 <div className="flex gap-1.5 justify-center">
-                                    <button onClick={() => handleLogsClick(permission)} className="p-1 rounded text-gray-600 hover:bg-gray-100 border border-gray-300 hover:border-gray-400 transition-all" title="View Logs">
-                                        <FileText size={12} />
-                                    </button>
                                     {!showDeleted && (
                                         <>
                                             <button onClick={() => handleViewRolesClick(permission)} className="p-1 rounded text-blue-600 hover:bg-blue-50 border border-blue-300 hover:border-blue-500 transition-all" title="View Roles">
@@ -662,41 +637,6 @@ const Permissions = () => {
                 </div>
             </Modal>
 
-            {/* Logs Modal */}
-            <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
-                <div className="bg-amber-50 border border-amber-100 p-5 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Audit Logs — {selectedPermission?.name}</h3>
-                    {selectedPermission && (
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created At:</p>
-                                <p className="text-gray-600">{format(parseISO(selectedPermission.createdAt), "PPP p")}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created By:</p>
-                                <p className="text-gray-600">{userDetails[selectedPermission.createdBy] || selectedPermission.createdBy || 'N/A'}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Last Updated At:</p>
-                                <p className="text-gray-600">{format(parseISO(selectedPermission.updatedAt), "PPP p")}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Updated By:</p>
-                                <p className="text-gray-600">{userDetails[selectedPermission.updatedBy] || selectedPermission.updatedBy || 'N/A'}</p>
-                            </div>
-                        </div>
-                    )}
-                    <div className="flex justify-end mt-6">
-                        <button
-                            type="button"
-                            onClick={() => setLogsModalOpen(false)}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-sm font-medium transition-colors duration-200"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </Modal>
         </div>
     );
 };

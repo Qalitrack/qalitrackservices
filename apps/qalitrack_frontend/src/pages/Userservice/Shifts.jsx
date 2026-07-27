@@ -2,20 +2,19 @@ import React, { useState, useEffect } from 'react';
 import {
     fetchShifts,
     fetchDeletedShifts,
-    updateShift,
     deleteShift,
-    createShift,
 } from '../../api/helpers/UserService/Shifts/Shifts.js';
-import { fetchUserById } from '../../api/helpers/UserService/Users/users.js';
+import { fetchShiftUsers } from '../../api/helpers/UserService/Shifts/shiftAssignment.js';
 import {
     Edit,
     Trash2,
-    PlusCircle,
     FileText,
     Lock,
     Unlock,
     Download,
+    CalendarClock,
 } from 'lucide-react';
+import PageHeader from '../../components/PageHeader.jsx';
 import TablePagination from '../../components/TablePagination';
 import { format, parseISO } from 'date-fns';
 import { jsPDF } from 'jspdf';
@@ -24,8 +23,7 @@ import dayjs from 'dayjs';
 import logoSrc from '../../assets/logo.jpeg';
 import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 import ShiftInstances from './Shifts/ShiftInstances';
-import AddShift from './Shifts/AddShift';
-import ShiftEdit from './Shifts/ShiftEdit';
+import ShiftForm from './Shifts/ShiftForm';
 
 function isValidDateString(dateString) {
     if (!dateString) return false;
@@ -75,13 +73,6 @@ const Modal = ({ children, isOpen, size = 'default' }) => {
     );
 };
 
-// Helper to check if a date string is a valid ISO date
-function isValidISODate(dateString) {
-    if (!dateString) return false;
-    const date = parseISO(dateString);
-    return date instanceof Date && !isNaN(date);
-}
-
 // Helper to get progress bar color based on fill percentage
 const getProgressBarColor = (percentage) => {
     if (percentage >= 1) return '#F59E0B'; // Green when complete
@@ -91,7 +82,7 @@ const getProgressBarColor = (percentage) => {
     return '#EF4444'; // Red when just starting
 };
 
-const Shifts = () => {
+const Shifts = ({ onViewAttendance }) => {
     const [shifts, setShifts] = useState([]);
     const [pagination, setPagination] = useState({
         page: 1,
@@ -106,28 +97,14 @@ const Shifts = () => {
     const [feedbackMessage, setFeedbackMessage] = useState({ text: '', type: '' });
     const [isViewUsersModalOpen, setViewUsersModalOpen] = useState(false);
     const [selectedShiftUsers, setSelectedShiftUsers] = useState([]);
+    const [viewUsersLoading, setViewUsersLoading] = useState(false);
     const [selectedShift, setSelectedShift] = useState(null);
     const [showDeleted, setShowDeleted] = useState(false);
-    const [isEditModalOpen, setEditModalOpen] = useState(false);
-    const [selectedShiftToEdit, setSelectedShiftToEdit] = useState(null);
-    const [editForm, setEditForm] = useState({
-        name: '',
-        description: '',
-        startTime: '',
-        durationHours: 1,
-        mode: '0', // '0' for Open, '1' for Closed
-        autoRepeatDaily: false,
-    });
-    const [editFormErrors, setEditFormErrors] = useState({});
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
     const [shiftToDelete, setShiftToDelete] = useState(null);
-    const [isAddModalOpen, setAddModalOpen] = useState(false);
-    const [isLogsModalOpen, setLogsModalOpen] = useState(false);
-    const [logsShift, setLogsShift] = useState(null);
     const [showInstancesModal, setShowInstancesModal] = useState(false);
     const [selectedShiftForInstances, setSelectedShiftForInstances] = useState(null);
     const [editingShift, setEditingShift] = useState(null);
-    const [userDetails, setUserDetails] = useState({});
     const [hoveredShiftId, setHoveredShiftId] = useState(null);
 
     const showMessage = (text, type) => {
@@ -175,95 +152,19 @@ const Shifts = () => {
         setPagination((p) => ({ ...p, page }));
     };
 
-    const handleViewUsersClick = (shift) => {
+    const handleViewUsersClick = async (shift) => {
         setSelectedShift(shift);
-        setSelectedShiftUsers(shift.assignedUsers || []);
+        setSelectedShiftUsers([]);
         setViewUsersModalOpen(true);
-    };
-
-    const handleEditClick = (shift) => {
-        setSelectedShiftToEdit(shift);
-        setEditForm({
-            name: shift.name || '',
-            description: shift.description || '',
-            startTime: shift.startTime ? shift.startTime.slice(0, 16) : '', // for datetime-local input
-            durationHours: shift.durationMinutes ? Math.round(shift.durationMinutes / 60) : 1, // Convert minutes to hours
-            mode: String(shift.mode || '0'), // Ensure mode is a string for the select
-            autoRepeatDaily: !!shift.autoRepeatDaily,
-        });
-        setEditFormErrors({});
-        setEditModalOpen(true);
-    };
-
-    const validateForm = (formData) => {
-        const errors = {};
-        if (!formData.name?.trim()) errors.name = 'Name is required';
-        if (!formData.startTime) errors.startTime = 'Start time is required';
-        if (formData.durationHours <= 0 || !Number.isInteger(Number(formData.durationHours))) {
-            errors.durationHours = 'Duration must be a positive whole number';
-        }
-        return errors;
-    };
-
-    const handleEditFormChange = (e) => {
-        const { name, value, type, checked } = e.target;
-
-        // Handle numeric inputs
-        let processedValue = value;
-        if (name === 'durationHours') {
-            processedValue = value === '' ? '' : Math.max(1, Math.floor(Number(value)));
-        }
-
-        const updatedForm = {
-            ...editForm,
-            [name]: type === 'checkbox' ? checked : processedValue,
-        };
-
-        setEditForm(updatedForm);
-
-        // Clear error for the current field when user types
-        if (editFormErrors[name]) {
-            const errors = { ...editFormErrors };
-            delete errors[name];
-            setEditFormErrors(errors);
-        }
-    };
-
-    const handleEditFormSubmit = async (e) => {
-        e.preventDefault();
-        if (!selectedShiftToEdit) return;
-
-        // Validate form
-        const errors = validateForm(editForm);
-        if (Object.keys(errors).length > 0) {
-            setEditFormErrors(errors);
-            return;
-        }
-
+        setViewUsersLoading(true);
         try {
-            // Convert startTime to ISO string and hours to minutes
-            const payload = {
-                ...editForm,
-                startTime: editForm.startTime ? new Date(editForm.startTime).toISOString() : '',
-                durationMinutes: Math.round(Number(editForm.durationHours) * 60), // Convert hours to minutes
-                mode: Number(editForm.mode) // Ensure mode is a number
-            };
-
-            await updateShift(selectedShiftToEdit.id, payload);
-            showMessage('Shift updated successfully!', 'success');
-            setEditModalOpen(false);
-            setSelectedShiftToEdit(null);
-            setEditFormErrors({});
-            loadData(pagination.page, showDeleted);
+            const users = await fetchShiftUsers(shift.id);
+            setSelectedShiftUsers(Array.isArray(users) ? users : []);
         } catch (err) {
-            showMessage(err?.response?.data?.message || 'Failed to update shift.', 'error');
+            showMessage('Failed to load assigned users.', 'error');
+        } finally {
+            setViewUsersLoading(false);
         }
-    };
-
-    const handleEditModalClose = () => {
-        setEditModalOpen(false);
-        setSelectedShiftToEdit(null);
-        setEditFormErrors({});
     };
 
     const handleDeleteClick = (shift) => {
@@ -287,127 +188,6 @@ const Shifts = () => {
     const handleCancelDelete = () => {
         setDeleteModalOpen(false);
         setShiftToDelete(null);
-    };
-
-    const handleAddClick = () => {
-        setAddForm({
-            name: '',
-            description: '',
-            startTime: '',
-            durationMinutes: 0,
-            mode: 0,
-            autoRepeatDaily: false,
-        });
-        setAddError('');
-        setAddSuccess('');
-        setAddModalOpen(true);
-    };
-
-    const handleAddFormChange = (e) => {
-        const { name, value, type, checked } = e.target;
-
-        // Handle numeric inputs
-        let processedValue = value;
-        if (name === 'durationHours') {
-            processedValue = value === '' ? '' : Math.max(1, Math.floor(Number(value)));
-        }
-
-        const updatedForm = {
-            ...addForm,
-            [name]: type === 'checkbox' ? checked : processedValue,
-        };
-
-        setAddForm(updatedForm);
-
-        // Clear error for the current field when user types
-        if (addFormErrors[name]) {
-            const errors = { ...addFormErrors };
-            delete errors[name];
-            setAddFormErrors(errors);
-        }
-    };
-
-    const handleAddFormSubmit = async (e) => {
-        e.preventDefault();
-
-        // Validate form
-        const errors = validateForm(addForm);
-        if (Object.keys(errors).length > 0) {
-            setAddFormErrors(errors);
-            return;
-        }
-
-        setAddLoading(true);
-        setAddError('');
-        setAddSuccess('');
-
-        try {
-            const payload = {
-                name: addForm.name.trim(),
-                description: addForm.description.trim(),
-                startTime: addForm.startTime ? new Date(addForm.startTime).toISOString() : '',
-                durationMinutes: Math.round(Number(addForm.durationHours) * 60), // Convert hours to minutes
-                mode: Number(addForm.mode), // Ensure mode is a number
-                autoRepeatDaily: addForm.autoRepeatDaily,
-            };
-
-            await createShift(payload);
-            setAddSuccess('Shift created successfully!');
-            setAddFormErrors({});
-            loadData(pagination.page, showDeleted);
-
-            // Reset form but keep it open for adding another shift
-            setAddForm({
-                name: '',
-                description: '',
-                startTime: '',
-                durationHours: 1,
-                mode: '0',
-                autoRepeatDaily: false,
-            });
-
-        } catch (err) {
-            setAddError(err?.response?.data?.message || err.message || 'Failed to create shift.');
-        } finally {
-            setAddLoading(false);
-        }
-    };
-
-    const handleAddModalClose = () => {
-        setAddModalOpen(false);
-        setAddFormErrors({});
-        // Reset form when closing
-        setAddForm({
-            name: '',
-            description: '',
-            startTime: '',
-            durationHours: 1,
-            mode: '0',
-            autoRepeatDaily: false,
-        });
-    };
-
-    const handleLogsClick = (shift) => {
-        setLogsShift(shift);
-        if (shift?.createdBy) loadUserDetails(shift.createdBy);
-        if (shift?.updatedBy) loadUserDetails(shift.updatedBy);
-        setLogsModalOpen(true);
-    };
-
-    const handleLogsModalClose = () => {
-        setLogsModalOpen(false);
-        setLogsShift(null);
-    };
-
-    // Fetch user email by ID and cache it
-    const loadUserDetails = async (userId) => {
-        if (!userId || userDetails[userId]) return;
-        try {
-            const user = await fetchUserById(userId);
-            setUserDetails(prev => ({ ...prev, [userId]: user.email }));
-        } catch (error) {
-            setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' }));
-        }
     };
 
     const fetchAllShifts = async (showDeleted = false) => {
@@ -621,45 +401,52 @@ const Shifts = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 flex items-center justify-between flex-wrap gap-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                <h2 className="text-base font-bold" style={{ color: "var(--cs-appbar-text)" }}>Shifts</h2>
-                <div className="flex items-center gap-2">
-                    <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
-                        <input
-                            id="show-deleted"
-                            type="checkbox"
-                            checked={showDeleted}
-                            onChange={(e) => {
-                                setShowDeleted(e.target.checked);
-                                setPagination((p) => ({ ...p, page: 1 }));
-                            }}
-                            className="h-3.5 w-3.5 rounded border-gray-300"
-                        />
-                        Show Deleted
-                    </label>
-                    <button
-                        onClick={handleDownloadPDF}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
-                    >
-                        <Download size={13} />
-                        <span>PDF</span>
-                    </button>
-                    <button
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow transition-all"
-                        style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
-                        onClick={() => setAddModalOpen(true)}
-                    >
-                        <PlusCircle size={13} />
-                        <span>Add Shift</span>
-                    </button>
-                </div>
-            </div>
+            <PageHeader
+                flush
+                icon={CalendarClock}
+                title="Shifts"
+                subtitle={`${pagination.totalCount} shifts total`}
+                actions={
+                    <>
+                        <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
+                            <input
+                                id="show-deleted"
+                                type="checkbox"
+                                checked={showDeleted}
+                                onChange={(e) => {
+                                    setShowDeleted(e.target.checked);
+                                    setPagination((p) => ({ ...p, page: 1 }));
+                                }}
+                                className="h-3.5 w-3.5 rounded border-gray-300"
+                            />
+                            Show Deleted
+                        </label>
+                        <button
+                            onClick={handleDownloadPDF}
+                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold cs-solid-chip-btn rounded transition-colors"
+                        >
+                            <Download size={13} />
+                            <span>PDF</span>
+                        </button>
+                    </>
+                }
+            />
 
             {feedbackMessage.text && (
                 <div className={`mx-4 mt-2 px-3 py-2 rounded-md text-xs font-medium border ${feedbackMessage.type === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
                     {feedbackMessage.text}
                 </div>
             )}
+
+            <ShiftForm
+                editingShift={editingShift}
+                showMessage={showMessage}
+                onCancelEdit={() => setEditingShift(null)}
+                onSaved={() => {
+                    setEditingShift(null);
+                    loadData(pagination.page, showDeleted);
+                }}
+            />
 
             <div className="flex-1 overflow-auto">
                 <table className="min-w-full">
@@ -817,13 +604,6 @@ const Shifts = () => {
                                                 <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                                             </svg>
                                         </button>
-                                        <button
-                                            className="text-gray-600 hover:text-gray-900 transition-colors"
-                                            title="Logs"
-                                            onClick={() => handleLogsClick(shift)}
-                                        >
-                                            <FileText size={18} />
-                                        </button>
                                         {!showDeleted && (
                                             <>
                                                 <button
@@ -896,24 +676,16 @@ const Shifts = () => {
                                     className="flex items-center text-amber-500 hover:text-amber-600 transition-colors text-sm"
                                 >
                                     <FileText size={16} className="mr-1" />
-                                    <span>{shift.assignedUsersCount || 0} Users</span>
+                                    <span>{shift.assignedUsers || 0} Users</span>
                                 </button>
                                 <div className="flex space-x-3">
                                     {!showDeleted && (
-                                        <>
-                                            <button
-                                                className="text-amber-600 hover:text-amber-900 transition-colors"
-                                                onClick={() => handleEditClick(shift)}
-                                            >
-                                                <Edit size={16} />
-                                            </button>
-                                            <button
-                                                className="text-red-600 hover:text-red-800 transition-colors"
-                                                onClick={() => handleDeleteClick(shift)}
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </>
+                                        <button
+                                            className="text-red-600 hover:text-red-800 transition-colors"
+                                            onClick={() => handleDeleteClick(shift)}
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
                                     )}
                                 </div>
                             </div>
@@ -933,7 +705,11 @@ const Shifts = () => {
 
             <Modal isOpen={isViewUsersModalOpen}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Users — {selectedShift?.name}</h3>
-                {selectedShiftUsers.length > 0 ? (
+                {viewUsersLoading ? (
+                    <div className="flex justify-center py-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500"></div>
+                    </div>
+                ) : selectedShiftUsers.length > 0 ? (
                     <ul className="space-y-2">
                         {selectedShiftUsers.map(user => (
                             <li key={user.id} className="bg-amber-50 border border-amber-100 px-3 py-2 rounded-md text-sm font-medium text-gray-700">
@@ -964,51 +740,6 @@ const Shifts = () => {
                 </div>
             </Modal>
 
-            {/* Add Shift Modal - Uses its own modal implementation */}
-            <AddShift
-                isOpen={isAddModalOpen}
-                onClose={() => setAddModalOpen(false)}
-                onShiftAdded={(newShift) => {
-                    // Ensure the new shift has all required properties with defaults
-                    const formattedShift = {
-                        ...newShift,
-                        startDate: newShift.startDate || new Date().toISOString(),
-                        endDate: newShift.endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-                        recurrenceType: newShift.recurrenceType || 0,
-                        status: newShift.status || 1, // Default to active status
-                        assignedUsers: newShift.assignedUsers || 0,
-                        requiredStaffCount: newShift.requiredStaffCount || 1
-                    };
-
-                    // Add the new shift to the beginning of the list
-                    setShifts(prevShifts => [formattedShift, ...prevShifts]);
-
-                    // Update the total count
-                    setPagination(prev => ({
-                        ...prev,
-                        totalCount: prev.totalCount + 1
-                    }));
-
-                    // Show success message
-                    setFeedbackMessage({
-                        text: 'Shift created successfully!',
-                        type: 'success'
-                    });
-                }}
-            />
-
-            {editingShift && (
-                <ShiftEdit
-                    isOpen={!!editingShift}
-                    onClose={() => setEditingShift(null)}
-                    shift={editingShift}
-                    onSave={() => {
-                        loadData(pagination.page, showDeleted);
-                        setEditingShift(null);
-                    }}
-                />
-            )}
-
             {/* Shift Instances Modal */}
             <Modal isOpen={showInstancesModal} onClose={() => setShowInstancesModal(false)} size="large">
                 <div className="w-full max-w-8xl max-h-[90vh] overflow-y-auto">
@@ -1028,55 +759,12 @@ const Shifts = () => {
                             </button>
                         </div>
                         <div className="w-full">
-                            <ShiftInstances shiftId={selectedShiftForInstances?.id} />
+                            <ShiftInstances shiftId={selectedShiftForInstances?.id} onViewAttendance={onViewAttendance} />
                         </div>
                     </div>
                 </div>
             </Modal>
 
-            {/* Logs Modal */}
-            <Modal isOpen={isLogsModalOpen}>
-                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-                    <h3 className="text-lg font-bold mb-4">Audit Logs for "{logsShift?.name}"</h3>
-                    {logsShift && (
-                        <div className="space-y-4">
-                            {/* Deleted badge if applicable */}
-                            {logsShift.isDeleted && (
-                                <div className="flex items-center mb-2">
-                                    <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-semibold">Deleted Shift</span>
-                                </div>
-                            )}
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created At:</p>
-                                <p className="text-gray-600">{isValidISODate(logsShift.createdAt) ? format(parseISO(logsShift.createdAt), "PPP p") : '-'}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created By:</p>
-                                <p className="text-gray-600">{userDetails[logsShift.createdBy] || logsShift.createdBy || 'N/A'}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Updated At:</p>
-                                <p className="text-gray-600">{
-                                    isValidISODate(logsShift.updatedAt) ? format(parseISO(logsShift.updatedAt), "PPP p") : '-'
-                                }</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Updated By:</p>
-                                <p className="text-gray-600">{userDetails[logsShift.updatedBy] || logsShift.updatedBy || 'N/A'}</p>
-                            </div>
-                        </div>
-                    )}
-                    <div className="flex justify-end mt-6">
-                        <button
-                            type="button"
-                            onClick={handleLogsModalClose}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-sm font-medium transition-colors duration-200"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </Modal>
         </div>
     );
 };

@@ -10,10 +10,17 @@ namespace UserService.Core.Mappings;
         public ShiftAttendanceProfile()
         {
             CreateMap<ShiftAttendance, ShiftAttendanceResponse>()
-                .ForMember(dest => dest.EmployeeName, 
+                .ForMember(dest => dest.EmployeeName,
                     opt => opt.MapFrom(src => $"{src.Employee.FirstName} {src.Employee.LastName}"))
-                .ForMember(dest => dest.EmployeeEmail, 
-                    opt => opt.MapFrom(src => src.Employee.Email));
+                .ForMember(dest => dest.EmployeeEmail,
+                    opt => opt.MapFrom(src => src.Employee.Email))
+                // ShiftInstance is only eager-loaded on some query paths (e.g. GetAllAsync) —
+                // GetByInstanceIdAsync's projection omits it since the caller already knows
+                // the shift/instance, so these must null-check rather than assume it's loaded.
+                .ForMember(dest => dest.ShiftId,
+                    opt => opt.MapFrom(src => src.ShiftInstance != null ? src.ShiftInstance.ShiftId : null))
+                .ForMember(dest => dest.ShiftName,
+                    opt => opt.MapFrom(src => src.ShiftInstance != null && src.ShiftInstance.Shift != null ? src.ShiftInstance.Shift.Name : null));
 
             CreateMap<ClockInRequest, ShiftAttendance>()
                 .ForMember(dest => dest.ClockInTime, 

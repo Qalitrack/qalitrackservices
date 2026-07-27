@@ -3,6 +3,7 @@ import { ScrollText } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { fetchAuditLogs } from '../../api/helpers/UserService/AuditLogs/auditLogs.js';
 import TablePagination from '../../components/TablePagination';
+import PageHeader from '../../components/PageHeader.jsx';
 
 const METHOD_STYLES = {
     POST: 'bg-green-100 text-green-700 border-green-300',
@@ -49,26 +50,20 @@ const AuditLogs = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            {/* Header */}
-            <div className="px-4 py-3 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex items-center justify-between flex-wrap gap-2">
-                <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-md bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center shadow-sm">
-                        <ScrollText className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
-                    </div>
-                    <div>
-                        <span className="text-sm font-bold text-gray-900 block leading-tight">Audit Logs</span>
-                        <span className="text-xs text-amber-800 font-medium">
-                            Every create/update/delete request captured at the gateway — read-only traffic isn't logged
-                        </span>
-                    </div>
-                </div>
-                <button
-                    onClick={() => loadLogs(page)}
-                    className="h-7 px-3 text-xs font-semibold border border-amber-300 text-amber-700 hover:bg-amber-100 rounded transition-colors"
-                >
-                    Refresh
-                </button>
-            </div>
+            <PageHeader
+                flush
+                icon={ScrollText}
+                title="Audit Logs"
+                subtitle="Every create/update/delete request captured at the gateway — read-only traffic isn't logged"
+                actions={
+                    <button
+                        onClick={() => loadLogs(page)}
+                        className="h-7 px-3 text-xs font-semibold rounded transition-colors cs-solid-chip-btn"
+                    >
+                        Refresh
+                    </button>
+                }
+            />
 
             {error && (
                 <div className="mx-4 mt-3 px-4 py-2 rounded-md text-sm font-medium border bg-red-50 border-red-200 text-red-700">

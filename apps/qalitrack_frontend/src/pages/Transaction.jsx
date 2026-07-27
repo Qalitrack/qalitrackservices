@@ -11,7 +11,8 @@ import {
   updateTransactionApi,
   fetchReweighRecords,
 } from "../store/weighingSlice";
-import { Eye, Search, Filter, X, CheckCircle2 } from "lucide-react";
+import { Eye, Search, Filter, X, CheckCircle2, Receipt } from "lucide-react";
+import PageHeader from "../components/PageHeader.jsx";
 import TransactionDrawer from "../components/transaction/TransactionDrawer";
 import ExportPreviewModal from "../components/transaction/ExportPreviewModal";
 import { getTransactionColumns, formatTurnaroundTimeSimple } from "../components/transaction/transactionColumns";
@@ -285,30 +286,12 @@ export default function Transactions() {
 
   return (
     <div className="h-full flex flex-col bg-white">
-      {/* Header — experiment: app bar filled with the scheme's primary color */}
-      <div
-        className="px-3 py-2 shrink-0"
-        style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}
-      >
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
-              <svg className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <div>
-              <div className="text-[11px] font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Transactions</div>
-              <div className="text-[9px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
-                <span className="font-semibold">{filteredTransactions.length}</span> of{" "}
-                <span className="font-semibold">{total || 0}</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 items-center">
+      <PageHeader
+        icon={Receipt}
+        title="Transactions"
+        subtitle={<><span className="font-semibold">{filteredTransactions.length}</span> of <span className="font-semibold">{total || 0}</span></>}
+        actions={
+          <>
             <Input
               allowClear
               placeholder="Search..."
@@ -365,10 +348,9 @@ export default function Transactions() {
             >
               Refresh
             </Button>
-          </div>
-        </div>
-      </div>
-
+          </>
+        }
+      />
 
       {/* Filters Panel — one consistent 5-column grid throughout so every
           field's edges line up across rows, and 15 fields fill exactly

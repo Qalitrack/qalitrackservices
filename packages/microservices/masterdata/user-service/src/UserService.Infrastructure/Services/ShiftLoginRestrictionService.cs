@@ -41,7 +41,17 @@ namespace UserService.Infrastructure.Services
             try
             {
                 _logger.LogInformation("=== LOGIN ATTEMPT FOR USER {UserId} ===", userId);
-                
+
+                // Shifts can only be created through the license-gated Shifts UI, so no Shift
+                // rows existing at all means this installation isn't using the feature — skip
+                // the instance-window computation below entirely instead of always running it
+                // just to arrive at "allow" anyway.
+                if (!await _context.Shifts.AnyAsync(s => !s.IsDeleted))
+                {
+                    _logger.LogInformation("No shifts configured, skipping shift-restriction check for user {UserId}", userId);
+                    return (true, "Shifts not in use - access granted");
+                }
+
                 // 1. Check if user is an admin first (bypass all restrictions)
                 var isPrivilegedUser = await IsUserAdminAsync(userId);
                 if (isPrivilegedUser)
@@ -147,6 +157,12 @@ namespace UserService.Infrastructure.Services
             try
             {
                 _logger.LogInformation("Handling login attendance for user {UserId}", userId);
+
+                // Same short-circuit as CanUserLoginAsync — nothing to attend to if Shifts isn't in use.
+                if (!await _context.Shifts.AnyAsync(s => !s.IsDeleted))
+                {
+                    return false;
+                }
 
                 var currentDateTime = DateTime.UtcNow;
 
@@ -311,20 +327,29 @@ namespace UserService.Infrastructure.Services
             {
                 _logger.LogInformation("Handling logout for user {UserId} at {LogoutTime}", userId, currentDateTime);
 
+                // Same short-circuit as CanUserLoginAsync — skip the shift-instance lookup when
+                // Shifts isn't in use, but still fall through to the online/offline status update below.
+                if (!await _context.Shifts.AnyAsync(s => !s.IsDeleted))
+                {
+                    _userStatusService.EnqueueStatusUpdate(userId, isActive: false);
+                    _logger.LogInformation("No shifts configured, skipped attendance handling for user {UserId} logout", userId);
+                    return;
+                }
+
                 _logger.LogDebug("Looking for active instances at {CurrentDateTime} (UTC) for user {UserId}", currentDateTime, userId);
-                
+
                 // Get active instances at the time of logout
                 var activeInstances = await GetCurrentlyActiveInstancesAsync(currentDateTime);
                 var activeShiftIds = activeInstances.Select(i => i.ShiftId).ToList();
-                
-                _logger.LogDebug("Found {Count} active instances for user {UserId} at {CurrentDateTime}", 
+
+                _logger.LogDebug("Found {Count} active instances for user {UserId} at {CurrentDateTime}",
                     activeInstances.Count, userId, currentDateTime);
-                
+
                 // Get user assignments to active shifts in a single query
                 var userAssignments = await _context.UserShifts
                     .Include(us => us.Shift)
-                    .Where(us => us.UserId == userId && 
-                                !us.IsDeleted && 
+                    .Where(us => us.UserId == userId &&
+                                !us.IsDeleted &&
                                 activeShiftIds.Contains(us.ShiftId))
                     .ToListAsync();
 

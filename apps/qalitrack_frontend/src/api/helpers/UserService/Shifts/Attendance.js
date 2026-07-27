@@ -1,5 +1,32 @@
 import {apiClient} from "../../apiClients.js";
 
+/**
+ * Fetches attendance records across all shifts, most recent first.
+ * Note: GET /ShiftAttendance returns a plain page of items with no total
+ * count/page metadata, so pagination here is Prev/Next-only (no "of N pages").
+ * @param {Object} options - Pagination options
+ * @param {number} options.pageNumber - Page number (default: 1)
+ * @param {number} options.pageSize - Number of items per page (default: 20)
+ * @param {AbortSignal} signal - Optional AbortSignal to cancel the request
+ * @returns {Promise<Array>}
+ */
+export const getAllAttendance = async ({ pageNumber = 1, pageSize = 20 } = {}, signal) => {
+    try {
+        const response = await apiClient.get('/ShiftAttendance', {
+            params: { pageNumber, pageSize },
+            signal,
+        });
+        return Array.isArray(response.data) ? response.data : [];
+    } catch (err) {
+        if (err.name === 'CanceledError') {
+            throw err;
+        }
+        if (err.response && err.response.status === 404) {
+            return [];
+        }
+        throw err;
+    }
+};
 
 /**
  * Fetches attendance records for a specific shift instance with pagination

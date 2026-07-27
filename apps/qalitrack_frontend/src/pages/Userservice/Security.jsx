@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Shield, Users, Lock, ScrollText } from "lucide-react";
+import PageHeader from "../../components/PageHeader.jsx";
 import Permissions from "./Permissions";
 import Roles from "./Roles";
 import PasswordPolicy from "./PasswordPolicy";
@@ -29,31 +30,18 @@ export default function Security() {
 
   return (
     <div className="h-full bg-gray-50 overflow-hidden flex flex-col">
-      {/* Header */}
-      <div className="mb-3 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-2.5 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-sm shrink-0">
-            <Shield className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
-          </div>
-          <div>
-            <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>SECURITY</div>
-            <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
-              Permissions, roles, password policy, and audit logs
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader icon={Shield} title="SECURITY" subtitle="Permissions, roles, password policy, and audit logs" />
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-3 flex-wrap px-4 sm:px-6 shrink-0">
+      <div className="flex items-center gap-5 mb-3 flex-wrap px-4 sm:px-6 border-b border-gray-200 shrink-0">
         {SECURITY_TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => selectTab(tab.id)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+            className={`flex items-center gap-1.5 pb-2 -mb-px text-sm font-medium border-b-2 transition-colors ${
               activeTab === tab.id
-                ? "bg-gradient-to-r from-amber-500 to-amber-600 text-white border border-amber-500 shadow-sm"
-                : "bg-white text-gray-700 hover:bg-amber-50 border border-gray-200"
+                ? "border-amber-500 text-amber-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
             {tab.icon}

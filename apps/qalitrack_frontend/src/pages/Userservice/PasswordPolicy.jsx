@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Edit2, X, Check } from 'lucide-react';
+import { Edit2, X, Check, Lock } from 'lucide-react';
 import { fetchPasswordPolicy, updatePasswordPolicy } from '../../api/helpers/UserService/PasswordPolicy/passwordpolicy';
+import PageHeader from '../../components/PageHeader.jsx';
 
 const FIELDS = [
     { key: 'minimumLength', label: 'Minimum Length', type: 'number' },
@@ -12,6 +13,7 @@ const CHECKBOXES = [
     { key: 'requireLowercase', label: 'Require Lowercase Letter' },
     { key: 'requireDigit', label: 'Require Digit' },
     { key: 'requireSpecialCharacter', label: 'Require Special Character' },
+    { key: 'twoFactorEnabled', label: 'Enable Two-Factor Authentication' },
 ];
 
 const PasswordPolicy = () => {
@@ -96,34 +98,42 @@ const PasswordPolicy = () => {
     // editing instead of a separate view-mode rendering path.
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 border-b border-gray-200 flex items-center justify-end">
-                {!isEditing ? (
-                    <button
-                        onClick={() => setIsEditing(true)}
-                        className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm transition-all"
-                    >
-                        <Edit2 className="w-3 h-3" />
-                        Edit
-                    </button>
-                ) : (
-                    <div className="flex items-center gap-2">
+            <PageHeader
+                flush
+                icon={Lock}
+                title="Password Policy"
+                subtitle="Rules new and changed passwords must satisfy"
+                actions={
+                    !isEditing ? (
                         <button
-                            onClick={handleCancel}
-                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-medium border border-gray-300 rounded text-gray-700 hover:bg-gray-50"
+                            onClick={() => setIsEditing(true)}
+                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow-sm transition-all"
+                            style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
                         >
-                            <X className="w-3 h-3" /> Cancel
+                            <Edit2 className="w-3 h-3" />
+                            Edit
                         </button>
-                        <button
-                            onClick={handleUpdate}
-                            disabled={isUpdating}
-                            className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm disabled:opacity-50"
-                        >
-                            <Check className="w-3 h-3" />
-                            {isUpdating ? 'Saving...' : 'Save'}
-                        </button>
-                    </div>
-                )}
-            </div>
+                    ) : (
+                        <>
+                            <button
+                                onClick={handleCancel}
+                                className="flex items-center gap-1.5 h-7 px-3 text-xs font-medium border border-white/30 rounded text-white hover:bg-white/10"
+                            >
+                                <X className="w-3 h-3" /> Cancel
+                            </button>
+                            <button
+                                onClick={handleUpdate}
+                                disabled={isUpdating}
+                                className="flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded shadow-sm disabled:opacity-50"
+                                style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
+                            >
+                                <Check className="w-3 h-3" />
+                                {isUpdating ? 'Saving...' : 'Save'}
+                            </button>
+                        </>
+                    )
+                }
+            />
 
             {updateMessage.text && (
                 <div className={`mx-4 mt-3 px-4 py-2 rounded-md text-sm font-medium border ${

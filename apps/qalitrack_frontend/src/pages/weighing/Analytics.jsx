@@ -14,6 +14,7 @@ import {
   TrendingUp, TrendingDown, AlertTriangle, CheckCircle,
   Activity, Clock, Filter, X, BarChart3
 } from "lucide-react";
+import PageHeader from "../../components/PageHeader.jsx";
 
 dayjs.extend(relativeTime);
 dayjs.extend(isBetween);
@@ -485,21 +486,12 @@ export default function Analytics() {
   return (
     <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
 
-      {/* HEADER */}
-      <div className="shadow-sm px-4 sm:px-6 py-3 sm:py-4 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-md shrink-0">
-              <Activity className="w-5 h-5" style={{ color: "var(--cs-icon-accent)" }} />
-            </div>
-            <div>
-              <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Live Analytics Dashboard</div>
-              <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
-                Real-time insights • Auto-refresh every 30s
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
+      <PageHeader
+        icon={Activity}
+        title="Live Analytics Dashboard"
+        subtitle="Real-time insights • Auto-refresh every 30s"
+        actions={
+          <>
             <div className="text-right hidden sm:block">
               <div className="text-[10px] font-medium" style={{ color: "var(--cs-appbar-text)", opacity: 0.6 }}>Last updated</div>
               <div className="text-xs font-bold" style={{ color: "var(--cs-appbar-text)" }}>{lastUpdated.fromNow()}</div>
@@ -512,9 +504,9 @@ export default function Analytics() {
               <Activity className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="hidden sm:inline">Refresh</span>
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* FILTERS BAR */}
       <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-2 shrink-0">

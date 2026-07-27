@@ -14,7 +14,7 @@ import CrossEntityComparison from "./CrossEntityComparison";
 
 import { getTransactions } from "../../api/Transaction/Transaction.js";
 import {
-  RotateCcw, FileDown, FileSpreadsheet, Filter, X,
+  RotateCcw, FileDown, FileSpreadsheet, Filter, X, FileText,
   BarChart3, Settings, Calendar, GitCompare
 } from "lucide-react";
 import dayjs from "dayjs";
@@ -23,6 +23,7 @@ import jsPDF from "jspdf";
 import * as XLSX from "xlsx";
 import logoSrc from "../../assets/logo.jpeg";
 import { getTicketSettings, resolveReportColors } from "../../utils/ticketThemeConfig";
+import PageHeader from "../../components/PageHeader.jsx";
 
 export default function Reports() {
   // Reports.jsx fetches its own data independently instead of reading/writing
@@ -648,50 +649,24 @@ export default function Reports() {
 
   return (
     <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
-      {/* Header */}
-      <div className="mb-4 mx-4 sm:mx-6 mt-4 sm:mt-6 rounded-lg px-4 py-2.5 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg cs-icon-box flex items-center justify-center shadow-sm shrink-0">
-            <svg
-              className="w-5 h-5"
-              style={{ color: "var(--cs-icon-accent)" }}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-          </div>
-          <div>
-            <div className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>REPORTS</div>
-            <div className="text-[11px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
-              Operational and analytical system reports
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHeader icon={FileText} title="REPORTS" subtitle="Operational and analytical system reports" />
 
       {/* TABS */}
-      <div className="flex gap-2 mb-4 flex-wrap px-4 sm:px-6 shrink-0">
+      <div className="flex items-center gap-5 mb-4 flex-wrap px-4 sm:px-6 border-b border-gray-200 shrink-0">
         {REPORT_TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`relative px-4 py-2 rounded-lg text-sm font-medium capitalize transition-all flex items-center gap-1.5 ${
+            className={`flex items-center gap-1.5 pb-2 -mb-px text-sm font-medium capitalize border-b-2 transition-colors ${
               activeTab === tab.id
-                ? "bg-amber-500 text-white border border-amber-500 shadow-sm"
-                : "bg-white text-gray-700 hover:bg-amber-50 border border-gray-200"
+                ? "border-amber-500 text-amber-600"
+                : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
             {tab.icon}
             {tab.label}
             {tab.badge && (
-              <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full">
+              <span className="px-1.5 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full leading-none">
                 {tab.badge}
               </span>
             )}

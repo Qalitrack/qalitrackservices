@@ -19,21 +19,13 @@ const Calibrations       = lazy(() => import("../pages/weighing/Calibrations.jsx
 const Analytics          = lazy(() => import("../pages/weighing/Analytics.jsx"));
 const Reports            = lazy(() => import("../pages/weighing/Reports.jsx"));
 const System             = lazy(() => import("../pages/weighing/System.jsx"));
-const Vehicle            = lazy(() => import("../components/weighing/Vehicles.jsx"));
-const Drivers            = lazy(() => import("../components/weighing/Drivers.jsx"));
 const AdminDashboard     = lazy(() => import("../pages/Userservice/AdminDashboard.jsx"));
 const Security           = lazy(() => import("../pages/Userservice/Security.jsx"));
-const Shifts             = lazy(() => import("../pages/Userservice/Shifts.jsx"));
-const ShiftAssignment    = lazy(() => import("../pages/Userservice/ShiftAssignment.jsx"));
-const Attendance         = lazy(() => import("../pages/Userservice/Attendance.jsx"));
+const ShiftsHub           = lazy(() => import("../pages/Userservice/ShiftsHub.jsx"));
 const Microservice       = lazy(() => import("../pages/Userservice/Backup/Microservice.jsx"));
-const Transporters       = lazy(() => import("../pages/weighing/TransporterFormModal.jsx"));
-const Suppliers          = lazy(() => import("../pages/Suppliers.jsx"));
+const FleetHub           = lazy(() => import("../pages/weighing/FleetHub.jsx"));
+const CommerceHub        = lazy(() => import("../pages/weighing/CommerceHub.jsx"));
 const Routes             = lazy(() => import("../pages/Routes.jsx"));
-const AxleConfigs        = lazy(() => import("../pages/weighing/AxleConfigs.jsx"));
-const Owners             = lazy(() => import("../pages/weighing/Owners.jsx"));
-const ProductsPortal     = lazy(() => import("../components/weighing/Product.jsx"));
-const SaccosPortal       = lazy(() => import("../pages/Saccos.jsx"));
 const WeighbridgesPortal = lazy(() => import("../pages/weighing/WeighingBridge.jsx"));
 const Transaction        = lazy(() => import("../pages/Transaction.jsx"));
 const UserManagement     = lazy(() => import("../pages/UserManagement.jsx"));
@@ -107,16 +99,12 @@ export const routes = [
                     { path: "dashboard",              element: <AdminDashboard /> },
                     { path: "weighing/factory",       element: <FactoryWeighing /> },
                     { path: "transactions",           element: <Transaction /> },
-                    { path: "weighing/vehicle",       element: <Vehicle /> },
-                    { path: "weighing/drivers",       element: <Drivers /> },
+                    { path: "fleet",                  element: <FleetHub /> },
+                    { path: "fleet/:tab",             element: <FleetHub /> },
+                    { path: "commerce",               element: <CommerceHub /> },
+                    { path: "commerce/:tab",          element: <CommerceHub /> },
                     { path: "automation",             element: <Automation /> },
                     { path: "calibrations",           element: <Calibrations /> },
-                    { path: "transporters",           element: <Transporters /> },
-                    { path: "weighing/axle-config",   element: <AxleConfigs /> },
-                    { path: "weighing/owners",        element: <Owners /> },
-                    { path: "weighing/products",      element: <ProductsPortal /> },
-                    { path: "suppliers",              element: <Suppliers /> },
-                    { path: "saccos",                 element: <SaccosPortal /> },
                     { path: "weighbridges",           element: <WeighbridgesPortal /> },
                     { path: "routes",                 element: <Routes /> },
                     { path: "profile",                element: <Profile /> },
@@ -127,8 +115,8 @@ export const routes = [
                         children: [
                             { path: "analytics", element: <FeatureLicenseGate feature={LicenseFeatures.ANALYTICS}><Analytics /></FeatureLicenseGate> },
                             { path: "reports",   element: <FeatureLicenseGate feature={LicenseFeatures.REPORTS}><Reports /></FeatureLicenseGate> },
-                            { path: "shifts",            element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><Shifts /></FeatureLicenseGate> },
-                            { path: "shift-assignment",  element: <ShiftAssignment /> },
+                            { path: "shifts",            element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><ShiftsHub /></FeatureLicenseGate> },
+                            { path: "shifts/:tab",       element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><ShiftsHub /></FeatureLicenseGate> },
                         ],
                     },
 
@@ -167,28 +155,23 @@ export const routes = [
                     { path: "dashboard",                element: <AdminDashboard /> },
                     { path: "weighing/factory",         element: <FactoryWeighing /> },
                     { path: "transactions",             element: <Transaction /> },
-                    { path: "weighing/vehicle",         element: <Vehicle /> },
-                    { path: "weighing/drivers",         element: <Drivers /> },
+                    { path: "fleet",                     element: <FleetHub /> },
+                    { path: "fleet/:tab",                element: <FleetHub /> },
+                    { path: "commerce",                 element: <CommerceHub /> },
+                    { path: "commerce/:tab",             element: <CommerceHub /> },
                     { path: "automation",               element: <Automation /> },
                     { path: "calibrations",             element: <Calibrations /> },
                     { path: "analytics",                element: <FeatureLicenseGate feature={LicenseFeatures.ANALYTICS}><Analytics /></FeatureLicenseGate> },
                     { path: "reports",                  element: <FeatureLicenseGate feature={LicenseFeatures.REPORTS}><Reports /></FeatureLicenseGate> },
                     { path: "system",                   element: <System /> },
-                    { path: "transporters",             element: <Transporters /> },
-                    { path: "weighing/axle-config",     element: <AxleConfigs /> },
-                    { path: "weighing/owners",          element: <Owners /> },
-                    { path: "weighing/products",        element: <ProductsPortal /> },
-                    { path: "suppliers",                element: <Suppliers /> },
-                    { path: "saccos",                   element: <SaccosPortal /> },
                     { path: "weighbridges",             element: <WeighbridgesPortal /> },
                     { path: "routes",                   element: <Routes /> },
                     // admin-only
                     { path: "user-management",          element: <FeatureLicenseGate feature={LicenseFeatures.USER_MANAGEMENT}><UserManagement /></FeatureLicenseGate> },
                     { path: "security",                 element: <Security /> },
                     { path: "security/:tab",             element: <Security /> },
-                    { path: "shifts",                   element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><Shifts /></FeatureLicenseGate> },
-                    { path: "attendance",               element: <Attendance /> },
-                    { path: "shift-assignment",         element: <ShiftAssignment /> },
+                    { path: "shifts",                   element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><ShiftsHub /></FeatureLicenseGate> },
+                    { path: "shifts/:tab",               element: <FeatureLicenseGate feature={LicenseFeatures.SHIFTS}><ShiftsHub /></FeatureLicenseGate> },
                     { path: "backup/microservice",      element: <FeatureLicenseGate feature={LicenseFeatures.BACKUP}><Microservice /></FeatureLicenseGate> },
                     { path: "profile",                  element: <Profile /> },
                 ]

@@ -4,6 +4,7 @@ import { message, Modal, Switch } from "antd";
 import TablePagination from "../../components/TablePagination";
 import VehicleRelationModal from "../../components/VehicleRelationModal";
 import DriverRelationModal from "../../components/DriverRelationModal";
+import PageHeader from "../../components/PageHeader.jsx";
 import {
   getTransporters,
   createTransporter,
@@ -154,35 +155,24 @@ export default function TransportersPortal() {
   return (
     <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
 
-      {/* Header — navy app-bar (Navy-theme experiment, see Transaction.jsx) */}
-      <div className="px-3 py-2 shrink-0" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
-              <Truck className="w-4 h-4" style={{ color: "var(--cs-icon-accent)" }} />
-            </div>
-            <div>
-              <div className="text-[11px] font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>Transporters</div>
-              <div className="text-[9px] font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>
-                <span className="font-semibold">{filtered.length}</span> registered
-              </div>
-            </div>
+      <PageHeader
+        flush
+        icon={Truck}
+        title="Transporters"
+        subtitle={<><span className="font-semibold">{filtered.length}</span> registered</>}
+        actions={
+          <div className="relative">
+            <Search size={10} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search transporters..."
+              className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
-
-          <div className="flex gap-2 items-center">
-            <div className="relative">
-              <Search size={10} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search transporters..."
-                className="qt-filter-field w-52 h-7 pl-7 pr-3 text-[11px] rounded-md border border-gray-300 shadow-sm"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* Inline Form */}
       <div className="bg-gradient-to-br from-gray-50 via-amber-50/30 to-amber-50/20 border-b border-amber-200 px-3 py-2.5 shrink-0">

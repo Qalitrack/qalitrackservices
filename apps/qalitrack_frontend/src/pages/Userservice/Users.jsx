@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, fetchUserById, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../api/helpers/UserService/Users/users.js';
+import { fetchUsers, fetchDeletedUsers, deleteUser, restoreUser, updateUser, resetPassword, assignRoleToUser, removeRoleFromUser, fetchUserRoles, fetchUserShifts, createUser } from '../../api/helpers/UserService/Users/users.js';
 import { fetchRoles } from '../../api/helpers/UserService/Roles/Roles.js';
-import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, FileText, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock, Download } from 'lucide-react';
+import { Edit, Trash2, PlusCircle, ChevronLeft, ChevronRight, RefreshCw, Mail, Phone, Save, XCircle, Key, ShieldAlert, ShieldCheck, Users as UsersIcon, Clock, Download } from 'lucide-react';
 
 // Every new/reset account gets this same fixed password until the user
 // completes first login and sets their own — mirrors UserService.cs's
@@ -17,6 +17,7 @@ import dayjs from 'dayjs';
 import logoSrc from '../../assets/logo.jpeg';
 import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 import TablePagination from '../../components/TablePagination';
+import PageHeader from '../../components/PageHeader.jsx';
 
 const Modal = ({ children, isOpen, onClose, size = "md" }) => {
     if (!isOpen) return null;
@@ -69,9 +70,7 @@ const Users = () => {
     // Shown after create/reset so the admin can relay it out-of-band (phone/SMS)
     // when the welcome/reset email doesn't reach a user in a remote area.
     const [temporaryPassword, setTemporaryPassword] = useState('');
-    const [isLogsModalOpen, setLogsModalOpen] = useState(false);
     const [isResetPasswordModalOpen, setResetPasswordModalOpen] = useState(false);
-    const [userDetails, setUserDetails] = useState({});
     const [isManageRolesModalOpen, setManageRolesModalOpen] = useState(false);
     const [isViewRolesModalOpen, setViewRolesModalOpen] = useState(false);
     const [selectedUserRoles, setSelectedUserRoles] = useState([]);
@@ -154,17 +153,6 @@ const Users = () => {
     const handleToggleShowDeleted = () => {
         setShowDeleted((prev) => !prev);
         setPagination((p) => ({ ...p, page: 1 }));
-    };
-
-    const loadUserDetails = async (userId) => {
-        if (!userId || userDetails[userId]) return; // Don't fetch if no ID or already fetched
-
-        try {
-            const user = await fetchUserById(userId);
-            setUserDetails(prev => ({ ...prev, [userId]: user.email }));
-        } catch (error) {
-            setUserDetails(prev => ({ ...prev, [userId]: 'Unknown' })); // Handle error case
-        }
     };
 
     const resetForm = () => {
@@ -266,13 +254,6 @@ const Users = () => {
         setModalFeedback({ text: '', type: '' });
         setTemporaryPassword('');
         setEditingUser(user);
-    };
-
-    const handleLogsClick = (user) => {
-        setSelectedUser(user);
-        loadUserDetails(user.createdBy);
-        loadUserDetails(user.updatedBy);
-        setLogsModalOpen(true);
     };
 
     const handleViewRolesClick = async (user) => {
@@ -770,32 +751,34 @@ const Users = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            {/* Header */}
-            <div className="shrink-0 px-3 py-2 bg-gradient-to-r from-amber-50 via-amber-50 to-amber-50 border-b border-amber-200 flex flex-col md:flex-row justify-between items-center gap-2">
-                <div className="flex items-center gap-4 w-full md:w-auto">
-                    <h2 className="text-[11px] font-bold text-gray-900">Users</h2>
-                    <div className="flex items-center gap-1.5">
-                        <label htmlFor="show-deleted" className="text-[10px] font-semibold text-gray-700">Show Deleted</label>
-                        <input
-                            type="checkbox"
-                            id="show-deleted"
-                            checked={showDeleted}
-                            onChange={handleToggleShowDeleted}
-                            className="h-3.5 w-3.5 rounded border-gray-300 text-amber-600 focus:ring-amber-500"
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center gap-2 w-full md:w-auto justify-end">
-                    <button
-                        onClick={handleDownloadPDF}
-                        className="h-7 px-3 flex items-center gap-1.5 text-[11px] font-semibold bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm transition-all"
-                        title="Download Users as PDF"
-                    >
-                        <Download size={14} />
-                        <span className="hidden md:inline">Download PDF</span>
-                    </button>
-                </div>
-            </div>
+            <PageHeader
+                flush
+                icon={UsersIcon}
+                title="Users"
+                actions={
+                    <>
+                        <label htmlFor="show-deleted" className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
+                            <input
+                                type="checkbox"
+                                id="show-deleted"
+                                checked={showDeleted}
+                                onChange={handleToggleShowDeleted}
+                                className="h-3.5 w-3.5 rounded border-gray-300"
+                            />
+                            Show Deleted
+                        </label>
+                        <button
+                            onClick={handleDownloadPDF}
+                            className="h-7 px-3 flex items-center gap-1.5 text-[11px] font-semibold rounded shadow-sm transition-all"
+                            style={{ backgroundColor: "#ffffff", color: "var(--cs-appbar-bg)" }}
+                            title="Download Users as PDF"
+                        >
+                            <Download size={14} />
+                            <span className="hidden md:inline">Download PDF</span>
+                        </button>
+                    </>
+                }
+            />
 
             {feedbackMessage.text && (
                 <div className={`shrink-0 mx-3 mt-2 p-2 rounded text-center text-[11px] font-medium ${feedbackMessage.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
@@ -986,13 +969,6 @@ const Users = () => {
                             <td className="px-3 py-2">
                                 <div className="flex gap-1.5 justify-center">
                                 <button
-                                    onClick={() => handleLogsClick(user)}
-                                    className="p-1 rounded text-gray-600 hover:bg-gray-100 border border-gray-300 hover:border-gray-400 transition-all"
-                                    title="View Logs"
-                                >
-                                    <FileText size={12} />
-                                </button>
-                                <button
                                     onClick={() => handleEditClick(user)}
                                     className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                     title="Edit User"
@@ -1058,48 +1034,6 @@ const Users = () => {
                   line-height: 1.3;
                 }
             `}</style>
-
-            {/* Logs Modal */}
-            <Modal isOpen={isLogsModalOpen} onClose={() => setLogsModalOpen(false)}>
-                <div className="bg-gray-100 p-6 rounded-lg shadow-md">
-                    <h3 className="text-lg font-bold mb-4">Audit Logs for "{selectedUser?.firstName} {selectedUser?.lastName}"</h3>
-                    {selectedUser && (
-                        <div className="space-y-4">
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created At:</p>
-                                <p className="text-gray-600">{format(parseISO(selectedUser.createdAt), "PPP p")}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Created By:</p>
-                                <p className="text-gray-600">{userDetails[selectedUser.createdBy] || selectedUser.createdBy || 'N/A'}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Last Updated At:</p>
-                                <p className="text-gray-600">{format(parseISO(selectedUser.updatedAt), "PPP p")}</p>
-                            </div>
-                            <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                <p className="font-semibold text-gray-700">Updated By:</p>
-                                <p className="text-gray-600">{userDetails[selectedUser.updatedBy] || selectedUser.updatedBy || 'N/A'}</p>
-                            </div>
-                            {selectedUser.isDeleted && (
-                                <div className="grid grid-cols-[140px_1fr] gap-x-6 items-start py-2 border-b">
-                                    <p className="font-semibold text-gray-700">Deleted At:</p>
-                                    <p className="text-gray-600">{format(parseISO(selectedUser.deletedAt), "PPP p")}</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
-                    <div className="flex justify-end mt-6">
-                        <button
-                            type="button"
-                            onClick={() => setLogsModalOpen(false)}
-                            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-sm font-medium transition-colors duration-200"
-                        >
-                            Close
-                        </button>
-                    </div>
-                </div>
-            </Modal>
 
             {/* Reset Password Modal */}
             <Modal isOpen={isResetPasswordModalOpen} onClose={() => setResetPasswordModalOpen(false)} size="sm">

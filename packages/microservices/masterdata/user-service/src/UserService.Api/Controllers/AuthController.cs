@@ -7,6 +7,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using UserService.Core.DTOs.User;
 using UserService.Core.Interfaces.Services;
+using UserService.Core.Services;
 
 namespace UserService.Api.Controllers
 {
@@ -22,7 +23,7 @@ namespace UserService.Api.Controllers
         private readonly IUserStatusService _userStatusService;
         private readonly ITwoFactorService _twoFactorService;
         private readonly IShiftLoginRestrictionService _shiftLoginRestrictionService;
-        private readonly IConfiguration _configuration;
+        private readonly PasswordPolicyService _passwordPolicyService;
 
         public AuthController(
             ITokenService tokenService,
@@ -33,7 +34,7 @@ namespace UserService.Api.Controllers
             IUserStatusService userStatusService,
             ITwoFactorService twoFactorService,
             IShiftLoginRestrictionService shiftLoginRestrictionService,
-            IConfiguration configuration)
+            PasswordPolicyService passwordPolicyService)
         {
             _tokenService = tokenService;
             _userService = userService;
@@ -43,7 +44,7 @@ namespace UserService.Api.Controllers
             _userStatusService = userStatusService;
             _twoFactorService = twoFactorService;
             _shiftLoginRestrictionService = shiftLoginRestrictionService;
-            _configuration = configuration;
+            _passwordPolicyService = passwordPolicyService;
         }
 
         [HttpPost("login")]
@@ -93,8 +94,9 @@ namespace UserService.Api.Controllers
                     });
                 }
 
-                // Check if 2FA is enabled
-                var is2FAEnabled = _configuration.GetValue<bool>("TwoFactorAuthentication:Enabled", true);
+                // Check if 2FA is enabled (admin-toggleable, DB-backed via PasswordPolicy)
+                var policy = await _passwordPolicyService.GetPolicyAsync();
+                var is2FAEnabled = policy.TwoFactorEnabled;
 
                 if (is2FAEnabled)
                 {

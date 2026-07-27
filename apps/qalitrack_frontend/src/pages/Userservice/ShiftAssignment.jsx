@@ -10,7 +10,7 @@ import {
     fetchDeletedUserShifts,
     fetchShiftById,
 } from "../../api/helpers/UserService/Shifts/shiftAssignment.js";
-import { Users, Tag, Download } from "lucide-react";
+import { Users, Tag, Download, UserCog } from "lucide-react";
 import { fetchUsers } from "../../api/helpers/UserService/Users/users.js";
 import { fetchRoles } from "../../api/helpers/UserService/Roles/Roles.js";
 import { format, parseISO } from "date-fns";
@@ -18,6 +18,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { getTicketSettings, resolveReportColors } from '../../utils/ticketThemeConfig';
 import TablePagination from '../../components/TablePagination';
+import PageHeader from '../../components/PageHeader.jsx';
 
 function isValidDateString(dateString) {
     if (!dateString) return false;
@@ -652,31 +653,36 @@ const ShiftAssignment = () => {
 
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-            <div className="px-4 py-3 flex items-center justify-between flex-wrap gap-2" style={{ backgroundColor: "var(--cs-appbar-bg)", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-                <h2 className="text-base font-bold" style={{ color: "var(--cs-appbar-text)" }}>Shift Assignment</h2>
-                <div className="flex items-center gap-2">
-                    <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
-                        <input
-                            type="checkbox"
-                            checked={showDeleted}
-                            onChange={(e) => {
-                                setShowDeleted(e.target.checked);
-                                setPagination((p) => ({ ...p, page: 1 }));
-                            }}
-                            className="h-3.5 w-3.5 rounded border-gray-300"
-                        />
-                        Show Deleted
-                    </label>
-                    <button
-                        onClick={handleDownloadPDF}
-                        disabled={showDeleted}
-                        className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-solid-chip-btn'}`}
-                    >
-                        <Download size={13} />
-                        <span>PDF</span>
-                    </button>
-                </div>
-            </div>
+            <PageHeader
+                flush
+                icon={UserCog}
+                title="Shift Assignment"
+                subtitle={`${pagination.totalCount} shifts total`}
+                actions={
+                    <>
+                        <label className="flex items-center gap-1.5 text-xs font-medium cursor-pointer" style={{ color: "var(--cs-appbar-text)" }}>
+                            <input
+                                type="checkbox"
+                                checked={showDeleted}
+                                onChange={(e) => {
+                                    setShowDeleted(e.target.checked);
+                                    setPagination((p) => ({ ...p, page: 1 }));
+                                }}
+                                className="h-3.5 w-3.5 rounded border-gray-300"
+                            />
+                            Show Deleted
+                        </label>
+                        <button
+                            onClick={handleDownloadPDF}
+                            disabled={showDeleted}
+                            className={`flex items-center gap-1.5 h-7 px-3 text-xs font-semibold rounded transition-colors ${showDeleted ? 'bg-white/10 text-white/40 cursor-not-allowed' : 'cs-solid-chip-btn'}`}
+                        >
+                            <Download size={13} />
+                            <span>PDF</span>
+                        </button>
+                    </>
+                }
+            />
 
             <div className="flex-1 overflow-auto">
                 <table className="min-w-full">

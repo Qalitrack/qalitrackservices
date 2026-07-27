@@ -9,6 +9,7 @@ namespace UserService.Core.DTOs.Auth
         public bool RequireDigit { get; set; }
         public bool RequireSpecialCharacter { get; set; }
         public int MaxAgeDays { get; set; }
+        public bool TwoFactorEnabled { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public string? CreatedBy { get; set; }

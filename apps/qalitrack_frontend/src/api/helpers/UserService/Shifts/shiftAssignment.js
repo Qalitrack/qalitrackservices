@@ -111,7 +111,7 @@ export const createShift = async (shiftData) => {
  * Fetches users assigned to a specific shift.
  * @param {string} shiftId - The ID of the shift.
  * @param {AbortSignal} [signal] - Optional AbortSignal to cancel the request.
- * @returns {Promise<Array>} Resolves to an array of user objects.
+ * @returns {Promise<Array>} Resolves to an array of user objects ({ id, email, firstName, lastName }).
  */
 export const fetchShiftUsers = async (shiftId, signal) => {
     try {
@@ -123,8 +123,8 @@ export const fetchShiftUsers = async (shiftId, signal) => {
             signal,
         });
 
-        // Unwrap nested data if API returns { data: { items: [...] } } else return response.data
-        return response.data?.data?.items ?? response.data;
+        // Backend returns { shiftId, shiftName, users: [...], totalUsers }
+        return response.data?.users ?? [];
     } catch (err) {
         if (err.name !== 'CanceledError') {
         }

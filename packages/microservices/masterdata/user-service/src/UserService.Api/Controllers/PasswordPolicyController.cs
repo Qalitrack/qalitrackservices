@@ -45,6 +45,7 @@ namespace UserService.Api.Controllers
                     RequireDigit = policy.RequireDigit,
                     RequireSpecialCharacter = policy.RequireSpecialCharacter,
                     MaxAgeDays = policy.MaxAgeDays,
+                    TwoFactorEnabled = policy.TwoFactorEnabled,
                     CreatedAt = policy.CreatedAt,
                     UpdatedAt = policy.UpdatedAt,
                     CreatedBy = policy.CreatedBy,
@@ -83,6 +84,7 @@ namespace UserService.Api.Controllers
                 currentPolicy.RequireDigit = policyDto.RequireDigit;
                 currentPolicy.RequireSpecialCharacter = policyDto.RequireSpecialCharacter;
                 currentPolicy.MaxAgeDays = policyDto.MaxAgeDays;
+                currentPolicy.TwoFactorEnabled = policyDto.TwoFactorEnabled;
 
                 await _passwordPolicyService.UpdatePolicyAsync(currentPolicy);
                 return Ok();

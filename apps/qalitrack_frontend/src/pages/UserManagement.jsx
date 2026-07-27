@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Users, Search, Filter, X, ChevronDown } from "lucide-react";
 import { fetchRoles } from "../api/helpers/UserService/Roles/Roles.js";
+import PageHeader from "../components/PageHeader.jsx";
 import UsersComponent from "../pages/Userservice/Users.jsx";
 
 const FilterSelect = ({ value, onChange, options, placeholder, icon: Icon, className = "" }) => (
@@ -80,72 +81,65 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="h-full flex flex-col px-2 py-1.5 gap-1.5 bg-gray-50">
+    <div className="h-full flex flex-col bg-gray-50 overflow-hidden">
+      <PageHeader
+        icon={Users}
+        title="User Management"
+        subtitle="Users • Roles • Permissions"
+        actions={
+          <div className="flex items-center gap-1.5">
+            <div className="relative">
+              <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Name, email, username..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="
+                  w-56 pl-7 pr-2.5 py-1 text-xs rounded-md
+                  border border-amber-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-300/40
+                  bg-white placeholder:text-gray-400 transition-all
+                "
+              />
+            </div>
 
-      {/* Header */}
-      <div className="shrink-0 flex items-center justify-between gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: "var(--cs-appbar-bg)" }}>
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-md cs-icon-box flex items-center justify-center shadow-sm">
-            <Users size={14} style={{ color: "var(--cs-icon-accent)" }} />
-          </div>
-          <div>
-            <h2 className="text-sm font-bold leading-tight" style={{ color: "var(--cs-appbar-text)" }}>User Management</h2>
-            <p className="text-xs font-medium leading-tight" style={{ color: "var(--cs-appbar-text)", opacity: 0.7 }}>Users • Roles • Permissions</p>
-          </div>
-        </div>
-
-        <div className="flex-1 flex items-center gap-1.5 max-w-3xl">
-          <div className="relative flex-1">
-            <Search size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Name, email, username..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="
-                w-full pl-7 pr-2.5 py-1 text-xs rounded-md
-                border border-amber-200 focus:border-amber-500 focus:ring-1 focus:ring-amber-300/40
-                bg-white placeholder:text-gray-400 transition-all
-              "
+            <FilterSelect
+              value={selectedRole}
+              onChange={setSelectedRole}
+              options={roleOptions}
+              placeholder={loading ? "Loading..." : "All Roles"}
+              icon={Filter}
+              className="min-w-[110px]"
+              disabled={loading}
             />
+
+            <FilterSelect
+              value={selectedStatus}
+              onChange={setSelectedStatus}
+              options={statusOptions}
+              placeholder="All Status"
+              className="min-w-[95px]"
+            />
+
+            {hasFilters && (
+              <button
+                onClick={clearFilters}
+                className="
+                  flex items-center gap-1 px-2 py-1 text-xs font-semibold
+                  bg-amber-100 text-amber-800 border border-amber-300 rounded-md
+                  hover:bg-amber-200 active:opacity-90 transition-colors
+                "
+              >
+                <X size={10} /> Clear
+              </button>
+            )}
           </div>
-
-          <FilterSelect
-            value={selectedRole}
-            onChange={setSelectedRole}
-            options={roleOptions}
-            placeholder={loading ? "Loading..." : "All Roles"}
-            icon={Filter}
-            className="min-w-[110px]"
-            disabled={loading}
-          />
-
-          <FilterSelect
-            value={selectedStatus}
-            onChange={setSelectedStatus}
-            options={statusOptions}
-            placeholder="All Status"
-            className="min-w-[95px]"
-          />
-
-          {hasFilters && (
-            <button
-              onClick={clearFilters}
-              className="
-                flex items-center gap-1 px-2 py-1 text-xs font-semibold
-                bg-amber-100 text-amber-800 border border-amber-300 rounded-md
-                hover:bg-amber-200 active:opacity-90 transition-colors
-              "
-            >
-              <X size={10} /> Clear
-            </button>
-          )}
-        </div>
-      </div>
+        }
+      />
 
       {/* Active filters */}
       {hasFilters && (
-        <div className="flex items-center gap-1.5 text-xs flex-wrap">
+        <div className="flex items-center gap-1.5 text-xs flex-wrap mx-4 sm:mx-6 mb-2">
           <span className="text-gray-700 font-medium">Filters:</span>
           {searchTerm && (
             <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full border border-amber-200">
@@ -166,21 +160,23 @@ export default function UserManagement() {
       )}
 
       {/* Main content card */}
-      <div className="flex-1 flex flex-col rounded-lg overflow-hidden bg-white border border-amber-200 shadow-sm">
-        <div className="shrink-0 px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200 flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <div className="w-0.5 h-4 bg-gradient-to-b from-amber-500 to-amber-500 rounded-full" />
-            <h3 className="text-xs font-semibold text-gray-900">User Directory</h3>
+      <div className="flex-1 overflow-hidden px-4 sm:px-6 pb-4 sm:pb-6">
+        <div className="h-full flex flex-col rounded-lg overflow-hidden bg-white border border-amber-200 shadow-sm">
+          <div className="shrink-0 px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-amber-100 border-b border-amber-200 flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <div className="w-0.5 h-4 bg-gradient-to-b from-amber-500 to-amber-500 rounded-full" />
+              <h3 className="text-xs font-semibold text-gray-900">User Directory</h3>
+            </div>
           </div>
-        </div>
 
-        <div className="flex-1 overflow-hidden">
-          <UsersComponent
-            compact={true}
-            searchTerm={searchTerm.trim()}
-            selectedRole={selectedRole}
-            selectedStatus={selectedStatus}
-          />
+          <div className="flex-1 overflow-hidden">
+            <UsersComponent
+              compact={true}
+              searchTerm={searchTerm.trim()}
+              selectedRole={selectedRole}
+              selectedStatus={selectedStatus}
+            />
+          </div>
         </div>
       </div>
     </div>

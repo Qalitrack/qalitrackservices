@@ -66,6 +66,10 @@ namespace UserService.Core.Services
                 };
             }
 
+            // TwoFactorEnabled isn't part of the "PasswordPolicy" config section, so it
+            // won't come from the binding above — fall back to the legacy config key.
+            fallbackPolicy.TwoFactorEnabled = _configuration.GetValue<bool>("TwoFactorAuthentication:Enabled", false);
+
             await _cacheService.SetAsync(CacheKey, fallbackPolicy, TimeSpan.FromHours(1));
             return fallbackPolicy;
         }

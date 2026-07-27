@@ -8,5 +8,6 @@ namespace UserService.Core.DTOs.PasswordPolicy
         public bool RequireDigit { get; set; }
         public bool RequireSpecialCharacter { get; set; }
         public int MaxAgeDays { get; set; }
+        public bool TwoFactorEnabled { get; set; }
         }
     }
