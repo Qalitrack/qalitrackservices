@@ -413,6 +413,7 @@ export default function CommodityReport({ transactions = [], loading }) {
             <table className="w-full text-xs min-w-[1200px]">
               <thead className="bg-amber-50">
                 <tr>
+                  <th className="p-2 text-left font-semibold border-b border-amber-200">#</th>
                   <th className="p-2 text-left font-semibold border-b border-amber-200">Date</th>
                   <th className="p-2 text-left font-semibold border-b border-amber-200">Vehicle</th>
                   <th className="p-2 text-left font-semibold border-b border-amber-200">Supplier</th>
@@ -425,6 +426,7 @@ export default function CommodityReport({ transactions = [], loading }) {
               <tbody>
                 {commodityTrips.map((t, idx) => (
                   <tr key={t.ticketID || t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                    <td className="p-2 text-gray-500 font-medium">{idx + 1}</td>
                     <td className="p-2">{t.date}</td>
                     <td className="p-2">{t.vehicle}</td>
                     <td className="p-2">{t.supplier}</td>
@@ -466,6 +468,7 @@ export default function CommodityReport({ transactions = [], loading }) {
                 <table className="w-full text-xs">
                   <thead className="bg-amber-50 sticky top-0">
                     <tr>
+                      <th className="p-2 text-left font-semibold border-b border-amber-200">#</th>
                       <th className="p-2 text-left font-semibold border-b border-amber-200">Commodity</th>
                       <th className="p-2 text-left font-semibold border-b border-amber-200">Trips</th>
                       <th className="p-2 text-left font-semibold border-b border-amber-200">Customers</th>
@@ -475,6 +478,7 @@ export default function CommodityReport({ transactions = [], loading }) {
                   <tbody>
                     {commoditySummary.map((c, idx) => (
                       <tr key={c.id} className={`border-t border-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                        <td className="p-2 text-gray-500 font-medium">{idx + 1}</td>
                         <td className="p-2 font-medium">{c.commodityName}</td>
                         <td className="p-2">{c.trips}</td>
                         <td className="p-2">{c.customers}</td>

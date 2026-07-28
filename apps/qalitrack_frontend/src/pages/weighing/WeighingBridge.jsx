@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import { Pencil, Trash2, Plus, Search, X, Check } from "lucide-react";
-import { message, Modal } from "antd";
+import { Pencil, Trash2, Plus, Search, X } from "lucide-react";
+import { message, Modal, Switch } from "antd";
 import TablePagination from "../../components/TablePagination";
 import {
   getWeighbridges,
@@ -278,10 +278,10 @@ export default function WeighbridgesPortal() {
       <div className="flex-1 overflow-hidden">
         <div className="h-full bg-white overflow-hidden flex flex-col">
 
-          {loading ? (
-            <div className="flex-1 flex items-center justify-center"><p className="text-gray-500 text-sm">Loading weighbridges…</p></div>
-          ) : error ? (
+          {error ? (
             <div className="flex-1 flex items-center justify-center"><p className="text-red-500 text-sm">Error: {error}</p></div>
+          ) : loading && paginated.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center"><p className="text-gray-500 text-sm">Loading weighbridges…</p></div>
           ) : paginated.length === 0 ? (
             <div className="flex-1 flex items-center justify-center"><p className="text-gray-500 text-sm">No weighbridges found.</p></div>
           ) : (
@@ -291,6 +291,7 @@ export default function WeighbridgesPortal() {
                   <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
                       {[
+                        { label: "#", align: "text-left" },
                         { label: "Location", align: "text-left" },
                         { label: "Description", align: "text-left" },
                         { label: "Scales", align: "text-left" },
@@ -312,11 +313,8 @@ export default function WeighbridgesPortal() {
                             i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                           }`}
                         >
-                          <td className="px-3 py-2">
-                            <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
-                              {wb.location}
-                            </div>
-                          </td>
+                          <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{(page - 1) * PAGE_SIZE + i + 1}</td>
+                          <td className="px-3 py-2 text-[10px] font-bold text-gray-800">{wb.location}</td>
                           <td className="px-3 py-2 text-[10px] text-gray-600 max-w-xs truncate">{wb.description || "—"}</td>
                           <td className="px-3 py-2">
                             {Array.isArray(wb.scales) && wb.scales.length > 0 ? (
@@ -330,29 +328,10 @@ export default function WeighbridgesPortal() {
                             )}
                           </td>
                           <td className="px-3 py-2">
-                            <span className={`px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase border inline-flex items-center gap-0.5 ${
-                              isActive
-                                ? "bg-green-100 text-green-700 border-green-300"
-                                : "bg-red-100 text-red-700 border-red-300"
-                            }`}>
-                              {isActive
-                                ? <><Check className="w-2.5 h-2.5" /> Active</>
-                                : <><X className="w-2.5 h-2.5" /> Inactive</>}
-                            </span>
+                            <Switch checked={isActive} onChange={() => handleToggleStatus(wb)} size="small" />
                           </td>
                           <td className="px-3 py-2">
                             <div className="flex gap-1.5 justify-center">
-                              <button
-                                onClick={() => handleToggleStatus(wb)}
-                                className={`p-1 rounded border text-[9px] font-semibold transition-all ${
-                                  isActive
-                                    ? "text-green-700 border-green-300 hover:bg-green-50"
-                                    : "text-red-700 border-red-300 hover:bg-red-50"
-                                }`}
-                                title={isActive ? "Set Inactive" : "Set Active"}
-                              >
-                                {isActive ? "✓" : "✕"}
-                              </button>
                               <button onClick={() => handleEdit(wb)}
                                 className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all" title="Edit">
                                 <Pencil className="w-3 h-3" />

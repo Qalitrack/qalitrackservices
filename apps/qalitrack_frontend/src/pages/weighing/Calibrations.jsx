@@ -74,6 +74,7 @@ export default function Calibrations() {
         <table className="min-w-full bg-white border">
           <thead>
             <tr className="bg-gray-100 text-left">
+              <th className="px-4 py-2 border">#</th>
               <th className="px-4 py-2 border">Equipment</th>
               <th className="px-4 py-2 border">Date</th>
               <th className="px-4 py-2 border">Status</th>
@@ -81,8 +82,9 @@ export default function Calibrations() {
             </tr>
           </thead>
           <tbody>
-            {calibrations.map((record) => (
+            {calibrations.map((record, index) => (
               <tr key={record.id} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border">{index + 1}</td>
                 <td className="px-4 py-2 border">{record.equipment}</td>
                 <td className="px-4 py-2 border">{record.date}</td>
                 <td className="px-4 py-2 border">{record.status}</td>

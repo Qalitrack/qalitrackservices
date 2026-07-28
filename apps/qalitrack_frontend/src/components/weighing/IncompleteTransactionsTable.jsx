@@ -244,7 +244,7 @@ export default function IncompleteTransactionsTable({ onAddWeighing }) {
     },
     {
       key: "noPlate", title: 'Vehicle', dataIndex: 'noPlate', width: 75, editable: true,
-      render: (text) => <div className="inline-block bg-gray-900 text-white px-1.5 py-0.5 rounded text-[10px] font-bold">{text || '-'}</div>,
+      render: (text) => <span className="text-[10px] font-bold text-gray-800">{text || '-'}</span>,
     },
     {
       key: "driverName", title: 'Driver', dataIndex: 'driverName', width: 90, editable: true,

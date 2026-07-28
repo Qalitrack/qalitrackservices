@@ -260,7 +260,7 @@ export default function SuppliersPortal({ onHeaderActionsChange }) {
 
       {/* Table Section */}
       <div className="flex-1 overflow-auto bg-white">
-        {loading ? (
+        {loading && suppliers.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-gray-500 text-sm">Loading suppliers...</p>
           </div>
@@ -276,6 +276,7 @@ export default function SuppliersPortal({ onHeaderActionsChange }) {
           <table className="w-full compact-table">
             <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
               <tr>
+                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Contact Person</th>
                 <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Email</th>
@@ -293,6 +294,7 @@ export default function SuppliersPortal({ onHeaderActionsChange }) {
                     index % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
+                  <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{(page - 1) * pageSize + index + 1}</td>
                   <td className="px-3 py-2 text-[10px] text-gray-900 font-bold">{s.name}</td>
                   <td className="px-3 py-2 text-[10px] text-gray-600 font-medium">{s.contactPerson || "-"}</td>
                   <td className="px-3 py-2 text-[10px] text-gray-600">{s.email || "-"}</td>

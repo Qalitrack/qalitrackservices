@@ -740,7 +740,7 @@ const Users = () => {
         return user.isActive ? 'Online' : 'Offline';
     };
 
-    if (loading) {
+    if (loading && users.length === 0) {
         return <div className="flex justify-center items-center h-32"><div>Loading users...</div></div>;
     }
 
@@ -905,6 +905,7 @@ const Users = () => {
                 <table className="w-full compact-table">
                     <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                         <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Email</th>
                         <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
                         <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Roles</th>
@@ -922,6 +923,7 @@ const Users = () => {
                                 user.isDeleted ? 'opacity-60 bg-gray-100' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                             }`}
                         >
+                            <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{(pagination.page - 1) * pagination.pageSize + index + 1}</td>
                             <td className="px-3 py-2 text-[10px] font-semibold text-gray-900">{user.email}</td>
                             <td className="px-3 py-2 text-[10px] font-medium text-gray-700">{user.firstName} {user.lastName}</td>
                             <td className="px-3 py-2 text-[10px] text-gray-600">

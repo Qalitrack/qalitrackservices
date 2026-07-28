@@ -52,7 +52,7 @@ export default function VehicleRelationModal({ entity, relationField, relationNa
           </button>
         </div>
         <div className="p-4">
-          {loading ? (
+          {loading && allVehicles.length === 0 ? (
             <p className="text-gray-500 text-sm text-center py-4">Loading vehicles...</p>
           ) : allVehicles.length === 0 ? (
             <p className="text-gray-500 text-sm text-center py-4">No vehicles registered in the system.</p>
@@ -84,11 +84,7 @@ export default function VehicleRelationModal({ entity, relationField, relationNa
                             className="w-3.5 h-3.5 accent-amber-500 disabled:opacity-40"
                           />
                         </td>
-                        <td className="py-2">
-                          <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
-                            {v.registrationNumber}
-                          </div>
-                        </td>
+                        <td className="py-2 text-[10px] font-bold text-gray-800">{v.registrationNumber}</td>
                         <td className="py-2 text-[10px] text-gray-700">{v.make} {v.model}</td>
                         <td className="py-2 text-[10px]">
                           {isThis ? (

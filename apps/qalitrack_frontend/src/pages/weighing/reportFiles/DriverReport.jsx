@@ -462,6 +462,7 @@ export default function DriverReport({ transactions = [], loading }) {
             <table className="w-full text-xs min-w-[1200px]">
               <thead className="bg-gradient-to-b from-amber-50 to-amber-100/50 sticky top-0">
                 <tr>
+                  <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">#</th>
                   <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Date</th>
                   <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Vehicle</th>
                   <th className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase border-b-2 border-amber-200">Supplier</th>
@@ -475,6 +476,7 @@ export default function DriverReport({ transactions = [], loading }) {
               <tbody>
                 {driverTrips.map((t, idx) => (
                   <tr key={t.ticketID || t.id} className={`border-t border-gray-100 hover:bg-amber-50/30 transition-colors ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                    <td className="p-2 text-[10px] text-gray-500 font-semibold">{idx + 1}</td>
                     <td className="p-2 text-[10px]">{t.date}</td>
                     <td className="p-2 text-[10px] font-semibold">{t.vehicle}</td>
                     <td className="p-2 text-[10px]">{t.supplier}</td>
@@ -517,6 +519,7 @@ export default function DriverReport({ transactions = [], loading }) {
                 <table className="w-full text-xs">
                   <thead className="bg-amber-50 sticky top-0">
                     <tr>
+                      <th className="p-2 text-left font-semibold border-b border-amber-200">#</th>
                       <th className="p-2 text-left font-semibold border-b border-amber-200">Driver Name</th>
                       <th className="p-2 text-left font-semibold border-b border-amber-200">Trips</th>
                       <th className="p-2 text-left font-semibold border-b border-amber-200">Vehicles</th>
@@ -526,6 +529,7 @@ export default function DriverReport({ transactions = [], loading }) {
                   <tbody>
                     {driverSummary.map((d, idx) => (
                       <tr key={d.id} className={`border-t border-gray-100 ${idx % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}>
+                        <td className="p-2 text-gray-500 font-medium">{idx + 1}</td>
                         <td className="p-2 font-medium">{d.driverName}</td>
                         <td className="p-2">{d.trips}</td>
                         <td className="p-2">{d.vehicles}</td>

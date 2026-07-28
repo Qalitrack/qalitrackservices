@@ -352,18 +352,18 @@ export default function DriverPortal({ onHeaderActionsChange }) {
 
       {/* Table Section */}
       <div className="flex-1 overflow-auto bg-white">
-        {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-              <p className="text-gray-500 text-sm">Loading drivers...</p>
-            </div>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <p className="text-red-500 text-sm font-semibold mb-2">⚠️ Error</p>
               <p className="text-red-400 text-xs">{error}</p>
+            </div>
+          </div>
+        ) : loading && drivers.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+              <p className="text-gray-500 text-sm">Loading drivers...</p>
             </div>
           </div>
         ) : drivers.length === 0 ? (
@@ -482,7 +482,7 @@ export default function DriverPortal({ onHeaderActionsChange }) {
                         )}
                       </div>
                     </td>
-                    <td className="px-3 py-2 text-center">
+                    <td className="px-3 py-2">
                       <Switch
                         checked={driver.status?.toLowerCase() === "active"}
                         onChange={() => handleToggleStatus(driver)}

@@ -946,7 +946,7 @@ export default function Vehicles({ onHeaderActionsChange }) {
 
       {/* Table Section */}
       <div className="flex-1 overflow-auto bg-white">
-        {loading ? (
+        {loading && vehicles.length === 0 ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-gray-500 text-sm">Loading vehicles...</p>
           </div>
@@ -984,11 +984,7 @@ export default function Vehicles({ onHeaderActionsChange }) {
                   <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">
                     {(pageNumber - 1) * pageSize + index + 1}
                   </td>
-                  <td className="px-3 py-2">
-                    <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold tracking-wider">
-                      {v.registrationNumber}
-                    </div>
-                  </td>
+                  <td className="px-3 py-2 text-[10px] font-bold text-gray-800">{v.registrationNumber}</td>
                   <td className="px-3 py-2 text-[10px] text-gray-700 font-medium">{v.type}</td>
                   <td className="px-3 py-2 text-[10px] text-gray-600">
                     {v.make && v.model ? `${v.make} ${v.model}` : v.make || v.model || "-"}
@@ -1015,7 +1011,7 @@ export default function Vehicles({ onHeaderActionsChange }) {
                       <span className="text-gray-400 text-[9px]">Not set</span>
                     )}
                   </td>
-                  <td className="px-3 py-2 text-center">
+                  <td className="px-3 py-2">
                     <Switch
                       checked={v.status?.toLowerCase() === "active"}
                       onChange={() => handleToggleStatus(v)}

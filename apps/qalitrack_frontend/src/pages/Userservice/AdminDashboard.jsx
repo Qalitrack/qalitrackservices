@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import PageHeader from "../../components/PageHeader.jsx";
 import { useColorScheme } from "../../components/Context/ColorSchemeContext.jsx";
+import { vibrantAccent } from "../../utils/schemeChartColor.js";
 import CountUp from "react-countup";
 import Chart from "react-apexcharts";
 import { fetchUsers } from "../../api/helpers/UserService/Users/users.js";
@@ -44,48 +45,6 @@ const barOpts = (cats, color = "#f59e0b") => ({
   dataLabels: { enabled: false },
   tooltip: { theme: "light", style: { fontSize: "10px" } },
 });
-
-function hexToHsl(hex) {
-  const c = hex.replace("#", "");
-  const r = parseInt(c.substring(0, 2), 16) / 255;
-  const g = parseInt(c.substring(2, 4), 16) / 255;
-  const b = parseInt(c.substring(4, 6), 16) / 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-  let h = 0, s = 0;
-  if (max !== min) {
-    const d = max - min;
-    s = d / (1 - Math.abs(2 * l - 1));
-    if (max === r) h = ((g - b) / d) % 6;
-    else if (max === g) h = (b - r) / d + 2;
-    else h = (r - g) / d + 4;
-    h *= 60;
-    if (h < 0) h += 360;
-  }
-  return [h, s * 100, l * 100];
-}
-
-function hslToHex(h, s, l) {
-  s /= 100; l /= 100;
-  const k = (n) => (n + h / 30) % 12;
-  const a = s * Math.min(l, 1 - l);
-  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-  const toHex = (x) => Math.round(x * 255).toString(16).padStart(2, "0");
-  return `#${toHex(f(0))}${toHex(f(8))}${toHex(f(4))}`;
-}
-
-// Chart bars need a vivid, readable-on-white color — a scheme's own preview
-// swatches are tuned for subtle UI accents (dots, borders), not solid fills,
-// so bump saturation/lightness from the scheme's hue instead of using them
-// directly. Saturation is clamped on both ends — floored so muted hues (Navy,
-// Indigo) still pop, capped so already-vivid hues (Emerald's green reads
-// neon at high saturation + high lightness) don't blow out; lightness is
-// kept a bit lower than a "medium" 50% for the same reason.
-function vibrantAccent(hex) {
-  const [h, s] = hexToHsl(hex);
-  const sat = Math.min(Math.max(s, 60), 75);
-  return hslToHex(h, sat, 42);
-}
 
 const hbarOpts = (cats, color = "#f59e0b") => ({
   chart: baseChart("bar"),
@@ -299,7 +258,7 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="h-full overflow-y-auto bg-gray-50">
+    <div className="h-full flex flex-col rounded-lg shadow-md border border-gray-200 bg-white overflow-hidden">
 
       <PageHeader
         icon={LayoutDashboard}
@@ -313,6 +272,8 @@ export default function AdminDashboard() {
             {!loading && <span className="ml-1 inline-block w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--cs-appbar-text)" }} />}
           </span>
         }
+        flush
+        className="border-b border-white/10"
         actions={
           <button onClick={refresh} disabled={loading}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold active:scale-95 transition-all disabled:opacity-50 border"
@@ -322,7 +283,7 @@ export default function AdminDashboard() {
         }
       />
 
-      <div className="p-5 space-y-4 min-w-0">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4 min-w-0">
 
         {error && (
           <div className="px-3 py-2 bg-red-50 border border-red-200 text-red-600 rounded-lg text-xs">{error}</div>
@@ -397,7 +358,7 @@ export default function AdminDashboard() {
 
           <Panel title="Recent Transactions" subtitle="Latest weighbridge tickets" className="lg:col-span-7"
             action={<button onClick={() => navigate("../transactions")} className="text-[10px] text-amber-600 hover:text-amber-700 font-semibold flex items-center gap-0.5">View all <ChevronRight size={10} /></button>}>
-            {loading
+            {loading && recentTxs.length === 0
               ? <div className="space-y-2 mt-1">{[...Array(5)].map((_, i) => <div key={i} className="h-6 bg-gray-100 rounded animate-pulse" />)}</div>
               : recentTxs.length === 0
                 ? <p className="text-xs text-gray-400 py-6 text-center">No transactions found</p>

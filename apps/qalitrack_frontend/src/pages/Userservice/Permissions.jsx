@@ -350,7 +350,7 @@ const Permissions = () => {
         }
     };
 
-    if (loading) {
+    if (loading && permissions.length === 0) {
         return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
 
@@ -397,6 +397,7 @@ const Permissions = () => {
                 <table className="w-full compact-table">
                     <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
+                        <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                         <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Name</th>
                         <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide hidden md:table-cell">Description</th>
                         <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Last Updated</th>
@@ -411,6 +412,7 @@ const Permissions = () => {
                                 permission.isDeleted ? 'opacity-60 bg-gray-100' : index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                             }`}
                         >
+                            <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{(page - 1) * PAGE_SIZE + index + 1}</td>
                             <td className="px-3 py-2 text-[10px] font-semibold text-gray-900">
                                 <div className="flex items-center gap-1.5">
                                     {permission.name}

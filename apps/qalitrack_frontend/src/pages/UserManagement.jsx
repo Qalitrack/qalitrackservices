@@ -81,11 +81,13 @@ export default function UserManagement() {
   );
 
   return (
-    <div className="h-full flex flex-col bg-gray-50 overflow-hidden">
+    <div className="h-full flex flex-col rounded-lg shadow-md border border-gray-200 bg-white overflow-hidden">
       <PageHeader
         icon={Users}
         title="User Management"
         subtitle="Users • Roles • Permissions"
+        flush
+        className="border-b border-white/10"
         actions={
           <div className="flex items-center gap-1.5">
             <div className="relative">
@@ -159,9 +161,9 @@ export default function UserManagement() {
         </div>
       )}
 
-      {/* Main content card */}
+      {/* Main content */}
       <div className="flex-1 overflow-hidden px-4 sm:px-6 pb-4 sm:pb-6">
-        <div className="h-full flex flex-col rounded-lg overflow-hidden bg-white border border-amber-200 shadow-sm">
+        <div className="h-full flex flex-col overflow-hidden">
           <UsersComponent
             compact={true}
             searchTerm={searchTerm.trim()}

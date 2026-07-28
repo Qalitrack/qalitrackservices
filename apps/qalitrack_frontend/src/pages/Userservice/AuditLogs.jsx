@@ -68,7 +68,7 @@ const AuditLogs = () => {
 
             {/* Table */}
             <div className="flex-1 overflow-auto bg-white">
-                {loading ? (
+                {loading && logs.length === 0 ? (
                     <div className="flex items-center justify-center h-full">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
                     </div>
@@ -79,6 +79,7 @@ const AuditLogs = () => {
                         <table className="w-full compact-table">
                             <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                                 <tr>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Timestamp</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Method</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Path</th>
@@ -96,6 +97,7 @@ const AuditLogs = () => {
                                             index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                                         }`}
                                     >
+                                        <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{(page - 1) * pageSize + index + 1}</td>
                                         <td className="px-3 py-2 text-[10px] text-gray-600 whitespace-nowrap">
                                             {log.createdAt ? format(parseISO(log.createdAt), 'dd MMM HH:mm:ss') : '-'}
                                         </td>

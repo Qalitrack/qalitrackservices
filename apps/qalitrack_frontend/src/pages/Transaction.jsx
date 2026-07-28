@@ -285,11 +285,13 @@ export default function Transactions() {
   );
 
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col rounded-lg shadow-md border border-gray-200 bg-white overflow-hidden">
       <PageHeader
         icon={Receipt}
         title="Transactions"
         subtitle={<><span className="font-semibold">{filteredTransactions.length}</span> of <span className="font-semibold">{total || 0}</span></>}
+        flush
+        className="border-b border-white/10"
         actions={
           <>
             <Input

@@ -521,12 +521,14 @@ export default function Analytics() {
   ].filter(Boolean).length;
 
   return (
-    <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
+    <div className="h-full flex flex-col rounded-lg shadow-md border border-gray-200 bg-white overflow-hidden">
 
       <PageHeader
         icon={Activity}
         title="Live Analytics Dashboard"
         subtitle="Real-time insights • Auto-refresh every 30s"
+        flush
+        className="border-b border-white/10"
         actions={
           <>
             <div className="text-right hidden sm:block">

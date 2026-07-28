@@ -257,13 +257,13 @@ export default function SaccosPortal({ onHeaderActionsChange }) {
 
       {/* Table Section */}
       <div className="flex-1 overflow-auto bg-white">
-        {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <p className="text-gray-500 text-sm">Loading saccos…</p>
-          </div>
-        ) : error ? (
+        {error ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-red-500 text-sm">Error: {error}</p>
+          </div>
+        ) : loading && paginated.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-gray-500 text-sm">Loading saccos…</p>
           </div>
         ) : paginated.length === 0 ? (
           <div className="flex items-center justify-center h-full">
@@ -307,7 +307,7 @@ export default function SaccosPortal({ onHeaderActionsChange }) {
                     <td className="px-3 py-2 text-[10px] text-gray-600 max-w-xs truncate">
                       {sacco.otherDetails || "—"}
                     </td>
-                    <td className="px-3 py-2 text-center">
+                    <td className="px-3 py-2">
                       <Switch checked={isActive} onChange={() => handleToggleStatus(sacco)} size="small" />
                     </td>
                     <td className="px-3 py-2">

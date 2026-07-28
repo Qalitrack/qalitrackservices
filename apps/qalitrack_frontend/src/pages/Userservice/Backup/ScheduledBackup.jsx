@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { backupAPI } from '../../../api/helpers/Backup/Backup';
-import { RefreshCw, Clock, AlertCircle, CheckCircle, HelpCircle, Trash2 } from 'lucide-react';
+import { Clock, AlertCircle, CheckCircle, HelpCircle, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const ScheduledBackup = () => {
+const ScheduledBackup = ({ refreshSignal }) => {
     const [scheduledBackups, setScheduledBackups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -27,9 +27,13 @@ const ScheduledBackup = () => {
         }
     };
 
+    // Refetches on mount, and again whenever the parent page's Refresh button
+    // bumps refreshSignal — so that one button covers this list too, instead
+    // of needing a second refresh control just for this section.
     useEffect(() => {
         loadScheduledBackups();
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [refreshSignal]);
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -207,130 +211,115 @@ const ScheduledBackup = () => {
             )}
 
             <div className="px-4 sm:px-6 lg:px-8">
-                <div className="sm:flex sm:items-center">
-                    <div className="sm:flex-auto">
-                        <h1 className="text-xl font-semibold text-gray-900">Scheduled Backups</h1>
-                        <p className="mt-2 text-sm text-gray-700">
-                            A list of all scheduled backup jobs and their next run times.
-                        </p>
-                    </div>
-                    <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-                        <button
-                            type="button"
-                            onClick={loadScheduledBackups}
-                            disabled={loading}
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50"
-                        >
-                            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                            {loading ? 'Refreshing...' : 'Refresh'}
-                        </button>
-                    </div>
+                <div>
+                    <h3 className="text-xs font-bold text-gray-800 uppercase tracking-wider">Scheduled Backups</h3>
+                    <p className="mt-0.5 text-[11px] text-gray-500">
+                        A list of all scheduled backup jobs and their next run times.
+                    </p>
                 </div>
 
                 {lastUpdated && (
-                    <div className="mt-2 text-xs text-gray-500 flex items-center">
+                    <div className="mt-2 text-[11px] text-gray-500 flex items-center">
                         <Clock className="h-3 w-3 mr-1" />
                         Last updated: {formatDate(lastUpdated)}
                     </div>
                 )}
 
                 {error && (
-                    <div className="mt-4 bg-red-50 border-l-4 border-red-400 p-4">
-                        <div className="flex">
-                            <div className="flex-shrink-0">
-                                <AlertCircle className="h-5 w-5 text-red-400" aria-hidden="true" />
-                            </div>
-                            <div className="ml-3">
-                                <p className="text-sm text-red-700">{error}</p>
-                            </div>
+                    <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                        <div className="flex items-center">
+                            <AlertCircle className="h-4 w-4 text-red-400 mr-2 shrink-0" aria-hidden="true" />
+                            <p className="text-sm text-red-700">{error}</p>
                         </div>
                     </div>
                 )}
 
-                <div className="mt-8 flex flex-col">
-                    <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-                                <table className="min-w-full divide-y divide-gray-300">
-                                    <thead className="bg-gray-50">
-                                    <tr>
-                                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                            Microservice
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Type
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Schedule
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Next Run
-                                        </th>
-                                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                            Status
-                                        </th>
-                                        <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                                            <span className="sr-only">Actions</span>
-                                        </th>
+                <div className="mt-4 flex flex-col">
+                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table className="w-full compact-table">
+                            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
+                            <tr>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
+                                    #
+                                </th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
+                                    Microservice
+                                </th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
+                                    Type
+                                </th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
+                                    Schedule
+                                </th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
+                                    Next Run
+                                </th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">
+                                    Status
+                                </th>
+                                <th className="px-3 py-2 text-center uppercase tracking-wide">
+                                    <span className="sr-only">Actions</span>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                            {loading && scheduledBackups.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="px-3 py-4 text-xs text-gray-500 text-center">
+                                        Loading scheduled backups...
+                                    </td>
+                                </tr>
+                            ) : scheduledBackups.length === 0 ? (
+                                <tr>
+                                    <td colSpan="7" className="px-3 py-4 text-xs text-gray-500 text-center">
+                                        No scheduled backups found.
+                                    </td>
+                                </tr>
+                            ) : (
+                                scheduledBackups.map((backup, index) => (
+                                    <tr key={index} className={`hover:bg-amber-50/40 transition-all ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
+                                        <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">
+                                            {index + 1}
+                                        </td>
+                                        <td className="px-3 py-2 text-[10px] font-bold text-gray-900">
+                                            {backup.microservice}
+                                        </td>
+                                        <td className="px-3 py-2 text-[10px] text-gray-600">
+                                            {getBackupType(backup.backupType)}
+                                        </td>
+                                        <td className="px-3 py-2 text-[10px] text-gray-600">
+                                            <div className="flex items-center">
+                                                <span>{parseCronExpression(backup.cronSchedule)}</span>
+                                                <div
+                                                    className="ml-1 text-gray-400 hover:text-gray-600 cursor-help relative"
+                                                    onMouseEnter={(e) => showTooltip(e, backup.cronSchedule)}
+                                                    onMouseLeave={hideTooltip}
+                                                >
+                                                    <HelpCircle className="h-3.5 w-3.5" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-3 py-2 text-[10px] text-gray-600">
+                                            {formatDate(backup.nextFireTime)}
+                                        </td>
+                                        <td className="px-3 py-2 text-[10px]">
+                                            {getStatusBadge(backup.nextFireTime)}
+                                        </td>
+                                        <td className="px-3 py-2 text-center">
+                                            <button
+                                                onClick={() => handleDeleteClick(backup.microservice, backup.backupType)}
+                                                disabled={isDeleting}
+                                                className="p-1 rounded text-red-600 hover:bg-red-50 border border-red-300 hover:border-red-500 transition-all disabled:opacity-40"
+                                                title="Unschedule backup"
+                                            >
+                                                <Trash2 className="w-3 h-3" />
+                                            </button>
+                                        </td>
                                     </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
-                                    {loading ? (
-                                        <tr>
-                                            <td colSpan="6" className="px-3 py-4 text-sm text-gray-500 text-center">
-                                                Loading scheduled backups...
-                                            </td>
-                                        </tr>
-                                    ) : scheduledBackups.length === 0 ? (
-                                        <tr>
-                                            <td colSpan="6" className="px-3 py-4 text-sm text-gray-500 text-center">
-                                                No scheduled backups found.
-                                            </td>
-                                        </tr>
-                                    ) : (
-                                        scheduledBackups.map((backup, index) => (
-                                            <tr key={index} className="hover:bg-gray-50">
-                                                <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                                    {backup.microservice}
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    {getBackupType(backup.backupType)}
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    <div className="flex items-center">
-                                                        <span>{parseCronExpression(backup.cronSchedule)}</span>
-                                                        <div
-                                                            className="ml-1 text-gray-400 hover:text-gray-600 cursor-help relative"
-                                                            onMouseEnter={(e) => showTooltip(e, backup.cronSchedule)}
-                                                            onMouseLeave={hideTooltip}
-                                                        >
-                                                            <HelpCircle className="h-4 w-4" />
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                                    {formatDate(backup.nextFireTime)}
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-sm">
-                                                    {getStatusBadge(backup.nextFireTime)}
-                                                </td>
-                                                <td className="whitespace-nowrap px-3 py-4 text-right text-sm font-medium">
-                                                    <button
-                                                        onClick={() => handleDeleteClick(backup.microservice, backup.backupType)}
-                                                        disabled={isDeleting}
-                                                        className="text-red-600 hover:text-red-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                                                        title="Unschedule backup"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
-                                    )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                                ))
+                            )}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 

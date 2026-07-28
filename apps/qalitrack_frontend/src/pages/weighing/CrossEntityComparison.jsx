@@ -3,11 +3,18 @@ import {
   BarChart, Bar, LineChart, Line, RadarChart, Radar,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
-  ResponsiveContainer, Cell
+  ResponsiveContainer
 } from "recharts";
 import { ArrowRight, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { useColorScheme } from "../../components/Context/ColorSchemeContext.jsx";
+import { vibrantAccent } from "../../utils/schemeChartColor.js";
 
 export default function CrossEntityComparison({ transactions = [] }) {
+  const { colorScheme, COLOR_SCHEMES } = useColorScheme();
+  const accent = useMemo(
+    () => vibrantAccent(COLOR_SCHEMES[colorScheme].primary),
+    [colorScheme, COLOR_SCHEMES]
+  );
   const [entityType, setEntityType] = useState("drivers");
   const [metric, setMetric] = useState("weight");
   const [selectedEntities, setSelectedEntities] = useState([]);
@@ -321,11 +328,7 @@ export default function CrossEntityComparison({ transactions = [] }) {
                         metrics.find(m => m.value === metric)?.label
                       ]}
                     />
-                    <Bar dataKey="value" fill="#f59e0b">
-                      {comparisonData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Bar>
+                    <Bar dataKey="value" fill={accent} />
                   </BarChart>
                 </ResponsiveContainer>
               )}
@@ -340,9 +343,9 @@ export default function CrossEntityComparison({ transactions = [] }) {
                     <Line
                       type="monotone"
                       dataKey="value"
-                      stroke="#f59e0b"
+                      stroke={accent}
                       strokeWidth={3}
-                      dot={{ r: 6, fill: "#f59e0b" }}
+                      dot={{ r: 6, fill: accent }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -356,16 +359,24 @@ export default function CrossEntityComparison({ transactions = [] }) {
                     <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10 }} />
                     <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
                     <Legend wrapperStyle={{ fontSize: 11 }} />
-                    {selectedEntities.map((entity, index) => (
-                      <Radar
-                        key={entity}
-                        name={entity}
-                        dataKey={entity}
-                        stroke={COLORS[index % COLORS.length]}
-                        fill={COLORS[index % COLORS.length]}
-                        fillOpacity={0.3}
-                      />
-                    ))}
+                    {selectedEntities.map((entity) => {
+                      // Colored by this entity's fixed position in the full roster
+                      // (entityData), not by its position in selectedEntities — the
+                      // latter shifts every time an earlier selection is removed,
+                      // which repaints every remaining entity's color on deselect.
+                      const rosterIndex = entityData.findIndex((e) => e.name === entity);
+                      const color = COLORS[rosterIndex % COLORS.length];
+                      return (
+                        <Radar
+                          key={entity}
+                          name={entity}
+                          dataKey={entity}
+                          stroke={color}
+                          fill={color}
+                          fillOpacity={0.3}
+                        />
+                      );
+                    })}
                   </RadarChart>
                 </ResponsiveContainer>
               )}

@@ -16,19 +16,19 @@ const RestoreConfirmation = ({ backup, onConfirm, onCancel, isRestoring }) => {
                         <X className="h-5 w-5" />
                     </button>
                 </div>
-                <p className="mb-4">Are you sure you want to restore backup {backup.backupId}? This action cannot be undone.</p>
+                <p className="mb-4 text-sm text-gray-700">Are you sure you want to restore backup {backup.backupId}? This action cannot be undone.</p>
                 <div className="flex justify-end space-x-3">
                     <button
                         onClick={onCancel}
                         disabled={isRestoring}
-                        className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300 disabled:opacity-50"
+                        className="px-4 py-2 text-sm font-semibold border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 disabled:opacity-50"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
                         disabled={isRestoring}
-                        className="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-50"
+                        className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg shadow hover:bg-green-700 transition-all disabled:opacity-50"
                     >
                         {isRestoring ? 'Restoring...' : 'Confirm Restore'}
                     </button>
@@ -48,11 +48,11 @@ const RestoreSuccess = ({ result, onClose }) => {
                         <X className="h-5 w-5" />
                     </button>
                 </div>
-                <p className="mb-4 text-green-600">Backup restoration has been initiated successfully.</p>
+                <p className="mb-4 text-sm text-green-600">Backup restoration has been initiated successfully.</p>
                 <div className="flex justify-end">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
+                        className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg shadow hover:bg-green-700 transition-all"
                     >
                         Close
                     </button>
@@ -74,17 +74,17 @@ const DownloadConfirmation = ({ backup, onConfirm, onCancel }) => {
                         <X className="h-5 w-5" />
                     </button>
                 </div>
-                <p className="mb-4">You are about to download backup <span className="font-medium">{backup.fileName}</span>. Would you like to continue?</p>
+                <p className="mb-4 text-sm text-gray-700">You are about to download backup <span className="font-medium">{backup.fileName}</span>. Would you like to continue?</p>
                 <div className="flex justify-end space-x-3">
                     <button
                         onClick={onCancel}
-                        className="px-4 py-2 text-gray-600 bg-gray-200 rounded hover:bg-gray-300"
+                        className="px-4 py-2 text-sm font-semibold border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                        className="px-4 py-2 text-sm font-semibold text-white bg-amber-500 rounded-lg shadow hover:bg-amber-600 transition-all"
                     >
                         Download
                     </button>
@@ -266,9 +266,7 @@ const AvailableBackups = ({ microservice, onClose }) => {
                         onClick={onClose}
                         className="text-gray-500 hover:text-gray-700"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
+                        <X className="w-5 h-5" />
                     </button>
                 </div>
                 <div className="p-6">
@@ -285,96 +283,94 @@ const AvailableBackups = ({ microservice, onClose }) => {
                             type="button"
                             onClick={loadAvailableBackups}
                             disabled={loading}
-                            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-amber-600 hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 disabled:opacity-50"
+                            className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-lg shadow-sm text-white bg-amber-500 hover:bg-amber-600 transition-all disabled:opacity-50"
                         >
-                            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+                            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
                             {loading ? 'Refreshing...' : 'Refresh'}
                         </button>
                     </div>
 
                     {error && (
-                        <div className="mb-4 bg-red-50 border-l-4 border-red-400 p-4">
-                            <div className="flex">
-                                <div className="flex-shrink-0">
-                                    <AlertCircle className="h-5 w-5 text-red-400" aria-hidden="true" />
-                                </div>
-                                <div className="ml-3">
-                                    <p className="text-sm text-red-700">{error}</p>
-                                </div>
+                        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                            <div className="flex items-center">
+                                <AlertCircle className="h-4 w-4 text-red-400 mr-2 shrink-0" aria-hidden="true" />
+                                <p className="text-sm text-red-700">{error}</p>
                             </div>
                         </div>
                     )}
 
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-300">
-                            <thead className="bg-gray-50">
+                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                        <table className="w-full compact-table">
+                            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                             <tr>
-                                <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Backup ID</th>
-                                <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">File Name</th>
-                                <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Type</th>
-                                <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Created At</th>
-                                <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">File Size</th>
-                                <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Latest</th>
-                                <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Download</th>
-                                <th className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900">Restore</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Backup ID</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">File Name</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Type</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Created At</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">File Size</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Latest</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Download</th>
+                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Restore</th>
                             </tr>
                             </thead>
-                            <tbody className="divide-y divide-gray-200 bg-white">
-                            {loading ? (
+                            <tbody className="divide-y divide-gray-100 bg-white">
+                            {loading && backups.length === 0 ? (
                                 <tr>
-                                    <td colSpan="8" className="px-3 py-4 text-sm text-gray-500 text-center">
+                                    <td colSpan="9" className="px-3 py-4 text-xs text-gray-500 text-center">
                                         Loading available backups...
                                     </td>
                                 </tr>
                             ) : backups.length === 0 ? (
                                 <tr>
-                                    <td colSpan="8" className="px-3 py-4 text-sm text-gray-500 text-center">
+                                    <td colSpan="9" className="px-3 py-4 text-xs text-gray-500 text-center">
                                         No backups found for {microservice}.
                                     </td>
                                 </tr>
                             ) : (
-                                backups.map((backup) => (
-                                    <tr key={backup.backupId} className="hover:bg-gray-50">
-                                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                                backups.map((backup, index) => (
+                                    <tr key={backup.backupId} className={`hover:bg-amber-50/40 transition-all ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
+                                        <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{index + 1}</td>
+                                        <td className="px-3 py-2 text-[10px] font-bold text-gray-900">
                                             {backup.backupId}
                                         </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <td className="px-3 py-2 text-[10px] text-gray-600 font-mono">
                                             {backup.fileName}
                                         </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <td className="px-3 py-2 text-[10px] text-gray-600">
                                             {getBackupType(backup.backupType)}
                                         </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <td className="px-3 py-2 text-[10px] text-gray-600">
                                             {formatDate(backup.createdAt)}
                                         </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <td className="px-3 py-2 text-[10px] text-gray-600">
                                             {formatFileSize(backup.fileSizeBytes)}
                                         </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                        <td className="px-3 py-2 text-[10px]">
                                             {backup.isLatest ? (
-                                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-green-100 text-green-800">
                                                         <CheckCircle className="h-3 w-3 mr-1" /> Yes
                                                     </span>
                                             ) : 'No'}
                                         </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-center">
+                                        <td className="px-3 py-2 text-center">
                                             <button
                                                 onClick={() => handleDownloadClick(backup)}
-                                                className="text-amber-600 hover:text-amber-900"
+                                                className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all disabled:opacity-40"
                                                 title="Download backup"
                                                 disabled={isRestoring}
                                             >
-                                                <Download className="h-4 w-4" />
+                                                <Download className="w-3 h-3" />
                                             </button>
                                         </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-center">
+                                        <td className="px-3 py-2 text-center">
                                             <button
                                                 onClick={() => handleRestoreClick(backup)}
                                                 disabled={isRestoring}
-                                                className="text-green-600 hover:text-green-900 disabled:opacity-50"
+                                                className="p-1 rounded text-green-600 hover:bg-green-50 border border-green-300 hover:border-green-500 transition-all disabled:opacity-40"
                                                 title="Restore from backup"
                                             >
-                                                <Upload className="h-4 w-4" />
+                                                <Upload className="w-3 h-3" />
                                             </button>
                                         </td>
                                     </tr>

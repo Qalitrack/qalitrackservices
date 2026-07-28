@@ -672,7 +672,7 @@ const ShiftAssignment = ({ onHeaderActionsChange }) => {
     }, [showDeleted]);
 
     // Loading / Error states
-    if (loading) {
+    if (loading && shifts.length === 0) {
         return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
     if (error) {
@@ -685,6 +685,7 @@ const ShiftAssignment = ({ onHeaderActionsChange }) => {
                 <table className="min-w-full">
                     <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
+                        <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">#</th>
                         <th className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Name</th>
                         {!showDeleted && (
                             <>
@@ -698,8 +699,9 @@ const ShiftAssignment = ({ onHeaderActionsChange }) => {
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                    {shifts.map((shift) => (
+                    {shifts.map((shift, index) => (
                         <tr key={shift.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
+                            <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{(pagination.page - 1) * pagination.pageSize + index + 1}</td>
                             <td className="px-3 py-2 text-[11px] font-semibold text-gray-900">{shift.name}</td>
                             {!showDeleted && (
                                 <>

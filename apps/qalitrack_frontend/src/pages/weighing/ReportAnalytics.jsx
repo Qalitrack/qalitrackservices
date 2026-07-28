@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  BarChart, Bar, PieChart, Pie, Cell,
   AreaChart, Area, ComposedChart,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer
@@ -10,11 +10,29 @@ import {
 } from "lucide-react";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween"; // ← FIX: Import the plugin
+import { useColorScheme } from "../../components/Context/ColorSchemeContext.jsx";
+import { vibrantAccent } from "../../utils/schemeChartColor.js";
 
 // ← FIX: Extend dayjs with the plugin
 dayjs.extend(isBetween);
 
 export default function ReportAnalytics({ transactions = [] }) {
+  const { colorScheme, COLOR_SCHEMES } = useColorScheme();
+  // Used for every single-hue "volume" series across this page (Weight
+  // Analysis, Hourly Distribution, Current Period, and Transaction Trends'
+  // translucent "Total" area). Completed/In Progress stay fixed status
+  // colors regardless of scheme — status must always mean the same thing.
+  // "Total" is safe to theme even though it shares a plot with those: at
+  // full saturation it fails the CVD check against Completed on the Emerald
+  // scheme (ΔE 1.8), but it's rendered as a 30%-opacity area under solid
+  // status bars, not a competing solid swatch — blended over white that's
+  // ΔE ~23 against Completed, comfortably distinct, and the opacity/shape
+  // difference (translucent area vs solid bar) is itself a secondary
+  // encoding beyond hue.
+  const accent = useMemo(
+    () => vibrantAccent(COLOR_SCHEMES[colorScheme].primary),
+    [colorScheme, COLOR_SCHEMES]
+  );
   const [timeRange, setTimeRange] = useState("30days");
   const [viewMode, setViewMode] = useState("trends");
 
@@ -361,30 +379,19 @@ export default function ReportAnalytics({ transactions = [] }) {
               <ComposedChart data={timeSeriesData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
                 <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-                <YAxis yAxisId="left" tick={{ fontSize: 11 }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
-                <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: "1px solid #fbbf24" }} />
+                <YAxis tick={{ fontSize: 11 }} />
+                <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8, border: `1px solid ${accent}` }} />
                 <Legend wrapperStyle={{ fontSize: 11 }} />
                 <Area
-                  yAxisId="left"
                   type="monotone"
                   dataKey="transactions"
-                  fill="#fbbf24"
-                  stroke="#f59e0b"
+                  fill={accent}
+                  stroke={accent}
                   fillOpacity={0.3}
                   name="Total"
                 />
-                <Bar yAxisId="left" dataKey="completed" fill="#10b981" name="Completed" />
-                <Bar yAxisId="left" dataKey="inProgress" fill="#ef4444" name="In Progress" />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="totalWeight"
-                  stroke="#3b82f6"
-                  strokeWidth={2}
-                  name="Weight (kg)"
-                  dot={{ r: 3 }}
-                />
+                <Bar dataKey="completed" fill="#10b981" name="Completed" />
+                <Bar dataKey="inProgress" fill="#ef4444" name="In Progress" />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -402,9 +409,9 @@ export default function ReportAnalytics({ transactions = [] }) {
                 <Area
                   type="monotone"
                   dataKey="totalWeight"
-                  stroke="#f59e0b"
-                  fill="#fbbf24"
-                  fillOpacity={0.6}
+                  stroke={accent}
+                  fill={accent}
+                  fillOpacity={0.3}
                   name="Total Weight (kg)"
                 />
               </AreaChart>
@@ -426,7 +433,7 @@ export default function ReportAnalytics({ transactions = [] }) {
                   <YAxis tick={{ fontSize: 11 }} />
                   <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="transactions" fill="#f59e0b" name="Transactions" />
+                  <Bar dataKey="transactions" fill={accent} name="Transactions" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -584,7 +591,7 @@ export default function ReportAnalytics({ transactions = [] }) {
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip contentStyle={{ fontSize: 11, borderRadius: 8 }} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
-              <Bar dataKey="current" fill="#f59e0b" name="Current Period" />
+              <Bar dataKey="current" fill={accent} name="Current Period" />
               <Bar dataKey="previous" fill="#94a3b8" name="Previous Period" />
             </BarChart>
           </ResponsiveContainer>

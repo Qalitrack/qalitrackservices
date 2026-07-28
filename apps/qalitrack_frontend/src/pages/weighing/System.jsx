@@ -815,12 +815,6 @@ function TicketsTab({ settings, setField, isDark }) {
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
                 )}
-                {isActive && (
-                  <div className="absolute top-2 left-2 flex items-center gap-1 bg-green-100 border border-green-300 text-green-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                    ACTIVE
-                  </div>
-                )}
 
                 <div className="mb-3 mt-1">
                   <h4 className="font-bold text-sm text-gray-900">{theme.name}</h4>

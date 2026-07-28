@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Tabs } from "antd";
 import { Shield, Users, Lock, ScrollText } from "lucide-react";
 import PageHeader from "../../components/PageHeader.jsx";
 import Permissions from "./Permissions";
@@ -39,26 +40,25 @@ export default function Security() {
   };
 
   return (
-    <div className="h-full bg-gray-50 overflow-hidden flex flex-col">
-      <PageHeader icon={Shield} title="SECURITY" subtitle="Permissions, roles, password policy, and audit logs" />
+    <div className="h-full flex flex-col rounded-lg shadow-md border border-gray-200 bg-white overflow-hidden">
+      <PageHeader icon={Shield} title="SECURITY" subtitle="Permissions, roles, password policy, and audit logs" flush className="border-b border-white/10" />
 
       {/* Tabs */}
-      <div className="flex items-center gap-5 mb-3 flex-wrap px-4 sm:px-6 border-b border-gray-200 shrink-0">
-        {SECURITY_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => selectTab(tab.id)}
-            className={`flex items-center gap-1.5 pb-2 -mb-px text-sm font-medium border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? "border-amber-500 text-amber-600"
-                : "border-transparent text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            {tab.icon}
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        activeKey={activeTab}
+        onChange={selectTab}
+        size="small"
+        className="px-4 sm:px-6 shrink-0"
+        items={SECURITY_TABS.map((t) => ({
+          key: t.id,
+          label: (
+            <span className="flex items-center gap-1.5">
+              {t.icon}
+              {t.label}
+            </span>
+          ),
+        }))}
+      />
 
       {/* Active tab content */}
       <div className="flex-1 overflow-hidden px-4 sm:px-6 pb-4 sm:pb-6">

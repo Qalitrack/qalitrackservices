@@ -61,7 +61,7 @@ export default function DriverRelationModal({
           </button>
         </div>
         <div className="p-4">
-          {loading ? (
+          {loading && allDrivers.length === 0 ? (
             <p className="text-gray-500 text-sm text-center py-4">Loading drivers...</p>
           ) : allDrivers.length === 0 ? (
             <p className="text-gray-500 text-sm text-center py-4">No drivers registered in the system.</p>

@@ -966,9 +966,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                     <td className="p-2 text-[10px] text-gray-400 font-mono">{(currentPage - 1) * PAGE_SIZE + idx + 1}</td>
                     <td className="p-2 text-[10px]">{dayjs(t.createdAt).format("DD MMM YYYY, HH:mm")}</td>
                     <td className="p-2 text-[10px] font-mono font-bold text-amber-600">{t.receiptNo || "-"}</td>
-                    <td className="p-2">
-                      <span className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[9px] font-bold">{t.noPlate || "-"}</span>
-                    </td>
+                    <td className="p-2 text-[10px] font-bold text-gray-800">{t.noPlate || "-"}</td>
                     <td className="p-2 text-[10px] font-medium">{t.driverName || "-"}</td>
                     <td className="p-2 text-[10px] text-gray-600">{t.commodityName || "-"}</td>
                     <td className="p-2 text-right text-[10px] font-bold text-amber-600">
@@ -1061,7 +1059,9 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                   <thead className="bg-amber-50 sticky top-0">
                     <tr>
                       {["#","Date","Receipt No","Vehicle","Driver","Commodity","Request Reason","First Wt","Second Wt","Net Wt","Decision By","Decision Notes","Status"].map((h) => (
-                        <th key={h} className="p-2 text-left font-semibold text-[9px] text-amber-900 uppercase border-b border-amber-200">{h}</th>
+                        <th key={h} className={`p-2 font-semibold text-[9px] text-amber-900 uppercase border-b border-amber-200 ${
+                          ["First Wt", "Second Wt", "Net Wt"].includes(h) ? "text-right" : "text-left"
+                        }`}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -1074,9 +1074,7 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                           <td className="p-2 text-gray-400 font-mono">{idx + 1}</td>
                           <td className="p-2">{dayjs(t.createdAt).format("DD MMM YYYY HH:mm")}</td>
                           <td className="p-2 font-mono font-bold text-amber-600">{t.receiptNo || "-"}</td>
-                          <td className="p-2">
-                            <span className="bg-gray-900 text-white px-1.5 py-0.5 rounded text-[9px] font-bold">{t.noPlate || "-"}</span>
-                          </td>
+                          <td className="p-2 text-[10px] font-bold text-gray-800">{t.noPlate || "-"}</td>
                           <td className="p-2 font-medium">{t.driverName || "-"}</td>
                           <td className="p-2 text-gray-600">{t.commodityName || "-"}</td>
                           <td className="p-2 text-gray-600 max-w-[140px] truncate">{row.requestRecord?.reason || t.reweighPermission || "-"}</td>
@@ -1227,7 +1225,9 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                               <thead className="bg-gray-800 text-white">
                                 <tr>
                                   {["#","Status","Started At","Reason","W1","W2","Net","Operator","Notes"].map(h => (
-                                    <th key={h} className="p-1.5 text-left text-[8px] font-bold uppercase whitespace-nowrap">{h}</th>
+                                    <th key={h} className={`p-1.5 text-[8px] font-bold uppercase whitespace-nowrap ${
+                                      h === "#" ? "text-center" : ["W1", "W2", "Net"].includes(h) ? "text-right" : "text-left"
+                                    }`}>{h}</th>
                                   ))}
                                 </tr>
                               </thead>
@@ -1432,7 +1432,9 @@ export default function ReweighedTransactionsReport({ transactions: propTransact
                           <thead className="bg-gray-800 text-white">
                             <tr>
                               {["#","Status","Started At","Reason","W1","W2","Net","Operator","Notes"].map(h => (
-                                <th key={h} className="p-1.5 text-left text-[8px] font-bold uppercase whitespace-nowrap">{h}</th>
+                                <th key={h} className={`p-1.5 text-[8px] font-bold uppercase whitespace-nowrap ${
+                                  h === "#" ? "text-center" : ["W1", "W2", "Net"].includes(h) ? "text-right" : "text-left"
+                                }`}>{h}</th>
                               ))}
                             </tr>
                           </thead>

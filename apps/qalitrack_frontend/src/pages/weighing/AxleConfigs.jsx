@@ -248,7 +248,7 @@ const AxleConfigs = ({ onHeaderActionsChange }) => {
       {/* Table */}
       <div className="flex-1 overflow-hidden">
         <div className="h-full bg-white overflow-hidden flex flex-col">
-          {loading ? (
+          {loading && paginated.length === 0 ? (
             <div className="flex-1 flex items-center justify-center"><p className="text-gray-500 text-sm">Loading configurations...</p></div>
           ) : paginated.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
@@ -264,8 +264,8 @@ const AxleConfigs = ({ onHeaderActionsChange }) => {
                 <table className="w-full compact-table">
                   <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
-                      {["Code","Wheels","Description","Axles","Max Load (kg)","Status","Actions"].map(h => (
-                        <th key={h} className={`px-3 py-2 text-[9px] font-bold text-amber-900 uppercase tracking-wide ${["Actions","Wheels","Axles","Status"].includes(h) ? "text-center" : h === "Max Load (kg)" ? "text-right" : "text-left"}`}>{h}</th>
+                      {["#","Code","Wheels","Description","Axles","Max Load (kg)","Status","Actions"].map(h => (
+                        <th key={h} className={`px-3 py-2 text-[9px] font-bold text-amber-900 uppercase tracking-wide ${["Actions","Wheels","Axles"].includes(h) ? "text-center" : h === "Max Load (kg)" ? "text-right" : "text-left"}`}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -277,6 +277,7 @@ const AxleConfigs = ({ onHeaderActionsChange }) => {
                           i % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                         }`}
                       >
+                        <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{(page - 1) * PAGE_SIZE + i + 1}</td>
                         <td className="px-3 py-2">
                           <span className="inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-[9px] font-semibold uppercase border border-blue-300">{c.code || "—"}</span>
                         </td>
@@ -292,7 +293,7 @@ const AxleConfigs = ({ onHeaderActionsChange }) => {
                           <span className="inline-block bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full text-[9px] font-semibold border border-amber-300">{c.axleCount}</span>
                         </td>
                         <td className="px-3 py-2 text-[10px] text-right text-amber-700 font-semibold">{c.maxLoadCapacity?.toLocaleString() || "—"}</td>
-                        <td className="px-3 py-2 text-center">
+                        <td className="px-3 py-2">
                           <Switch checked={c.isActive} onChange={() => handleStatusToggle(c.id, c.isActive)} size="small" />
                         </td>
                         <td className="px-3 py-2">

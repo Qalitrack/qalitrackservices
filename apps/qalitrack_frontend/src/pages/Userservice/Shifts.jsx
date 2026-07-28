@@ -419,7 +419,7 @@ const Shifts = ({ onViewAttendance, onHeaderActionsChange }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showDeleted]);
 
-    if (loading) {
+    if (loading && shifts.length === 0) {
         return <div className="h-full flex items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div></div>;
     }
 
@@ -450,6 +450,7 @@ const Shifts = ({ onViewAttendance, onHeaderActionsChange }) => {
                 <table className="min-w-full">
                     <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
                     <tr>
+                        <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">#</th>
                         <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Name</th>
                         <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Time</th>
                         <th scope="col" className="px-3 py-2 text-left text-[9px] font-bold text-amber-900 uppercase tracking-wide">Date Range</th>
@@ -460,13 +461,14 @@ const Shifts = ({ onViewAttendance, onHeaderActionsChange }) => {
                     </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                    {shifts.map((shift) => {
+                    {shifts.map((shift, index) => {
                         const startDate = new Date(shift.startDate);
                         const endDate = new Date(shift.endDate);
                         const isRecurring = shift.recurrenceType !== 0;
 
                         return (
                             <tr key={shift.id} className="border-b border-gray-100 hover:bg-amber-50 transition-all">
+                                <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold whitespace-nowrap">{(pagination.page - 1) * pagination.pageSize + index + 1}</td>
                                 <td
                                     className="px-3 py-2 whitespace-nowrap relative"
                                     onMouseEnter={() => setHoveredShiftId(shift.id)}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Tabs } from "antd";
 import ReportsTable from "./ReportsTable";
 import DriverReport from "./reportFiles/DriverReport";
 import ReweighedTransactionsReport from "./reportFiles/ReweighedTransactionsReport";
@@ -649,31 +650,30 @@ export default function Reports() {
   ].includes(activeTab);
 
   return (
-    <div className="h-full bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden flex flex-col">
-      <PageHeader icon={FileText} title="REPORTS" subtitle="Operational and analytical system reports" />
+    <div className="h-full flex flex-col rounded-lg shadow-md border border-gray-200 bg-white overflow-hidden">
+      <PageHeader icon={FileText} title="REPORTS" subtitle="Operational and analytical system reports" flush className="border-b border-white/10" />
 
       {/* TABS */}
-      <div className="flex items-center gap-5 mb-4 flex-wrap px-4 sm:px-6 border-b border-gray-200 shrink-0">
-        {REPORT_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 pb-2 -mb-px text-sm font-medium capitalize border-b-2 transition-colors ${
-              activeTab === tab.id
-                ? "border-amber-500 text-amber-600"
-                : "border-transparent text-gray-500 hover:text-gray-700"
-            }`}
-          >
-            {tab.icon}
-            {tab.label}
-            {tab.badge && (
-              <span className="px-1.5 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full leading-none">
-                {tab.badge}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        size="small"
+        className="px-4 sm:px-6 shrink-0"
+        items={REPORT_TABS.map((tab) => ({
+          key: tab.id,
+          label: (
+            <span className="flex items-center gap-1.5">
+              {tab.icon}
+              {tab.label}
+              {tab.badge && (
+                <span className="px-1.5 py-0.5 bg-green-500 text-white text-[9px] font-bold rounded-full leading-none">
+                  {tab.badge}
+                </span>
+              )}
+            </span>
+          ),
+        }))}
+      />
 
       {/* MAIN CONTENT AREA - SCROLLABLE */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 pb-6">
@@ -895,7 +895,9 @@ export default function Reports() {
                       ].map((h) => (
                         <th
                           key={h}
-                          className="p-2 text-left font-bold text-[9px] text-amber-900 uppercase tracking-wider border-b-2 border-amber-200"
+                          className={`p-2 font-bold text-[9px] text-amber-900 uppercase tracking-wider border-b-2 border-amber-200 ${
+                            ["First Wt", "Second Wt", "Net Wt"].includes(h) ? "text-right" : "text-left"
+                          }`}
                         >
                           {h}
                         </th>
@@ -921,21 +923,13 @@ export default function Reports() {
                               : "bg-gray-50/50"
                           }`}
                         >
-                          <td className="p-2">
-                            <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 text-[10px] font-extrabold text-amber-900 border border-amber-300 shadow-sm">
-                              {idx + 1}
-                            </span>
-                          </td>
+                          <td className="p-2 text-gray-500 font-bold">{idx + 1}</td>
                           <td className="p-2">{dayjs(t.createdAt).format("DD MMM YYYY")}</td>
                           <td className="p-2">{dayjs(t.createdAt).format("HH:mm:ss")}</td>
                           <td className="p-2 font-mono font-bold text-amber-600 bg-amber-50 rounded px-1.5">
                             {t.receiptNo || "-"}
                           </td>
-                          <td className="p-2">
-                            <div className="inline-block bg-gray-900 text-white px-2 py-0.5 rounded text-[10px] font-bold">
-                              {t.noPlate || "-"}
-                            </div>
-                          </td>
+                          <td className="p-2 font-bold text-gray-800">{t.noPlate || "-"}</td>
                           <td className="p-2 font-medium text-gray-700">{t.driverName || "-"}</td>
                           <td className="p-2 text-gray-600">{t.commodityName || "-"}</td>
                           <td className="p-2 text-gray-600">{t.supplierName || "-"}</td>

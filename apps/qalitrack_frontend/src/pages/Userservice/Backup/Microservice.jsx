@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchMicroserviceData } from '../../../api/helpers/Backup/Microservice.js';
 import { RefreshCw, Database, Clock, HardDriveDownload, Calendar, Download, X } from 'lucide-react';
+import PageHeader from '../../../components/PageHeader.jsx';
 import Backup from './Backup';
 import ScheduledBackup from './ScheduledBackup';
 import AvailableBackups from './AvailableBackups';
@@ -13,6 +14,7 @@ const Microservices = () => {
     const [showBackupModal, setShowBackupModal] = useState(false);
     const [showScheduledBackups, setShowScheduledBackups] = useState(false);
     const [showAvailableBackupsModal, setShowAvailableBackupsModal] = useState(false);
+    const [scheduledRefreshKey, setScheduledRefreshKey] = useState(0);
 
     const formatDate = (dateString) => {
         if (!dateString) return 'Never';
@@ -29,6 +31,11 @@ const Microservices = () => {
         try {
             setLoading(true);
             setError(null);
+            // Bumping this key also re-triggers ScheduledBackup's own fetch (it
+            // watches this prop) — so the one page-level Refresh button covers
+            // both data sources instead of needing a second button just for
+            // the scheduled-backups list.
+            setScheduledRefreshKey((k) => k + 1);
             const data = await fetchMicroserviceData();
             const list = data?.data ?? data?.items ?? data;
             if (Array.isArray(list)) {
@@ -48,158 +55,148 @@ const Microservices = () => {
         fetchData();
     }, []);
 
-    if (loading) {
-        return (
-            <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center">
-                <div className="flex items-center space-x-2 text-gray-600">
-                    <RefreshCw className="w-6 h-6 animate-spin" />
-                    <span className="text-lg">Loading backup configuration...</span>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="min-h-screen bg-gray-50 p-6">
-                <div className="max-w-7xl mx-auto">
-                    <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-                        <h2 className="text-xl font-semibold text-red-800 mb-2">Error Loading Backup Configuration</h2>
-                        <p className="text-red-600 mb-4">{error}</p>
-                        <button
-                            onClick={fetchData}
-                            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                        >
-                            Retry
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     const db = microservices[0];
 
     return (
         <>
-            <div className="min-h-screen bg-gray-50 p-6">
-                <div className="max-w-7xl mx-auto">
-                    {/* Header */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 gap-4">
-                        <div className="flex-1">
-                            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Database Backup</h1>
-                            <p className="text-gray-600 mt-1">Backup and restore QalitrackDB</p>
-                        </div>
-                        <div className="flex items-center space-x-3">
+            <div className="h-full flex flex-col rounded-lg shadow-md border border-gray-200 bg-white overflow-hidden">
+                <PageHeader
+                    icon={Database}
+                    title="DATABASE BACKUP"
+                    subtitle="Backup and restore QalitrackDB"
+                    flush
+                    className="border-b border-white/10"
+                    actions={
+                        <>
                             {lastUpdated && (
-                                <div className="hidden sm:flex text-sm text-gray-500 items-center">
-                                    <Clock className="w-4 h-4 mr-1" />
+                                <div className="hidden sm:flex items-center gap-1 text-[10px]" style={{ color: 'var(--cs-appbar-text)', opacity: 0.7 }}>
+                                    <Clock className="w-3 h-3" />
                                     {lastUpdated.toLocaleTimeString()}
                                 </div>
                             )}
                             <button
                                 type="button"
                                 onClick={() => setShowScheduledBackups(!showScheduledBackups)}
-                                className="flex items-center px-3 py-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors text-sm"
+                                className="flex items-center gap-1.5 px-3 py-1.5 border cs-solid-chip-btn rounded-lg text-xs font-semibold shadow-sm transition-all"
                             >
-                                <Calendar size={16} className="mr-1" />
+                                <Calendar size={14} />
                                 {showScheduledBackups ? 'Hide Scheduled' : 'Scheduled Backups'}
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setShowAvailableBackupsModal(true)}
                                 disabled={!db}
-                                className="flex items-center px-3 py-1.5 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors text-sm disabled:opacity-50"
+                                className="flex items-center gap-1.5 px-3 py-1.5 border cs-solid-chip-btn rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
                             >
-                                <Download size={16} className="mr-1" />
+                                <Download size={14} />
                                 Restore / Download
                             </button>
                             <button
                                 type="button"
                                 onClick={() => setShowBackupModal(true)}
-                                className="flex items-center px-3 py-1.5 bg-amber-500 text-white rounded hover:bg-amber-700 transition-colors text-sm"
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md transition-all border-0"
+                                style={{ backgroundColor: '#ffffff', color: 'var(--cs-appbar-bg)' }}
                             >
-                                <HardDriveDownload size={16} className="mr-1" />
+                                <HardDriveDownload size={14} />
                                 Backup Now
                             </button>
                             <button
                                 onClick={fetchData}
                                 disabled={loading}
-                                className="bg-amber-500 text-white px-3 py-1.5 rounded-lg hover:bg-amber-600 transition-colors flex items-center space-x-1.5 text-sm"
+                                className="flex items-center gap-1.5 px-3 py-1.5 border cs-solid-chip-btn rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
                             >
                                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
-                                <span>Refresh</span>
+                                Refresh
                             </button>
-                        </div>
-                    </div>
+                        </>
+                    }
+                />
 
+                <div className="flex-1 overflow-auto p-4 sm:p-6">
                     {/* Scheduled Backups */}
                     {showScheduledBackups && (
-                        <div className="mb-8">
-                            <ScheduledBackup />
+                        <div className="mb-6">
+                            <ScheduledBackup refreshSignal={scheduledRefreshKey} />
                         </div>
                     )}
 
-                    {/* DB Info Card */}
-                    {db ? (
-                        <div className="bg-white rounded-md shadow-sm border overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-800">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Database</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Connection</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Last Backup</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white">
-                                    <tr>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-2">
-                                                <Database className="w-4 h-4 text-amber-500" />
-                                                <span className="text-sm font-medium text-gray-900">{db.name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                                                db.status === 0
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : db.status === 1
-                                                        ? 'bg-red-100 text-red-800'
-                                                        : 'bg-yellow-100 text-yellow-800'
-                                            }`}>
-                                                {db.status === 0 ? 'Active' : db.status === 1 ? 'Inactive' : 'Paused'}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            {(() => {
-                                                const { host, db: dbName } = parseConnectionString(db.connectionString);
-                                                return (
-                                                    <div className="flex flex-col gap-1">
-                                                        <span className="flex items-center gap-1.5 text-xs">
-                                                            <span className="text-gray-400 uppercase tracking-wide font-medium w-7">host</span>
-                                                            <span className="font-mono text-gray-700">{host}</span>
-                                                        </span>
-                                                        <span className="flex items-center gap-1.5 text-xs">
-                                                            <span className="text-gray-400 uppercase tracking-wide font-medium w-7">db</span>
-                                                            <span className="font-mono text-gray-700">{dbName}</span>
-                                                        </span>
-                                                    </div>
-                                                );
-                                            })()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                                            {formatDate(db.lastBackupAt)}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    {error ? (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+                            <h2 className="text-base font-semibold text-red-800 mb-2">Error Loading Backup Configuration</h2>
+                            <p className="text-red-600 text-sm mb-4">{error}</p>
+                            <button
+                                onClick={fetchData}
+                                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm"
+                            >
+                                Retry
+                            </button>
                         </div>
+                    ) : loading && microservices.length === 0 ? (
+                        <div className="flex items-center justify-center py-16">
+                            <div className="flex items-center gap-2 text-gray-500">
+                                <RefreshCw className="w-5 h-5 animate-spin" />
+                                <span className="text-sm">Loading backup configuration...</span>
+                            </div>
+                        </div>
+                    ) : db ? (
+                        <table className="w-full compact-table">
+                            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
+                                <tr>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Database</th>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Status</th>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Connection</th>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Last Backup</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr className="border-b border-gray-100 bg-white">
+                                    <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">1</td>
+                                    <td className="px-3 py-2">
+                                        <div className="flex items-center gap-2">
+                                            <Database className="w-3.5 h-3.5 text-amber-500" />
+                                            <span className="text-[10px] font-bold text-gray-900">{db.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-3 py-2">
+                                        <span className={`px-2 inline-flex text-[9px] leading-5 font-semibold rounded-full ${
+                                            db.status === 0
+                                                ? 'bg-green-100 text-green-800'
+                                                : db.status === 1
+                                                    ? 'bg-red-100 text-red-800'
+                                                    : 'bg-yellow-100 text-yellow-800'
+                                        }`}>
+                                            {db.status === 0 ? 'Active' : db.status === 1 ? 'Inactive' : 'Paused'}
+                                        </span>
+                                    </td>
+                                    <td className="px-3 py-2">
+                                        {(() => {
+                                            const { host, db: dbName } = parseConnectionString(db.connectionString);
+                                            return (
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="flex items-center gap-1.5 text-[10px]">
+                                                        <span className="text-gray-400 uppercase tracking-wide font-medium w-7">host</span>
+                                                        <span className="font-mono text-gray-700">{host}</span>
+                                                    </span>
+                                                    <span className="flex items-center gap-1.5 text-[10px]">
+                                                        <span className="text-gray-400 uppercase tracking-wide font-medium w-7">db</span>
+                                                        <span className="font-mono text-gray-700">{dbName}</span>
+                                                    </span>
+                                                </div>
+                                            );
+                                        })()}
+                                    </td>
+                                    <td className="px-3 py-2 text-[10px] text-gray-600">
+                                        {formatDate(db.lastBackupAt)}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     ) : (
                         <div className="text-center py-12">
-                            <Database className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                            <h3 className="text-lg font-medium text-gray-900 mb-2">No database configured</h3>
-                            <p className="text-gray-600">Contact your administrator.</p>
+                            <Database className="w-12 h-12 text-gray-300 mx-auto mb-2" />
+                            <p className="text-gray-500 text-sm font-medium">No database configured</p>
+                            <p className="text-gray-400 text-xs mt-1">Contact your administrator.</p>
                         </div>
                     )}
                 </div>

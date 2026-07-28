@@ -241,10 +241,10 @@ export default function TransportersPortal({ onHeaderActionsChange }) {
       <div className="flex-1 overflow-hidden">
         <div className="h-full bg-white overflow-hidden flex flex-col">
 
-          {loading ? (
-            <div className="flex-1 flex items-center justify-center"><p className="text-gray-500 text-sm">Loading transporters…</p></div>
-          ) : error ? (
+          {error ? (
             <div className="flex-1 flex items-center justify-center"><p className="text-red-500 text-sm">Error: {error}</p></div>
+          ) : loading && paginated.length === 0 ? (
+            <div className="flex-1 flex items-center justify-center"><p className="text-gray-500 text-sm">Loading transporters…</p></div>
           ) : paginated.length === 0 ? (
             <div className="flex-1 flex items-center justify-center">
               <div className="text-center">
@@ -296,7 +296,7 @@ export default function TransportersPortal({ onHeaderActionsChange }) {
                               </span>
                             ) : <span className="text-[10px] text-gray-400">—</span>}
                           </td>
-                          <td className="px-3 py-2 text-center">
+                          <td className="px-3 py-2">
                             <Switch checked={t.status === "Active"} onChange={() => handleToggleStatus(t)} size="small" />
                           </td>
                           <td className="px-3 py-2">
