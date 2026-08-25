@@ -66,6 +66,13 @@ namespace UserService.Core.Services
                 };
             }
 
+            // Fixed id, not whatever BaseEntity's random default assigned —
+            // otherwise every uncached call before the row is first saved
+            // would hand back a different random id, and if two concurrent
+            // "first ever save" requests each started from one of those,
+            // both could insert. See PasswordPolicy.SingletonId.
+            fallbackPolicy.Id = PasswordPolicy.SingletonId;
+
             // TwoFactorEnabled isn't part of the "PasswordPolicy" config section, so it
             // won't come from the binding above — fall back to the legacy config key.
             fallbackPolicy.TwoFactorEnabled = _configuration.GetValue<bool>("TwoFactorAuthentication:Enabled", false);

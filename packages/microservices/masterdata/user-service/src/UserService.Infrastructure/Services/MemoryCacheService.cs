@@ -152,36 +152,82 @@ public class MemoryCacheService(IMemoryCache memoryCache, ILogger<MemoryCacheSer
         {
             try
             {
-                // Try to add the lock to the cache - if it's not there, we get the lock
-                var lockAcquired = memoryCache.TryGetValue(lockKey, out _) == false;
-                
-                if (lockAcquired)
+                // Check-then-set must be one atomic step — previously the
+                // TryGetValue check and the Set below ran outside any lock,
+                // so two concurrent callers could both see "not present" and
+                // both believe they acquired the lock.
+                lock (_lockObject)
                 {
-                    // Set lock with the specified timeout
-                    var cacheOptions = new MemoryCacheEntryOptions
+                    var lockAcquired = memoryCache.TryGetValue(lockKey, out _) == false;
+
+                    if (lockAcquired)
                     {
-                        AbsoluteExpirationRelativeToNow = timeout,
-                        Priority = CacheItemPriority.High
-                    };
-                    
-                    memoryCache.Set(lockKey, true, cacheOptions);
-                    lock (_lockObject)
-                    {
+                        var cacheOptions = new MemoryCacheEntryOptions
+                        {
+                            AbsoluteExpirationRelativeToNow = timeout,
+                            Priority = CacheItemPriority.High
+                        };
+
+                        memoryCache.Set(lockKey, true, cacheOptions);
                         _cacheKeys.Add(lockKey);
+                        logger.LogDebug("Lock acquired: {LockKey}", lockKey);
                     }
-                    logger.LogDebug("Lock acquired: {LockKey}", lockKey);
+                    else
+                    {
+                        logger.LogDebug("Failed to acquire lock: {LockKey}", lockKey);
+                    }
+
+                    return lockAcquired;
                 }
-                else
-                {
-                    logger.LogDebug("Failed to acquire lock: {LockKey}", lockKey);
-                }
-                
-                return lockAcquired;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Error acquiring lock: {LockKey}", lockKey);
                 return false;
+            }
+        });
+    }
+
+    // Value+expiry tracked together explicitly rather than relying on
+    // IMemoryCache's own eviction timing — Set() replaces an entry's
+    // expiration policy wholesale, so re-Setting on every increment without
+    // this would either reset a sliding window (wrong: "N per fixed period"
+    // requires a fixed window) or, if expiration were simply omitted after
+    // the first increment, leave the entry cached forever.
+    private sealed record CounterEntry(long Count, DateTime ExpiresAtUtc);
+
+    public async Task<long> IncrementAsync(string key, TimeSpan? expiration = null)
+    {
+        return await Task.Run(() =>
+        {
+            // Single-process atomicity only — this cache isn't shared across
+            // instances, so a lock here is sufficient (unlike the check-then-set
+            // race in AcquireLockAsync, there's no distributed-lock equivalent
+            // needed for a purely in-process cache).
+            lock (_lockObject)
+            {
+                var now = DateTime.UtcNow;
+                long newValue;
+                DateTime expiresAtUtc;
+
+                if (memoryCache.TryGetValue(key, out var cached) &&
+                    cached is CounterEntry existing &&
+                    existing.ExpiresAtUtc > now)
+                {
+                    newValue = existing.Count + 1;
+                    expiresAtUtc = existing.ExpiresAtUtc; // preserve the original fixed window
+                }
+                else
+                {
+                    newValue = 1;
+                    expiresAtUtc = now + (expiration ?? TimeSpan.FromMinutes(30));
+                }
+
+                memoryCache.Set(key, new CounterEntry(newValue, expiresAtUtc),
+                    new MemoryCacheEntryOptions { AbsoluteExpiration = expiresAtUtc });
+                _cacheKeys.Add(key);
+
+                return newValue;
             }
         });
     }

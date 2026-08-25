@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.HttpOverrides;
 using Yarp.ReverseProxy.Model;
+using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Claims;
@@ -99,7 +101,44 @@ builder.Services.AddCors(options =>
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
 
+// Read the real client IP/scheme from X-Forwarded-* headers instead of the
+// TCP connection — but ONLY from a proxy we actually know about. Most
+// installs are offline Docker deployments where this gateway container IS
+// the edge (nothing in front of it), so trusting X-Forwarded-For by default
+// would let any client spoof their own logged IP. Deployments that do sit
+// behind a real reverse proxy (e.g. the cloud K8s install behind Traefik)
+// opt in by listing that proxy under ForwardedHeaders:KnownProxies /
+// KnownNetworks in their own config — with none configured, the default
+// ASP.NET Core behavior (trust nothing beyond loopback) applies, and
+// Connection.RemoteIpAddress is left as the real client IP untouched.
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = builder.Configuration.GetValue<ForwardedHeaders?>("ForwardedHeaders:ForwardedHeaders") ?? ForwardedHeaders.All;
+    options.ForwardLimit = 1;
+
+    // List<IPAddress>/List<IPNetwork> aren't config-binder-convertible types,
+    // so KnownProxies/KnownNetworks are parsed explicitly here rather than
+    // via Configuration.Bind().
+    foreach (var proxy in builder.Configuration.GetSection("ForwardedHeaders:KnownProxies").Get<string[]>() ?? Array.Empty<string>())
+    {
+        if (IPAddress.TryParse(proxy, out var ip)) options.KnownProxies.Add(ip);
+    }
+
+    foreach (var network in builder.Configuration.GetSection("ForwardedHeaders:KnownNetworks").Get<string[]>() ?? Array.Empty<string>())
+    {
+        var parts = network.Split('/');
+        if (parts.Length == 2 && IPAddress.TryParse(parts[0], out var prefix) && int.TryParse(parts[1], out var prefixLength))
+        {
+            options.KnownNetworks.Add(new Microsoft.AspNetCore.HttpOverrides.IPNetwork(prefix, prefixLength));
+        }
+    }
+});
+
 var app = builder.Build();
+
+// Must run before anything reads Connection.RemoteIpAddress or Request.Scheme —
+// in particular, before the audit-log middleware below.
+app.UseForwardedHeaders();
 
 // Add request logging for YARP
 app.Use(async (context, next) =>
@@ -136,21 +175,82 @@ app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Audit log: record every mutating request (GET is skipped — read traffic
-// isn't audited) after auth so HttpContext.User claims are populated. The
-// gateway has no database, so this forwards a fire-and-forget HTTP call to
-// user-service; a slow or failed audit write never delays or breaks the
-// actual proxied request.
+// Classifies an incoming path into (EntityType, EntityId) for audit logging.
+// Mirrors the PathRemovePrefix transforms already in this file's
+// ReverseProxy:Routes config, so it stays in sync with actual routing.
+static (string? EntityType, string? EntityId) ClassifyPath(string path)
+{
+    var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+    var i = 0;
+    if (i < segments.Length && segments[i].Equals("api", StringComparison.OrdinalIgnoreCase)) i++;
+
+    string[][] wrapperPrefixes =
+    {
+        new[] { "MasterData" },
+        new[] { "Transaction" },
+        new[] { "tech", "user" }
+    };
+    foreach (var wrapper in wrapperPrefixes)
+    {
+        if (i + wrapper.Length <= segments.Length &&
+            wrapper.SequenceEqual(segments.Skip(i).Take(wrapper.Length), StringComparer.OrdinalIgnoreCase))
+        {
+            i += wrapper.Length;
+            break;
+        }
+    }
+
+    if (i >= segments.Length) return (null, null);
+    var entityType = segments[i];
+    var entityId = (i + 1 < segments.Length && LooksLikeId(segments[i + 1])) ? segments[i + 1] : null;
+    return (entityType, entityId);
+}
+
+static bool LooksLikeId(string s) => Guid.TryParse(s, out _) || s.All(char.IsDigit);
+
+// Entity types considered sensitive enough that even a read of them should be
+// audited (PII / financial data) — everything else keeps read traffic unaudited.
+var sensitiveReadEntityTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+{
+    "Drivers", "Vehicles", "Suppliers", "Customers", "Owners", "Transporters",
+    "Users", "Roles", "Permissions", "Transaction", "AuditLogs"
+};
+
+// Audit log: record every mutating request, plus reads of sensitive entities
+// (HEAD is always skipped — it carries no information beyond a GET), after
+// auth so HttpContext.User claims are populated. The gateway has no database,
+// so this forwards a fire-and-forget HTTP call to user-service; a slow or
+// failed audit write never delays or breaks the actual proxied request.
 app.Use(async (context, next) =>
 {
-    if (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method))
+    var method = context.Request.Method;
+    var path = context.Request.Path.Value ?? string.Empty;
+    var (entityType, entityId) = ClassifyPath(path);
+
+    if (HttpMethods.IsHead(method))
     {
         await next();
         return;
     }
 
-    var method = context.Request.Method;
-    var path = context.Request.Path.Value ?? string.Empty;
+    var isGet = HttpMethods.IsGet(method);
+    var isSensitiveRead = isGet && entityType != null && sensitiveReadEntityTypes.Contains(entityType);
+    if (isGet && !isSensitiveRead)
+    {
+        await next();
+        return;
+    }
+
+    var action = method switch
+    {
+        _ when isGet => "Read",
+        _ when HttpMethods.IsPost(method) => "Create",
+        _ when HttpMethods.IsPut(method) => "Update",
+        _ when HttpMethods.IsPatch(method) => "Update",
+        _ when HttpMethods.IsDelete(method) => "Delete",
+        _ => method
+    };
+
     var queryString = context.Request.QueryString.Value ?? string.Empty;
     var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
     var stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -180,7 +280,10 @@ app.Use(async (context, next) =>
                 userId,
                 userName,
                 ipAddress,
-                durationMs = stopwatch.ElapsedMilliseconds
+                durationMs = stopwatch.ElapsedMilliseconds,
+                entityType,
+                entityId,
+                action
             };
             await client.PostAsJsonAsync("/AuditLogs", payload);
         }

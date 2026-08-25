@@ -153,6 +153,7 @@ builder.Services.AddAuthorization();
 // Add repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddScoped<ITransactionSettingsRepository, TransactionSettingsRepository>();
 // TODO: Add additional repositories as needed
 // builder.Services.AddScoped<IAnotherRepository, AnotherRepository>();
 
@@ -162,6 +163,7 @@ builder.Services.AddSingleton<ITimeService, TimeService>();
 // Add services
 builder.Services.AddScoped<ITransactionService, Transaction.Core.Services.TransactionService>();
 builder.Services.AddScoped<IReceiptNumberService, ReceiptNumberService>();
+builder.Services.AddScoped<ITransactionSettingsService, TransactionSettingsService>();
 builder.Services.AddScoped<IFileStorageService, FileSystemStorageService>();
 // TODO: Add additional services as needed
 // builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

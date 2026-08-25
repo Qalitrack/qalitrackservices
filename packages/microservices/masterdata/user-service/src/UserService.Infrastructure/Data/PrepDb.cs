@@ -403,7 +403,7 @@ namespace UserService.Infrastructure.Data
             {
                 var passwordPolicy = new PasswordPolicy
                 {
-                    Id = Guid.NewGuid().ToString(),
+                    Id = PasswordPolicy.SingletonId,
                     MinimumLength = 6,
                     RequireUppercase = false,
                     RequireLowercase = false,

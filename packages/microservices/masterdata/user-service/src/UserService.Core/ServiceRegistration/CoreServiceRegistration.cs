@@ -24,9 +24,18 @@ public static class CoreServiceRegistration
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IPermissionsService, PermissionsService>();
         services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IUserStatusService, UserStatusService>();
+        // UserStatusService is a BackgroundService whose whole purpose is
+        // draining a Channel it owns — it was previously registered Scoped,
+        // never hosted, so every DI resolution got its own private Channel
+        // with nobody reading it: every EnqueueStatusUpdate call was a silent
+        // no-op. Registering it as a singleton hosted service, and exposing
+        // that SAME instance as IUserStatusService, makes it actually run.
+        services.AddSingleton<UserStatusService>();
+        services.AddHostedService(provider => provider.GetRequiredService<UserStatusService>());
+        services.AddSingleton<IUserStatusService>(provider => provider.GetRequiredService<UserStatusService>());
         services.AddScoped<ITwoFactorService, TwoFactorService>();
         services.AddScoped<PasswordPolicyService>();
+        services.AddScoped<EmailSettingsService>();
         services.AddScoped<IJwtConfigurationService, JwtConfigurationService>();
         services.AddScoped<IShiftNotificationService,ShiftNotificationService>();
         services.AddHostedService<ShiftInstanceBackgroundService>();

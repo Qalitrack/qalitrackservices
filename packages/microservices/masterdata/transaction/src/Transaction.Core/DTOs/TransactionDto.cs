@@ -188,6 +188,7 @@ public class UpdateTransactionDto
     
     public string? ChangeDesc { get; set; }
     public string? NprSource { get; set; }
+    public string? ChangedBy { get; set; }
 
     // NOTE: ReceiptNo cannot be changed after creation
 }
@@ -201,11 +202,13 @@ public class AddSecondWeightDto
     public string? OperatorID2nd { get; set; }
     public string? OperatorName2nd { get; set; }
     public string? Notes { get; set; }
+    public string? ChangedBy { get; set; }
 }
 
 public class CompleteTransactionDto
 {
     public string TicketID { get; set; } = string.Empty;
+    public string? ChangedBy { get; set; }
 }
 
 public class RequestReweighDto

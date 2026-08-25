@@ -24,6 +24,7 @@ namespace UserService.Infrastructure.Repositories
         public async Task<IEnumerable<Permission>>GetUserPermissionsAsync(string userId)
         {
             var rolePermissions = await _context.UserRoles
+                .AsNoTracking()
                 .Where(ur => ur.UserId == userId && !ur.IsDeleted)
                 .Include(ur => ur.Role)
                     .ThenInclude(r => r.RolePermissions)
@@ -43,6 +44,7 @@ namespace UserService.Infrastructure.Repositories
         public async Task<IEnumerable<User>> GetUsersByRoleAsync(string roleId)
         {
             return await _context.UserRoles
+                .AsNoTracking()
                 .Where(ur => ur.RoleId == roleId && !ur.IsDeleted)
                 .Select(ur => ur.User)
                 .Where(u => u != null && !u.IsDeleted)
@@ -52,6 +54,7 @@ namespace UserService.Infrastructure.Repositories
         public async Task<IEnumerable<UserRole>> GetUserRolesAsync(string userId)
         {
             return await _context.UserRoles
+                .AsNoTracking()
                 .Include(ur => ur.Role)
                 .Where(ur => ur.UserId == userId && !ur.IsDeleted)
                 .ToListAsync();
@@ -279,8 +282,7 @@ namespace UserService.Infrastructure.Repositories
                         .ThenInclude(ur => ur.Role);
                 }
 
-                var user = await query.Include(user => user.UserRoles).ThenInclude(userRole => userRole.Role)
-                    .FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
+                var user = await query.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
 
                 if (user == null)
                 {
@@ -508,6 +510,7 @@ public async Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId)
         return new List<Role>();
         
     return await _context.UserRoles
+        .AsNoTracking()
         .Where(ur => ur.UserId == userId && !ur.IsDeleted)
         .Include(ur => ur.Role)
         .Select(ur => ur.Role)

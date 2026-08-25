@@ -108,6 +108,102 @@ namespace Transaction.Infrastructure.Data.Migrations
                     b.ToTable("ReweighRecords", "transactions");
                 });
 
+            modelBuilder.Entity("Transaction.Core.Entities.TransactionAuditLog", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
+
+                    b.Property<DateTime>("ChangeTimestamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ChangedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ChangedFields")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("NewValues")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldValues")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WeighbridgeTransactionId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangeTimestamp");
+
+                    b.HasIndex("WeighbridgeTransactionId");
+
+                    b.ToTable("transaction_audit_logs", "transactions");
+                });
+
+            modelBuilder.Entity("Transaction.Core.Entities.TransactionSettings", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ReceiptPrefix")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("NCCU");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("transaction_settings", "transactions");
+                });
+
             modelBuilder.Entity("Transaction.Core.Entities.WeighbridgeTransaction", b =>
                 {
                     b.Property<string>("TicketID")
@@ -343,15 +439,29 @@ namespace Transaction.Infrastructure.Data.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("WeighMode");
 
+                    b.Property<uint>("xmin")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("TicketID");
+
+                    b.HasIndex("CommodityID");
 
                     b.HasIndex("FirstWeightDate");
 
                     b.HasIndex("NoPlate");
 
-                    b.HasIndex("ReceiptNo");
+                    b.HasIndex("ReceiptNo")
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
 
                     b.HasIndex("Status");
+
+                    b.HasIndex("VehicleID");
+
+                    b.HasIndex("Status", "FirstWeightDate");
 
                     b.ToTable("tickets", "transactions");
                 });

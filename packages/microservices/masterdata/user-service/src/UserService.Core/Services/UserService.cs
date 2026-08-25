@@ -293,18 +293,13 @@ namespace UserService.Core.Services
 
         public async Task<bool> UpdateUserActiveStatusAsync(string userId, bool isActive)
         {
-            var user = await userRepository.GetByIdAsync(userId, true);
-            if (user == null)
-            {
-                return false;
-            }
-
-            user.IsActive = isActive;
-            // Repository will handle UpdatedAt/UpdatedBy
-            
-            var result = await userRepository.UpdateUserActiveStatusAsync(userId, isActive);
-            
-            return result;
+            // This runs on every login/logout. The previous pre-check here
+            // (a full User+UserRoles+Role fetch) only tested existence — its
+            // mutation was discarded, since persistence happens entirely via
+            // the call below — and UpdateUserActiveStatusAsync already
+            // returns false on 0 rows affected when the user doesn't exist,
+            // so the pre-check was a pure wasted round-trip.
+            return await userRepository.UpdateUserActiveStatusAsync(userId, isActive);
         }
 
         public async Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName)

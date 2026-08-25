@@ -607,7 +607,25 @@ public class CachedUserService(IUserService userService, ICacheService cacheServ
 
     public async Task<IEnumerable<string>> GetPermissionsForRoleAsync(string roleName)
     {
-        return await userService.GetPermissionsForRoleAsync(roleName);
+        // This runs once per role on every policy-protected request
+        // (PermissionAuthorizationHandler loops over the caller's roles) —
+        // uncached, it was the one method on this class that didn't actually
+        // cache anything despite the class's whole purpose being caching.
+        // Role-permission mappings change rarely, so the same TTL as the
+        // other permission caches is fine.
+        var cacheKey = $"role_permissions:{roleName}";
+
+        var cached = await cacheService.GetAsync<IEnumerable<string>>(cacheKey);
+        if (cached != null)
+        {
+            return cached;
+        }
+
+        var permissions = await userService.GetPermissionsForRoleAsync(roleName);
+        var permissionsArray = permissions as string[] ?? permissions.ToArray();
+        await cacheService.SetAsync(cacheKey, permissionsArray, TimeSpan.FromMinutes(CacheExpirationMinutes));
+
+        return permissionsArray;
     }
 
     public async Task<IEnumerable<Role>> GetUserRolesByUserIdAsync(string userId)

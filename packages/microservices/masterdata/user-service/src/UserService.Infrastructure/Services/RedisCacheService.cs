@@ -208,4 +208,26 @@ public class RedisCacheService : ICacheService
             _logger.LogWarning(ex, "Failed to release lock (will expire naturally): {LockKey}", lockKey);
         }
     }
+
+    public async Task<long> IncrementAsync(string key, TimeSpan? expiration = null)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            throw new ArgumentException("Key must not be empty.", nameof(key));
+        }
+
+        var db = _connectionMultiplexer.GetDatabase();
+        // Redis INCR is atomic — concurrent callers each get a distinct,
+        // correctly-ordered value instead of racing on a read-then-write.
+        var newValue = await db.StringIncrementAsync(key);
+        if (newValue == 1 && expiration.HasValue)
+        {
+            // Only set TTL on first creation, so this is a fixed window
+            // (e.g. "5 attempts per 10 minutes"), not a sliding one that
+            // resets on every increment.
+            await db.KeyExpireAsync(key, expiration.Value);
+        }
+
+        return newValue;
+    }
 }

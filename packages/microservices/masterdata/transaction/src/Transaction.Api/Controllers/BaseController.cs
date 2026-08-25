@@ -69,6 +69,16 @@ public abstract class BaseController : ControllerBase
         });
     }
 
+    protected IActionResult Conflict(string message)
+    {
+        return StatusCode(409, new ApiResponseDto
+        {
+            Success = false,
+            Message = message,
+            StatusCode = 409
+        });
+    }
+
     protected IActionResult InternalServerError(string message = "Internal server error")
     {
         return StatusCode(500, new ApiResponseDto

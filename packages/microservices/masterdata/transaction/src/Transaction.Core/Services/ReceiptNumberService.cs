@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Transaction.Core.Interfaces;
 
 namespace Transaction.Core.Services;
@@ -14,34 +13,38 @@ public class ReceiptNumberService : IReceiptNumberService
 {
     private readonly ITransactionRepository _transactionRepository;
     private readonly ITimeService _timeService;
-    private readonly string _prefix;
+    private readonly ITransactionSettingsService _settingsService;
     private const int SequenceLength = 6;
 
     public ReceiptNumberService(
         ITransactionRepository transactionRepository,
         ITimeService timeService,
-        IConfiguration configuration)
+        ITransactionSettingsService settingsService)
     {
         _transactionRepository = transactionRepository ??
             throw new ArgumentNullException(nameof(transactionRepository));
         _timeService = timeService ??
             throw new ArgumentNullException(nameof(timeService));
-        _prefix = configuration?["Transaction:ReceiptPrefix"] ?? "NCCU";
+        _settingsService = settingsService ??
+            throw new ArgumentNullException(nameof(settingsService));
     }
 
     /// <summary>
-    /// Generates a receipt number in format: QSL-YYYYMMDD-XXXXXX
-    /// Example: QSL-20240202-000001
+    /// Generates a receipt number in format: PREFIX-YYYYMMDD-XXXXXX
+    /// Example: NCCU-20240202-000001
     /// </summary>
     public async Task<string> GenerateReceiptNumberAsync()
     {
+        var settings = await _settingsService.GetSettingsAsync();
+        var prefix = settings.ReceiptPrefix;
+
         var now = _timeService.Now;
-        
+
         // Format: YYYYMMDD (e.g., 20240202)
         var datePart = now.ToString("yyyyMMdd");
-        
+
         // Get the latest receipt number for today
-        var searchPattern = $"{_prefix}-{datePart}";
+        var searchPattern = $"{prefix}-{datePart}";
         var latestReceipt = await _transactionRepository.GetLatestReceiptNumberAsync(searchPattern);
         
         int sequenceNumber = 1;
@@ -50,7 +53,7 @@ public class ReceiptNumberService : IReceiptNumberService
             latestReceipt.StartsWith(searchPattern))
         {
             // Extract the sequence part (last 6 digits)
-            // Format is QSL-YYYYMMDD-XXXXXX, so we need the part after the last hyphen
+            // Format is PREFIX-YYYYMMDD-XXXXXX, so we need the part after the last hyphen
             var lastHyphenIndex = latestReceipt.LastIndexOf('-');
             if (lastHyphenIndex >= 0 && lastHyphenIndex < latestReceipt.Length - 1)
             {
@@ -62,8 +65,8 @@ public class ReceiptNumberService : IReceiptNumberService
             }
         }
         
-        // Format: QSL-YYYYMMDD-XXXXXX
+        // Format: PREFIX-YYYYMMDD-XXXXXX
         var sequenceFormatted = sequenceNumber.ToString().PadLeft(SequenceLength, '0');
-        return $"{_prefix}-{datePart}-{sequenceFormatted}";
+        return $"{prefix}-{datePart}-{sequenceFormatted}";
     }
 }

@@ -54,7 +54,11 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         if (pageNumber < 1) pageNumber = 1;
         if (pageSize < 1) pageSize = 10;
 
-        var query = DbSet.Where(e => !e.IsDeleted);
+        // Read-only listing — every mutation path (UpdateAsync/DeleteAsync/
+        // UpdateRangeAsync below) explicitly calls DbSet.Update()/UpdateRange(),
+        // which attaches entities regardless of their prior tracking state, so
+        // nothing here needs change tracking.
+        var query = DbSet.AsNoTracking().Where(e => !e.IsDeleted);
 
         // Apply search predicate if provided
         if (searchPredicate != null)
@@ -142,7 +146,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<IEnumerable<T>> GetByIdsAsync(IEnumerable<string> ids)
     {
         var idSet = new HashSet<string>(ids);
-        return await DbSet.Where(e => idSet.Contains(e.Id) && !e.IsDeleted).ToListAsync();
+        return await DbSet.AsNoTracking().Where(e => idSet.Contains(e.Id) && !e.IsDeleted).ToListAsync();
     }
 
     public virtual async Task<T> CreateAsync(T entity)
@@ -311,6 +315,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<T?> GetByPredicateAsync(Expression<Func<T, bool>> predicate)
     {
         return await DbSet
+            .AsNoTracking()
             .Where(e => !e.IsDeleted)
             .FirstOrDefaultAsync(predicate);
     }
@@ -318,6 +323,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public virtual async Task<IEnumerable<T>> GetAllByPredicateAsync(Expression<Func<T, bool>> predicate)
     {
         return await DbSet
+            .AsNoTracking()
             .Where(e => !e.IsDeleted)
             .Where(predicate)
             .ToListAsync();
@@ -346,6 +352,26 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
                 await using var transaction = await Context.Database.BeginTransactionAsync();
                 try
                 {
+                    // Preserve CreatedBy for entities that don't already carry it —
+                    // one batched lookup for the whole set instead of one query per
+                    // entity in the loop below.
+                    Dictionary<string, string?> createdByById = new();
+                    if (CurrentUserId != null)
+                    {
+                        var idsNeedingCreatedBy = entityList
+                            .Where(e => string.IsNullOrEmpty(e.CreatedBy))
+                            .Select(e => e.Id)
+                            .ToHashSet();
+
+                        if (idsNeedingCreatedBy.Count > 0)
+                        {
+                            createdByById = await DbSet.AsNoTracking()
+                                .Where(e => idsNeedingCreatedBy.Contains(e.Id))
+                                .Select(e => new { e.Id, e.CreatedBy })
+                                .ToDictionaryAsync(e => e.Id, e => e.CreatedBy);
+                        }
+                    }
+
                     // Apply audit fields to all entities
                     foreach (var entity in entityList)
                     {
@@ -354,13 +380,9 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
                         {
                             entity.UpdatedBy = CurrentUserId;
 
-                            // Preserve CreatedBy if it was not set
-                            var existingCreatedBy = await DbSet.AsNoTracking()
-                                .Where(e => e.Id == entity.Id)
-                                .Select(e => e.CreatedBy)
-                                .FirstOrDefaultAsync();
-
-                            if (!string.IsNullOrEmpty(existingCreatedBy) && string.IsNullOrEmpty(entity.CreatedBy))
+                            if (string.IsNullOrEmpty(entity.CreatedBy) &&
+                                createdByById.TryGetValue(entity.Id, out var existingCreatedBy) &&
+                                !string.IsNullOrEmpty(existingCreatedBy))
                             {
                                 entity.CreatedBy = existingCreatedBy;
                             }

@@ -36,6 +36,11 @@ public class SaccoService : ISaccoService
 
     public async Task<PagedResult<SaccoDto>> GetPagedSaccosAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
     {
+        // Frontend requests up to 200 for the Saccos management page (loaded
+        // once, client-side) — clamp guards against a pathological pageSize
+        // without breaking that.
+        pageSize = Math.Clamp(pageSize, 1, 500);
+
         try
         {
             var result = await _saccoRepository.GetPagedAsync(

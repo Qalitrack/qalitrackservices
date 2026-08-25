@@ -30,5 +30,18 @@ public interface ITransactionRepository : IRepository<WeighbridgeTransaction>
     Task<ReweighRecord> CreateReweighRecordAsync(ReweighRecord record);
 
     // Delete by ticket ID
-    Task<bool> DeleteAsync(string ticketId);
+    Task<bool> DeleteAsync(string ticketId, string? changedBy = null);
+
+    // Get generic before/after audit trail for a transaction
+    Task<List<TransactionAuditLog>> GetAuditLogsAsync(string ticketId);
+
+    // Create a generic audit-log row directly (used for the Create action,
+    // which has no "before" state to diff)
+    Task<TransactionAuditLog> CreateAuditLogAsync(TransactionAuditLog log);
+
+    // Creates a transaction, regenerating and retrying on a ReceiptNo unique
+    // constraint conflict — guards against two concurrent creations both
+    // reading the same "latest receipt number" and computing the same next
+    // value (see ReceiptNumberService).
+    Task<WeighbridgeTransaction> CreateWithUniqueReceiptNoAsync(WeighbridgeTransaction entity, Func<Task<string>> generateReceiptNo);
 }

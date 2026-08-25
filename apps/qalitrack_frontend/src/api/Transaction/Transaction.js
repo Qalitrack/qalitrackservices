@@ -6,6 +6,17 @@ import { transactionsClient } from "../helpers/apiClients";
 const BASE = "/Transaction";
 const CREATE_PATH = "/Transaction/Transaction/"; // ✅ Full correct path
 
+// Who's making this change, for the audit trail — the transaction service has
+// no auth of its own, so the logged-in user's identity has to come from here.
+const getChangedByEmail = () => {
+  try {
+    const session = JSON.parse(localStorage.getItem("authSession"));
+    return session?.userData?.email || null;
+  } catch {
+    return null;
+  }
+};
+
 const handleRequest = async (promise) => {
   try {
     const response = await promise;
@@ -83,14 +94,18 @@ export const getTransactionById = async (ticketId) => {
  * PUT /api/Transaction/Transaction/{ticketId}
  */
 export const updateTransaction = async (ticketId, payload) => {
-  return handleRequest(transactionsClient.put(`${BASE}/${ticketId}`, payload));
+  return handleRequest(
+    transactionsClient.put(`${BASE}/${ticketId}`, { changedBy: getChangedByEmail(), ...payload })
+  );
 };
 
 /**
  * DELETE /api/Transaction/Transaction/{ticketId}
  */
 export const deleteTransaction = async (ticketId) => {
-  return handleRequest(transactionsClient.delete(`${BASE}/${ticketId}`));
+  return handleRequest(
+    transactionsClient.delete(`${BASE}/${ticketId}`, { params: { changedBy: getChangedByEmail() } })
+  );
 };
 
 export const deactivateTransactionApi = deleteTransaction;
@@ -143,7 +158,9 @@ export const getTransactionsByStatus = async (status, limit = 100) => {
  * POST /api/Transaction/Transaction/add-second-weight
  */
 export const addSecondWeight = async (payload) => {
-  return handleRequest(transactionsClient.post(`${BASE}/add-second-weight`, payload));
+  return handleRequest(
+    transactionsClient.post(`${BASE}/add-second-weight`, { changedBy: getChangedByEmail(), ...payload })
+  );
 };
 
 /**
@@ -168,7 +185,8 @@ export const addWeighing = async (payload) => {
  */
 export const completeTransaction = async (payload) => {
   const mapped = {
-    ticketID: payload.ticketID || payload.transactionId || payload.id
+    ticketID: payload.ticketID || payload.transactionId || payload.id,
+    changedBy: getChangedByEmail(),
   };
   return handleRequest(transactionsClient.post(`${BASE}/complete`, mapped));
 };
@@ -251,4 +269,19 @@ export const addReweighWeight = async (payload) => {
  */
 export const completeReweigh = async (payload) => {
   return handleRequest(transactionsClient.post(`${BASE}/complete-reweigh`, payload));
+};
+
+/**
+ * GET /api/Transaction/Settings
+ * Transaction settings (e.g. ticket/receipt number prefix)
+ */
+export const getTransactionSettings = async () => {
+  return handleRequest(transactionsClient.get("/Settings"));
+};
+
+/**
+ * PUT /api/Transaction/Settings
+ */
+export const updateTransactionSettings = async (payload) => {
+  return handleRequest(transactionsClient.put("/Settings", payload));
 };

@@ -8,18 +8,26 @@ using UserService.Core.Interfaces.Services;
 
 namespace UserService.Core.Services
 {
+    // Registered as a singleton hosted service (see CoreServiceRegistration) and
+    // also exposed as IUserStatusService via that same instance, so the queue
+    // this class owns actually has a reader running. It must not depend
+    // directly on IUserStatusRepository (scoped, DbContext-backed) — that
+    // would capture one scoped instance for the app's entire lifetime.
+    // Instead it resolves a fresh scope per processed update, matching this
+    // codebase's other background services (ShiftInstanceBackgroundService,
+    // EmailProcessorService).
     public class UserStatusService : BackgroundService, IUserStatusService
     {
-        private readonly IUserStatusRepository _userStatusRepository;  // Inject repository
+        private readonly IServiceProvider _serviceProvider;
         private readonly ILogger<UserStatusService> _logger;
         private readonly Channel<UserStatusUpdate> _channel;
         private readonly ChannelWriter<UserStatusUpdate> _writer;
 
         public UserStatusService(
-            IUserStatusRepository userStatusRepository,  // Use repository via DI
+            IServiceProvider serviceProvider,
             ILogger<UserStatusService> logger)
         {
-            _userStatusRepository = userStatusRepository ?? throw new ArgumentNullException(nameof(userStatusRepository));
+            _serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             // Create a channel for queuing status updates
@@ -66,9 +74,9 @@ namespace UserService.Core.Services
         {
             try
             {
-                // Call the repository to update the user status
-                await _userStatusRepository.UpdateUserStatusAsync(update.UserId, update.IsActive);
-           
+                using var scope = _serviceProvider.CreateScope();
+                var userStatusRepository = scope.ServiceProvider.GetRequiredService<IUserStatusRepository>();
+                await userStatusRepository.UpdateUserStatusAsync(update.UserId, update.IsActive);
             }
             catch (Exception ex)
             {

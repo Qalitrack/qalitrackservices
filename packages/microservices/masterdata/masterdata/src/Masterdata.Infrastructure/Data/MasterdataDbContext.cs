@@ -90,6 +90,8 @@ namespace Masterdata.Infrastructure.Data
                     .IsRequired(false);
 
                 entity.HasIndex(e => e.RegistrationNumber).IsUnique();
+                // GetPagedAsync defaults every list endpoint's sort to CreatedAt.
+                entity.HasIndex(e => e.CreatedAt);
             });
 
             // ──────────────────────────────────────────────────────────────
@@ -110,6 +112,8 @@ namespace Masterdata.Infrastructure.Data
                 entity.Property(e => e.LicenseNumber).HasMaxLength(50);
                 entity.Property(e => e.IdNumber).HasMaxLength(50);
                 entity.HasOne(e => e.Transporter).WithMany(t => t.Drivers).HasForeignKey(e => e.TransporterId).OnDelete(DeleteBehavior.Restrict);
+                // GetPagedAsync defaults every list endpoint's sort to CreatedAt.
+                entity.HasIndex(e => e.CreatedAt);
             });
 
             // ──────────────────────────────────────────────────────────────

@@ -80,6 +80,12 @@ import { getLicenseStatus, deactivateLicense } from "../../utils/licenseUtils";
 import WeighbridgesPortal from "./WeighingBridge";
 import { getWeighbridges } from "../../api/MasterData/WeighingBridge";
 
+// ── Ticket numbering (backend-persisted) ──────────────────────────────────────
+import {
+  getTransactionSettings,
+  updateTransactionSettings,
+} from "../../api/Transaction/Transaction";
+
 const { Option } = Select;
 
 
@@ -783,6 +789,58 @@ function WeighbridgeSection({ settings, setField }) {
 // ═════════════════════════════════════════════════════════════════════════════
 // TAB: TICKETS & PRINTING
 // ═════════════════════════════════════════════════════════════════════════════
+// ═════════════════════════════════════════════════════════════════════════════
+// SECTION: TICKET / RECEIPT NUMBER PREFIX (backend-persisted)
+// ═════════════════════════════════════════════════════════════════════════════
+function TicketNumberingSection() {
+  const [prefix, setPrefix] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    getTransactionSettings()
+      .then((res) => setPrefix(res?.data?.receiptPrefix ?? ""))
+      .catch((error) => message.error("Failed to load ticket numbering: " + error.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  const handleSavePrefix = async () => {
+    setSaving(true);
+    try {
+      await updateTransactionSettings({ receiptPrefix: prefix });
+      message.success("Ticket number prefix saved!");
+    } catch (error) {
+      message.error("Failed to save: " + error.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <Section title="Ticket / Receipt Numbering" icon={<FileText className="w-4 h-4 text-blue-600" />}>
+      <p className="text-xs text-gray-400 mb-4">
+        Prefix used when generating new ticket/receipt numbers, e.g.{" "}
+        <span className="font-mono">{(prefix || "PREFIX")}-20260824-000001</span>.
+      </p>
+      <Field label="Ticket Number Prefix">
+        <div className="flex items-center gap-2">
+          <Input
+            value={prefix}
+            onChange={(e) => setPrefix(e.target.value.toUpperCase())}
+            placeholder="NCCU"
+            maxLength={20}
+            className="font-mono"
+            disabled={loading}
+          />
+          <Button type="primary" onClick={handleSavePrefix} loading={saving} disabled={loading}>
+            Save Prefix
+          </Button>
+        </div>
+      </Field>
+    </Section>
+  );
+}
+
 function TicketsTab({ settings, setField, isDark }) {
   const themesArray = Object.entries(TICKET_THEMES).map(([key, val]) => ({
     key,
@@ -791,6 +849,8 @@ function TicketsTab({ settings, setField, isDark }) {
 
   return (
     <div className="space-y-5 pb-6 pt-2">
+      <TicketNumberingSection />
+
       <Section title="Export / PDF Theme" icon={<Palette className="w-4 h-4 text-amber-600" />}>
         <p className="text-xs text-gray-400 mb-4">
           Applied to all PDF exports — transaction tickets, reports, and data tables.

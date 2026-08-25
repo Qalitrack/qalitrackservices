@@ -17,7 +17,6 @@ services:
       - user-service
       - masterdata-service
       - transaction-service
-      - technician-api
     networks:
       - qalitrack-network
     restart: unless-stopped
@@ -61,28 +60,6 @@ services:
     volumes:
       - masterdata-data:/data
       - masterdata-logs:/app/logs
-    networks:
-      - qalitrack-network
-    restart: unless-stopped
-
-  # Technician API (includes QTruck features)
-  technician-api:
-    build:
-      context: ../../packages/microservices/masterdata/technician-api
-      dockerfile: Dockerfile
-    ports:
-      - "7006:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - UsePostgreSQL=false
-      - ConnectionStrings__DefaultConnection=Data Source=/data/technician.db
-      - Jwt__SecretKey=DevelopmentSecretKeyForJWTWhichShouldBeAtLeast32CharactersLong!
-      - Jwt__Issuer=qalitrack
-      - Jwt__Audience=qalitrack
-    volumes:
-      - technician-data:/data
-      - technician-logs:/app/logs
-      - technician-uploads:/app/wwwroot/uploads
     networks:
       - qalitrack-network
     restart: unless-stopped
@@ -165,9 +142,6 @@ volumes:
   user-logs:
   masterdata-data:
   masterdata-logs:
-  technician-data:
-  technician-logs:
-  technician-uploads:
   transaction-data:
   transaction-logs:
   backup-data:

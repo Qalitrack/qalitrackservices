@@ -273,6 +273,8 @@ namespace Masterdata.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedAt");
+
                     b.HasIndex("SupplierId");
 
                     b.HasIndex("TransporterId");
@@ -766,6 +768,8 @@ namespace Masterdata.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AxleConfigurationId");
+
+                    b.HasIndex("CreatedAt");
 
                     b.HasIndex("OwnerId");
 

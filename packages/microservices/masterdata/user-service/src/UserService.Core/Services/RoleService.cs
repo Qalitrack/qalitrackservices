@@ -17,7 +17,8 @@ public class RoleService(
     IUserRepository userRepository,
     IUserRoleRepository userRoleRepository,
     IMapper mapper,
-    ILogger<RoleService> logger)
+    ILogger<RoleService> logger,
+    ICacheService cacheService)
     : IRoleService
 {
     private readonly IRoleRepository _roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
@@ -27,6 +28,7 @@ public class RoleService(
     private readonly IUserRoleRepository _userRoleRepository = userRoleRepository ?? throw new ArgumentNullException(nameof(userRoleRepository));
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly ILogger<RoleService> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+    private readonly ICacheService _cacheService = cacheService ?? throw new ArgumentNullException(nameof(cacheService));
 
     public async Task<IEnumerable<RoleDto>> GetAllAsync()
     {
@@ -194,9 +196,13 @@ public async Task<bool> AssignPermissionToRoleAsync(string roleId, string permis
 
     // Use our new method that properly handles both new assignments and restoring deleted ones
     var success = await _rolePermissionRepository.AssignOrRestorePermissionToRoleAsync(roleId, permissionId);
-    
+
     if (success)
     {
+        // CachedUserService.GetPermissionsForRoleAsync caches by role name —
+        // without this, a newly-granted permission wouldn't take effect for
+        // authorization checks until the cache TTL expires.
+        await _cacheService.RemoveAsync($"role_permissions:{role.Name}");
         _logger.LogInformation("Permission {PermissionId} successfully assigned to role {RoleId}", permissionId, roleId);
     }
     else
@@ -233,9 +239,12 @@ public async Task<bool> RemovePermissionFromRoleAsync(string roleId, string perm
 
     // Use the specialized method to delete by both roleId and permissionId
     var success = await _rolePermissionRepository.DeleteByRoleAndPermissionAsync(roleId, permissionId);
-    
+
     if (success)
     {
+        // See AssignPermissionToRoleAsync — a revoked permission must stop
+        // being effective immediately, not after the cache TTL expires.
+        await _cacheService.RemoveAsync($"role_permissions:{role.Name}");
         _logger.LogInformation("Removed permission {PermissionId} from role {RoleId}", permissionId, roleId);
     }
     else

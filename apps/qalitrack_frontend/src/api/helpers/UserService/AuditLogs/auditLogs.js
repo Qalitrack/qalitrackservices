@@ -17,3 +17,11 @@ export const fetchAuditLogs = async (page = 1, pageSize = 10, signal) => {
         throw err;
     }
 };
+
+// Walks the hash chain server-side and reports whether any row's hash no
+// longer matches its stored predecessor — i.e. whether the log has been
+// tampered with since it was written.
+export const verifyAuditLogChain = async () => {
+    const response = await apiClient.get('/AuditLogs/verify');
+    return response.data?.data || response.data;
+};

@@ -21,11 +21,15 @@ public class TwoFactorService(
     {
         try
         {
-            // Check rate limiting - max 3 codes per 15 minutes
+            // Check rate limiting - max 3 codes per 15 minutes. Increment
+            // first and check the result, atomically, instead of
+            // read-then-write — otherwise concurrent requests can all read
+            // the same starting count and all pass the check together,
+            // letting more than 3 codes through in the window.
             var generationKey = $"2fa_generation:{userId}";
-            var generationCount = await cacheService.GetAsync<int>(generationKey);
+            var generationCount = await cacheService.IncrementAsync(generationKey, TimeSpan.FromMinutes(15));
 
-            if (generationCount >= 3)
+            if (generationCount > 3)
             {
                 logger.LogWarning("2FA rate limit hit for user {UserId} - {Count} codes in last 15 min", userId, generationCount);
                 return new ServiceResult
@@ -48,7 +52,6 @@ public class TwoFactorService(
             {
                 cacheService.SetAsync(codeKey, code, TimeSpan.FromMinutes(5)),
                 cacheService.RemoveAsync(attemptKey),
-                cacheService.SetAsync(generationKey, generationCount + 1, TimeSpan.FromMinutes(15))
             };
 
             await Task.WhenAll(cacheOperations);
@@ -140,19 +143,22 @@ public class TwoFactorService(
             // Verify code
             if (storedCode != code)
             {
-                await cacheService.SetAsync(
+                // Atomic increment — concurrent wrong-code guesses for the
+                // same session must not all read the same starting count and
+                // race, or the 5-attempt lockout can be bypassed by firing
+                // guesses in parallel instead of sequentially.
+                var newAttemptCount = await cacheService.IncrementAsync(
                     $"2fa_attempts:{userId}",
-                    attemptCount + 1,
                     TimeSpan.FromMinutes(LockoutMinutes)
                 );
 
-                logger.LogWarning("VERIFY-2FA INVALID CODE | user {UserId} | attempts now {NewCount}/{Max}", 
-                    userId, attemptCount + 1, MaxAttempts);
+                logger.LogWarning("VERIFY-2FA INVALID CODE | user {UserId} | attempts now {NewCount}/{Max}",
+                    userId, newAttemptCount, MaxAttempts);
 
                 return new ServiceResult
                 {
                     Success = false,
-                    Message = $"Invalid verification code. {MaxAttempts - attemptCount - 1} attempts remaining."
+                    Message = $"Invalid verification code. {Math.Max(0, MaxAttempts - newAttemptCount)} attempts remaining."
                 };
             }
 

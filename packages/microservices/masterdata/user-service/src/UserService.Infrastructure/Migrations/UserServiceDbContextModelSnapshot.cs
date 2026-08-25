@@ -28,6 +28,11 @@ namespace UserService.Infrastructure.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TIMESTAMPTZ");
 
@@ -36,6 +41,19 @@ namespace UserService.Infrastructure.Migrations
 
                     b.Property<long>("DurationMs")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("EntityId")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("EntityType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
 
                     b.Property<string>("IpAddress")
                         .HasColumnType("text");
@@ -51,8 +69,19 @@ namespace UserService.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PreviousHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("QueryString")
                         .HasColumnType("text");
+
+                    b.Property<long>("SequenceNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("SequenceNumber"));
 
                     b.Property<int>("StatusCode")
                         .HasColumnType("integer");
@@ -71,7 +100,65 @@ namespace UserService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EntityType");
+
+                    b.HasIndex("SequenceNumber")
+                        .IsUnique();
+
                     b.ToTable("AuditLogs", "users");
+                });
+
+            modelBuilder.Entity("UserService.Core.Entities.EmailSettings", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TIMESTAMPTZ");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EnableSsl")
+                        .HasColumnType("BOOLEAN");
+
+                    b.Property<string>("FromEmail")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("FromName")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("BOOLEAN")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("SmtpHost")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("SmtpPassword")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<int>("SmtpPort")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SmtpUsername")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TIMESTAMPTZ");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailSettings", "users");
                 });
 
             modelBuilder.Entity("UserService.Core.Entities.PasswordPolicy", b =>
@@ -202,6 +289,9 @@ namespace UserService.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Jti")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Edit2, X, Check, Lock } from 'lucide-react';
+import { Edit2, X, Check, Lock, Mail } from 'lucide-react';
 import { fetchPasswordPolicy, updatePasswordPolicy } from '../../api/helpers/UserService/PasswordPolicy/passwordpolicy';
+import { fetchEmailSettings, updateEmailSettings, sendTestEmail } from '../../api/helpers/UserService/EmailSettings/emailSettings';
 import PageHeader from '../../components/PageHeader.jsx';
 
 const FIELDS = [
@@ -15,6 +16,209 @@ const CHECKBOXES = [
     { key: 'requireSpecialCharacter', label: 'Require Special Character' },
     { key: 'twoFactorEnabled', label: 'Enable Two-Factor Authentication' },
 ];
+
+// SMTP settings this install actually sends 2FA/notification email through —
+// different clients use different Gmail accounts, so this is per-install
+// configurable rather than baked into deployment config. The password field
+// is write-only: the server never sends the saved password back, so this
+// only ever shows blank (type a new one to change it, leave it blank to keep
+// what's already saved).
+function EmailSettingsSection() {
+    const [settings, setSettings] = useState(null);
+    const [passwordInput, setPasswordInput] = useState('');
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [message, setMessage] = useState({ text: '', type: '' });
+    const [testEmail, setTestEmail] = useState('');
+    const [testing, setTesting] = useState(false);
+
+    const loadSettings = async () => {
+        setLoading(true);
+        try {
+            const data = await fetchEmailSettings();
+            setSettings(data);
+        } catch (err) {
+            setMessage({ text: err.message || 'Failed to load email settings.', type: 'error' });
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        loadSettings();
+    }, []);
+
+    const setField = (key, value) => setSettings((prev) => ({ ...prev, [key]: value }));
+
+    const handleSave = async () => {
+        setSaving(true);
+        setMessage({ text: '', type: '' });
+        try {
+            const updated = await updateEmailSettings({
+                smtpHost: settings.smtpHost,
+                smtpPort: Number(settings.smtpPort) || 587,
+                smtpUsername: settings.smtpUsername,
+                smtpPassword: passwordInput || undefined,
+                fromEmail: settings.fromEmail,
+                fromName: settings.fromName,
+                enableSsl: settings.enableSsl,
+            });
+            setSettings(updated);
+            setPasswordInput('');
+            setMessage({ text: 'Email settings saved.', type: 'success' });
+        } catch (err) {
+            setMessage({ text: err.response?.data || err.message || 'Failed to save email settings.', type: 'error' });
+        } finally {
+            setSaving(false);
+            setTimeout(() => setMessage({ text: '', type: '' }), 5000);
+        }
+    };
+
+    const handleTest = async () => {
+        if (!testEmail) return;
+        setTesting(true);
+        setMessage({ text: '', type: '' });
+        try {
+            await sendTestEmail(testEmail);
+            setMessage({ text: `Test email sent to ${testEmail}.`, type: 'success' });
+        } catch (err) {
+            setMessage({ text: err.response?.data?.message || err.message || 'Failed to send test email.', type: 'error' });
+        } finally {
+            setTesting(false);
+        }
+    };
+
+    if (loading || !settings) {
+        return (
+            <div className="max-w-md mx-auto flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-amber-500"></div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="max-w-md mx-auto space-y-4 pb-6 mb-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-gray-500" />
+                    <h3 className="text-sm font-bold text-gray-800">Email / SMTP Settings</h3>
+                </div>
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                    settings.isConfigured ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                }`}>
+                    {settings.isConfigured ? 'Configured' : 'Not configured'}
+                </span>
+            </div>
+
+            {message.text && (
+                <div className={`px-3 py-2 rounded-md text-xs font-medium border ${
+                    message.type === 'success'
+                        ? 'bg-green-50 border-green-200 text-green-700'
+                        : 'bg-red-50 border-red-200 text-red-700'
+                }`}>
+                    {message.text}
+                </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
+                <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">SMTP Host</label>
+                    <input
+                        value={settings.smtpHost || ''}
+                        onChange={(e) => setField('smtpHost', e.target.value)}
+                        placeholder="smtp.gmail.com"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                    />
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">Port</label>
+                    <input
+                        type="number"
+                        value={settings.smtpPort || 587}
+                        onChange={(e) => setField('smtpPort', e.target.value)}
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                    />
+                </div>
+            </div>
+
+            <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Gmail Address (App Username)</label>
+                <input
+                    value={settings.smtpUsername || ''}
+                    onChange={(e) => setField('smtpUsername', e.target.value)}
+                    placeholder="yourcompany@gmail.com"
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                />
+            </div>
+
+            <div>
+                <label className="block text-xs font-semibold text-gray-700 mb-1">Gmail App Password</label>
+                <input
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    placeholder={settings.isPasswordSet ? 'Leave blank to keep the saved password' : 'Enter the 16-character app password'}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none font-mono"
+                />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+                <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">From Email</label>
+                    <input
+                        value={settings.fromEmail || ''}
+                        onChange={(e) => setField('fromEmail', e.target.value)}
+                        placeholder="noreply@qalitrack.com"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                    />
+                </div>
+                <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">From Name</label>
+                    <input
+                        value={settings.fromName || ''}
+                        onChange={(e) => setField('fromName', e.target.value)}
+                        placeholder="QaliTrack System"
+                        className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                    />
+                </div>
+            </div>
+
+            <label className="flex items-center justify-between px-4 py-3 rounded-md border bg-white border-gray-200 cursor-pointer">
+                <span className="text-sm font-medium text-gray-700">Use TLS (recommended)</span>
+                <input
+                    type="checkbox"
+                    checked={!!settings.enableSsl}
+                    onChange={(e) => setField('enableSsl', e.target.checked)}
+                    className="h-4 w-4 text-amber-600 border-gray-300 rounded focus:ring-amber-500"
+                />
+            </label>
+
+            <button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full h-8 text-xs font-semibold rounded shadow-sm disabled:opacity-50 bg-amber-500 hover:bg-amber-600 text-white"
+            >
+                {saving ? 'Saving...' : 'Save Email Settings'}
+            </button>
+
+            <div className="flex gap-2 pt-1">
+                <input
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                    placeholder="Send a test email to…"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:ring-1 focus:ring-amber-400 focus:border-amber-400 outline-none"
+                />
+                <button
+                    onClick={handleTest}
+                    disabled={testing || !testEmail}
+                    className="h-9 px-3 text-xs font-semibold rounded border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-50 shrink-0"
+                >
+                    {testing ? 'Sending...' : 'Send Test'}
+                </button>
+            </div>
+        </div>
+    );
+}
 
 const PasswordPolicy = () => {
     const [policy, setPolicy] = useState(null);
@@ -66,7 +270,8 @@ const PasswordPolicy = () => {
             setUpdateMessage({ text: 'Password policy updated successfully!', type: 'success' });
             setIsEditing(false);
         } catch (err) {
-            setUpdateMessage({ text: err.message || 'Failed to update policy.', type: 'error' });
+            const serverMessage = typeof err.response?.data === 'string' ? err.response.data : err.response?.data?.message;
+            setUpdateMessage({ text: serverMessage || err.message || 'Failed to update policy.', type: 'error' });
         } finally {
             setIsUpdating(false);
             setTimeout(() => setUpdateMessage({ text: '', type: '' }), 5000);
@@ -140,6 +345,8 @@ const PasswordPolicy = () => {
             )}
 
             <div className="flex-1 overflow-auto p-4">
+                <EmailSettingsSection />
+
                 <div className="max-w-md mx-auto space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         {FIELDS.map(({ key, label, type }) => (

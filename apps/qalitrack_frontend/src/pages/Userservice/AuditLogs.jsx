@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollText } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
-import { fetchAuditLogs } from '../../api/helpers/UserService/AuditLogs/auditLogs.js';
+import { fetchAuditLogs, verifyAuditLogChain } from '../../api/helpers/UserService/AuditLogs/auditLogs.js';
 import TablePagination from '../../components/TablePagination';
 import PageHeader from '../../components/PageHeader.jsx';
 
@@ -26,6 +26,21 @@ const AuditLogs = () => {
     const [page, setPage] = useState(1);
     const [pageSize] = useState(20);
     const [totalCount, setTotalCount] = useState(0);
+    const [verifying, setVerifying] = useState(false);
+    const [verifyResult, setVerifyResult] = useState(null);
+
+    const handleVerify = async () => {
+        setVerifying(true);
+        setVerifyResult(null);
+        try {
+            const result = await verifyAuditLogChain();
+            setVerifyResult(result);
+        } catch (err) {
+            setVerifyResult({ valid: false, error: err.message || 'Verification failed.' });
+        } finally {
+            setVerifying(false);
+        }
+    };
 
     const loadLogs = async (pageNumber) => {
         setLoading(true);
@@ -51,14 +66,39 @@ const AuditLogs = () => {
     return (
         <div className="h-full flex flex-col bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
             <div className="shrink-0 flex items-center justify-between gap-3 px-3 py-2 border-b border-gray-200 bg-gray-50">
-                <p className="text-[11px] text-gray-500">Every create/update/delete request captured at the gateway — read-only traffic isn't logged</p>
-                <button
-                    onClick={() => loadLogs(page)}
-                    className="h-7 px-3 text-xs font-semibold rounded border border-amber-300 text-amber-700 bg-white hover:bg-amber-50 transition-colors shrink-0"
-                >
-                    Refresh
-                </button>
+                <p className="text-[11px] text-gray-500">Every create/update/delete request, plus reads of sensitive data, captured at the gateway</p>
+                <div className="flex items-center gap-2 shrink-0">
+                    <button
+                        onClick={handleVerify}
+                        disabled={verifying}
+                        className="h-7 px-3 text-xs font-semibold rounded border border-blue-300 text-blue-700 bg-white hover:bg-blue-50 transition-colors disabled:opacity-50"
+                    >
+                        {verifying ? 'Verifying…' : 'Verify integrity'}
+                    </button>
+                    <button
+                        onClick={() => loadLogs(page)}
+                        className="h-7 px-3 text-xs font-semibold rounded border border-amber-300 text-amber-700 bg-white hover:bg-amber-50 transition-colors"
+                    >
+                        Refresh
+                    </button>
+                </div>
             </div>
+
+            {verifyResult && (
+                <div
+                    className={`mx-4 mt-3 px-4 py-2 rounded-md text-sm font-medium border ${
+                        verifyResult.valid
+                            ? 'bg-green-50 border-green-200 text-green-700'
+                            : 'bg-red-50 border-red-200 text-red-700'
+                    }`}
+                >
+                    {verifyResult.valid
+                        ? `Chain verified clean — ${verifyResult.checkedCount} rows checked, no tampering detected.`
+                        : verifyResult.error
+                        ? `Verification failed: ${verifyResult.error}`
+                        : `Chain integrity broken at sequence #${verifyResult.firstBrokenSequenceNumber} — a row's hash no longer matches (${verifyResult.checkedCount} rows checked).`}
+                </div>
+            )}
 
             {error && (
                 <div className="mx-4 mt-3 px-4 py-2 rounded-md text-sm font-medium border bg-red-50 border-red-200 text-red-700">
@@ -83,6 +123,8 @@ const AuditLogs = () => {
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Timestamp</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Method</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Path</th>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Entity</th>
+                                    <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Action</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Status</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">User</th>
                                     <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">IP Address</th>
@@ -108,6 +150,12 @@ const AuditLogs = () => {
                                         </td>
                                         <td className="px-3 py-2 text-[10px] text-gray-800 font-mono">
                                             {log.path}{log.queryString || ''}
+                                        </td>
+                                        <td className="px-3 py-2 text-[10px] text-gray-700">
+                                            {log.entityType || <span className="text-gray-400">-</span>}
+                                        </td>
+                                        <td className="px-3 py-2 text-center text-[10px] text-gray-700">
+                                            {log.action || '-'}
                                         </td>
                                         <td className="px-3 py-2 text-center">
                                             <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-semibold border ${statusStyle(log.statusCode)}`}>

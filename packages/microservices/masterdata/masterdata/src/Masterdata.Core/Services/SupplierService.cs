@@ -40,6 +40,11 @@ public class SupplierService : ISupplierService
         int pageSize = 10,
         string? searchTerm = null)
     {
+        // Frontend requests up to 200 for the vehicle-form supplier dropdown
+        // (loaded once, client-side) — clamp guards against a pathological
+        // pageSize without breaking that.
+        pageSize = Math.Clamp(pageSize, 1, 500);
+
         // Note: ContactInfo is stored as a jsonb column, so it can't be matched with a
         // plain-text LIKE/lower() comparison (Postgres has no lower(jsonb) overload) -
         // search is limited to Name.

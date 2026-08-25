@@ -15,18 +15,82 @@ public class VehicleService : IVehicleService
     private readonly IRepository<Vehicle> _vehicleRepository;
     private readonly IRepository<Driver> _driverRepository;
     private readonly IRepository<DriverVehicle> _driverVehicleRepository;
+    private readonly IRepository<Supplier> _supplierRepository;
+    private readonly IRepository<Transporter> _transporterRepository;
+    private readonly IRepository<Owner> _ownerRepository;
+    private readonly IRepository<AxleConfiguration> _axleConfigurationRepository;
     private readonly IMapper _mapper;
 
     public VehicleService(
         IRepository<Vehicle> vehicleRepository,
         IRepository<Driver> driverRepository,
         IRepository<DriverVehicle> driverVehicleRepository,
+        IRepository<Supplier> supplierRepository,
+        IRepository<Transporter> transporterRepository,
+        IRepository<Owner> ownerRepository,
+        IRepository<AxleConfiguration> axleConfigurationRepository,
         IMapper mapper)
     {
         _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
         _driverRepository = driverRepository ?? throw new ArgumentNullException(nameof(driverRepository));
         _driverVehicleRepository = driverVehicleRepository ?? throw new ArgumentNullException(nameof(driverVehicleRepository));
+        _supplierRepository = supplierRepository ?? throw new ArgumentNullException(nameof(supplierRepository));
+        _transporterRepository = transporterRepository ?? throw new ArgumentNullException(nameof(transporterRepository));
+        _ownerRepository = ownerRepository ?? throw new ArgumentNullException(nameof(ownerRepository));
+        _axleConfigurationRepository = axleConfigurationRepository ?? throw new ArgumentNullException(nameof(axleConfigurationRepository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+    }
+
+    // Vehicle.Supplier/Transporter/Owner/AxleConfiguration navigation properties
+    // are never populated (no Include/lazy-loading configured anywhere in this
+    // service), so VehicleReadDto's *Name fields were always null/empty via
+    // AutoMapper's flattening convention. Batch-fetch the referenced entities'
+    // names for a whole page of vehicles in one query per related type, instead
+    // of querying per-vehicle.
+    private async Task PopulateRelatedNamesAsync(List<VehicleReadDto> dtos)
+    {
+        if (dtos.Count == 0) return;
+
+        var supplierIds = dtos.Where(d => d.SupplierId != null).Select(d => d.SupplierId!).Distinct().ToList();
+        var transporterIds = dtos.Where(d => d.TransporterId != null).Select(d => d.TransporterId!).Distinct().ToList();
+        var ownerIds = dtos.Where(d => d.OwnerId != null).Select(d => d.OwnerId!).Distinct().ToList();
+        var axleConfigurationIds = dtos.Where(d => d.AxleConfigurationId != null).Select(d => d.AxleConfigurationId!).Distinct().ToList();
+        var driverIds = dtos.SelectMany(d => d.AssignedDriverIds).Distinct().ToList();
+
+        var supplierNames = supplierIds.Count > 0
+            ? (await _supplierRepository.GetByIdsAsync(supplierIds)).ToDictionary(s => s.Id, s => s.Name)
+            : new Dictionary<string, string>();
+        var transporterNames = transporterIds.Count > 0
+            ? (await _transporterRepository.GetByIdsAsync(transporterIds)).ToDictionary(t => t.Id, t => t.Name)
+            : new Dictionary<string, string>();
+        var ownerNames = ownerIds.Count > 0
+            ? (await _ownerRepository.GetByIdsAsync(ownerIds)).ToDictionary(o => o.Id, o => o.Name)
+            : new Dictionary<string, string>();
+        var axleConfigurationCodes = axleConfigurationIds.Count > 0
+            ? (await _axleConfigurationRepository.GetByIdsAsync(axleConfigurationIds)).ToDictionary(a => a.Id, a => a.Code)
+            : new Dictionary<string, string>();
+        var driverNames = driverIds.Count > 0
+            ? (await _driverRepository.GetByIdsAsync(driverIds)).ToDictionary(d => d.Id, d => d.FullName)
+            : new Dictionary<string, string>();
+
+        foreach (var dto in dtos)
+        {
+            if (dto.SupplierId != null && supplierNames.TryGetValue(dto.SupplierId, out var supplierName))
+                dto.SupplierName = supplierName;
+            if (dto.TransporterId != null && transporterNames.TryGetValue(dto.TransporterId, out var transporterName))
+                dto.TransporterName = transporterName;
+            if (dto.OwnerId != null && ownerNames.TryGetValue(dto.OwnerId, out var ownerName))
+                dto.OwnerName = ownerName;
+            if (dto.AxleConfigurationId != null && axleConfigurationCodes.TryGetValue(dto.AxleConfigurationId, out var axleCode))
+                dto.AxleConfigurationName = axleCode;
+
+            dto.DriverIds = dto.AssignedDriverIds.ToList();
+            dto.DriverNames = dto.AssignedDriverIds
+                .Select(id => driverNames.TryGetValue(id, out var name) ? name : null)
+                .Where(name => name != null)
+                .Select(name => name!)
+                .ToList();
+        }
     }
 
     public async Task<VehicleReadDto?> GetByIdAsync(string id)
@@ -43,6 +107,8 @@ public class VehicleService : IVehicleService
         dto.AssignedDriverIds = driverVehicles
             .Select(dv => dv.DriverId)
             .ToList();
+
+        await PopulateRelatedNamesAsync(new List<VehicleReadDto> { dto });
 
         return dto;
     }
@@ -68,6 +134,8 @@ public class VehicleService : IVehicleService
         dto.AssignedDriverIds = driverVehicles
             .Select(dv => dv.DriverId)
             .ToList();
+
+        await PopulateRelatedNamesAsync(new List<VehicleReadDto> { dto });
 
         return dto;
     }
@@ -95,6 +163,12 @@ public class VehicleService : IVehicleService
 
     public async Task<PagedResult<VehicleReadDto>> GetPagedVehiclesAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
     {
+        // Frontend has legitimate callers requesting up to 500 (e.g. the
+        // owner/transporter/supplier vehicle-assignment checklist, which
+        // loads a full list client-side) — clamp guards against a truly
+        // pathological pageSize without breaking that.
+        pageSize = Math.Clamp(pageSize, 1, 500);
+
         // Added RfiDcode to search properties
         var pagedResult = await _vehicleRepository.GetPagedAsync(
             pageNumber: pageNumber,
@@ -121,10 +195,12 @@ public class VehicleService : IVehicleService
         // Assign driver IDs to each vehicle DTO
         foreach (var dto in vehicleDtos)
         {
-            dto.AssignedDriverIds = assignedDriversLookup.TryGetValue(dto.Id, out var driverIds) 
-                ? driverIds 
+            dto.AssignedDriverIds = assignedDriversLookup.TryGetValue(dto.Id, out var driverIds)
+                ? driverIds
                 : new List<string>();
         }
+
+        await PopulateRelatedNamesAsync(vehicleDtos);
 
         return new PagedResult<VehicleReadDto>
         {
@@ -360,10 +436,12 @@ public class VehicleService : IVehicleService
         // Assign driver IDs to each vehicle DTO
         foreach (var dto in vehicleDtos)
         {
-            dto.AssignedDriverIds = driverVehiclesLookup.TryGetValue(dto.Id, out var driverIds) 
-                ? driverIds 
+            dto.AssignedDriverIds = driverVehiclesLookup.TryGetValue(dto.Id, out var driverIds)
+                ? driverIds
                 : new List<string>();
         }
+
+        await PopulateRelatedNamesAsync(vehicleDtos);
 
         return vehicleDtos;
     }

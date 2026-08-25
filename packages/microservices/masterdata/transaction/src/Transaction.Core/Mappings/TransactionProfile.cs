@@ -8,6 +8,13 @@ public class TransactionProfile : Profile
 {
     public TransactionProfile()
     {
+        // TransactionSettings mappings
+        CreateMap<TransactionSettings, TransactionSettingsResponseDto>();
+        CreateMap<UpdateTransactionSettingsDto, TransactionSettings>();
+
+        // TransactionAuditLog mappings
+        CreateMap<TransactionAuditLog, AuditLogDto>();
+
         // WeighbridgeTransaction to TransactionReadDto
         CreateMap<WeighbridgeTransaction, TransactionReadDto>()
             .ReverseMap();

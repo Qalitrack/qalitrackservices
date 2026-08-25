@@ -55,8 +55,12 @@ public class TransactionServiceUnitTests
             TransporterName = "Test Transport"
         };
 
-        _mockRepo.Setup(r => r.CreateAsync(It.IsAny<WeighbridgeTransaction>()))
-            .ReturnsAsync((WeighbridgeTransaction t) => t);
+        _mockRepo.Setup(r => r.CreateWithUniqueReceiptNoAsync(It.IsAny<WeighbridgeTransaction>(), It.IsAny<Func<Task<string>>>()))
+            .Returns(async (WeighbridgeTransaction t, Func<Task<string>> generateReceiptNo) =>
+            {
+                t.ReceiptNo = await generateReceiptNo();
+                return t;
+            });
 
         // Act
         var result = await _service.CreateAsync(dto);

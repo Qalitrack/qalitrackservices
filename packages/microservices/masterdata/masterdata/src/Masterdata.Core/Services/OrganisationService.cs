@@ -36,6 +36,11 @@ public class OrganisationService : IOrganisationService
 
     public async Task<PagedResult<OrganisationDto>> GetPagedOrganisationsAsync(int pageNumber = 1, int pageSize = 10, string? searchTerm = null)
     {
+        // Matches the clamp ceiling used for the other reference-data
+        // services (Vehicles/Transporters/Suppliers/Saccos) for consistency,
+        // even though the frontend doesn't call this endpoint today.
+        pageSize = Math.Clamp(pageSize, 1, 500);
+
         try
         {
             var result = await _organisationRepository.GetPagedAsync(

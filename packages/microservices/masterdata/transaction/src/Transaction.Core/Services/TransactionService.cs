@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Text.Json;
 using AutoMapper;
 using Transaction.Core.DTOs;
 using Transaction.Core.Entities;
@@ -16,6 +18,72 @@ public class TransactionService(
     private readonly IMapper _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     private readonly ITimeService _timeService = timeService ?? throw new ArgumentNullException(nameof(timeService));
     private readonly IReceiptNumberService _receiptNumberService = receiptNumberService ?? throw new ArgumentNullException(nameof(receiptNumberService));
+
+    // Bookkeeping fields excluded from the before/after diff — they change on
+    // every mutation as a side effect and aren't "what actually changed."
+    private static readonly string[] AuditIgnoredProperties =
+    {
+        nameof(BaseEntity.Id), nameof(BaseEntity.CreatedAt), nameof(BaseEntity.UpdatedAt),
+        nameof(BaseEntity.CreatedBy), nameof(BaseEntity.UpdatedBy), nameof(BaseEntity.IsDeleted),
+        nameof(WeighbridgeTransaction.TicketID)
+    };
+
+    // Snapshots a transaction's business-field values before mutation, since
+    // the entity fetched via GetByIdAsync is EF-tracked and gets mutated in
+    // place by the caller — there's no other way to observe the "before" state.
+    private static Dictionary<string, object?> SnapshotValues(WeighbridgeTransaction entity)
+    {
+        var snapshot = new Dictionary<string, object?>();
+        foreach (var prop in typeof(WeighbridgeTransaction).GetProperties())
+        {
+            if (AuditIgnoredProperties.Contains(prop.Name)) continue;
+            snapshot[prop.Name] = prop.GetValue(entity);
+        }
+        return snapshot;
+    }
+
+    // Diffs `before` (a snapshot taken via SnapshotValues) against `after`'s
+    // current values and, if anything actually changed, returns an audit row
+    // ready to persist. Returns null when nothing changed (e.g. an Update
+    // call whose DTO fields all matched the existing values).
+    private static TransactionAuditLog? BuildAuditLog(
+        WeighbridgeTransaction after, Dictionary<string, object?> before,
+        string action, string? changedBy, string? reason)
+    {
+        var changedFields = new List<string>();
+        var oldValues = new Dictionary<string, object?>();
+        var newValues = new Dictionary<string, object?>();
+
+        foreach (var prop in typeof(WeighbridgeTransaction).GetProperties())
+        {
+            if (AuditIgnoredProperties.Contains(prop.Name)) continue;
+            var oldVal = before.TryGetValue(prop.Name, out var v) ? v : null;
+            var newVal = prop.GetValue(after);
+            if (!Equals(oldVal, newVal))
+            {
+                changedFields.Add(prop.Name);
+                oldValues[prop.Name] = oldVal;
+                newValues[prop.Name] = newVal;
+            }
+        }
+
+        if (changedFields.Count == 0 && action == "Updated")
+        {
+            return null;
+        }
+
+        return new TransactionAuditLog
+        {
+            WeighbridgeTransactionId = after.TicketID,
+            Action = action,
+            ChangedBy = changedBy ?? string.Empty,
+            ChangedFields = JsonSerializer.Serialize(changedFields),
+            OldValues = JsonSerializer.Serialize(oldValues),
+            NewValues = JsonSerializer.Serialize(newValues),
+            ChangeTimestamp = DateTime.UtcNow,
+            Reason = reason ?? string.Empty,
+        };
+    }
 
     public async Task<PagedResult<TransactionReadDto>> GetAllAsync(WeighbridgeTransactionFilter filter)
     {
@@ -73,22 +141,15 @@ public class TransactionService(
 
         var utcNow = _timeService.UtcNow;
 
-        // Auto-generate receipt number in format: QSL-YYYYMMDD-XXXXXX
-        // Example: QSL-20240202-000001
-        var receiptNo = await _receiptNumberService.GenerateReceiptNumberAsync();
-
         // Map DTO to entity
         var transaction = _mapper.Map<WeighbridgeTransaction>(dto);
-        
+
         // Auto-generate GUID for TicketID if not already set
         if (string.IsNullOrEmpty(transaction.TicketID))
         {
             transaction.TicketID = Guid.NewGuid().ToString();
         }
-        
-        // Set auto-generated receipt number
-        transaction.ReceiptNo = receiptNo;
-        
+
         // Set timestamps
         transaction.CreatedAt = utcNow;
         transaction.UpdatedAt = utcNow;
@@ -96,10 +157,27 @@ public class TransactionService(
 
         // Set initial status
         transaction.Status = "Active";
-        
-        // Save to database
-        var createdTransaction = await _transactionRepository.CreateAsync(transaction);
-        
+
+        // Receipt number in format: QSL-YYYYMMDD-XXXXXX (e.g. QSL-20240202-000001).
+        // Generated and assigned inside CreateWithUniqueReceiptNoAsync, which
+        // retries with a freshly-generated number if two concurrent creations
+        // race to the same "next" receipt number (backed by a unique
+        // constraint on ReceiptNo, so a collision fails loud instead of
+        // silently duplicating).
+        var createdTransaction = await _transactionRepository.CreateWithUniqueReceiptNoAsync(
+            transaction, _receiptNumberService.GenerateReceiptNumberAsync);
+
+        await _transactionRepository.CreateAuditLogAsync(new TransactionAuditLog
+        {
+            WeighbridgeTransactionId = createdTransaction.TicketID,
+            Action = "Created",
+            ChangedBy = string.Empty,
+            ChangedFields = "[]",
+            OldValues = string.Empty,
+            NewValues = JsonSerializer.Serialize(SnapshotValues(createdTransaction)),
+            ChangeTimestamp = utcNow,
+        });
+
         // Return mapped DTO with the auto-generated ReceiptNo
         return _mapper.Map<TransactionReadDto>(createdTransaction);
     }
@@ -125,6 +203,7 @@ public class TransactionService(
         }
 
         var utcNow = _timeService.UtcNow;
+        var before = SnapshotValues(existingTransaction);
 
         // Only update non-null fields from the DTO
         if (dto.NoPlate != null) existingTransaction.NoPlate = dto.NoPlate;
@@ -154,14 +233,20 @@ public class TransactionService(
         // Update timestamps
         existingTransaction.UpdatedAt = utcNow;
         existingTransaction.ChangeDate = utcNow;
-        
+        existingTransaction.UpdatedBy = dto.ChangedBy;
+
         // NOTE: ReceiptNo is NEVER updated - it's a permanent identifier
-        
+
         var updatedTransaction = await _transactionRepository.UpdateAsync(existingTransaction);
+        if (updatedTransaction != null)
+        {
+            var auditLog = BuildAuditLog(updatedTransaction, before, "Updated", dto.ChangedBy, dto.ChangeDesc);
+            if (auditLog != null) await _transactionRepository.CreateAuditLogAsync(auditLog);
+        }
         return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 
-    public async Task<bool> DeleteAsync(string ticketId)
+    public async Task<bool> DeleteAsync(string ticketId, string? changedBy = null)
     {
         var transaction = await _transactionRepository.GetByIdAsync(ticketId);
         if (transaction == null)
@@ -175,7 +260,13 @@ public class TransactionService(
             throw new InvalidOperationException("Cannot delete a completed transaction or a transaction with pending reweigh request.");
         }
 
-        return await _transactionRepository.DeleteAsync(ticketId);
+        return await _transactionRepository.DeleteAsync(ticketId, changedBy);
+    }
+
+    public async Task<IEnumerable<AuditLogDto>> GetAuditLogsAsync(string ticketId)
+    {
+        var logs = await _transactionRepository.GetAuditLogsAsync(ticketId);
+        return _mapper.Map<IEnumerable<AuditLogDto>>(logs);
     }
 
     public async Task<bool> IsReceiptNoAvailableAsync(string receiptNo)
@@ -220,6 +311,7 @@ public class TransactionService(
         }
 
         var utcNow = _timeService.UtcNow;
+        var before = SnapshotValues(transaction);
 
         // Update second weighing information
         transaction.SecondWeight = dto.SecondWeight;
@@ -253,7 +345,14 @@ public class TransactionService(
             transaction.Status = "Completed";
         }
 
+        transaction.UpdatedBy = dto.ChangedBy;
+
         var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
+        if (updatedTransaction != null)
+        {
+            var auditLog = BuildAuditLog(updatedTransaction, before, "SecondWeightAdded", dto.ChangedBy, dto.Notes);
+            if (auditLog != null) await _transactionRepository.CreateAuditLogAsync(auditLog);
+        }
         return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 
@@ -278,6 +377,7 @@ public class TransactionService(
         }
 
         var utcNow = _timeService.UtcNow;
+        var before = SnapshotValues(transaction);
 
         // Calculate net weight if not already calculated
         if (string.IsNullOrEmpty(transaction.NetWeight))
@@ -311,8 +411,14 @@ public class TransactionService(
 
         transaction.Status = "Completed";
         transaction.UpdatedAt = utcNow;
+        transaction.UpdatedBy = dto.ChangedBy;
 
         var updatedTransaction = await _transactionRepository.UpdateAsync(transaction);
+        if (updatedTransaction != null)
+        {
+            var auditLog = BuildAuditLog(updatedTransaction, before, "Completed", dto.ChangedBy, null);
+            if (auditLog != null) await _transactionRepository.CreateAuditLogAsync(auditLog);
+        }
         return updatedTransaction == null ? null : _mapper.Map<TransactionReadDto>(updatedTransaction);
     }
 

@@ -12,6 +12,8 @@ public class TransactionDbContext : DbContext
 
     public DbSet<WeighbridgeTransaction> Transactions { get; set; }
     public DbSet<ReweighRecord> ReweighRecords { get; set; }
+    public DbSet<TransactionSettings> Settings { get; set; }
+    public DbSet<TransactionAuditLog> TransactionAuditLogs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -21,10 +23,14 @@ public class TransactionDbContext : DbContext
 
         ConfigureWeighbridgeTransaction(modelBuilder);
         ConfigureReweighRecord(modelBuilder);
+        ConfigureTransactionSettings(modelBuilder);
+        ConfigureTransactionAuditLog(modelBuilder);
 
         // Add global query filter for soft deletes
         modelBuilder.Entity<WeighbridgeTransaction>().HasQueryFilter(e => !e.IsDeleted);
         modelBuilder.Entity<ReweighRecord>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<TransactionSettings>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<TransactionAuditLog>().HasQueryFilter(e => !e.IsDeleted);
     }
 
     private void ConfigureWeighbridgeTransaction(ModelBuilder modelBuilder)
@@ -33,7 +39,20 @@ public class TransactionDbContext : DbContext
         {
             // Map to MySQL table name
             entity.ToTable("tickets");
-            
+
+            // Optimistic concurrency token (Postgres's built-in xmin system
+            // column) — without this, two operators editing the same ticket
+            // at once (e.g. one calling Update while another calls
+            // AddSecondWeight) silently last-write-wins with no error and no
+            // audit trace of the lost change. With it, the loser's
+            // SaveChangesAsync throws DbUpdateConcurrencyException instead.
+            entity.Property<uint>("xmin")
+                  .HasColumnName("xmin")
+                  .HasColumnType("xid")
+                  .ValueGeneratedOnAddOrUpdate()
+                  .IsRowVersion();
+
+
             // Primary Key - Updated for GUID support
             entity.HasKey(e => e.TicketID);
             entity.Property(e => e.TicketID)
@@ -202,10 +221,22 @@ public class TransactionDbContext : DbContext
                   .HasColumnName("is_reweighed");
 
             // Indexes
-            entity.HasIndex(e => e.ReceiptNo);
+            // Unique among active tickets — matches IsReceiptNoAvailableAsync's
+            // existing "!IsDeleted" semantics, and turns a receipt-number
+            // collision (two concurrent creations computing the same "next"
+            // number) into a loud constraint violation instead of a silently
+            // duplicated receipt. CreateWithUniqueReceiptNoAsync retries on it.
+            entity.HasIndex(e => e.ReceiptNo).IsUnique().HasFilter("\"IsDeleted\" = false");
             entity.HasIndex(e => e.NoPlate);
             entity.HasIndex(e => e.Status);
             entity.HasIndex(e => e.FirstWeightDate);
+            // Covers the default list/dashboard query shape: filter by
+            // Status, sort by FirstWeightDate.
+            entity.HasIndex(e => new { e.Status, e.FirstWeightDate });
+            // Standalone dimension filters used by GetPagedAsync that had no
+            // supporting index at all.
+            entity.HasIndex(e => e.VehicleID);
+            entity.HasIndex(e => e.CommodityID);
         });
     }
 
@@ -237,6 +268,38 @@ public class TransactionDbContext : DbContext
             entity.HasIndex(e => e.AttemptNumber);
             entity.HasIndex(e => e.StartedAt);
             entity.HasIndex(e => e.Status);
+        });
+    }
+
+    private void ConfigureTransactionSettings(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TransactionSettings>(entity =>
+        {
+            entity.ToTable("transaction_settings");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ReceiptPrefix)
+                  .IsRequired()
+                  .HasMaxLength(20)
+                  .HasDefaultValue("NCCU");
+        });
+    }
+
+    private void ConfigureTransactionAuditLog(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<TransactionAuditLog>(entity =>
+        {
+            entity.ToTable("transaction_audit_logs");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.WeighbridgeTransactionId).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Action).IsRequired().HasMaxLength(30);
+            entity.Property(e => e.ChangedBy).HasMaxLength(200);
+            entity.Property(e => e.ChangedFields).HasColumnType("text");
+            entity.Property(e => e.OldValues).HasColumnType("text");
+            entity.Property(e => e.NewValues).HasColumnType("text");
+            entity.Property(e => e.Reason).HasMaxLength(500);
+
+            entity.HasIndex(e => e.WeighbridgeTransactionId);
+            entity.HasIndex(e => e.ChangeTimestamp);
         });
     }
 }

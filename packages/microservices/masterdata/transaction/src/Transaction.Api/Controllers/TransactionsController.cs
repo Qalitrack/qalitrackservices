@@ -3,6 +3,7 @@
 // Includes turnaround time tracking and complete reweigh workflow
 // ============================================
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Transaction.Core.DTOs;
 using Transaction.Core.Interfaces;
 
@@ -183,6 +184,13 @@ public class TransactionsController : BaseController
             _logger.LogWarning(ex, "Validation error when creating transaction");
             return BadRequest(ex.Message);
         }
+        catch (InvalidOperationException ex)
+        {
+            // Exhausted retries on a receipt-number collision — vanishingly
+            // rare, but a legitimate "try again" rather than a server bug.
+            _logger.LogWarning(ex, "Could not allocate a unique receipt number when creating transaction");
+            return Conflict("Could not generate a unique receipt number right now. Please try again.");
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating transaction");
@@ -211,6 +219,11 @@ public class TransactionsController : BaseController
             _logger.LogWarning(ex, "Invalid operation when adding second weight to transaction {TicketID}", request.TicketID);
             return BadRequest(ex.Message);
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogWarning(ex, "Concurrency conflict adding second weight to transaction {TicketID}", request.TicketID);
+            return Conflict("This transaction was changed by someone else. Please refresh and try again.");
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error adding second weight to transaction {TicketID}", request.TicketID);
@@ -238,6 +251,11 @@ public class TransactionsController : BaseController
         {
             _logger.LogWarning(ex, "Invalid operation when completing transaction {TicketID}", request.TicketID);
             return BadRequest(ex.Message);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogWarning(ex, "Concurrency conflict completing transaction {TicketID}", request.TicketID);
+            return Conflict("This transaction was changed by someone else. Please refresh and try again.");
         }
         catch (Exception ex)
         {
@@ -313,6 +331,11 @@ public class TransactionsController : BaseController
             _logger.LogWarning(ex, "Invalid operation when approving reweigh for transaction {TicketID}", request.TicketID);
             return BadRequest(ex.Message);
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogWarning(ex, "Concurrency conflict approving reweigh for transaction {TicketID}", request.TicketID);
+            return Conflict("This transaction was changed by someone else. Please refresh and try again.");
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error approving reweigh for transaction {TicketID}", request.TicketID);
@@ -340,6 +363,11 @@ public class TransactionsController : BaseController
         {
             _logger.LogWarning(ex, "Invalid operation when rejecting reweigh for transaction {TicketID}", request.TicketID);
             return BadRequest(ex.Message);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogWarning(ex, "Concurrency conflict rejecting reweigh for transaction {TicketID}", request.TicketID);
+            return Conflict("This transaction was changed by someone else. Please refresh and try again.");
         }
         catch (Exception ex)
         {
@@ -369,6 +397,11 @@ public class TransactionsController : BaseController
             _logger.LogWarning(ex, "Invalid operation when updating transaction {TicketID}", ticketId);
             return BadRequest(ex.Message);
         }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            _logger.LogWarning(ex, "Concurrency conflict updating transaction {TicketID}", ticketId);
+            return Conflict("This transaction was changed by someone else. Please refresh and try again.");
+        }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error updating transaction with TicketID {TicketID}", ticketId);
@@ -380,11 +413,11 @@ public class TransactionsController : BaseController
     /// Delete a transaction
     /// </summary>
     [HttpDelete("{ticketId}")]
-    public async Task<IActionResult> Delete(string ticketId)
+    public async Task<IActionResult> Delete(string ticketId, [FromQuery] string? changedBy = null)
     {
         try
         {
-            var result = await _transactionService.DeleteAsync(ticketId);
+            var result = await _transactionService.DeleteAsync(ticketId, changedBy);
             if (!result)
             {
                 return NotFound("Transaction not found");
@@ -401,6 +434,24 @@ public class TransactionsController : BaseController
         {
             _logger.LogError(ex, "Error deleting transaction with TicketID {TicketID}", ticketId);
             return InternalServerError("An error occurred while deleting transaction");
+        }
+    }
+
+    /// <summary>
+    /// Get the before/after change trail for a transaction
+    /// </summary>
+    [HttpGet("{ticketId}/audit-logs")]
+    public async Task<IActionResult> GetAuditLogs(string ticketId)
+    {
+        try
+        {
+            var logs = await _transactionService.GetAuditLogsAsync(ticketId);
+            return Ok(logs);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting audit logs for transaction {TicketID}", ticketId);
+            return InternalServerError("An error occurred while retrieving audit logs");
         }
     }
 

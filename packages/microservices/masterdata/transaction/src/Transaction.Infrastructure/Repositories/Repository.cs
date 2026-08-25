@@ -21,12 +21,15 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbSet.Where(e => !e.IsDeleted).ToListAsync();
+        // Read-only: UpdateAsync/DeleteAsync below always re-fetch by id
+        // rather than relying on the caller's instance being tracked, so
+        // callers of this method never need change tracking either.
+        return await _dbSet.AsNoTracking().Where(e => !e.IsDeleted).ToListAsync();
     }
 
     public virtual async Task<T?> GetByIdAsync(string id)
     {
-        return await _dbSet.FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+        return await _dbSet.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
     }
 
     public virtual async Task<T> CreateAsync(T entity)

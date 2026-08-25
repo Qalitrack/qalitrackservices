@@ -55,10 +55,15 @@ public class AxleConfigurationService : IAxleConfigurationService
 
     public async Task<PagedResult<AxleConfigurationDto>> GetAxleConfigurationsAsync(int pageNumber = 1, int pageSize = 10)
     {
+        // Frontend requests up to 200 for the Axle Configuration management
+        // page (loaded once, client-side) — clamp guards against a
+        // pathological pageSize without breaking that.
+        pageSize = Math.Clamp(pageSize, 1, 500);
+
         try
         {
             _logger.LogInformation("Getting axle configurations - Page: {PageNumber}, Size: {PageSize}", pageNumber, pageSize);
-            
+
             var result = await _repository.GetPagedAsync(
                 pageNumber: pageNumber,
                 pageSize: pageSize,

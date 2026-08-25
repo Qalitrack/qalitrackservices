@@ -9,7 +9,6 @@ This directory contains Docker Compose configuration for running QaliTrack servi
 | Gateway | 7000 | API Gateway (Production Gateway) |
 | User Service | 7001 | Authentication & User Management |
 | Masterdata Service | 7002 | Consolidated Master Data APIs |
-| Technician API | 7006 | Technician & QTruck Features |
 | Transaction Service | 7015 | Transaction Processing |
 | Backup Service | 7020 | Database Backup & Restore |
 
@@ -32,9 +31,6 @@ docker compose up -d
 ```bash
 # Start only user service and gateway
 docker compose up -d user-service gateway
-
-# Start only technician API
-docker compose up -d technician-api
 ```
 
 ### 3. View Logs
@@ -44,7 +40,7 @@ docker compose up -d technician-api
 docker compose logs -f
 
 # Specific service
-docker compose logs -f technician-api
+docker compose logs -f [service-name]
 
 # Last 100 lines
 docker compose logs --tail=100 -f
@@ -92,8 +88,6 @@ ports:
 Data is stored in Docker volumes:
 
 - `user-data` - User service SQLite database
-- `technician-data` - Technician API SQLite database
-- `technician-uploads` - File uploads for technician service
 - etc.
 
 **To reset all data:**
@@ -144,11 +138,6 @@ curl http://localhost:7000/health
 ### User Service
 ```bash
 curl http://localhost:7001/health
-```
-
-### Technician API
-```bash
-curl http://localhost:7006/health
 ```
 
 ## Adding New Services

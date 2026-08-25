@@ -16,13 +16,16 @@ namespace UserService.Api.Controllers
     public class PasswordPolicyController : ControllerBase
     {
         private readonly PasswordPolicyService _passwordPolicyService;
+        private readonly EmailSettingsService _emailSettingsService;
         private readonly ILogger<PasswordPolicyController> _logger;
 
         public PasswordPolicyController(
             PasswordPolicyService passwordPolicyService,
+            EmailSettingsService emailSettingsService,
             ILogger<PasswordPolicyController> logger)
         {
             _passwordPolicyService = passwordPolicyService ?? throw new ArgumentNullException(nameof(passwordPolicyService));
+            _emailSettingsService = emailSettingsService ?? throw new ArgumentNullException(nameof(emailSettingsService));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -76,6 +79,11 @@ namespace UserService.Api.Controllers
                 if (currentPolicy == null || new Guid(currentPolicy.Id) != id)
                 {
                     return NotFound("Password policy not found");
+                }
+
+                if (policyDto.TwoFactorEnabled && !await _emailSettingsService.IsConfiguredAsync())
+                {
+                    return BadRequest("Configure SMTP email settings before enabling two-factor authentication — 2FA codes are delivered by email.");
                 }
 
                 currentPolicy.MinimumLength = policyDto.MinimumLength;

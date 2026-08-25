@@ -10,7 +10,4 @@ public class TransactionAuditLog : BaseEntity
     public string NewValues { get; set; } = string.Empty; // JSON of new values
     public DateTime ChangeTimestamp { get; set; }
     public string Reason { get; set; } = string.Empty;
-    
-    // Navigation
-    public virtual WeighbridgeTransaction Transaction { get; set; } = null!;
 }

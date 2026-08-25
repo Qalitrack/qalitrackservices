@@ -11,7 +11,10 @@ public interface ITransactionService
     Task<TransactionReadDto?> GetByReceiptNoAsync(string receiptNo);
     Task<TransactionReadDto> CreateAsync(CreateTransactionDto dto);
     Task<TransactionReadDto?> UpdateAsync(string ticketId, UpdateTransactionDto dto);
-    Task<bool> DeleteAsync(string ticketId);
+    Task<bool> DeleteAsync(string ticketId, string? changedBy = null);
+
+    // Before/after change trail for a transaction
+    Task<IEnumerable<AuditLogDto>> GetAuditLogsAsync(string ticketId);
     
     // Receipt validation
     Task<bool> IsReceiptNoAvailableAsync(string receiptNo);

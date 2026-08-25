@@ -1,24 +1,26 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using MimeKit;
 using UserService.Core.Interfaces.Emails;
+using UserService.Core.Services;
 
 namespace UserService.Infrastructure.Services;
 
-public class SmtpEmailService(IConfiguration configuration, ILogger<SmtpEmailService> logger)
+public class SmtpEmailService(EmailSettingsService emailSettingsService, ILogger<SmtpEmailService> logger)
     : IEmailService
 {
     public async Task SendEmailAsync(string to, string subject, string body)
     {
-        var smtpHost     = configuration["Email:SmtpHost"];
-        var smtpPort     = int.Parse(configuration["Email:SmtpPort"] ?? "587");
-        var smtpUsername = configuration["Email:SmtpUsername"];
-        var smtpPassword = configuration["Email:SmtpPassword"];
-        var fromEmail    = configuration["Email:FromEmail"] ?? smtpUsername;
-        var fromName     = configuration["Email:FromName"] ?? "QaliTrack";
-        var enableSsl    = bool.Parse(configuration["Email:EnableSsl"] ?? "true");
+        var settings = await emailSettingsService.GetSettingsAsync();
+
+        var smtpHost     = settings.SmtpHost;
+        var smtpPort     = settings.SmtpPort;
+        var smtpUsername = settings.SmtpUsername;
+        var smtpPassword = settings.SmtpPassword;
+        var fromEmail    = settings.FromEmail ?? smtpUsername;
+        var fromName     = settings.FromName ?? "QaliTrack";
+        var enableSsl    = settings.EnableSsl;
 
         if (string.IsNullOrEmpty(smtpHost) || string.IsNullOrEmpty(smtpUsername))
         {
