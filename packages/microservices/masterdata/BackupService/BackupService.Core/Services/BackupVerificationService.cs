@@ -16,6 +16,14 @@ public BackupVerificationService(IFileSystem fileSystem, ILogger<BackupVerificat
 
 public async Task VerifyBackupIntegrityAsync(string backupPath, BackupType backupType, CancellationToken ct = default)
 {
+    if (BackupRestoreService.IsPgBackRestIdentifier(backupPath))
+    {
+        // pgBackRest verifies checksums as part of every backup/archive-push by default —
+        // there's no separate file for pg_restore --schema-only to sanity-check here.
+        _logger.LogInformation("Skipping file-based verification for pgBackRest backup {BackupPath} — integrity is checked by pgBackRest itself", backupPath);
+        return;
+    }
+
     if (!_fileSystem.File.Exists(backupPath))
     {
         _logger.LogError("Backup file {BackupPath} not found", backupPath);

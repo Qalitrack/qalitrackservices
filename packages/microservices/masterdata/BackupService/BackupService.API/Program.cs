@@ -115,6 +115,8 @@ builder.Services.AddScoped<IDatabaseBackupService, DatabaseBackupService>();
 builder.Services.AddScoped<IBackupCreationService, BackupCreationService>();
 builder.Services.AddScoped<IBackupRestoreService, BackupRestoreService>();
 builder.Services.AddScoped<IBackupVerificationService, BackupVerificationService>();
+builder.Services.AddSingleton<IProcessRunner, ProcessRunner>();
+builder.Services.AddScoped<IPgBackRestClient, PgBackRestClient>();
 builder.Services.AddScoped<IFileSystem, FileSystem>();
 builder.Services.AddScoped<IMicroserviceRepository, MicroserviceRepository>();
 builder.Services.AddScoped<IMicroService, MicroService>();

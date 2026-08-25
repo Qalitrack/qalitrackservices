@@ -121,12 +121,18 @@ namespace BackupService.API.Controllers
 
                 string backupFilePath = backupInfo.FileName;
 
+                if (backupInfo.IsPhysical)
+                {
+                    throw new InvalidOperationException(
+                        "This is a pgBackRest physical backup — it lives inside the pgbackrest repo volume as many files, not one downloadable file. Use restore instead.");
+                }
+
                 if (string.IsNullOrEmpty(backupFilePath) || !System.IO.File.Exists(backupFilePath))
                 {
                     throw new FileNotFoundException($"Backup file not found: {backupFilePath}");
                 }
 
-                _logger.LogInformation("Downloading backup for microservice: {Microservice}, Backup ID: {BackupId}, File: {BackupFilePath}", 
+                _logger.LogInformation("Downloading backup for microservice: {Microservice}, Backup ID: {BackupId}, File: {BackupFilePath}",
                     microservice, backupId, backupFilePath);
 
                 // Open the file stream and return it as a downloadable response
@@ -142,6 +148,11 @@ namespace BackupService.API.Controllers
             catch (ArgumentException ex)
             {
                 _logger.LogWarning(ex, "Invalid arguments for download: {Microservice}", microservice);
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Backup not downloadable: {Microservice}, {BackupId}", microservice, backupId);
                 return BadRequest(new { error = ex.Message });
             }
             catch (FileNotFoundException ex)
@@ -197,12 +208,13 @@ namespace BackupService.API.Controllers
 
                 string backupFilePath = backupInfo.FileName;
 
-                if (string.IsNullOrEmpty(backupFilePath) || !System.IO.File.Exists(backupFilePath))
+                if (string.IsNullOrEmpty(backupFilePath) ||
+                    (!backupInfo.IsPhysical && !System.IO.File.Exists(backupFilePath)))
                 {
                     throw new FileNotFoundException($"Backup file not found: {backupFilePath}");
                 }
 
-                _logger.LogInformation("Restoring backup for microservice: {Microservice}, Backup ID: {BackupId}, File: {BackupFilePath}", 
+                _logger.LogInformation("Restoring backup for microservice: {Microservice}, Backup ID: {BackupId}, File: {BackupFilePath}",
                     request.Microservice, request.BackupId, backupFilePath);
 
                 // Call the service method with the backup file path

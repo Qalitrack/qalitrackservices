@@ -21,5 +21,10 @@ public class BackupChain
     // NEW: Track the most recent LSN (updated after each incremental backup)
     [JsonPropertyName("lastLsn")]
     public string? LastLsn { get; set; }
-    
+
+    // True for pgBackRest-based physical backups. Their files live inside the
+    // pgBackRest repo volume, not as browsable files under the backup directory,
+    // so availability is trusted from pgbackrest itself rather than checked with
+    // File.Exists like the legacy pg_dump chains below.
+    public bool IsPhysical { get; init; }
 }

@@ -96,7 +96,9 @@ public class DatabaseBackupService : IDatabaseBackupService
         if (string.IsNullOrWhiteSpace(backupFilePath))
             throw new ArgumentException("Backup file path must be provided", nameof(backupFilePath));
 
-        if (!File.Exists(backupFilePath))
+        // pgBackRest identifiers ("pgbackrest:{label}") aren't real files on this
+        // container's filesystem — only legacy pg_dump paths get existence-checked here.
+        if (!BackupRestoreService.IsPgBackRestIdentifier(backupFilePath) && !File.Exists(backupFilePath))
             throw new FileNotFoundException($"Backup file not found: {backupFilePath}");
 
         _logger.LogInformation("Starting restore for {Microservice} from backup file {BackupFilePath}", 

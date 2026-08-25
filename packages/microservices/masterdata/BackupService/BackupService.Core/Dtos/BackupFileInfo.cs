@@ -13,4 +13,10 @@ public class BackupFileInfo
     public bool IsLatest { get; init; }
     public string ServiceName { get; init; } = string.Empty;
 
+    /// <summary>
+    /// True for pgBackRest physical backups. FileName is a "pgbackrest:{label}"
+    /// sentinel in that case, not a real path — there is no single file to
+    /// download or existence-check on disk.
+    /// </summary>
+    public bool IsPhysical { get; init; }
 }
