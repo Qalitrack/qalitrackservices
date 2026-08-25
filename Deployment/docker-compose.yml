@@ -111,13 +111,6 @@ services:
       - JWT_ISSUER=qalitrack
       - JWT_AUDIENCE=qalitrack
       - Backup__Path=/app/Backups
-      - Email__FromEmail=${EMAIL_FROM_EMAIL}
-      - Email__FromName=${EMAIL_FROM_NAME}
-      - Email__SmtpHost=${EMAIL_SMTP_HOST}
-      - Email__SmtpPort=${EMAIL_SMTP_PORT}
-      - Email__SmtpUsername=${EMAIL_SMTP_USERNAME}
-      - Email__SmtpPassword=${EMAIL_SMTP_PASSWORD}
-      - Email__EnableSsl=${EMAIL_ENABLE_SSL}
     volumes:
       - ./user-service/data:/app/data
       - ./user-service/logs:/app/logs

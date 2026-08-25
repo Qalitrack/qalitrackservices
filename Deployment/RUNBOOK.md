@@ -80,18 +80,15 @@ REDIS_PASSWORD=<choose a strong password>
 # JWT — generate with: node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"
 JWT_SECRET_KEY=<256-bit base64 string>
 
-# Email (SMTP — used by User Service)
-EMAIL_FROM_EMAIL=noreply@yourcompany.com
-EMAIL_FROM_NAME=QaliTrack System
-EMAIL_SMTP_HOST=smtp.gmail.com
-EMAIL_SMTP_PORT=587
-EMAIL_SMTP_USERNAME=you@gmail.com
-EMAIL_SMTP_PASSWORD=<app password>
-EMAIL_ENABLE_SSL=true
-
 # Receipt numbering (Transaction Service) — optional, defaults to NCCU
 RECEIPT_PREFIX=NCCU
 ```
+
+SMTP is no longer configured via `.env` — User Service now stores email settings
+(host, port, credentials, from address) in the database and manages them through
+the Email Settings screen / `EmailSettingsController` API instead. On a fresh
+install with nothing configured yet, `SmtpEmailService` just logs a warning and
+skips sending rather than failing — set it up once via the UI after first startup.
 
 ---
 
