@@ -109,6 +109,7 @@ namespace BackupService.Core.Services
                 LastLsn = backupResult.Lsn,
                 Timeline = backupResult.Timeline,
                 IsPhysical = true,
+                FullBackupSizeBytes = backupResult.FileSizeBytes,
             };
 
             _metadata.Chains.Add(chain);
@@ -133,6 +134,8 @@ namespace BackupService.Core.Services
             }
 
             chain.Incrementals.Add(backupResult.FileName);
+            chain.IncrementalSizesBytes.Add(backupResult.FileSizeBytes);
+            chain.IncrementalTimestamps.Add(backupResult.Timestamp);
             chain.LastLsn = backupResult.Lsn;
 
             await SaveMetadataAsync(_metadata, ct);
@@ -192,20 +195,25 @@ namespace BackupService.Core.Services
                     FileName = $"pgbackrest:{chain.FullBackupFile}",
                     BackupType = BackupType.Full,
                     CreatedAt = chain.Timestamp,
+                    FileSizeBytes = chain.FullBackupSizeBytes,
                     ChainId = chain.ChainId ?? chain.Id.ToString(),
                     IsLatest = IsLatestChain(chain, validChains),
                     ServiceName = chain.MicroserviceName,
                     IsPhysical = true,
                 });
 
-                foreach (var inc in chain.Incrementals)
+                for (var i = 0; i < chain.Incrementals.Count; i++)
                 {
                     result.Add(new BackupFileInfo
                     {
-                        BackupId = inc,
-                        FileName = $"pgbackrest:{inc}",
+                        BackupId = chain.Incrementals[i],
+                        FileName = $"pgbackrest:{chain.Incrementals[i]}",
                         BackupType = BackupType.Incremental,
-                        CreatedAt = chain.Timestamp, // approximation — pgbackrest info has the exact timestamp
+                        // Falls back to the full backup's timestamp only for chains recorded
+                        // before this field existed — must be the incremental's own timestamp
+                        // for "restore latest" (which orders by CreatedAt) to resolve correctly.
+                        CreatedAt = i < chain.IncrementalTimestamps.Count ? chain.IncrementalTimestamps[i] : chain.Timestamp,
+                        FileSizeBytes = i < chain.IncrementalSizesBytes.Count ? chain.IncrementalSizesBytes[i] : 0,
                         ChainId = chain.ChainId ?? chain.Id.ToString(),
                         IsLatest = IsLatestChain(chain, validChains),
                         ServiceName = chain.MicroserviceName,

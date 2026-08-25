@@ -490,11 +490,14 @@ docker run --rm -u postgres \
   -v postgres_prod_data:/var/lib/postgresql/data \
   -v pgbackrest_repo:/var/lib/pgbackrest \
   qalitrack-postgres-prod:latest \
-  pgbackrest --stanza=qalitrack --delta --type=immediate restore
+  pgbackrest --stanza=qalitrack --delta --type=immediate \
+    --recovery-option=recovery_target_action=promote restore
 docker start qalitrack-postgres-prod
 ```
 
 `--type=immediate` matters: without it, pgBackRest replays every WAL segment archived since (archiving runs continuously, independent of backup timing), which recovers to "now" rather than "this backup" — confirmed with a real restore during testing, where a row written after the last backup survived until this flag was added.
+
+`--recovery-option=recovery_target_action=promote` matters just as much: without it, Postgres reaches the recovery target and then just **pauses read-only** (`pg_is_in_recovery()` stays `true`) instead of becoming a normal writable primary — confirmed against a real restore where every write afterward, including this service's own EF Core migrations, failed with `cannot execute ... in a read-only transaction` until manually running `SELECT pg_promote();`. A `SELECT`-only check after restore will not catch this — you have to attempt a write.
 
 ### Checking status
 

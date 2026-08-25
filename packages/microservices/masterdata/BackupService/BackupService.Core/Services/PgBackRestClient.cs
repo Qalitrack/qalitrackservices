@@ -102,6 +102,12 @@ public class PgBackRestClient : IPgBackRestClient
                 // against a real pgbackrest run: without --type=immediate, data written after
                 // the last backup survived a restore).
                 "--type=immediate",
+                // Without this, Postgres reaches the recovery target and then just sits
+                // there PAUSED in read-only mode (pg_is_in_recovery() stays true) instead of
+                // becoming a normal writable primary — confirmed against a real restore where
+                // every write, including this service's own EF migrations, failed with
+                // "cannot execute ... in a read-only transaction" until manually promoted.
+                "--recovery-option=recovery_target_action=promote",
             };
 
             // --set targets a specific backup label (full or incremental) — verified against

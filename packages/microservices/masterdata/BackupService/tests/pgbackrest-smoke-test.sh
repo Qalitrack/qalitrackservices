@@ -94,14 +94,40 @@ docker exec "$CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -c \
 echo "==> pgbackrest info"
 docker exec -u postgres "$CONTAINER" pgbackrest --stanza=qalitrack info
 
+# Runs a restore, waits for Postgres, and fails loudly if it's still stuck in
+# read-only recovery (pg_is_in_recovery()) or a real INSERT doesn't go through.
+# Without --recovery-option=recovery_target_action=promote, Postgres reaches the
+# recovery target and just PAUSES read-only instead of becoming a writable primary
+# — confirmed against a real restore where every subsequent write failed with
+# "cannot execute ... in a read-only transaction", and a read-only SELECT-based
+# check alone (this script's original version) never caught it.
+restore_and_assert_writable() {
+  docker stop "$CONTAINER" >/dev/null
+  docker run --rm -u postgres \
+    -v "$DATA_VOL":/var/lib/postgresql/data -v "$REPO_VOL":/var/lib/pgbackrest \
+    -e PGBACKREST_PG1_USER="$DB_USER" "$IMAGE" \
+    pgbackrest --stanza=qalitrack --delta --type=immediate \
+      --recovery-option=recovery_target_action=promote --log-level-console=info \
+      "$@" restore
+  docker start "$CONTAINER" >/dev/null
+  wait_ready
+
+  local in_recovery
+  in_recovery="$(docker exec "$CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -t -A -c "SELECT pg_is_in_recovery();")"
+  if [ "$in_recovery" != "f" ]; then
+    echo "FAIL: Postgres is still in read-only recovery after restore (pg_is_in_recovery() = $in_recovery)" >&2
+    exit 1
+  fi
+
+  if ! docker exec "$CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -c \
+    "INSERT INTO smoke_test(note) VALUES ('writable-check'); DELETE FROM smoke_test WHERE note = 'writable-check';" >/dev/null; then
+    echo "FAIL: a real write failed after restore — Postgres did not come back as a writable primary" >&2
+    exit 1
+  fi
+}
+
 echo "==> Restore #1: default (no --set) — should recover the LATEST backup (A, B, C, not D)"
-docker stop "$CONTAINER" >/dev/null
-docker run --rm -u postgres \
-  -v "$DATA_VOL":/var/lib/postgresql/data -v "$REPO_VOL":/var/lib/pgbackrest \
-  -e PGBACKREST_PG1_USER="$DB_USER" "$IMAGE" \
-  pgbackrest --stanza=qalitrack --delta --type=immediate --log-level-console=info restore
-docker start "$CONTAINER" >/dev/null
-wait_ready
+restore_and_assert_writable
 
 RESULT1="$(docker exec "$CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -t -A -c "SELECT string_agg(note, ',' ORDER BY id) FROM smoke_test;")"
 EXPECTED1="row-A-full,row-B-incr1,row-C-incr2"
@@ -110,16 +136,10 @@ if [ "$RESULT1" != "$EXPECTED1" ]; then
   echo "      (if row-D is present, --type=immediate is not doing its job)" >&2
   exit 1
 fi
-echo "PASS: default restore recovered the latest backup, nothing written after it."
+echo "PASS: default restore recovered the latest backup, writable, nothing written after it."
 
 echo "==> Restore #2: --set=\$INCR1_LABEL — should recover ONLY A, B (not C, not D)"
-docker stop "$CONTAINER" >/dev/null
-docker run --rm -u postgres \
-  -v "$DATA_VOL":/var/lib/postgresql/data -v "$REPO_VOL":/var/lib/pgbackrest \
-  -e PGBACKREST_PG1_USER="$DB_USER" "$IMAGE" \
-  pgbackrest --stanza=qalitrack --delta --type=immediate --set="$INCR1_LABEL" --log-level-console=info restore
-docker start "$CONTAINER" >/dev/null
-wait_ready
+restore_and_assert_writable --set="$INCR1_LABEL"
 
 RESULT2="$(docker exec "$CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -t -A -c "SELECT string_agg(note, ',' ORDER BY id) FROM smoke_test;")"
 EXPECTED2="row-A-full,row-B-incr1"
@@ -128,4 +148,4 @@ if [ "$RESULT2" != "$EXPECTED2" ]; then
   echo "      (--set is supposed to stop the chain exactly at the chosen backup — this is what the frontend's per-row restore relies on)" >&2
   exit 1
 fi
-echo "PASS: --set correctly restored to the targeted point in the chain, excluding later incrementals."
+echo "PASS: --set correctly restored to the targeted point in the chain, writable, excluding later incrementals."
