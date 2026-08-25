@@ -74,11 +74,13 @@ jobs:
         run: |
           cd ${{ env.SERVICE_PATH }}
           dotnet restore BackupService.API/BackupService.API.csproj --verbosity normal
-      
+          dotnet restore tests/BackupService.Tests/BackupService.Tests.csproj --verbosity normal
+
       - name: Build application
         run: |
           cd ${{ env.SERVICE_PATH }}
           dotnet build BackupService.API/BackupService.API.csproj --no-restore -c Release --verbosity normal
+          dotnet build tests/BackupService.Tests/BackupService.Tests.csproj --no-restore -c Release --verbosity normal
       
       - name: Run unit tests
         env:
