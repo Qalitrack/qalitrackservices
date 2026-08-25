@@ -1,27 +1,55 @@
 import React, { useEffect, useCallback, useState } from "react";
 import dayjs from "dayjs";
-import { Check, Hourglass } from "lucide-react";
+import { Check, Hourglass, Printer } from "lucide-react";
 import { useTheme } from "../Context/ThemeContext.jsx";
 import logo from "../../assets/qalitrack_logo_full.png";
+import { generateThemedPDF } from "../../utils/generateTransactionPDF";
+import { getTicketSettings } from "../../utils/ticketThemeConfig";
+
+// Same turnaround-time formatter the Transactions list ticket export uses —
+// duplicated as a tiny inline fallback isn't worth it, but this kiosk only
+// ever prints its own just-completed ticket, so a plain elapsed-time string
+// is enough (no need for the full column-formatting logic).
+function formatTurnaround(startedAt, completedAt) {
+  if (!startedAt || !completedAt) return "—";
+  const mins = Math.max(0, dayjs(completedAt).diff(dayjs(startedAt), "minute"));
+  const h = Math.floor(mins / 60), m = mins % 60;
+  return h > 0 ? `${h}h ${m}m` : `${m}m`;
+}
 
 export default function TicketPrintScreen({ ticketData, onComplete }) {
   const { isDark } = useTheme();
   const [printing,      setPrinting]      = useState(true);
   const [printSuccess,  setPrintSuccess]  = useState(false);
+  const [printFailed,   setPrintFailed]   = useState(false);
   const [countdown,     setCountdown]     = useState(7);
   const isComplete = ticketData?.isCompleted || (ticketData?.firstWeight && ticketData?.secondWeight);
 
+  // Same PDF ticket generator used from the Transactions list (ExportPreviewModal.jsx)
+  // — this used to be entirely simulated (a fake setTimeout with no real printer call).
   const printThermalTicket = useCallback(async () => {
     try {
       setPrinting(true);
-      // REAL MODE: uncomment and configure when thermal printer endpoint is ready
-      // await fetch(`${import.meta.env.VITE_HARDWARE_BASE_URL}/api/Printer/thermal/print`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ content: formatThermalTicket(ticketData), printerName:"ThermalPrinter01", copies:1 }) });
-      setTimeout(() => { setPrintSuccess(true); setPrinting(false); }, 2000);
-      setTimeout(() => { onComplete(); }, 9000);
-    } catch (error) {
+      setPrintFailed(false);
+      const gross = ticketData?.firstWeight || ticketData?.weight || 0;
+      const tare  = ticketData?.secondWeight || 0;
+      await generateThemedPDF(
+        {
+          ...ticketData,
+          netWeight: tare ? Math.abs(gross - tare) : gross,
+          firstWeightDate: ticketData?.createdAt,
+          secondWeightDate: ticketData?.completedAt,
+          scaleName: ticketData?.scaleName || ticketData?.weighBridgeName,
+        },
+        getTicketSettings(),
+        formatTurnaround,
+      );
       setPrintSuccess(true);
       setPrinting(false);
       setTimeout(() => { onComplete(); }, 9000);
+    } catch (error) {
+      setPrintFailed(true);
+      setPrinting(false);
     }
   }, [ticketData, onComplete]);
 
@@ -32,39 +60,6 @@ export default function TicketPrintScreen({ ticketData, onComplete }) {
     const id = setInterval(() => setCountdown(c => c - 1), 1000);
     return () => clearInterval(id);
   }, [printSuccess]);
-
-  const formatThermalTicket = (data) => {
-    const lines = [];
-    lines.push("================================");
-    lines.push("       QALITRACK WEIGHBRIDGE");
-    lines.push("     Self-Service Weighing");
-    lines.push("================================");
-    lines.push("");
-    lines.push(`ID: ${data.receiptNo || data.ticketID || "WB-" + Date.now()}`);
-    lines.push(`Date: ${dayjs(data.weighTime || new Date()).format("DD/MM/YYYY, HH:mm:ss")}`);
-    lines.push("");
-    lines.push("VEHICLE & DRIVER");
-    lines.push(`Plate: ${data.noPlate || "N/A"}`);
-    lines.push(`Driver: ${data.driverName || "N/A"}`);
-    lines.push("");
-    lines.push("MATERIAL");
-    lines.push(`Product: ${data.commodityName || "—"}`);
-    lines.push(`Supplier: ${data.supplierName || "—"}`);
-    lines.push(`Transporter: ${data.transporterName || "—"}`);
-    lines.push("");
-    lines.push("WEIGHTS");
-    lines.push(`Gross: ${fmtW(data.firstWeight || data.weight)} kg`);
-    lines.push(`Tare:  ${fmtW(data.secondWeight || 0)} kg`);
-    lines.push(`Net:   ${fmtW(data.secondWeight ? Math.abs(data.firstWeight - data.secondWeight) : data.firstWeight || data.weight)} kg`);
-    lines.push("");
-    lines.push("================================");
-    lines.push(data.secondWeight ? "   STATUS: COMPLETE" : "   STATUS: PENDING 2ND WEIGHT");
-    lines.push("================================");
-    lines.push("");
-    lines.push("Powered by QALIBRATED SYSTEMS");
-    lines.push("================================");
-    return lines.join("\n");
-  };
 
   const fmtW = (w) => {
     if (!w) return "0";

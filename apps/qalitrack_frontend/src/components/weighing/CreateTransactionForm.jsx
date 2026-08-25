@@ -5,7 +5,7 @@
 import React, { useEffect, useMemo, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Input, Select, AutoComplete, Button, message, Row, Col, Typography, Space, Alert, Modal, Tooltip } from "antd";
-import { Scale, Info } from "lucide-react";
+import { Scale, Info, Printer } from "lucide-react";
 import dayjs from "dayjs";
 import {
   fetchWeighbridges,
@@ -16,6 +16,9 @@ import {
   fetchIncompleteByPlate,
   fetchIncompleteByVehicleIdThunk,
 } from "../../store/weighingSlice";
+import { generateThemedPDF } from "../../utils/generateTransactionPDF";
+import { getTicketSettings } from "../../utils/ticketThemeConfig";
+import { formatTurnaroundTimeSimple } from "../transaction/transactionColumns";
 
 const { Option } = Select;
 const { Text } = Typography;
@@ -63,6 +66,10 @@ export default function CreateTransactionForm({
   const [submitError, setSubmitError] = useState(null);
   const [showFinalizePreview, setShowFinalizePreview] = useState(false);
   const [previewEditData, setPreviewEditData] = useState({});
+  // Set once the second weight actually saves — switches the same modal from
+  // the editable preview into a printable receipt instead of just closing,
+  // so the operator can print right there without hunting for another screen.
+  const [finalizedReceipt, setFinalizedReceipt] = useState(null);
 
   const isSecondWeighing = !!(formData.id || formData.ticketID);
   const [manualPlate, setManualPlate] = useState(false);
@@ -400,7 +407,7 @@ export default function CreateTransactionForm({
     };
 
     try {
-      await dispatch(addSecondWeight(payload)).unwrap();
+      const result = await dispatch(addSecondWeight(payload)).unwrap();
       const finalNet = (() => {
         const w1 = parseFloat(data.firstWeight || 0);
         const w2 = parseFloat(data.secondWeight || capturedWeight || 0);
@@ -410,7 +417,10 @@ export default function CreateTransactionForm({
       message.success({ content: `✓ Transaction Completed! Net: ${finalNet.toLocaleString()} KG`, duration: 5 });
       await dispatch(fetchTransactions({ isCompleted: false, pageNumber: 1, pageSize: 100 }));
       setSuggestedFields({});
-      if (onTransactionCreated) onTransactionCreated();
+      // Stay open on the same modal, switched to a printable receipt, instead of
+      // closing straight away — lets the operator print right here. Backend result
+      // (has receiptNo, firstWeightDate, etc.) takes priority over the form data.
+      setFinalizedReceipt({ ...data, ...(result?.data ?? result ?? {}), netWeight: finalNet });
     } catch (err) {
       let errMsg = "Failed to save transaction";
       if (err.message) errMsg = err.message;
@@ -420,6 +430,21 @@ export default function CreateTransactionForm({
       setSubmitError(errMsg);
       message.error(errMsg);
     }
+  };
+
+  // Closes the modal after finalize — resets the form and refreshes the queue,
+  // same as if "Cancel" had been pressed on a plain (non-finalize) form.
+  const handleDoneAfterFinalize = () => {
+    setShowFinalizePreview(false);
+    setFinalizedReceipt(null);
+    if (onTransactionCreated) onTransactionCreated();
+  };
+
+  // Same PDF ticket generator already used from the Transactions list
+  // (ExportPreviewModal.jsx) — reused here rather than a separate print path.
+  const handlePrintReceipt = () => {
+    if (!finalizedReceipt) return;
+    generateThemedPDF(finalizedReceipt, getTicketSettings(), formatTurnaroundTimeSimple);
   };
 
   const handleSubmit = async () => {
@@ -939,15 +964,15 @@ export default function CreateTransactionForm({
     {/* ── Finalize Preview Modal ─────────────────────────────────────── */}
     <Modal
       open={showFinalizePreview}
-      onCancel={() => setShowFinalizePreview(false)}
+      onCancel={finalizedReceipt ? handleDoneAfterFinalize : () => setShowFinalizePreview(false)}
       width={720}
       title={
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center">
-            <span className="text-white text-xs font-bold">📋</span>
+            <span className="text-white text-xs font-bold">{finalizedReceipt ? "✓" : "📋"}</span>
           </div>
           <span className="text-sm font-bold text-gray-900">
-            Transaction Preview — Confirm Before Finalizing
+            {finalizedReceipt ? "Transaction Complete — Ready to Print" : "Transaction Preview — Confirm Before Finalizing"}
           </span>
           <span className="ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-500 text-amber-600 bg-amber-50">
             {previewEditData.noPlate || "—"}
@@ -955,21 +980,66 @@ export default function CreateTransactionForm({
         </div>
       }
       footer={
-        <div className="flex gap-2 justify-end">
-          <Button onClick={() => setShowFinalizePreview(false)}>Back to Form</Button>
-          <Button
-            type="primary"
-            loading={loading}
-            onClick={() => { setShowFinalizePreview(false); doFinalizeSubmit(previewEditData); }}
-            style={{ background: "linear-gradient(135deg, var(--cs-500), var(--cs-600))", border: "none" }}
-            className="font-bold"
-          >
-            CONFIRM &amp; FINALIZE
-          </Button>
-        </div>
+        finalizedReceipt ? (
+          <div className="flex gap-2 justify-end">
+            <Button onClick={handleDoneAfterFinalize}>Done</Button>
+            <Button
+              type="primary"
+              icon={<Printer size={14} />}
+              onClick={handlePrintReceipt}
+              style={{ background: "linear-gradient(135deg, var(--cs-500), var(--cs-600))", border: "none" }}
+              className="font-bold"
+            >
+              Print Ticket
+            </Button>
+          </div>
+        ) : (
+          <div className="flex gap-2 justify-end">
+            <Button onClick={() => setShowFinalizePreview(false)}>Back to Form</Button>
+            <Button
+              type="primary"
+              loading={loading}
+              onClick={() => doFinalizeSubmit(previewEditData)}
+              style={{ background: "linear-gradient(135deg, var(--cs-500), var(--cs-600))", border: "none" }}
+              className="font-bold"
+            >
+              CONFIRM &amp; FINALIZE
+            </Button>
+          </div>
+        )
       }
     >
-      {showFinalizePreview && (
+      {finalizedReceipt ? (
+        <div className="space-y-3 text-xs">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg p-4 text-center shadow-md">
+            <div className="text-white text-[10px] font-bold uppercase tracking-wider mb-1">Net Payload</div>
+            <div className="text-white text-4xl font-black font-mono">
+              {Math.round(finalizedReceipt.netWeight || 0).toLocaleString()} <small className="text-base font-normal">KG</small>
+            </div>
+            <div className="text-white/80 text-[10px] mt-1">
+              Gross: {finalizedReceipt.firstWeight || 0} kg → Tare: {finalizedReceipt.secondWeight || 0} kg
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { label: "Ticket / Receipt", value: finalizedReceipt.receiptNo || finalizedReceipt.ticketID || "—" },
+              { label: "Vehicle Plate",    value: finalizedReceipt.noPlate || "—" },
+              { label: "Transporter",      value: finalizedReceipt.transporterName || "—" },
+              { label: "Commodity",        value: finalizedReceipt.commodityName || "—" },
+            ].map(f => (
+              <div key={f.label} className="bg-gray-50 rounded px-3 py-2 border border-gray-200">
+                <div className="text-gray-400 text-[9px] font-bold uppercase mb-1">{f.label}</div>
+                <div className="font-bold text-gray-900 text-xs">{f.value}</div>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-center text-gray-400 text-[11px] pt-1">
+            Transaction saved successfully. Print a ticket for the driver, or close this window.
+          </p>
+        </div>
+      ) : showFinalizePreview && (
         <div className="space-y-3 text-xs max-h-[70vh] overflow-y-auto pr-1">
           {/* Net Weight Banner */}
           <div className="bg-gradient-to-r from-amber-400 to-amber-500 rounded-lg p-3 text-center shadow-md">

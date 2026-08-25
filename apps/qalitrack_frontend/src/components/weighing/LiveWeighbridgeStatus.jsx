@@ -17,7 +17,7 @@ function normalizeWeight(raw) {
   return val; // 0 or ≥ 1 — already correct
 }
 
-export default function LiveWeighbridgeStatus({ onManualCapture }) {
+export default function LiveWeighbridgeStatus({ onManualCapture, readOnly = false }) {
   const [totalWeight, setTotalWeight] = useState("---");
   const [isStable, setIsStable] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -137,21 +137,25 @@ export default function LiveWeighbridgeStatus({ onManualCapture }) {
         </span>
       </div>
 
-      {/* ACTION */}
-      <button
-        disabled={!isStable}
-        onClick={handleCapture}
-        className={`
-          w-full py-2 rounded-md text-sm font-medium transition
-          ${
-            isStable
-              ? "bg-amber-600 hover:bg-amber-700 text-black"
-              : "bg-neutral-700 text-neutral-400 cursor-not-allowed"
-          }
-        `}
-      >
-        Capture Weight
-      </button>
+      {/* ACTION — hidden in read-only/monitor mode, this scale isn't being
+          driven from here (e.g. it's the unmanned kiosk's own scale, just
+          being watched from the office dashboard). */}
+      {!readOnly && (
+        <button
+          disabled={!isStable}
+          onClick={handleCapture}
+          className={`
+            w-full py-2 rounded-md text-sm font-medium transition
+            ${
+              isStable
+                ? "bg-amber-600 hover:bg-amber-700 text-black"
+                : "bg-neutral-700 text-neutral-400 cursor-not-allowed"
+            }
+          `}
+        >
+          Capture Weight
+        </button>
+      )}
     </div>
   );
 }

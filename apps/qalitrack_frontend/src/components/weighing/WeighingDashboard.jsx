@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, message } from "antd";
+import { Monitor } from "lucide-react";
 import CreateTransactionForm from "./CreateTransactionForm";
 import IncompleteTransactionsTable from "./IncompleteTransactionsTable";
 import LiveWeighbridgeStatus from "./LiveWeighbridgeStatus";
+import UnmannedMonitorPanel from "./UnmannedMonitorPanel";
 import CameraGrid from "../CameraGrid";
 import { useLicenseFeature } from "../../hooks/useLicenseFeature";
 import { LicenseFeatures } from "../../utils/LicenseFeatures";
@@ -77,6 +79,7 @@ export default function WeighingDashboard() {
   const dispatch = useDispatch();
   const { error, weighbridges = [] } = useSelector((state) => state.weighing);
   const anprLicensed = useLicenseFeature(LicenseFeatures.ANPR);
+  const [showUnmannedMonitor, setShowUnmannedMonitor] = useState(false);
   const [capturedWeight, setCapturedWeight] = useState(null);
   const [formData, setFormData] = useState(buildFormData);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -144,20 +147,39 @@ export default function WeighingDashboard() {
 
   return (
     <div className="flex flex-col h-full gap-2 overflow-hidden">
+      <div className="flex items-center justify-end shrink-0 px-1">
+        <button
+          onClick={() => setShowUnmannedMonitor((v) => !v)}
+          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold border transition-all ${
+            showUnmannedMonitor
+              ? "bg-amber-500 border-amber-500 text-white shadow-sm"
+              : "bg-white border-gray-300 text-gray-600 hover:border-amber-400"
+          }`}
+        >
+          <Monitor size={12} />
+          {showUnmannedMonitor ? "Viewing: Unmanned Monitor" : "View Unmanned Monitor"}
+        </button>
+      </div>
+
+      {showUnmannedMonitor ? (
+        <div className="flex-1 min-h-0">
+          <UnmannedMonitorPanel />
+        </div>
+      ) : (
       <div className="flex gap-2 h-[62%] shrink-0">
         <div className="w-[38%] h-full">
           <Card
             title={<span className="text-[10px] font-bold uppercase">New Transaction</span>}
             size="small"
             className="h-full shadow-sm flex flex-col overflow-hidden"
-            styles={{ 
-              body: { 
-                flex: 1, 
-                padding: "4px 8px", 
-                display: "flex", 
-                flexDirection: "column", 
-                overflow: "hidden" 
-              } 
+            styles={{
+              body: {
+                flex: 1,
+                padding: "4px 8px",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden"
+              }
             }}
           >
             <CreateTransactionForm
@@ -189,33 +211,36 @@ export default function WeighingDashboard() {
           </div>
         </div>
       </div>
+      )}
 
-      <div className="flex-1 min-h-0">
-        <Card
-          title={<span className="text-[10px] font-bold uppercase">Active Yard Queue</span>}
-          size="small"
-          className="h-full shadow-sm flex flex-col overflow-hidden"
-          styles={{ 
-            body: { 
-              flex: 1, 
-              padding: 0, 
-              overflow: "hidden" 
-            } 
-          }}
-        >
-          <IncompleteTransactionsTable
-            refreshKey={refreshKey}
-            onAddWeighing={(transaction) => {
-              setFormData({
-                ...transaction,
-                firstWeight: transaction.firstWeight?.toString() || "",
-                secondWeight: "",
-              });
-              setCapturedWeight(transaction.currentWeight || null);
+      {!showUnmannedMonitor && (
+        <div className="flex-1 min-h-0">
+          <Card
+            title={<span className="text-[10px] font-bold uppercase">Active Yard Queue</span>}
+            size="small"
+            className="h-full shadow-sm flex flex-col overflow-hidden"
+            styles={{
+              body: {
+                flex: 1,
+                padding: 0,
+                overflow: "hidden"
+              }
             }}
-          />
-        </Card>
-      </div>
+          >
+            <IncompleteTransactionsTable
+              refreshKey={refreshKey}
+              onAddWeighing={(transaction) => {
+                setFormData({
+                  ...transaction,
+                  firstWeight: transaction.firstWeight?.toString() || "",
+                  secondWeight: "",
+                });
+                setCapturedWeight(transaction.currentWeight || null);
+              }}
+            />
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

@@ -9,10 +9,17 @@
  *       • Payload sends secondWeight instead of firstWeight
  *  2. Scale stream URL read from SystemSettings via useHardwareConfig()
  *     (live — updates without page reload when System Settings are saved)
+ *  3. Weight now reads from the real scale SSE stream (hwConfig.scaleStreamUrl),
+ *     same connection/heartbeat/normalization approach as LiveWeighbridgeStatus.jsx
+ *     — this used to simulate a fake weight that converged to a hardcoded
+ *     constant regardless of what was actually on the scale.
+ *  4. Theme aligned with its sibling kiosk screen (VehicleDetectionScreen.jsx):
+ *     useTheme() + Tailwind dark/light classes instead of hardcoded inline hex.
  */
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { message, Select } from "antd";
+import { useTheme } from "../Context/ThemeContext.jsx";
 import { useHardwareConfig } from "../../hooks/useHardwareConfig";
 import logo from "../../assets/qalitrack_logo_full.png";
 const { Option } = Select;
@@ -60,6 +67,19 @@ function useDebounce(fn, delay) {
   }, [fn, delay]);
 }
 
+/**
+ * Normalize raw weight from the stream — same rule as LiveWeighbridgeStatus.jsx.
+ * The scale indicator streams values divided by 1000 in some firmware versions
+ * (e.g. indicator reads 10 kg → stream sends 0.010000).
+ * Detection rule: if the parsed value is > 0 and < 1, multiply by 1000.
+ */
+function normalizeWeight(raw) {
+  const val = typeof raw === "number" ? raw : parseFloat(String(raw).replace(/[^0-9.-]/g, ""));
+  if (isNaN(val)) return null;
+  if (val > 0 && val < 1) return Math.round(val * 1000 * 100) / 100; // reversed — fix it
+  return val; // 0 or ≥ 1 — already correct
+}
+
 // ── extractVehicleFields ──────────────────────────────────────────────────────
 const extractVehicleFields = (vehicleData = {}) => {
   const v = vehicleData?.vehicle ?? vehicleData ?? {};
@@ -72,6 +92,7 @@ const extractVehicleFields = (vehicleData = {}) => {
     vehicleModel:    v.vehicleModel        ?? "",
     capacity:        v.capacity            ?? "",
     ownerId:         v.ownerId             ?? "",
+    ownerName:       v.ownerName           ?? "",
     transporterID:   v.transporterId       ?? null,
     transporterName: v.transporterName     ?? v.saccoName ?? "",
     supplierID:      v.supplierId          ?? null,
@@ -106,6 +127,8 @@ export default function WeighingScreen({
   onBack,
   error: parentError,
 }) {
+  const { isDark } = useTheme();
+
   // ── Live scale URL from SystemSettings ────────────────────────────────────
   const hwConfig = useHardwareConfig();
 
@@ -125,6 +148,7 @@ export default function WeighingScreen({
     vehicleModel:    vf.vehicleModel,
     capacity:        vf.capacity,
     ownerId:         vf.ownerId,
+    ownerName:       vf.ownerName,
     transporterID:   vf.transporterID,
     transporterName: vf.transporterName,
     supplierID:      vf.supplierID,
@@ -165,6 +189,7 @@ export default function WeighingScreen({
       vehicleModel:    newVf.vehicleModel,
       capacity:        newVf.capacity,
       ownerId:         newVf.ownerId,
+      ownerName:       newVf.ownerName,
       transporterID:   newVf.transporterID,
       transporterName: newVf.transporterName,
       supplierID:      newVf.supplierID,
@@ -182,11 +207,12 @@ export default function WeighingScreen({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vehicleData, driverData]);
 
-  // ── Weight (TODO: replace interval with real scale SSE from hwConfig.scaleStreamUrl) ──
+  // ── Weight — real scale SSE stream ────────────────────────────────────────
   const [weightMode,     setWeightMode]     = useState("captured");
   const [capturedWeight, setCapturedWeight] = useState(0);
   const [manualWeight,   setManualWeight]   = useState("");
   const [isStable,       setIsStable]       = useState(false);
+  const [scaleConnected, setScaleConnected] = useState(false);
   const [submitting,     setSubmitting]     = useState(false);
   const [apiError,       setApiError]       = useState(null);
   const bufferRef        = useRef(null);
@@ -216,26 +242,61 @@ export default function WeighingScreen({
     }).catch(() => {});
   }, [existingTransaction]);
 
-  // Simulated scale readings (replace with real SSE using hwConfig.scaleStreamUrl)
+  // Real scale stream — same connect/heartbeat/normalize approach as
+  // LiveWeighbridgeStatus.jsx, feeding the same buffer + stability pipeline.
   useEffect(() => {
-    const BASE = isSecondWeigh ? 8400 : 19011;
-    let iter = 0;
-    const id = setInterval(() => {
-      iter++;
-      const w = iter < 6 ? BASE + Math.floor(Math.random() * 40 - 20) : BASE;
-      bufferRef.current = w;
-      setCapturedWeight(w);
-    }, 1200);
-    return () => clearInterval(id);
-  }, [isSecondWeigh]);
+    bufferRef.current = null;
+    lastStableRef.current = null;
+    stabilityCounter.current = 0;
+    setIsStable(false);
+    setCapturedWeight(0);
+    setScaleConnected(false);
+
+    const source = new EventSource(hwConfig.scaleStreamUrl);
+
+    source.onerror = () => setScaleConnected(false);
+
+    source.addEventListener("heartbeat", (event) => {
+      try {
+        const status = JSON.parse(event.data);
+        setScaleConnected(!!status.connected);
+      } catch {
+        // malformed heartbeat payload — leave connected state as-is
+      }
+    });
+
+    source.onmessage = (event) => {
+      setScaleConnected(true);
+      try {
+        const data = JSON.parse(event.data);
+        const raw = data?.weight !== undefined ? data.weight : (typeof data === "number" ? data : null);
+        if (raw !== null) {
+          const w = normalizeWeight(raw);
+          if (w !== null && w !== bufferRef.current) {
+            bufferRef.current = w;
+            setCapturedWeight(w);
+          }
+        }
+      } catch {
+        const w = normalizeWeight(event.data);
+        if (w !== null && w !== bufferRef.current) {
+          bufferRef.current = w;
+          setCapturedWeight(w);
+        }
+      }
+    };
+
+    return () => source.close();
+  }, [hwConfig.scaleStreamUrl, isSecondWeigh]);
 
   useEffect(() => {
+    const requiredCycles = hwConfig.scaleStabilityThreshold || 5;
     const id = setInterval(() => {
       const curr = bufferRef.current;
       if (curr == null) return;
       if (curr === lastStableRef.current) {
         stabilityCounter.current++;
-        if (stabilityCounter.current >= 5) setIsStable(true);
+        if (stabilityCounter.current >= requiredCycles) setIsStable(true);
       } else {
         lastStableRef.current = curr;
         stabilityCounter.current = 1;
@@ -243,7 +304,7 @@ export default function WeighingScreen({
       }
     }, 800);
     return () => clearInterval(id);
-  }, []);
+  }, [hwConfig.scaleStabilityThreshold]);
 
   const debouncedP    = useDebounce(q => { if (q) searchProducts(q).then(setProducts); }, 400);
   const setField      = (k, v) => setForm(p => ({ ...p, [k]: v }));
@@ -341,28 +402,35 @@ export default function WeighingScreen({
     }
   };
 
-  // ── Styles ────────────────────────────────────────────────────────────────
-  const card    = { background: "#fff", border: "1px solid #e5e7eb", borderRadius: "14px", boxShadow: "0 1px 4px rgba(0,0,0,0.06)", overflow: "hidden" };
-  const cardHdr = { padding: "10px 16px", background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "1px solid #f0ecdf", display: "flex", alignItems: "center", justifyContent: "space-between" };
-  const inputStyle = { width: "100%", padding: "7px 10px", borderRadius: "8px", border: "1.5px solid #e5e7eb", fontSize: "13px", color: "#111827", background: "#fff", outline: "none" };
-  const onFoc = e => { e.target.style.borderColor = "#d97706"; e.target.style.boxShadow = "0 0 0 3px rgba(217,119,6,0.12)"; };
-  const onBlr = e => { e.target.style.borderColor = "#e5e7eb"; e.target.style.boxShadow = "none"; };
+  // ── Shared classnames (mirrors VehicleDetectionScreen.jsx conventions) ─────
+  const cardCls   = isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200";
+  const cardHdrCls = isDark
+    ? "bg-gray-800 border-gray-700"
+    : "bg-gradient-to-b from-amber-50 to-amber-50 border-amber-100";
+  const inputCls = `w-full px-3 py-1.5 rounded-lg border text-sm outline-none transition-colors focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 ${
+    isDark ? "bg-gray-800 border-gray-700 text-white placeholder:text-gray-600" : "bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
+  }`;
+  const lockedFieldCls = isDark
+    ? "bg-gray-800 border-amber-800/60"
+    : "bg-amber-50 border-amber-200";
+
+  const scaleStatusLabel = !scaleConnected ? "No Signal" : isStable ? "Stable" : "Live";
+  const scaleStatusDot   = !scaleConnected ? "bg-red-500" : isStable ? "bg-green-500" : "bg-amber-500 animate-pulse";
 
   // ─── RENDER ───────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: "#f8fafc" }}>
+    <div className={`min-h-screen flex flex-col ${isDark ? "bg-gray-950" : "bg-slate-100"}`}>
 
       {/* ── HEADER ─────────────────────────────────────────────────────────── */}
-      <header className="shrink-0 px-6 py-3 flex items-center justify-between"
-        style={{ background: "#fff", borderBottom: "1px solid #e5e7eb", boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
+      <header className={`shrink-0 px-6 py-3 flex items-center justify-between border-b shadow-sm ${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
         <div className="flex items-center gap-3">
           <img src={logo} alt="Qalitrack" className="h-12 w-auto" />
-          <div className="w-px h-7 bg-gray-200" />
+          <div className={`w-px h-7 ${isDark ? "bg-gray-700" : "bg-gray-200"}`} />
           <div>
-            <h1 className="text-base font-bold" style={{ color: "#111827" }}>
+            <h1 className={`text-base font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
               {isSecondWeigh ? "Second (Tare) Weight" : "Self-Service Weighing"}
             </h1>
-            <p className="text-xs" style={{ color: "#6b7280" }}>
+            <p className={`text-xs ${isDark ? "text-gray-500" : "text-gray-400"}`}>
               {isSecondWeigh
                 ? `Completing transaction · First weight: ${existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg`
                 : "RFID verified · NFC authenticated · Unmanned mode"
@@ -371,28 +439,29 @@ export default function WeighingScreen({
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {form.noPlate    && <Pill bg="#f0fdf4" border="#bbf7d0" color="#16a34a">✓ {form.noPlate}</Pill>}
-          {form.driverName && <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">✓ {form.driverName}</Pill>}
-          {isSecondWeigh && (
-            <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">
-              ⚠️ 2nd Weight · 1st: {existingTransaction?.firstWeight ?? "—"} kg
-            </Pill>
-          )}
-          <Pill bg="#fffbeb" border="#fcd34d" color="#92400e">🔒 {form.weighBridgeName}</Pill>
-          <Pill bg="#dcfce7" border="#bbf7d0" color="#16a34a">● LIVE</Pill>
+          {form.noPlate    && <Pill isDark={isDark} tone="green">✓ {form.noPlate}</Pill>}
+          {form.driverName && <Pill isDark={isDark} tone="amber">✓ {form.driverName}</Pill>}
+          {isSecondWeigh && <Pill isDark={isDark} tone="amber">⚠️ 2nd Weight · 1st: {existingTransaction?.firstWeight ?? "—"} kg</Pill>}
+          <Pill isDark={isDark} tone="amber">🔒 {form.weighBridgeName}</Pill>
+          <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold border ${
+            !scaleConnected
+              ? isDark ? "bg-red-900/30 border-red-800 text-red-400" : "bg-red-50 border-red-200 text-red-600"
+              : isDark ? "bg-green-900/30 border-green-800 text-green-400" : "bg-green-50 border-green-200 text-green-700"
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${scaleStatusDot}`} /> {scaleStatusLabel}
+          </span>
         </div>
       </header>
 
       {/* ── SECOND WEIGHT BANNER ────────────────────────────────────────────── */}
       {isSecondWeigh && (
-        <div className="shrink-0 px-6 py-3 flex items-center gap-4"
-          style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", borderBottom: "2px solid #fcd34d" }}>
+        <div className={`shrink-0 px-6 py-3 flex items-center gap-4 border-b-2 ${isDark ? "bg-amber-950/30 border-amber-800" : "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-300"}`}>
           <span className="text-2xl">⚖️</span>
           <div>
-            <p className="text-sm font-black" style={{ color: "#d97706" }}>
+            <p className={`text-sm font-black ${isDark ? "text-amber-400" : "text-amber-700"}`}>
               SECOND WEIGHING MODE — Completing Existing Transaction
             </p>
-            <p className="text-xs" style={{ color: "#92400e" }}>
+            <p className={`text-xs ${isDark ? "text-amber-300/80" : "text-amber-800"}`}>
               Ticket: <strong>{existingTransaction?.ticketID ?? existingTransaction?.id ?? "—"}</strong>
               {" · "}
               First weight (gross): <strong>{existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} kg</strong>
@@ -403,23 +472,21 @@ export default function WeighingScreen({
         </div>
       )}
 
-
       {/* ── BODY ───────────────────────────────────────────────────────────── */}
       <div className="flex-1 overflow-auto px-6 py-5 flex flex-col gap-5">
         <div className="grid grid-cols-12 gap-4">
 
           {/* ── Vehicle Card ─────────────────────────────────────────────── */}
-          <div className="col-span-4" style={card}>
-            <div style={cardHdr}>
-              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Vehicle</p>
-              <Pill bg="#f0fdf4" border="#bbf7d0" color="#16a34a">✓ RFID Verified</Pill>
+          <div className={`col-span-4 rounded-2xl border overflow-hidden ${cardCls}`}>
+            <div className={`px-4 py-2.5 flex items-center justify-between border-b ${cardHdrCls}`}>
+              <p className={`text-xs font-bold uppercase tracking-wide ${isDark ? "text-amber-400" : "text-amber-700"}`}>Vehicle</p>
+              <Pill isDark={isDark} tone="green">✓ RFID Verified</Pill>
             </div>
             <div className="p-4 space-y-3">
-              <div className="rounded-xl py-3 text-center"
-                style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", border: "2px solid #fcd34d" }}>
-                <p className="text-xs font-semibold uppercase tracking-wider mb-0.5" style={{ color: "#92400e" }}>Registration</p>
-                <p className="text-3xl font-black tracking-widest" style={{ color: "#111827" }}>{form.noPlate || "—"}</p>
-                {form.rfidTag && <p className="font-mono text-xs mt-1" style={{ color: "#9ca3af" }}>{form.rfidTag}</p>}
+              <div className={`rounded-xl py-3 text-center border-2 ${isDark ? "bg-amber-950/20 border-amber-800/60" : "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-300"}`}>
+                <p className={`text-xs font-semibold uppercase tracking-wider mb-0.5 ${isDark ? "text-amber-400" : "text-amber-700"}`}>Registration</p>
+                <p className={`text-3xl font-black tracking-widest ${isDark ? "text-white" : "text-gray-900"}`}>{form.noPlate || "—"}</p>
+                {form.rfidTag && <p className={`font-mono text-xs mt-1 ${isDark ? "text-gray-500" : "text-gray-400"}`}>{form.rfidTag}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-2">
@@ -428,63 +495,60 @@ export default function WeighingScreen({
                   { label: "Make",     value: form.vehicleMake  },
                   { label: "Model",    value: form.vehicleModel },
                   { label: "Capacity", value: form.capacity ? `${form.capacity} kg` : null },
-                ].filter(f => f.value).map(f => <InfoChip key={f.label} label={f.label} value={f.value} />)}
+                ].filter(f => f.value).map(f => <InfoChip key={f.label} label={f.label} value={f.value} isDark={isDark} />)}
               </div>
 
-              <ReadOnlyField label="Owner"       value={form.ownerId}         icon="👤" fromRfid />
-              <ReadOnlyField label="Transporter" value={form.transporterName} icon="🚛" fromRfid required />
-              <ReadOnlyField label="Supplier"    value={form.supplierName}    icon="🏭" fromRfid />
-              {form.saccoName && <ReadOnlyField label="SACCO" value={form.saccoName} icon="🤝" fromRfid />}
+              <ReadOnlyField label="Owner"       value={form.ownerId}         icon="👤" fromRfid isDark={isDark} />
+              <ReadOnlyField label="Transporter" value={form.transporterName} icon="🚛" fromRfid required isDark={isDark} />
+              <ReadOnlyField label="Supplier"    value={form.supplierName}    icon="🏭" fromRfid isDark={isDark} />
+              {form.saccoName && <ReadOnlyField label="SACCO" value={form.saccoName} icon="🤝" fromRfid isDark={isDark} />}
             </div>
           </div>
 
           {/* ── Driver Card ──────────────────────────────────────────────── */}
-          <div className="col-span-3" style={card}>
-            <div style={cardHdr}>
-              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>Driver / Operator</p>
-              <Pill bg="#eff6ff" border="#bfdbfe" color="#1d4ed8">✓ NFC Auth</Pill>
+          <div className={`col-span-3 rounded-2xl border overflow-hidden ${cardCls}`}>
+            <div className={`px-4 py-2.5 flex items-center justify-between border-b ${cardHdrCls}`}>
+              <p className={`text-xs font-bold uppercase tracking-wide ${isDark ? "text-amber-400" : "text-amber-700"}`}>Driver / Operator</p>
+              <Pill isDark={isDark} tone="blue">✓ NFC Auth</Pill>
             </div>
             <div className="p-4 space-y-3">
               {form.driverName ? (
                 <>
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
-                      style={{ background: "linear-gradient(135deg,#dbeafe,#eff6ff)", border: "2px solid #bfdbfe" }}>
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl flex-shrink-0 border-2 ${isDark ? "bg-blue-950/40 border-blue-800" : "bg-gradient-to-br from-blue-100 to-blue-50 border-blue-200"}`}>
                       👤
                     </div>
                     <div>
-                      <p className="font-bold text-sm" style={{ color: "#111827" }}>{form.driverName}</p>
-                      {form.employeeId && <p className="text-xs font-mono" style={{ color: "#6b7280" }}>ID: {form.employeeId}</p>}
+                      <p className={`font-bold text-sm ${isDark ? "text-white" : "text-gray-900"}`}>{form.driverName}</p>
+                      {form.employeeId && <p className={`text-xs font-mono ${isDark ? "text-gray-500" : "text-gray-500"}`}>ID: {form.employeeId}</p>}
                     </div>
                   </div>
-                  <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-                    style={{ background: "#fffbeb", border: "1px solid #fcd34d" }}>
+                  <div className={`rounded-lg px-3 py-2 flex items-center gap-2 border ${isDark ? "bg-amber-950/20 border-amber-800/60" : "bg-amber-50 border-amber-300"}`}>
                     <span>🔒</span>
                     <div>
-                      <p className="text-xs font-bold" style={{ color: "#92400e" }}>Operator (locked)</p>
-                      <p className="text-xs font-semibold" style={{ color: "#111827" }}>{form.operatorName}</p>
+                      <p className={`text-xs font-bold ${isDark ? "text-amber-400" : "text-amber-700"}`}>Operator (locked)</p>
+                      <p className={`text-xs font-semibold ${isDark ? "text-white" : "text-gray-900"}`}>{form.operatorName}</p>
                     </div>
                   </div>
-                  {form.driverPhone && <DRow label="Phone"   value={form.driverPhone} />}
-                  {form.licenseNo   && <DRow label="Licence" value={form.licenseNo}   />}
-                  {form.nfcUid      && <DRow label="NFC UID" value={form.nfcUid} mono />}
+                  {form.driverPhone && <DRow label="Phone"   value={form.driverPhone} isDark={isDark} />}
+                  {form.licenseNo   && <DRow label="Licence" value={form.licenseNo}   isDark={isDark} />}
+                  {form.nfcUid      && <DRow label="NFC UID" value={form.nfcUid} mono isDark={isDark} />}
                 </>
               ) : (
                 <div className="flex flex-col items-center justify-center py-8 text-center">
                   <span className="text-4xl mb-2">👤</span>
-                  <p className="text-xs" style={{ color: "#9ca3af" }}>No driver authenticated</p>
+                  <p className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>No driver authenticated</p>
                 </div>
               )}
 
               {/* Show first weight card in second-weigh mode */}
               {isSecondWeigh && (
-                <div className="rounded-xl p-3 mt-2"
-                  style={{ background: "linear-gradient(135deg,#fffbeb,#fff7ed)", border: "1.5px solid #fcd34d" }}>
-                  <p className="text-xs font-bold uppercase mb-1" style={{ color: "#d97706" }}>First Weight (Gross)</p>
-                  <p className="text-2xl font-black font-mono" style={{ color: "#111827" }}>
-                    {existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} <span className="text-sm font-normal text-gray-400">kg</span>
+                <div className={`rounded-xl p-3 mt-2 border ${isDark ? "bg-amber-950/20 border-amber-800/60" : "bg-gradient-to-r from-amber-50 to-orange-50 border-amber-300"}`}>
+                  <p className={`text-xs font-bold uppercase mb-1 ${isDark ? "text-amber-400" : "text-amber-700"}`}>First Weight (Gross)</p>
+                  <p className={`text-2xl font-black font-mono ${isDark ? "text-white" : "text-gray-900"}`}>
+                    {existingTransaction?.firstWeight ?? existingTransaction?.grossWeight ?? "—"} <span className={`text-sm font-normal ${isDark ? "text-gray-600" : "text-gray-400"}`}>kg</span>
                   </p>
-                  <p className="text-xs mt-1" style={{ color: "#92400e" }}>
+                  <p className={`text-xs mt-1 ${isDark ? "text-amber-300/80" : "text-amber-800"}`}>
                     Captured: {existingTransaction?.createdAt ? new Date(existingTransaction.createdAt).toLocaleString() : "—"}
                   </p>
                 </div>
@@ -493,16 +557,19 @@ export default function WeighingScreen({
           </div>
 
           {/* ── Weight Card ──────────────────────────────────────────────── */}
-          <div className="col-span-5 flex flex-col" style={card}>
-            <div style={cardHdr}>
-              <p className="text-xs font-bold uppercase tracking-wide" style={{ color: "#d97706" }}>
+          <div className={`col-span-5 flex flex-col rounded-2xl border overflow-hidden ${cardCls}`}>
+            <div className={`px-4 py-2.5 flex items-center justify-between border-b ${cardHdrCls}`}>
+              <p className={`text-xs font-bold uppercase tracking-wide ${isDark ? "text-amber-400" : "text-amber-700"}`}>
                 {isSecondWeigh ? "Second (Tare) Weight" : "Weight Reading"}
               </p>
-              <div className="flex rounded-lg overflow-hidden" style={{ border: "1.5px solid #e5e7eb" }}>
+              <div className={`flex rounded-lg overflow-hidden border ${isDark ? "border-gray-700" : "border-gray-200"}`}>
                 {["captured", "manual"].map(m => (
                   <button key={m} onClick={() => setWeightMode(m)}
-                    className="px-3 py-0.5 text-xs font-semibold transition-all"
-                    style={{ background: weightMode === m ? "#d97706" : "#fff", color: weightMode === m ? "#fff" : "#6b7280" }}>
+                    className={`px-3 py-0.5 text-xs font-semibold transition-all ${
+                      weightMode === m
+                        ? "bg-amber-500 text-white"
+                        : isDark ? "bg-gray-800 text-gray-400" : "bg-white text-gray-500"
+                    }`}>
                     {m === "captured" ? "⚡ Captured" : "✏️ Manual"}
                   </button>
                 ))}
@@ -511,36 +578,38 @@ export default function WeighingScreen({
             <div className="flex-1 flex flex-col items-center justify-center py-6 gap-2">
               {weightMode === "captured" ? (
                 <>
-                  <p className="text-6xl font-mono font-bold" style={{ color: isStable ? "#16a34a" : "#d97706" }}>
+                  {!scaleConnected && (
+                    <p className={`text-xs font-semibold mb-1 ${isDark ? "text-red-400" : "text-red-600"}`}>
+                      ⚠ No signal from scale — check hardware connection
+                    </p>
+                  )}
+                  <p className={`text-6xl font-mono font-bold ${!scaleConnected ? (isDark ? "text-gray-700" : "text-gray-300") : isStable ? "text-green-600" : "text-amber-500"}`}>
                     {capturedWeight.toLocaleString()}
                   </p>
-                  <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG</p>
-                  <span className="px-3 py-0.5 rounded-full text-xs font-bold" style={{
-                    background: isStable ? "#dcfce7" : "#fef3c7",
-                    color:      isStable ? "#16a34a" : "#d97706",
-                    border:     isStable ? "1px solid #bbf7d0" : "1px solid #fcd34d",
-                  }}>
+                  <p className={`text-sm font-semibold ${isDark ? "text-gray-600" : "text-gray-400"}`}>KG</p>
+                  <span className={`px-3 py-0.5 rounded-full text-xs font-bold border ${
+                    isStable
+                      ? isDark ? "bg-green-900/30 border-green-800 text-green-400" : "bg-green-50 border-green-200 text-green-700"
+                      : isDark ? "bg-amber-950/30 border-amber-800 text-amber-400" : "bg-amber-50 border-amber-300 text-amber-700"
+                  }`}>
                     {isStable ? "● Stable" : "● Stabilising…"}
                   </span>
 
                   {/* Net weight preview in second-weigh mode */}
                   {isSecondWeigh && capturedWeight > 0 && (existingTransaction?.firstWeight ?? 0) > 0 && (
-                    <div className="mt-3 px-4 py-2 rounded-xl"
-                      style={{ background: "#f0fdf4", border: "1.5px solid #bbf7d0" }}>
-                      <p className="text-xs font-bold uppercase" style={{ color: "#166534" }}>Net Weight Preview</p>
-                      <p className="text-xl font-black font-mono" style={{ color: "#16a34a" }}>
+                    <div className={`mt-3 px-4 py-2 rounded-xl border ${isDark ? "bg-green-900/20 border-green-800" : "bg-green-50 border-green-200"}`}>
+                      <p className={`text-xs font-bold uppercase ${isDark ? "text-green-400" : "text-green-800"}`}>Net Weight Preview</p>
+                      <p className={`text-xl font-black font-mono ${isDark ? "text-green-400" : "text-green-600"}`}>
                         {Math.abs((existingTransaction?.firstWeight ?? 0) - capturedWeight).toLocaleString()} kg
                       </p>
                     </div>
                   )}
 
                   <div className="mt-2 flex gap-2 flex-wrap justify-center">
-                    <span className="text-xs px-2 py-1 rounded-lg font-semibold"
-                      style={{ background: "#fffbeb", color: "#92400e", border: "1px solid #fcd34d" }}>
+                    <span className={`text-xs px-2 py-1 rounded-lg font-semibold border ${isDark ? "bg-amber-950/20 text-amber-400 border-amber-800/60" : "bg-amber-50 text-amber-700 border-amber-300"}`}>
                       🔒 {form.weighBridgeName || "Factory A"}
                     </span>
-                    <span className="text-xs px-2 py-1 rounded-lg font-semibold"
-                      style={{ background: "#f0fdf4", color: "#166534", border: "1px solid #bbf7d0" }}>
+                    <span className={`text-xs px-2 py-1 rounded-lg font-semibold border ${isDark ? "bg-green-900/20 text-green-400 border-green-800" : "bg-green-50 text-green-800 border-green-200"}`}>
                       Mode: Unmanned
                     </span>
                   </div>
@@ -549,9 +618,9 @@ export default function WeighingScreen({
                 <>
                   <input type="number" placeholder="0" value={manualWeight}
                     onChange={e => setManualWeight(e.target.value)}
-                    style={{ ...inputStyle, width: "180px", fontSize: "32px", textAlign: "center" }}
-                    onFocus={onFoc} onBlur={onBlr} />
-                  <p className="text-sm font-semibold" style={{ color: "#9ca3af" }}>KG (manual)</p>
+                    className={`${inputCls} w-[180px] text-center`}
+                    style={{ fontSize: "32px" }} />
+                  <p className={`text-sm font-semibold ${isDark ? "text-gray-600" : "text-gray-400"}`}>KG (manual)</p>
                 </>
               )}
             </div>
@@ -559,15 +628,15 @@ export default function WeighingScreen({
         </div>
 
         {/* ── Transaction Details ──────────────────────────────────────────── */}
-        <div style={card}>
-          <div style={cardHdr}>
+        <div className={`rounded-2xl border overflow-hidden ${cardCls}`}>
+          <div className={`px-4 py-2.5 flex items-center justify-between border-b ${cardHdrCls}`}>
             <div className="flex items-center gap-2">
-              <div className="w-1 h-5 rounded-full" style={{ background: "linear-gradient(180deg,#d97706,#f59e0b)" }} />
-              <p className="text-sm font-bold" style={{ color: "#111827" }}>
+              <div className="w-1 h-5 rounded-full bg-gradient-to-b from-amber-600 to-amber-400" />
+              <p className={`text-sm font-bold ${isDark ? "text-white" : "text-gray-900"}`}>
                 {isSecondWeigh ? "Transaction Details (from first weighing)" : "Transaction Details"}
               </p>
             </div>
-            <p className="text-xs" style={{ color: "#9ca3af" }}>
+            <p className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>
               {isSecondWeigh
                 ? "Pre-filled from original transaction — update if needed"
                 : "🔒 = auto-filled from RFID · remaining fields are optional"
@@ -577,7 +646,7 @@ export default function WeighingScreen({
           <div className="p-5">
             <div className="grid grid-cols-4 gap-4 mb-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Commodity</label>
+                <label className={`block text-xs font-semibold mb-1 ${isDark ? "text-gray-500" : "text-gray-500"}`}>Commodity</label>
                 <Select
                   showSearch placeholder="Search commodity…"
                   onSearch={debouncedP}
@@ -591,36 +660,34 @@ export default function WeighingScreen({
                 </Select>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Customer Name</label>
+                <label className={`block text-xs font-semibold mb-1 ${isDark ? "text-gray-500" : "text-gray-500"}`}>Customer Name</label>
                 <input placeholder="Customer name" value={form.customerName}
                   onChange={e => setField("customerName", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+                  className={inputCls} />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Origin</label>
+                <label className={`block text-xs font-semibold mb-1 ${isDark ? "text-gray-500" : "text-gray-500"}`}>Origin</label>
                 <input placeholder="Origin" value={form.originName}
                   onChange={e => setField("originName", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+                  className={inputCls} />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Destination</label>
+                <label className={`block text-xs font-semibold mb-1 ${isDark ? "text-gray-500" : "text-gray-500"}`}>Destination</label>
                 <input placeholder="Destination" value={form.destinationName}
                   onChange={e => setField("destinationName", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+                  className={inputCls} />
               </div>
             </div>
 
             <div className="grid grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-semibold mb-1"
-                  style={{ color: "#d97706" }}>
-                  Weighbridge {isSecondWeigh ? "(locked to original)" : <span style={{ color: "#ef4444" }}>*</span>}
+                <label className={`block text-xs font-semibold mb-1 ${isDark ? "text-amber-400" : "text-amber-700"}`}>
+                  Weighbridge {isSecondWeigh ? "(locked to original)" : <span className="text-red-500">*</span>}
                 </label>
                 {isSecondWeigh ? (
-                  <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
-                    style={{ background: "#fffbeb", border: "1.5px solid #fcd34d" }}>
+                  <div className={`rounded-lg px-3 py-2 flex items-center gap-2 h-9 border ${lockedFieldCls}`}>
                     <span className="text-xs">🔒</span>
-                    <span className="text-sm font-semibold" style={{ color: "#111827" }}>{form.weighBridgeName}</span>
+                    <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-gray-900"}`}>{form.weighBridgeName}</span>
                   </div>
                 ) : (
                   <Select value={form.weighBridgeName || undefined}
@@ -634,19 +701,17 @@ export default function WeighingScreen({
                 )}
               </div>
               <div>
-                <label className="block text-xs font-semibold text-amber-600 mb-1">Weigh Mode (locked)</label>
-                <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
-                  style={{ background: "#fffbeb", border: "1.5px solid #fcd34d" }}>
+                <label className="block text-xs font-semibold mb-1 text-amber-600">Weigh Mode (locked)</label>
+                <div className={`rounded-lg px-3 py-2 flex items-center gap-2 h-9 border ${lockedFieldCls}`}>
                   <span className="text-xs">🔒</span>
-                  <span className="text-sm font-semibold" style={{ color: "#111827" }}>Unmanned</span>
+                  <span className={`text-sm font-semibold ${isDark ? "text-white" : "text-gray-900"}`}>Unmanned</span>
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Operation</label>
+                <label className={`block text-xs font-semibold mb-1 ${isDark ? "text-gray-500" : "text-gray-500"}`}>Operation</label>
                 {isSecondWeigh ? (
-                  <div className="rounded-lg px-3 py-2 flex items-center gap-2 h-9"
-                    style={{ background: "#f9fafb", border: "1.5px solid #e5e7eb" }}>
-                    <span className="text-sm font-semibold" style={{ color: "#374151" }}>{form.operation}</span>
+                  <div className={`rounded-lg px-3 py-2 flex items-center gap-2 h-9 border ${isDark ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-200"}`}>
+                    <span className={`text-sm font-semibold ${isDark ? "text-gray-300" : "text-gray-700"}`}>{form.operation}</span>
                   </div>
                 ) : (
                   <Select value={form.operation} onChange={v => setField("operation", v)} style={{ width: "100%" }}>
@@ -657,10 +722,10 @@ export default function WeighingScreen({
                 )}
               </div>
               <div>
-                <label className="block text-xs font-semibold text-gray-500 mb-1">Notes</label>
+                <label className={`block text-xs font-semibold mb-1 ${isDark ? "text-gray-500" : "text-gray-500"}`}>Notes</label>
                 <input placeholder="Additional notes…" value={form.notes}
                   onChange={e => setField("notes", e.target.value)}
-                  style={inputStyle} onFocus={onFoc} onBlur={onBlr} />
+                  className={inputCls} />
               </div>
             </div>
           </div>
@@ -668,25 +733,23 @@ export default function WeighingScreen({
 
         {/* ── Error Banner ─────────────────────────────────────────────────── */}
         {(apiError || parentError) && (
-          <div className="rounded-xl px-4 py-3 flex items-center gap-3"
-            style={{ background: "#fef2f2", border: "1px solid #fecaca" }}>
+          <div className={`rounded-xl px-4 py-3 flex items-center gap-3 border ${isDark ? "bg-red-950/30 border-red-900" : "bg-red-50 border-red-200"}`}>
             <span className="text-lg">⚠️</span>
-            <p className="text-sm font-medium" style={{ color: "#dc2626" }}>{apiError || parentError}</p>
+            <p className={`text-sm font-medium ${isDark ? "text-red-400" : "text-red-600"}`}>{apiError || parentError}</p>
           </div>
         )}
       </div>
 
       {/* ── FOOTER ─────────────────────────────────────────────────────────── */}
-      <footer className="shrink-0 px-6 py-4 flex items-center justify-between"
-        style={{ background: "#fff", borderTop: "1px solid #e5e7eb", boxShadow: "0 -1px 3px rgba(0,0,0,0.06)" }}>
+      <footer className={`shrink-0 px-6 py-4 flex items-center justify-between border-t ${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"}`}>
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="px-4 py-2 rounded-lg text-sm font-semibold"
-            style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb" }}>
+          <button onClick={onBack}
+            className={`px-4 py-2 rounded-lg text-sm font-semibold border ${isDark ? "bg-gray-800 text-gray-300 border-gray-700" : "bg-gray-100 text-gray-700 border-gray-200"}`}>
             ← Back
           </button>
-          <div className="text-sm" style={{ color: "#6b7280" }}>
+          <div className={`text-sm ${isDark ? "text-gray-500" : "text-gray-500"}`}>
             {isSecondWeigh ? "Tare weight: " : "Weight: "}
-            <span className="font-bold" style={{ color: "#111827" }}>{effectiveWeight.toLocaleString()} kg</span>
+            <span className={`font-bold ${isDark ? "text-white" : "text-gray-900"}`}>{effectiveWeight.toLocaleString()} kg</span>
             {isSecondWeigh && (existingTransaction?.firstWeight ?? 0) > 0 && effectiveWeight > 0 && (
               <span className="ml-2 text-xs text-green-600 font-semibold">
                 Net: {Math.abs((existingTransaction?.firstWeight ?? 0) - effectiveWeight).toLocaleString()} kg
@@ -697,16 +760,11 @@ export default function WeighingScreen({
         <button
           onClick={handleCapture}
           disabled={submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0}
-          className="px-8 py-2.5 rounded-xl text-sm font-bold text-white transition-all"
-          style={{
-            background: submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0
-              ? "#9ca3af"
-              : isSecondWeigh
-              ? "linear-gradient(135deg,#d97706,#ea580c)"
-              : "linear-gradient(135deg,#d97706,#f59e0b)",
-            boxShadow: submitting ? "none" : "0 3px 10px rgba(217,119,6,0.35)",
-            cursor: submitting ? "not-allowed" : "pointer",
-          }}>
+          className={`px-8 py-2.5 rounded-xl text-sm font-bold text-white transition-all ${
+            submitting || (weightMode === "captured" && !isStable) || effectiveWeight <= 0
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-700 hover:to-amber-600 shadow-lg shadow-amber-600/30 cursor-pointer"
+          }`}>
           {submitting
             ? "Saving…"
             : isSecondWeigh
@@ -720,56 +778,62 @@ export default function WeighingScreen({
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
-function Pill({ bg, border, color, children }) {
+function Pill({ tone, isDark, children }) {
+  const tones = {
+    green: isDark ? "bg-green-900/30 border-green-800 text-green-400" : "bg-green-50 border-green-200 text-green-700",
+    amber: isDark ? "bg-amber-950/30 border-amber-800 text-amber-400" : "bg-amber-50 border-amber-300 text-amber-700",
+    blue:  isDark ? "bg-blue-950/30 border-blue-800 text-blue-400"   : "bg-blue-50 border-blue-200 text-blue-700",
+  };
   return (
-    <span className="px-2.5 py-0.5 rounded-full text-xs font-bold"
-      style={{ background: bg, border: `1px solid ${border}`, color }}>
+    <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${tones[tone]}`}>
       {children}
     </span>
   );
 }
 
-function InfoChip({ label, value }) {
+function InfoChip({ label, value, isDark }) {
   return (
-    <div className="rounded-lg p-2" style={{ background: "#f9fafb", border: "1px solid #f3f4f6" }}>
-      <p className="text-xs font-bold uppercase tracking-wider mb-0.5" style={{ color: "#9ca3af" }}>{label}</p>
-      <p className="text-xs font-bold truncate" style={{ color: "#374151" }}>{value}</p>
+    <div className={`rounded-lg p-2 border ${isDark ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-100"}`}>
+      <p className={`text-xs font-bold uppercase tracking-wider mb-0.5 ${isDark ? "text-gray-600" : "text-gray-400"}`}>{label}</p>
+      <p className={`text-xs font-bold truncate ${isDark ? "text-gray-200" : "text-gray-700"}`}>{value}</p>
     </div>
   );
 }
 
-function ReadOnlyField({ label, value, icon, fromRfid, required }) {
+function ReadOnlyField({ label, value, icon, fromRfid, required, isDark }) {
   const hasValue = Boolean(value && String(value).trim().length > 0);
   return (
     <div>
       <div className="flex items-center gap-1 mb-1">
-        <p className="text-xs font-bold uppercase tracking-wider" style={{ color: "#d97706" }}>
-          {label}{required && <span style={{ color: "#ef4444" }}>*</span>}
+        <p className={`text-xs font-bold uppercase tracking-wider ${isDark ? "text-amber-400" : "text-amber-700"}`}>
+          {label}{required && <span className="text-red-500">*</span>}
         </p>
         {fromRfid && (
-          <span className="text-xs px-1.5 py-0 rounded font-semibold"
-            style={{ background: "#f0fdf4", color: "#16a34a", border: "1px solid #bbf7d0" }}>
+          <span className={`text-xs px-1.5 py-0 rounded font-semibold border ${isDark ? "bg-green-900/30 text-green-400 border-green-800" : "bg-green-50 text-green-700 border-green-200"}`}>
             RFID
           </span>
         )}
       </div>
-      <div className="rounded-lg px-3 py-2 flex items-center gap-2"
-        style={{ background: hasValue ? "#fffbeb" : "#f9fafb", border: hasValue ? "1.5px solid #fcd34d" : "1.5px solid #f3f4f6" }}>
+      <div className={`rounded-lg px-3 py-2 flex items-center gap-2 border ${
+        hasValue
+          ? isDark ? "bg-amber-950/20 border-amber-800/60" : "bg-amber-50 border-amber-300"
+          : isDark ? "bg-gray-800 border-gray-700" : "bg-gray-50 border-gray-100"
+      }`}>
         <span className="text-base">{icon}</span>
-        <span className="text-sm font-semibold" style={{ color: hasValue ? "#111827" : "#9ca3af" }}>
+        <span className={`text-sm font-semibold ${hasValue ? (isDark ? "text-white" : "text-gray-900") : (isDark ? "text-gray-600" : "text-gray-400")}`}>
           {hasValue ? value : "Not provided"}
         </span>
-        {hasValue && <span className="ml-auto text-xs" style={{ color: "#d97706" }}>🔒</span>}
+        {hasValue && <span className={`ml-auto text-xs ${isDark ? "text-amber-400" : "text-amber-600"}`}>🔒</span>}
       </div>
     </div>
   );
 }
 
-function DRow({ label, value, mono }) {
+function DRow({ label, value, mono, isDark }) {
   return (
-    <div className="flex items-center justify-between py-1.5 px-2 rounded-lg" style={{ background: "#f9fafb" }}>
-      <span className="text-xs" style={{ color: "#9ca3af" }}>{label}</span>
-      <span className={`text-xs font-semibold ${mono ? "font-mono" : ""}`} style={{ color: "#374151" }}>{value}</span>
+    <div className={`flex items-center justify-between py-1.5 px-2 rounded-lg ${isDark ? "bg-gray-800" : "bg-gray-50"}`}>
+      <span className={`text-xs ${isDark ? "text-gray-600" : "text-gray-400"}`}>{label}</span>
+      <span className={`text-xs font-semibold ${mono ? "font-mono" : ""} ${isDark ? "text-gray-300" : "text-gray-700"}`}>{value}</span>
     </div>
   );
 }
