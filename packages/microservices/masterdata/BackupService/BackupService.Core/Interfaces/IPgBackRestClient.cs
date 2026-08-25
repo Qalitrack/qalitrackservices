@@ -15,10 +15,13 @@ public interface IPgBackRestClient
     Task<PgBackRestInfo> GetInfoAsync(CancellationToken ct = default);
 
     /// <summary>
-    /// Stops postgres-prod, restores the latest backup chain into its data volume via a
-    /// one-off container, then starts postgres-prod back up. Restores everything the
-    /// stanza covers at once — there is no per-schema/per-microservice restore with a
-    /// physical backup.
+    /// Stops postgres-prod, restores into its data volume via a one-off container, then
+    /// starts postgres-prod back up. Restores everything the stanza covers at once —
+    /// there is no per-schema/per-microservice restore with a physical backup.
     /// </summary>
-    Task RestoreAsync(CancellationToken ct = default);
+    /// <param name="backupLabel">
+    /// A specific pgBackRest backup label (full or incremental) to restore up to — passed
+    /// as pgbackrest's --set. Null/omitted restores the latest backup in the chain.
+    /// </param>
+    Task RestoreAsync(string? backupLabel = null, CancellationToken ct = default);
 }

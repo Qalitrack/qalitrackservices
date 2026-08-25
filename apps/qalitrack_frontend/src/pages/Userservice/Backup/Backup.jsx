@@ -6,6 +6,7 @@ const Backup = () => {
     const [error, setError] = useState(null);
     const [formData, setFormData] = useState({
         microservice: 'QalitrackDB',
+        backupType: 0, // 0 = Full, 1 = Incremental
         scheduleType: 'none',
         frequency: '',
         minute: '0',
@@ -28,6 +29,7 @@ const Backup = () => {
         try {
             const backupData = {
                 microservice: formData.microservice,
+                type: formData.backupType,
                 ...(formData.scheduleType === 'custom' && { cronSchedule: formData.customCron }),
                 ...(formData.scheduleType !== 'none' && formData.scheduleType !== 'custom' && {
                     cronSchedule: getCronExpression()
@@ -44,6 +46,7 @@ const Backup = () => {
 
             setFormData(prev => ({
                 microservice: 'QalitrackDB',
+                backupType: 0,
                 scheduleType: 'none',
                 frequency: '',
                 minute: '0',
@@ -114,6 +117,28 @@ const Backup = () => {
                             <Database className="h-4 w-4 text-amber-500 shrink-0" />
                             <span className="font-medium">QalitrackDB</span>
                             <span className="text-gray-400 text-xs">(postgres-prod · all schemas)</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Backup Type</label>
+                        <div className="grid grid-cols-2 gap-2">
+                            <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, backupType: 0 }))}
+                                className={`p-3 rounded border text-left ${formData.backupType === 0 ? 'border-amber-400 bg-amber-50' : 'border-gray-200 hover:bg-gray-50'}`}
+                            >
+                                <span className="font-medium block">Full</span>
+                                <span className="text-xs text-gray-500">A complete pgBackRest base backup. Always safe to run.</span>
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, backupType: 1 }))}
+                                className={`p-3 rounded border text-left ${formData.backupType === 1 ? 'border-amber-400 bg-amber-50' : 'border-gray-200 hover:bg-gray-50'}`}
+                            >
+                                <span className="font-medium block">Incremental</span>
+                                <span className="text-xs text-gray-500">Only changes since the last backup. Requires a prior Full backup to exist.</span>
+                            </button>
                         </div>
                     </div>
 
@@ -293,6 +318,7 @@ const Backup = () => {
                             onClick={() => {
                                 setFormData({
                                     microservice: 'QalitrackDB',
+                                    backupType: 0,
                                     scheduleType: 'none',
                                     customCron: '',
                                     frequency: '',

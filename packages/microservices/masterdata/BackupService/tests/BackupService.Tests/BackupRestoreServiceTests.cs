@@ -39,7 +39,7 @@ public class BackupRestoreServiceTests
         var act = async () => await _sut.RestoreBackupAsync("masterdata", backupFilePath);
 
         await act.Should().ThrowAsync<Exception>(); // ArgumentException for empty, NotSupportedException otherwise
-        _pgBackRest.Verify(p => p.RestoreAsync(It.IsAny<CancellationToken>()), Times.Never);
+        _pgBackRest.Verify(p => p.RestoreAsync(It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -51,7 +51,19 @@ public class BackupRestoreServiceTests
 
         result.IsSuccessful.Should().BeTrue();
         result.FullBackupUsed.Should().Be("pgbackrest:20260825-020000F");
-        _pgBackRest.Verify(p => p.RestoreAsync(It.IsAny<CancellationToken>()), Times.Once);
+        // Must pass the specific label through, not just "restore something" — otherwise
+        // restoring an older/non-latest chain entry would silently restore latest instead.
+        _pgBackRest.Verify(p => p.RestoreAsync("20260825-020000F", It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task RestoreBackupAsync_IncrementalIdentifier_PassesIncrementalLabelThrough()
+    {
+        _repo.Setup(r => r.GetMicroserviceAsync("masterdata", It.IsAny<CancellationToken>())).ReturnsAsync(ActiveMicroservice());
+
+        await _sut.RestoreBackupAsync("masterdata", "pgbackrest:20260825-020000F_20260826-020000I");
+
+        _pgBackRest.Verify(p => p.RestoreAsync("20260825-020000F_20260826-020000I", It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -64,14 +76,14 @@ public class BackupRestoreServiceTests
         var act = async () => await _sut.RestoreBackupAsync("masterdata", "pgbackrest:20260825-020000F");
 
         await act.Should().ThrowAsync<InvalidOperationException>();
-        _pgBackRest.Verify(p => p.RestoreAsync(It.IsAny<CancellationToken>()), Times.Never);
+        _pgBackRest.Verify(p => p.RestoreAsync(It.IsAny<string?>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
     public async Task RestoreBackupAsync_PgBackRestThrows_PausesMicroserviceAndWraps()
     {
         _repo.Setup(r => r.GetMicroserviceAsync("masterdata", It.IsAny<CancellationToken>())).ReturnsAsync(ActiveMicroservice());
-        _pgBackRest.Setup(p => p.RestoreAsync(It.IsAny<CancellationToken>()))
+        _pgBackRest.Setup(p => p.RestoreAsync(It.IsAny<string?>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("pgBackRest restore failed: missing WAL segment"));
 
         var act = async () => await _sut.RestoreBackupAsync("masterdata", "pgbackrest:20260825-020000F");

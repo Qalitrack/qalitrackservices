@@ -35,6 +35,8 @@ public class BackupRestoreService : IBackupRestoreService
     public static bool IsPgBackRestIdentifier(string backupFilePath) =>
         !string.IsNullOrWhiteSpace(backupFilePath) && backupFilePath.StartsWith(PgBackRestPrefix, StringComparison.Ordinal);
 
+    private static string ExtractLabel(string backupFilePath) => backupFilePath[PgBackRestPrefix.Length..];
+
     public async Task<RestoreResult> RestoreBackupAsync(string microservice, string backupFilePath, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(backupFilePath))
@@ -51,13 +53,14 @@ public class BackupRestoreService : IBackupRestoreService
             var ms = await ValidateMicroserviceAsync(microservice, ct);
             var startTime = DateTime.UtcNow;
 
+            var label = ExtractLabel(backupFilePath);
             _logger.LogWarning(
-                "Starting pgBackRest restore for {Microservice} — this restores the entire shared Postgres instance, not just {Microservice}'s schema.",
-                microservice, microservice);
+                "Starting pgBackRest restore to {Label} for {Microservice} — this restores the entire shared Postgres instance, not just {Microservice}'s schema.",
+                label, microservice, microservice);
 
             try
             {
-                await _pgBackRestClient.RestoreAsync(ct);
+                await _pgBackRestClient.RestoreAsync(label, ct);
 
                 await UpdateMicroserviceStatusAsync(ms, MicroserviceStatus.Active, ct);
 

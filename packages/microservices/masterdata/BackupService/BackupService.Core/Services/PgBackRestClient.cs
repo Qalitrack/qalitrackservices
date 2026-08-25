@@ -80,7 +80,7 @@ public class PgBackRestClient : IPgBackRestClient
         return ParseInfo(result.StandardOutput);
     }
 
-    public async Task RestoreAsync(CancellationToken ct = default)
+    public async Task RestoreAsync(string? backupLabel = null, CancellationToken ct = default)
     {
         _logger.LogWarning("Stopping {Container} to restore its data volume from pgBackRest — the whole stanza comes back together, there is no per-schema restore.", _options.PostgresContainerName);
         await RunDockerCommandAsync(new[] { "stop", _options.PostgresContainerName }, TimeSpan.FromSeconds(_options.ContainerStopStartTimeoutSeconds), ct);
@@ -94,14 +94,27 @@ public class PgBackRestClient : IPgBackRestClient
                 "-v", $"{_options.PostgresDataVolume}:/var/lib/postgresql/data",
                 "-v", $"{_options.PgBackRestRepoVolume}:/var/lib/pgbackrest",
                 _options.PostgresImage,
+                "pgbackrest", $"--stanza={_options.Stanza}", "--delta",
                 // --type=immediate stops recovery as soon as the restored backup set reaches
                 // consistency. Without it, pgBackRest's default replays *every* WAL segment
                 // archived since — since archive_command runs continuously regardless of when
                 // backups happen, that silently recovers to "now", not "this backup" (verified
                 // against a real pgbackrest run: without --type=immediate, data written after
                 // the last backup survived a restore).
-                "pgbackrest", $"--stanza={_options.Stanza}", "--delta", "--type=immediate", "--log-level-console=info", "restore"
+                "--type=immediate",
             };
+
+            // --set targets a specific backup label (full or incremental) — verified against
+            // a real chain of full+2 incrementals that restoring --set=<first incremental>
+            // correctly excludes data written after it, even though a later incremental and
+            // its data existed in the repo. Omitted, pgBackRest defaults to the latest backup.
+            if (!string.IsNullOrWhiteSpace(backupLabel) && !backupLabel.Equals("latest", StringComparison.OrdinalIgnoreCase))
+            {
+                restoreArgs.Add($"--set={backupLabel}");
+            }
+
+            restoreArgs.Add("--log-level-console=info");
+            restoreArgs.Add("restore");
 
             _logger.LogInformation("Running pgBackRest restore via a one-off container from {Image}", _options.PostgresImage);
             var result = await _processRunner.RunAsync("docker", restoreArgs, TimeSpan.FromMinutes(_options.RestoreTimeoutMinutes), ct);

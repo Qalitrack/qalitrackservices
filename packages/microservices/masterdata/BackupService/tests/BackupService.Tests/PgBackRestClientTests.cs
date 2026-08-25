@@ -151,6 +151,31 @@ public class PgBackRestClientTests
     }
 
     [Fact]
+    public async Task RestoreAsync_WithLabel_PassesSetArgument()
+    {
+        var runner = new FakeProcessRunner();
+        var client = CreateClient(runner);
+
+        await client.RestoreAsync("20260825-020000F_20260826-020000I");
+
+        runner.Invocations[1].Arguments.Should().Contain("--set=20260825-020000F_20260826-020000I");
+    }
+
+    [Fact]
+    public async Task RestoreAsync_NoLabelOrLatest_OmitsSetArgument()
+    {
+        var runner = new FakeProcessRunner();
+        var client = CreateClient(runner);
+
+        await client.RestoreAsync();
+        runner.Invocations[1].Arguments.Should().NotContain(a => a.StartsWith("--set="));
+
+        runner.Invocations.Clear();
+        await client.RestoreAsync("latest");
+        runner.Invocations[1].Arguments.Should().NotContain(a => a.StartsWith("--set="));
+    }
+
+    [Fact]
     public async Task RestoreAsync_RestoreFails_StillStartsPostgresBackUp()
     {
         var runner = new FakeProcessRunner();
