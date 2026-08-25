@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { backupAPI } from '../../../api/helpers/Backup/Backup';
-import { RefreshCw, Clock, AlertCircle, CheckCircle, Download, Upload, X } from 'lucide-react';
+import { RefreshCw, Clock, AlertCircle, CheckCircle, Download, Upload, X, Layers, GitBranch } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {backupApiClient} from "../../../api/helpers/BackupApiclient.js";
 
 const RestoreConfirmation = ({ backup, onConfirm, onCancel, isRestoring }) => {
     if (!backup) return null;
+    const isIncremental = backup.backupType === 1;
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -16,7 +17,18 @@ const RestoreConfirmation = ({ backup, onConfirm, onCancel, isRestoring }) => {
                         <X className="h-5 w-5" />
                     </button>
                 </div>
-                <p className="mb-4 text-sm text-gray-700">Are you sure you want to restore backup {backup.backupId}? This action cannot be undone.</p>
+                <p className="mb-2 text-sm text-gray-700">
+                    Restore to {isIncremental ? 'the incremental backup' : 'the full backup'} taken on{' '}
+                    <span className="font-medium">{new Date(backup.createdAt).toLocaleString()}</span>? This action cannot be undone.
+                </p>
+                {backup.isPhysical && (
+                    <p className="mb-4 text-sm bg-amber-50 border border-amber-200 rounded p-2 text-amber-800">
+                        This restores the entire shared Postgres instance, not just this service — every
+                        service is briefly unavailable while it stops, restores, and starts back up.
+                        Anything written after this point in the chain will be lost, including{' '}
+                        {isIncremental ? 'later incremental backups' : 'any incremental backups chained after it'}.
+                    </p>
+                )}
                 <div className="flex justify-end space-x-3">
                     <button
                         onClick={onCancel}
@@ -128,41 +140,62 @@ const AvailableBackups = ({ microservice, onClose }) => {
         return new Date(dateString).toLocaleString();
     };
 
-    const getBackupType = (type) => {
-        return type === 0 ? 'Full' : 'Incremental';
-    };
-
     const formatFileSize = (bytes) => {
-        if (bytes === 0) return '0 Bytes';
+        if (!bytes) return '0 Bytes';
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
+    // Groups the flat backup list into full+incremental chains so the chain
+    // structure is visible instead of an undifferentiated list — a Full backup
+    // is the chain's base, its Incrementals are nested underneath it in order.
+    const chains = useMemo(() => {
+        const byChain = new Map();
+        backups.forEach((b) => {
+            if (!byChain.has(b.chainId)) {
+                byChain.set(b.chainId, { chainId: b.chainId, full: null, incrementals: [] });
+            }
+            const entry = byChain.get(b.chainId);
+            if (b.backupType === 0) entry.full = b;
+            else entry.incrementals.push(b);
+        });
+
+        return Array.from(byChain.values())
+            .filter((c) => c.full)
+            .sort((a, b) => new Date(b.full.createdAt) - new Date(a.full.createdAt))
+            .map((c) => ({
+                ...c,
+                incrementals: [...c.incrementals].sort((x, y) => new Date(x.createdAt) - new Date(y.createdAt)),
+            }));
+    }, [backups]);
+
     const handleDownloadClick = (backup) => {
+        if (backup.isPhysical) {
+            toast.error("This is a pgBackRest physical backup — it can't be downloaded as a single file. Restore it in place instead.");
+            return;
+        }
         setBackupToDownload(backup);
     };
 
     const confirmDownload = async () => {
         if (!backupToDownload) return;
-        
+
         try {
-            // Use the existing backupApiClient to make the request
             const response = await backupApiClient.client.get(
                 `/Backup/download/${encodeURIComponent(microservice)}/${encodeURIComponent(backupToDownload.backupId)}`,
                 {
-                    responseType: 'blob', // Important for file downloads
+                    responseType: 'blob',
                     headers: {
                         'Accept': '*/*'
                     }
                 }
             );
 
-            // Get the filename from content-disposition header or use a fallback
             const contentDisposition = response.headers['content-disposition'];
             let filename = backupToDownload.fileName || `backup-${backupToDownload.backupId}.dump`;
-            
+
             if (contentDisposition) {
                 const filenameMatch = contentDisposition.match(/filename[^;=]*=((['"]).*?\2|[^;\n]*)/);
                 if (filenameMatch && filenameMatch[1]) {
@@ -170,27 +203,21 @@ const AvailableBackups = ({ microservice, onClose }) => {
                 }
             }
 
-            // Create a blob URL for the file
             const blob = new Blob([response.data], { type: response.headers['content-type'] });
             const url = window.URL.createObjectURL(blob);
-            
-            // Create a temporary link element
+
             const link = document.createElement('a');
             link.href = url;
             link.download = filename;
-            
-            // Append to body (required for Firefox)
+
             document.body.appendChild(link);
-            
-            // Trigger the download
             link.click();
-            
-            // Clean up
+
             setTimeout(() => {
                 window.URL.revokeObjectURL(url);
                 document.body.removeChild(link);
             }, 100);
-            
+
             toast.success('Download started successfully');
         } catch (error) {
             toast.error(`Failed to start download: ${error.message || 'Unknown error'}`);
@@ -210,12 +237,10 @@ const AvailableBackups = ({ microservice, onClose }) => {
         try {
             setIsRestoring(true);
 
-
             const result = await backupAPI.restoreBackupById(currentBackup.backupId, microservice);
             setRestoreResult(result);
             toast.success('Backup restoration started successfully');
 
-            // Refresh the backups list
             loadAvailableBackups();
         } catch (error) {
             toast.error(`Failed to restore backup: ${error.message || 'Unknown error'}`);
@@ -232,6 +257,32 @@ const AvailableBackups = ({ microservice, onClose }) => {
     const cancelDownload = () => {
         setBackupToDownload(null);
     };
+
+    const DownloadButton = ({ backup }) => (
+        <button
+            onClick={() => handleDownloadClick(backup)}
+            className={`p-1 rounded border transition-all ${
+                backup.isPhysical
+                    ? 'text-gray-300 border-gray-200 cursor-not-allowed'
+                    : 'text-amber-600 hover:bg-amber-50 border-amber-300 hover:border-amber-500 disabled:opacity-40'
+            }`}
+            title={backup.isPhysical ? "pgBackRest backups can't be downloaded as a single file" : 'Download backup'}
+            disabled={isRestoring || backup.isPhysical}
+        >
+            <Download className="w-3 h-3" />
+        </button>
+    );
+
+    const RestoreButton = ({ backup }) => (
+        <button
+            onClick={() => handleRestoreClick(backup)}
+            disabled={isRestoring}
+            className="p-1 rounded text-green-600 hover:bg-green-50 border border-green-300 hover:border-green-500 transition-all disabled:opacity-40"
+            title="Restore to this point"
+        >
+            <Upload className="w-3 h-3" />
+        </button>
+    );
 
     return (
         <>
@@ -299,86 +350,81 @@ const AvailableBackups = ({ microservice, onClose }) => {
                         </div>
                     )}
 
-                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
-                        <table className="w-full compact-table">
-                            <thead className="sticky top-0 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
-                            <tr>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">#</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Backup ID</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">File Name</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Type</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Created At</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">File Size</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-left uppercase tracking-wide">Latest</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Download</th>
-                                <th className="px-3 py-2 text-[9px] font-bold text-amber-900 text-center uppercase tracking-wide">Restore</th>
-                            </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100 bg-white">
-                            {loading && backups.length === 0 ? (
-                                <tr>
-                                    <td colSpan="9" className="px-3 py-4 text-xs text-gray-500 text-center">
-                                        Loading available backups...
-                                    </td>
-                                </tr>
-                            ) : backups.length === 0 ? (
-                                <tr>
-                                    <td colSpan="9" className="px-3 py-4 text-xs text-gray-500 text-center">
-                                        No backups found for {microservice}.
-                                    </td>
-                                </tr>
-                            ) : (
-                                backups.map((backup, index) => (
-                                    <tr key={backup.backupId} className={`hover:bg-amber-50/40 transition-all ${index % 2 === 0 ? "bg-white" : "bg-gray-50"}`}>
-                                        <td className="px-3 py-2 text-[10px] text-gray-500 font-semibold">{index + 1}</td>
-                                        <td className="px-3 py-2 text-[10px] font-bold text-gray-900">
-                                            {backup.backupId}
-                                        </td>
-                                        <td className="px-3 py-2 text-[10px] text-gray-600 font-mono">
-                                            {backup.fileName}
-                                        </td>
-                                        <td className="px-3 py-2 text-[10px] text-gray-600">
-                                            {getBackupType(backup.backupType)}
-                                        </td>
-                                        <td className="px-3 py-2 text-[10px] text-gray-600">
-                                            {formatDate(backup.createdAt)}
-                                        </td>
-                                        <td className="px-3 py-2 text-[10px] text-gray-600">
-                                            {formatFileSize(backup.fileSizeBytes)}
-                                        </td>
-                                        <td className="px-3 py-2 text-[10px]">
-                                            {backup.isLatest ? (
-                                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-green-100 text-green-800">
-                                                        <CheckCircle className="h-3 w-3 mr-1" /> Yes
-                                                    </span>
-                                            ) : 'No'}
-                                        </td>
-                                        <td className="px-3 py-2 text-center">
-                                            <button
-                                                onClick={() => handleDownloadClick(backup)}
-                                                className="p-1 rounded text-amber-600 hover:bg-amber-50 border border-amber-300 hover:border-amber-500 transition-all disabled:opacity-40"
-                                                title="Download backup"
-                                                disabled={isRestoring}
-                                            >
-                                                <Download className="w-3 h-3" />
-                                            </button>
-                                        </td>
-                                        <td className="px-3 py-2 text-center">
-                                            <button
-                                                onClick={() => handleRestoreClick(backup)}
-                                                disabled={isRestoring}
-                                                className="p-1 rounded text-green-600 hover:bg-green-50 border border-green-300 hover:border-green-500 transition-all disabled:opacity-40"
-                                                title="Restore from backup"
-                                            >
-                                                <Upload className="w-3 h-3" />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                            </tbody>
-                        </table>
-                    </div>
+                    {loading && chains.length === 0 ? (
+                        <div className="border border-gray-200 rounded-lg px-3 py-6 text-xs text-gray-500 text-center">
+                            Loading available backups...
+                        </div>
+                    ) : chains.length === 0 ? (
+                        <div className="border border-gray-200 rounded-lg px-3 py-6 text-xs text-gray-500 text-center">
+                            No backups found for {microservice}.
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {chains.map((chain) => (
+                                <div key={chain.chainId} className="border border-gray-200 rounded-lg overflow-hidden">
+                                    {/* Full backup — the chain's base */}
+                                    <div className="flex items-center justify-between gap-3 px-3 py-2.5 bg-gradient-to-b from-amber-50 to-amber-50 border-b-2 border-amber-200">
+                                        <div className="flex items-center gap-2.5 min-w-0">
+                                            <Layers className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+                                            <div className="min-w-0">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-[11px] font-bold text-gray-900">Full backup</span>
+                                                    {chain.full.isLatest && (
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-green-100 text-green-800">
+                                                            <CheckCircle className="h-3 w-3 mr-1" /> Latest chain
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div className="text-[10px] text-gray-500 font-mono truncate">{chain.full.backupId}</div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-4 shrink-0">
+                                            <span className="text-[10px] text-gray-600">{formatDate(chain.full.createdAt)}</span>
+                                            <span className="text-[10px] text-gray-600">{formatFileSize(chain.full.fileSizeBytes)}</span>
+                                            <div className="flex items-center gap-1.5">
+                                                <DownloadButton backup={chain.full} />
+                                                <RestoreButton backup={chain.full} />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Incrementals chained onto this full backup */}
+                                    {chain.incrementals.length === 0 ? (
+                                        <div className="px-3 py-2 text-[10px] text-gray-400 italic">No incremental backups on this chain yet.</div>
+                                    ) : (
+                                        <div className="divide-y divide-gray-100">
+                                            {chain.incrementals.map((inc, i) => (
+                                                <div key={inc.backupId} className="flex items-center justify-between gap-3 pl-8 pr-3 py-2 bg-white">
+                                                    <div className="flex items-center gap-2 min-w-0">
+                                                        <GitBranch className="h-3 w-3 text-gray-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <div className="flex items-center gap-2">
+                                                                <span className="text-[10px] font-semibold text-gray-700">Incremental #{i + 1}</span>
+                                                                {inc.isLatest && (
+                                                                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-semibold bg-green-100 text-green-800">
+                                                                        <CheckCircle className="h-3 w-3 mr-1" /> Latest
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="text-[9px] text-gray-400 font-mono truncate">{inc.backupId}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex items-center gap-4 shrink-0">
+                                                        <span className="text-[10px] text-gray-500">{formatDate(inc.createdAt)}</span>
+                                                        <span className="text-[10px] text-gray-500">{formatFileSize(inc.fileSizeBytes)}</span>
+                                                        <div className="flex items-center gap-1.5">
+                                                            <DownloadButton backup={inc} />
+                                                            <RestoreButton backup={inc} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </div>
         </>

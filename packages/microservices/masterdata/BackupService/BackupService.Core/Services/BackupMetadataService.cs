@@ -106,15 +106,43 @@ namespace BackupService.Core.Services
                 Timestamp = backupResult.Timestamp,
                 Incrementals = new List<string>(),
                 Lsn = backupResult.Lsn,
+                LastLsn = backupResult.Lsn,
                 Timeline = backupResult.Timeline,
+                IsPhysical = true,
+                FullBackupSizeBytes = backupResult.FileSizeBytes,
             };
 
             _metadata.Chains.Add(chain);
             await SaveMetadataAsync(_metadata, ct);
-            _logger.LogInformation("Added full backup chain for {Microservice}: {BackupFile}, LSN: {Lsn}, Timeline: {Timeline}", 
+            _logger.LogInformation("Added full backup chain for {Microservice}: {BackupFile}, LSN: {Lsn}, Timeline: {Timeline}",
                 microservice, backupResult.FileName, backupResult.Lsn, backupResult.Timeline);
         }
-        
+
+        public async Task UpdateMetadataWithIncrementalBackupAsync(BackupResult backupResult, string microservice, CancellationToken ct = default)
+        {
+            await EnsureMetadataLoaded(ct);
+
+            var chain = _metadata.Chains
+                .Where(c => c.MicroserviceName == microservice && c.IsPhysical)
+                .OrderByDescending(c => c.Timestamp)
+                .FirstOrDefault();
+
+            if (chain == null)
+            {
+                throw new InvalidOperationException(
+                    $"No full backup chain found for {microservice} — an incremental backup needs a full backup to attach to.");
+            }
+
+            chain.Incrementals.Add(backupResult.FileName);
+            chain.IncrementalSizesBytes.Add(backupResult.FileSizeBytes);
+            chain.IncrementalTimestamps.Add(backupResult.Timestamp);
+            chain.LastLsn = backupResult.Lsn;
+
+            await SaveMetadataAsync(_metadata, ct);
+            _logger.LogInformation("Added incremental backup {BackupFile} to chain {ChainId} for {Microservice}, LSN: {Lsn}",
+                backupResult.FileName, chain.ChainId, microservice, backupResult.Lsn);
+        }
+
         public async Task<List<BackupChain>> GetAllBackupChainsAsync(string? microservice = null, CancellationToken ct = default)
         {
             await EnsureMetadataLoaded(ct);
@@ -133,26 +161,68 @@ namespace BackupService.Core.Services
                 : _metadata.Chains.Where(c => c.MicroserviceName == microservice).ToList();
 
             var result = new List<BackupFileInfo>();
-
             var backupRoot = _backupDirectory;
 
-            // Metadata can outlive the file it describes — e.g. the backups volume
-            // gets wiped/reset without also clearing this JSON — so a chain only
-            // counts as "available" once we confirm its full-backup file actually
-            // exists on disk. Otherwise the API reports phantom backups that a
-            // user can see and try to restore/download but that don't exist.
-            var validChains = chains
+            // Physical (pgBackRest) chains live inside the pgbackrest repo volume, which
+            // this service has no direct filesystem access to (only docker exec/run) — so
+            // their availability is trusted from the chain record itself, not File.Exists.
+            var physicalChains = chains.Where(c => c.IsPhysical).ToList();
+
+            // Legacy pg_dump chains: metadata can outlive the file it describes — e.g. the
+            // backups volume gets wiped/reset without also clearing this JSON — so a chain
+            // only counts as "available" once we confirm its full-backup file actually
+            // exists on disk. Otherwise the API reports phantom backups that a user can see
+            // and try to restore/download but that don't exist.
+            var legacyChains = chains.Except(physicalChains).ToList();
+            var validLegacyChains = legacyChains
                 .Where(c => _fileSystem.File.Exists(Path.Combine(backupRoot, c.FullBackupFile)))
                 .ToList();
 
-            foreach (var missing in chains.Except(validChains))
+            foreach (var missing in legacyChains.Except(validLegacyChains))
             {
                 _logger.LogWarning(
                     "Skipping backup chain {ChainId} for {Microservice} — file not found: {Path}",
                     missing.Id, missing.MicroserviceName, Path.Combine(backupRoot, missing.FullBackupFile));
             }
 
-            foreach (var chain in validChains)
+            var validChains = physicalChains.Concat(validLegacyChains).ToList();
+
+            foreach (var chain in physicalChains)
+            {
+                result.Add(new BackupFileInfo
+                {
+                    BackupId = chain.Id.ToString(),
+                    FileName = $"pgbackrest:{chain.FullBackupFile}",
+                    BackupType = BackupType.Full,
+                    CreatedAt = chain.Timestamp,
+                    FileSizeBytes = chain.FullBackupSizeBytes,
+                    ChainId = chain.ChainId ?? chain.Id.ToString(),
+                    IsLatest = IsLatestChain(chain, validChains),
+                    ServiceName = chain.MicroserviceName,
+                    IsPhysical = true,
+                });
+
+                for (var i = 0; i < chain.Incrementals.Count; i++)
+                {
+                    result.Add(new BackupFileInfo
+                    {
+                        BackupId = chain.Incrementals[i],
+                        FileName = $"pgbackrest:{chain.Incrementals[i]}",
+                        BackupType = BackupType.Incremental,
+                        // Falls back to the full backup's timestamp only for chains recorded
+                        // before this field existed — must be the incremental's own timestamp
+                        // for "restore latest" (which orders by CreatedAt) to resolve correctly.
+                        CreatedAt = i < chain.IncrementalTimestamps.Count ? chain.IncrementalTimestamps[i] : chain.Timestamp,
+                        FileSizeBytes = i < chain.IncrementalSizesBytes.Count ? chain.IncrementalSizesBytes[i] : 0,
+                        ChainId = chain.ChainId ?? chain.Id.ToString(),
+                        IsLatest = IsLatestChain(chain, validChains),
+                        ServiceName = chain.MicroserviceName,
+                        IsPhysical = true,
+                    });
+                }
+            }
+
+            foreach (var chain in validLegacyChains)
             {
                 var fullBackupPath = Path.Combine(backupRoot, chain.FullBackupFile);
                 result.Add(new BackupFileInfo

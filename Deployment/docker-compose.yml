@@ -6,7 +6,14 @@ services:
   #   user-service → schema: users
   # =================================================================
   postgres-prod:
-    image: postgres:16
+    build:
+      context: ./docker-images/postgres
+      dockerfile: Dockerfile
+    # Pinned explicitly — without this, Compose would tag the built image after the
+    # compose project name (e.g. "deployment-postgres-prod"), which would silently
+    # break the `docker run qalitrack-postgres-prod:latest ...` restore command below
+    # (Backup__PostgresImage) since that name wouldn't exist.
+    image: qalitrack-postgres-prod:latest
     container_name: qalitrack-postgres-prod
     restart: always
     environment:
@@ -18,8 +25,24 @@ services:
       - POSTGRES_MAX_CONNECTIONS=600
       - POSTGRES_WORK_MEM=2MB
       - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+      # pgBackRest defaults to connecting as role "postgres", but the bootstrapped
+      # superuser role here is whatever DB_USER is — without this it fails stanza-create/
+      # check/backup with "role postgres does not exist". docker exec/archive_command
+      # both inherit this container's environment, so pgbackrest picks it up automatically.
+      - PGBACKREST_PG1_USER=${DB_USER}
+    # archive_mode + archive_command hand every completed WAL segment to pgBackRest
+    # so full backups can be chained into incrementals instead of re-dumping everything.
+    command:
+      - "postgres"
+      - "-c"
+      - "wal_level=replica"
+      - "-c"
+      - "archive_mode=on"
+      - "-c"
+      - "archive_command=pgbackrest --stanza=qalitrack archive-push %p"
     volumes:
       - postgres_prod_data:/var/lib/postgresql/data
+      - pgbackrest_repo:/var/lib/pgbackrest
       - ./postgres/init-scripts:/docker-entrypoint-initdb.d
     networks:
       - qalitrack-proxy
@@ -234,11 +257,22 @@ services:
       - JWT_AUDIENCE=qalitrack
       - Backup__Path=/app/Backups
       - Backup__MetadataPath=/app/backup-metadata
+      - Backup__PgBackRestStanza=qalitrack
+      - Backup__PostgresContainerName=qalitrack-postgres-prod
+      - Backup__PostgresImage=qalitrack-postgres-prod:latest
+      - Backup__PostgresDataVolume=postgres_prod_data
+      - Backup__PgBackRestRepoVolume=pgbackrest_repo
     volumes:
       - ./backup-service/data:/app/data
       - ./backup-service/logs:/app/logs
       - ./backup-service/backups:/app/Backups
       - ./backup-service/metadata:/app/backup-metadata
+      # Needed to `docker exec`/`docker run` against postgres-prod for pgBackRest
+      # backup/restore — physical backups must run where PGDATA lives, and Compose
+      # gives no other way to reach into a sibling container. This grants
+      # backup-service-prod effective control of the whole Docker host; accepted
+      # for this single-tenant on-prem deployment, see RUNBOOK.md.
+      - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       postgres-prod:
         condition: service_healthy
@@ -258,6 +292,9 @@ volumes:
   postgres_prod_data:
     driver: local
     name: postgres_prod_data
+  pgbackrest_repo:
+    driver: local
+    name: pgbackrest_repo
   redis_prod_data:
     driver: local
     name: redis_prod_data

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BackupService.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BackupService.Infrastructure.Migrations
 {
     [DbContext(typeof(BackupServiceDbContext))]
-    partial class BackupServiceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260825065221_AddIsPhysicalToBackupChain")]
+    partial class AddIsPhysicalToBackupChain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,17 +39,6 @@ namespace BackupService.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
-
-                    b.Property<long>("FullBackupSizeBytes")
-                        .HasColumnType("bigint");
-
-                    b.PrimitiveCollection<List<long>>("IncrementalSizesBytes")
-                        .IsRequired()
-                        .HasColumnType("bigint[]");
-
-                    b.PrimitiveCollection<List<DateTime>>("IncrementalTimestamps")
-                        .IsRequired()
-                        .HasColumnType("timestamp with time zone[]");
 
                     b.PrimitiveCollection<List<string>>("Incrementals")
                         .IsRequired()

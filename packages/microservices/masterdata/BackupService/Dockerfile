@@ -6,7 +6,7 @@ EXPOSE 443
 
 # Install PostgreSQL 16 client tools and wget for health checks
 RUN apt-get update && \
-    apt-get install -y wget gnupg lsb-release && \
+    apt-get install -y wget gnupg lsb-release curl && \
     # Add PostgreSQL repository for version 16 - use bookworm (Debian 12) explicitly
     sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bookworm-pgdg main" > /etc/apt/sources.list.d/pgdg.list' && \
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg && \
@@ -19,6 +19,17 @@ RUN apt-get update && \
     which pg_dump && \
     which pg_isready && \
     pg_dump --version
+
+# Static Docker CLI (client only, no daemon) so this container can `docker exec`/
+# `docker run` against postgres-prod to drive pgBackRest, which must run where
+# PGDATA lives rather than over a network connection like pg_dump/pg_restore.
+RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-25.0.5.tgz \
+      -o /tmp/docker.tgz && \
+    tar -xzf /tmp/docker.tgz -C /tmp && \
+    mv /tmp/docker/docker /usr/local/bin/docker && \
+    chmod +x /usr/local/bin/docker && \
+    rm -rf /tmp/docker.tgz /tmp/docker && \
+    docker --version
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src

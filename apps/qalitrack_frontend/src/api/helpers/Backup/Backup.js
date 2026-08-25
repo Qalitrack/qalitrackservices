@@ -9,6 +9,7 @@ class BackupAPI {
      * Create a new backup
      * @param {Object} backupData - The backup configuration
      * @param {string} backupData.microservice - Name of the microservice to backup
+     * @param {number} [backupData.type] - 0 = Full, 1 = Incremental (defaults to Full)
      * @param {string} backupData.saveLocation - Location to save the backup
      * @param {string} [backupData.cronSchedule] - Optional cron schedule for recurring backups
      * @returns {Promise<Object>} The created backup details
@@ -17,7 +18,7 @@ class BackupAPI {
         try {
             const payload = {
                 microservice: backupData.microservice,
-                type: 0, // Full backup as specified
+                type: backupData.type ?? 0,
                 saveLocation: backupData.saveLocation,
                 cronSchedule: backupData.cronSchedule || ''
             };

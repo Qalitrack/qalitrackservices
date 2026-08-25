@@ -27,6 +27,11 @@
    - [Kiosk app](#kiosk-app-electron)
    - [Windows build via Wine](#windows-build-via-wine-linux-host)
 7. [Service Map](#7-service-map)
+8. [Backups — pgBackRest (Full + Incremental)](#8-backups--pgbackrest-full--incremental)
+   - [One-time setup](#one-time-setup)
+   - [Everyday operation](#everyday-operation)
+   - [Restoring](#restoring)
+   - [Checking status](#checking-status)
 
 ---
 
@@ -433,7 +438,72 @@ The NSIS installer is written to `release/Qalitrack Setup <version>.exe`.
 | `qalitrack-gateway-service-prod` | 7000 | 7000 | API Gateway — all client traffic enters here |
 | `qalitrack-user-service-prod` | 7001 | 80 | Auth, users, roles, shifts, backup scheduler |
 | `qalitrack-masterdata-service-prod` | 7002 | 80 | Vehicles, drivers, products, weighbridges |
-| `qalitrack-backup-service-prod` | 7003 | 80 | Scheduled pg_dump backups |
+| `qalitrack-backup-service-prod` | 7003 | 80 | Drives pgBackRest full/incremental backups & restores (see [§8](#8-backups--pgbackrest-full--incremental)) |
 | `qalitrack-transaction-service-prod` | 7004 | 80 | Weigh transactions |
 | `qalitrack-postgres-prod` | — | 5432 | Shared PostgreSQL (internal only) |
 | `qalitrack-redis-prod` | — | 6379 | Shared Redis (internal only) |
+
+---
+
+## 8. Backups — pgBackRest (Full + Incremental)
+
+`postgres-prod` runs a custom image (`Deployment/docker-images/postgres/`) with
+pgBackRest installed. Backups are physical (whole-instance), not per-schema — one
+stanza (`qalitrack`) covers `masterdata` + `transactions` + `users` + `backup`
+together. `backup-service-prod` drives everything via `docker exec`/`docker run`
+against `postgres-prod`, which is why it needs `/var/run/docker.sock` mounted in
+(see the comment on that volume in `docker-compose.yml` — it's a deliberate,
+accepted trade-off for this single-tenant on-prem deployment, not an oversight).
+
+### One-time setup
+
+After the stack is up for the first time (or after wiping the `pgbackrest_repo`
+volume), the stanza needs to be created and given an initial full backup before
+any incremental backup can run:
+
+```bash
+docker exec qalitrack-postgres-prod pgbackrest --stanza=qalitrack stanza-create
+docker exec qalitrack-postgres-prod pgbackrest --stanza=qalitrack check
+docker exec qalitrack-postgres-prod pgbackrest --stanza=qalitrack backup --type=full
+```
+
+### Everyday operation
+
+Trigger backups the same way as before, through the BackupService API
+(`POST /Backup/create` with `"type": 0` for Full, `"type": 1` for Incremental) or
+its Quartz-scheduled cron jobs. An incremental backup fails with a clear error if
+no full backup chain exists yet for that microservice — run a full backup first.
+
+### Restoring
+
+`POST /Backup/restore` with `"backupId": "latest"` (or a specific pgbackrest
+label) restores the **entire** shared instance — `postgres-prod` gets stopped,
+restored via a one-off container sharing its volumes, then started back up.
+There is no per-schema/per-microservice restore with a physical backup; every
+service using `postgres-prod` is down for the duration.
+
+To restore by hand instead of through the API:
+
+```bash
+docker stop qalitrack-postgres-prod
+docker run --rm -u postgres \
+  -v postgres_prod_data:/var/lib/postgresql/data \
+  -v pgbackrest_repo:/var/lib/pgbackrest \
+  qalitrack-postgres-prod:latest \
+  pgbackrest --stanza=qalitrack --delta --type=immediate \
+    --recovery-option=recovery_target_action=promote restore
+docker start qalitrack-postgres-prod
+```
+
+`--type=immediate` matters: without it, pgBackRest replays every WAL segment archived since (archiving runs continuously, independent of backup timing), which recovers to "now" rather than "this backup" — confirmed with a real restore during testing, where a row written after the last backup survived until this flag was added.
+
+`--recovery-option=recovery_target_action=promote` matters just as much: without it, Postgres reaches the recovery target and then just **pauses read-only** (`pg_is_in_recovery()` stays `true`) instead of becoming a normal writable primary — confirmed against a real restore where every write afterward, including this service's own EF Core migrations, failed with `cannot execute ... in a read-only transaction` until manually running `SELECT pg_promote();`. A `SELECT`-only check after restore will not catch this — you have to attempt a write.
+
+### Checking status
+
+```bash
+docker exec qalitrack-postgres-prod pgbackrest --stanza=qalitrack info
+```
+
+Shows the full/incremental chain, sizes, and timestamps — this replaces browsing
+a directory of dated `.dump` files, since a physical backup isn't one file.
